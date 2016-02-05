@@ -26,8 +26,8 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
         //      probably a Windows line ending difference
         //TODO on my machine single line comments cause the line counter to inc by 2
         //var linenum = Math.floor(lexer.yylineno / 2) + 1;
-        //var linenum = lexer.yylineno + 1;
-        var linenum = lexer.yylineno + 1 - numscomments;
+        var linenum = lexer.yylineno + 1;
+        //var linenum = lexer.yylineno + 1 - numscomments;
 
         //file finished check
         if (token === "EOF" || token === 1) {
