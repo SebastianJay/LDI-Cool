@@ -677,7 +677,8 @@ case 54:return "TILDE";
 break;
 case 55:return "TIMES";
 break;
-case 56:	if (parseInt(yy_.yytext, 10) <= 2147483647) {
+case 56:	parsednum = parseInt(yy_.yytext, 10);
+									if (parsednum <= 2147483647) {
 										return "INTEGER";
 									} else {
 										return "INTEGER_TOO_LARGE";

@@ -1,5 +1,6 @@
 %lex
 //global vars go here
+var parsednum = 0;
 var strbuf = '';
 
 %x scomment
@@ -65,7 +66,8 @@ var strbuf = '';
 \;								return "SEMI";
 \~								return "TILDE";
 \*								return "TIMES";
-[0-9]+ 							%{	if (parseInt(yytext, 10) <= 2147483647) {
+[0-9]+ 							%{	parsednum = parseInt(yytext, 10);
+									if (parsednum <= 2147483647) {
 										return "INTEGER";
 									} else {
 										return "INTEGER_TOO_LARGE";
@@ -81,7 +83,6 @@ var strbuf = '';
 /lex
 %%
 
-/* not needed, I think */
 TOKEN
 	: WHITESPACE
 	| NUMBER

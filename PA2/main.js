@@ -1,6 +1,7 @@
 
 var fs = require('fs');
-fs.readFile(process.argv[2], 'ASCII', function (err, data) {
+var inpath = process.argv[2];
+fs.readFile(inpath, 'ASCII', function (err, data) {
     if (err) {
     	console.log(err);
     	return;
@@ -9,17 +10,18 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
     var parser= require('./grammar').parser;
     var lexer = parser.lexer;
 
-    /// NOTE: lexer increments line number before newline,
-    ///       assignment wants after
-
+    var outtokens = [];
     var errtext = '';
+
     lexer.setInput(data);
     while(!lexer.done) {
     	token = lexer.lex();
+        /// NOTE: lexer increments line number before newline,
+        ///       assignment wants after
         //TODO on my machine the numbering starts at 1 and increments by 2 each line
         //      probably a Windows line ending difference
-        var linenum = Math.floor(lexer.yylineno / 2) + 1;
-        //var linenum = lexer.yylineno + 1;
+        //var linenum = Math.floor(lexer.yylineno / 2) + 1;
+        var linenum = lexer.yylineno + 1;
 
         //file finished check
         if (token === "EOF" || token === 1) {
@@ -59,16 +61,41 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
         //valid tokens
         if (token === "STRING") {
             //strbuf was declared in grammer.jison
-            console.log((linenum) + "\n" + token + "\n" + strbuf);
+            outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + strbuf);
+        } else if (token === "INTEGER") {
+            //parsednum was declared in grammar.jison
+            outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + parsednum);
+        } else if (token === "IDENTIFIER" || token === "TYPE"){
+            outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + lexer.yytext);
         } else {
-            console.log((linenum) + "\n" + token + "\n" + lexer.yytext);
+            outtokens.push(linenum + '\n' + token.toLowerCase());
         }
     }
 
     if (errtext) {
-        console.log(errtext);
+        process.stdout.write(errtext);
     } else {
-        //TODO: buffer valid output in main loop and print it here
+        var i;
+        var outbuffer = '';
+        for (i = 0; i < outtokens.length; i+=1) {
+            //process.stdout.write(outtokens[i]);
+            //process.stdout.write('\n');
+            outbuffer += outtokens[i] + '\n';
+        }
+
+        var lastind = inpath.lastIndexOf('.');
+        var foutprefix = '';
+        if (lastind === -1) {
+            foutprefix = inpath;
+        } else {
+            foutprefix = inpath.substr(0, lastind);
+        }
+        var foutname = foutprefix + '.cl-lex';
+        fs.writeFile(foutname, outbuffer, 'ASCII', function(err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     }
 
 });
