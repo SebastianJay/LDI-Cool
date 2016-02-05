@@ -75,9 +75,9 @@ var grammar = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o};
 var parser = {trace: function trace() { },
 yy: {},
-symbols_: {"error":2,"TOKEN":3,"WHITESPACE":4,"NUMBER":5,"IDENTIFIER":6,"$accept":0,"$end":1},
-terminals_: {2:"error",4:"WHITESPACE",5:"NUMBER",6:"IDENTIFIER"},
-productions_: [0,[3,1],[3,1],[3,1],[3,0]],
+symbols_: {"error":2,"TOKEN":3,"WHITESPACE":4,"NUMBER":5,"CLASS":6,"IDENTIFIER":7,"$accept":0,"$end":1},
+terminals_: {2:"error",4:"WHITESPACE",5:"NUMBER",6:"CLASS",7:"IDENTIFIER"},
+productions_: [0,[3,1],[3,1],[3,1],[3,1]],
 performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* action[1] */, $$ /* vstack */, _$ /* lstack */) {
 /* this == yyval */
 
@@ -85,8 +85,8 @@ var $0 = $$.length - 1;
 switch (yystate) {
 }
 },
-table: [{1:[2,4],3:1,4:[1,2],5:[1,3],6:[1,4]},{1:[3]},{1:[2,1]},{1:[2,2]},{1:[2,3]}],
-defaultActions: {2:[2,1],3:[2,2],4:[2,3]},
+table: [{3:1,4:[1,2],5:[1,3],6:[1,4],7:[1,5]},{1:[3]},{1:[2,1]},{1:[2,2]},{1:[2,3]},{1:[2,4]}],
+defaultActions: {2:[2,1],3:[2,2],4:[2,3],5:[2,4]},
 parseError: function parseError(str, hash) {
     if (hash.recoverable) {
         this.trace(str);
@@ -565,16 +565,96 @@ options: {},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return "WHITESPACE";
+case 0:return "CASE";
 break;
-case 1:return "NUMBER";
+case 1:return "CLASS";
 break;
-case 2:return "INDENTIFIER";
+case 2:return "ELSE";
+break;
+case 3:return "ESAC";
+break;
+case 4:return "FALSE";
+break;
+case 5:return "FI";
+break;
+case 6:return "IF";
+break;
+case 7:return "INHERITS";
+break;
+case 8:return "IN";
+break;
+case 9:return "ISVOID";
+break;
+case 10:return "LET";
+break;
+case 11:return "LOOP";
+break;
+case 12:return "NEW";
+break;
+case 13:return "NOT";
+break;
+case 14:return "OF";
+break;
+case 15:return "POOL";
+break;
+case 16:return "THEN";
+break;
+case 17:return "TRUE";
+break;
+case 18:return "WHILE";
+break;
+case 19:return "RARROW";
+break;
+case 20:return "LARROW";
+break;
+case 21:return "LE";
+break;
+case 22:return "AT";
+break;
+case 23:return "COLON";
+break;
+case 24:return "COMMA";
+break;
+case 25:return "DIVIDE";
+break;
+case 26:return "DOT";
+break;
+case 27:return "EQUALS";
+break;
+case 28:return "LBRACE";
+break;
+case 29:return "RBRACE";
+break;
+case 30:return "LPAREN";
+break;
+case 31:return "RPAREN";
+break;
+case 32:return "LT";
+break;
+case 33:return "MINUS";
+break;
+case 34:return "PLUS";
+break;
+case 35:return "SEMI";
+break;
+case 36:return "TILDE";
+break;
+case 37:return "TIMES";
+break;
+case 38:return "WHITESPACE";
+break;
+case 39:return "NUMBER";
+break;
+case 40:return "IDENTIFIER";
+break;
+case 41: return "EOF"; 
+break;
+case 42: return "BADPATTERN"; 
 break;
 }
 },
-rules: [/^(?:\s)/,/^(?:[0-9]+)/,/^(?:\w[\w[0-9]*)/],
-conditions: {"INITIAL":{"rules":[0,1,2],"inclusive":true}}
+rules: [/^(?:[cC][aA][sS][eE])/,/^(?:[cC][lL][aA][sS][sS])/,/^(?:[eE][lL][sS][eE])/,/^(?:[eE][sS][aA][cC])/,/^(?:f[aA][lL][sS][eE])/,/^(?:[fF][iI])/,/^(?:[iI][fF])/,/^(?:[iI][nN][hH][eE][rR][iI][tT][sS])/,/^(?:[iI][nN])/,/^(?:[iI][sS][vV][oO][iI][dD])/,/^(?:[lL][eE][tT])/,/^(?:[lL][oO][oO][pP])/,/^(?:[nN][eE][wW])/,/^(?:[nN][oO][tT])/,/^(?:[oO][fF])/,/^(?:[pP][oO][oO][lL])/,/^(?:[tT][hH][eE][nN])/,/^(?:t[rR][uU][eE])/,/^(?:[wW][hH][iI][lL][eE])/,/^(?:=>)/,/^(?:<-)/,/^(?:<=)/,/^(?:@)/,/^(?::)/,/^(?:,)/,/^(?:\/)/,/^(?:\.)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:<)/,/^(?:-)/,/^(?:\+)/,/^(?:;)/,/^(?:~)/,/^(?:\*)/,/^(?:\s)/,/^(?:[0-9]+)/,/^(?:\w[\w[0-9]*)/,/^(?:$)/,/^(?:.*)/],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42],"inclusive":true}}
 });
 return lexer;
 })();
