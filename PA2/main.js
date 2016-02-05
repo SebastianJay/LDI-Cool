@@ -19,6 +19,7 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
         //TODO on my machine the numbering starts at 1 and increments by 2 each line
         //      probably a Windows line ending difference
         var linenum = Math.floor(lexer.yylineno / 2) + 1;
+        //var linenum = lexer.yylineno + 1;
 
         //file finished check
         if (token === "EOF" || token === 1) {
@@ -26,7 +27,7 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
         }
 
         //error checks
-        if (token === "BADPATTERN") {
+        if (token === "BAD_PATTERN") {
             errtext = 'ERROR: ' + linenum + ': Lexer: Invalid character pattern: ' + lexer.yytext;
             break;
         }
@@ -46,6 +47,10 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
             errtext = 'ERROR: ' + linenum + ': Lexer: Invalid NUL in string';
             break;
         }
+        if (token === "INTEGER_TOO_LARGE") {
+            errtext = 'ERROR: ' + linenum + ': Lexer: Integer constant not 32-bit unsigned: ' + lexer.yytext;
+            break;
+        }
 
         if (token === "WHITESPACE") {
             continue;
@@ -63,7 +68,7 @@ fs.readFile(process.argv[2], 'ASCII', function (err, data) {
     if (errtext) {
         console.log(errtext);
     } else {
-        //TODO: buffer valid output and print it here
+        //TODO: buffer valid output in main loop and print it here
     }
 
 });

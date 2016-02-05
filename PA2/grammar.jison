@@ -7,7 +7,7 @@ var strbuf = '';
 %x string
 %%
 <INITIAL>[\-]{2}					this.begin('scomment');
-<scomment><<EOF>>					this.popState();
+<scomment><<EOF>>					this.popState(); return "EOF";
 <scomment>[\r\n]					this.popState();			/* TODO resolve newline differences */
 <scomment>.+						/* skip */
 
@@ -18,14 +18,14 @@ var strbuf = '';
 <mcomment>[)]						/* skip */
 <mcomment>[^*)]+					/* skip */					/* TODO more elegant solution for *) ? */
 
-<INITIAL>\"							%{ this.begin('string'); strbuf = ''; %}
+<INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
 <string><<EOF>>						return "EOF_IN_STRING";
-<string>[\n]						return "NEWLINE_IN_STRING";
+<string>[\r\n]						return "NEWLINE_IN_STRING";
 <string>[\0]						return "NUL_IN_STRING";
-<string>\"							%{ this.popState(); return "STRING"%}
+<string>[\"]						%{ this.popState(); return "STRING"%}
 <string>[\\]["]						strbuf += yytext;
 <string>[\\]						strbuf += yytext;
-<string>[^"\\\n\0]+					strbuf += yytext;
+<string>[^"\\\r\n\0]+				strbuf += yytext;
 
 \b[cC][aA][sS][eE]\b				return "CASE";
 \b[cC][lL][aA][sS][sS]\b			return "CLASS";
@@ -65,19 +65,23 @@ var strbuf = '';
 \;								return "SEMI";
 \~								return "TILDE";
 \*								return "TIMES";
-/* TODO: validate number size */
-[0-9]+ 							%{ return "INTEGER"; %}
+[0-9]+ 							%{	if (parseInt(yytext, 10) <= 2147483647) {
+										return "INTEGER";
+									} else {
+										return "INTEGER_TOO_LARGE";
+									}
+								%}
 [a-z][a-zA-Z0-9_]*   			return "IDENTIFIER";
 [A-Z][a-zA-Z0-9_]*				return "TYPE";
-\s								return "WHITESPACE";
-[ \n\f\r\t\v]					return "WHITESPACE";
-<<EOF>>							%{ return "EOF"; %}
-.*								%{ return "BADPATTERN"; %}
+\s+								return "WHITESPACE";
+[ \n\f\r\t\v]+					return "WHITESPACE";	/* being redundant but safe */
+<<EOF>>							return "EOF";
+.*								return "BAD_PATTERN";
 
 /lex
 %%
 
-/* does this part serve a purpose? */
+/* not needed, I think */
 TOKEN
 	: WHITESPACE
 	| NUMBER
