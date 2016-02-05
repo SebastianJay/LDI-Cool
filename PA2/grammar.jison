@@ -1,29 +1,25 @@
 %lex
-//global vars go here
-var parsednum = 0;
-var strbuf = '';
-
 %x scomment
 %x mcomment
 %x string
 %%
 <INITIAL>[\-]{2}					this.begin('scomment');
-<scomment><<EOF>>					this.popState(); return "EOF";
-<scomment>[\r\n]					this.popState();			/* TODO resolve newline differences */
+<scomment><<EOF>>					%{ this.popState(); return "EOF"; %}
+<scomment>[\r\n]					%{ this.popState(); numscomments += 1; %}		/* TODO resolve newline differences */
 <scomment>.+						/* skip */
 
 <INITIAL>[(][*]						this.begin('mcomment');
 <mcomment><<EOF>>					return "EOF_IN_COMMENT";
 <mcomment>[*][)]					this.popState();
 <mcomment>[*]						/* skip */
-<mcomment>[)]						/* skip */
+<mcomment>[)]+						/* skip */
 <mcomment>[^*)]+					/* skip */					/* TODO more elegant solution for *) ? */
 
 <INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
 <string><<EOF>>						return "EOF_IN_STRING";
 <string>[\r\n]						return "NEWLINE_IN_STRING";
 <string>[\0]						return "NUL_IN_STRING";
-<string>[\"]						%{ this.popState(); return "STRING"%}
+<string>[\"]						%{ this.popState(); return "STRING"; %}
 <string>[\\]["]						strbuf += yytext;
 <string>[\\]						strbuf += yytext;
 <string>[^"\\\r\n\0]+				strbuf += yytext;
@@ -66,14 +62,14 @@ var strbuf = '';
 \;								return "SEMI";
 \~								return "TILDE";
 \*								return "TIMES";
-[0-9]+ 							%{	parsednum = parseInt(yytext, 10);
+[0-9]+							%{	parsednum = parseInt(yytext, 10);
 									if (parsednum <= 2147483647) {
 										return "INTEGER";
 									} else {
 										return "INTEGER_TOO_LARGE";
 									}
 								%}
-[a-z][a-zA-Z0-9_]*   			return "IDENTIFIER";
+[a-z][a-zA-Z0-9_]*  	 		return "IDENTIFIER";
 [A-Z][a-zA-Z0-9_]*				return "TYPE";
 \s+								return "WHITESPACE";
 [ \n\f\r\t\v]+					return "WHITESPACE";	/* being redundant but safe */

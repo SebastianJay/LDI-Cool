@@ -1,3 +1,7 @@
+//TODO fix global vars?
+parsednum = 0;
+numscomments = 0;
+strbuf = '';
 
 var fs = require('fs');
 var inpath = process.argv[2];
@@ -20,8 +24,10 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
         ///       assignment wants after
         //TODO on my machine the numbering starts at 1 and increments by 2 each line
         //      probably a Windows line ending difference
+        //TODO on my machine single line comments cause the line counter to inc by 2
         //var linenum = Math.floor(lexer.yylineno / 2) + 1;
-        var linenum = lexer.yylineno + 1;
+        //var linenum = lexer.yylineno + 1;
+        var linenum = lexer.yylineno + 1 - numscomments;
 
         //file finished check
         if (token === "EOF" || token === 1) {
@@ -60,10 +66,10 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
 
         //valid tokens
         if (token === "STRING") {
-            //strbuf was declared in grammer.jison
+            //strbuf was declared in grammer.js
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + strbuf);
         } else if (token === "INTEGER") {
-            //parsednum was declared in grammar.jison
+            //parsednum was declared in grammar.js
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + parsednum);
         } else if (token === "IDENTIFIER" || token === "TYPE"){
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + lexer.yytext);
@@ -73,7 +79,7 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
     }
 
     if (errtext) {
-        process.stdout.write(errtext);
+        process.stdout.write(errtext + '\n');
     } else {
         var i;
         var outbuffer = '';

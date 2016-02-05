@@ -567,9 +567,9 @@ var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
 case 0:this.begin('scomment');
 break;
-case 1:this.popState(); return "EOF";
+case 1: this.popState(); return "EOF"; 
 break;
-case 2:this.popState();			/* TODO resolve newline differences */
+case 2: this.popState(); numscomments += 1; 
 break;
 case 3:/* skip */
 break;
@@ -593,7 +593,7 @@ case 12:return "NEWLINE_IN_STRING";
 break;
 case 13:return "NUL_IN_STRING";
 break;
-case 14: this.popState(); return "STRING"
+case 14: this.popState(); return "STRING"; 
 break;
 case 15:strbuf += yy_.yytext;
 break;
@@ -699,7 +699,7 @@ case 62:return "BAD_PATTERN";
 break;
 }
 },
-rules: [/^(?:[\-]{2})/,/^(?:$)/,/^(?:[\r\n])/,/^(?:.+)/,/^(?:[(][*])/,/^(?:$)/,/^(?:[*][)])/,/^(?:[*])/,/^(?:[)])/,/^(?:[^*)]+)/,/^(?:[\"])/,/^(?:$)/,/^(?:[\r\n])/,/^(?:[\0])/,/^(?:[\"])/,/^(?:[\\]["])/,/^(?:[\\])/,/^(?:[^"\\\r\n\0]+)/,/^(?:\b[cC][aA][sS][eE]\b)/,/^(?:\b[cC][lL][aA][sS][sS]\b)/,/^(?:\b[eE][lL][sS][eE]\b)/,/^(?:\b[eE][sS][aA][cC]\b)/,/^(?:\bf[aA][lL][sS][eE]\b)/,/^(?:\b[fF][iI]\b)/,/^(?:\b[iI][fF]\b)/,/^(?:\b[iI][nN][hH][eE][rR][iI][tT][sS]\b)/,/^(?:\b[iI][nN]\b)/,/^(?:\b[iI][sS][vV][oO][iI][dD]\b)/,/^(?:\b[lL][eE][tT]\b)/,/^(?:\b[lL][oO][oO][pP]\b)/,/^(?:\b[nN][eE][wW]\b)/,/^(?:\b[nN][oO][tT]\b)/,/^(?:\b[oO][fF]\b)/,/^(?:\b[pP][oO][oO][lL]\b)/,/^(?:\b[tT][hH][eE][nN]\b)/,/^(?:\bt[rR][uU][eE]\b)/,/^(?:\b[wW][hH][iI][lL][eE]\b)/,/^(?:=>)/,/^(?:<-)/,/^(?:<=)/,/^(?:@)/,/^(?::)/,/^(?:,)/,/^(?:\/)/,/^(?:\.)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:<)/,/^(?:-)/,/^(?:\+)/,/^(?:;)/,/^(?:~)/,/^(?:\*)/,/^(?:[0-9]+)/,/^(?:[a-z][a-zA-Z0-9_]*)/,/^(?:[A-Z][a-zA-Z0-9_]*)/,/^(?:\s+)/,/^(?:[ \n\f\r\t\v]+)/,/^(?:$)/,/^(?:.*)/],
+rules: [/^(?:[\-]{2})/,/^(?:$)/,/^(?:[\r\n])/,/^(?:.+)/,/^(?:[(][*])/,/^(?:$)/,/^(?:[*][)])/,/^(?:[*])/,/^(?:[)]+)/,/^(?:[^*)]+)/,/^(?:[\"])/,/^(?:$)/,/^(?:[\r\n])/,/^(?:[\0])/,/^(?:[\"])/,/^(?:[\\]["])/,/^(?:[\\])/,/^(?:[^"\\\r\n\0]+)/,/^(?:\b[cC][aA][sS][eE]\b)/,/^(?:\b[cC][lL][aA][sS][sS]\b)/,/^(?:\b[eE][lL][sS][eE]\b)/,/^(?:\b[eE][sS][aA][cC]\b)/,/^(?:\bf[aA][lL][sS][eE]\b)/,/^(?:\b[fF][iI]\b)/,/^(?:\b[iI][fF]\b)/,/^(?:\b[iI][nN][hH][eE][rR][iI][tT][sS]\b)/,/^(?:\b[iI][nN]\b)/,/^(?:\b[iI][sS][vV][oO][iI][dD]\b)/,/^(?:\b[lL][eE][tT]\b)/,/^(?:\b[lL][oO][oO][pP]\b)/,/^(?:\b[nN][eE][wW]\b)/,/^(?:\b[nN][oO][tT]\b)/,/^(?:\b[oO][fF]\b)/,/^(?:\b[pP][oO][oO][lL]\b)/,/^(?:\b[tT][hH][eE][nN]\b)/,/^(?:\bt[rR][uU][eE]\b)/,/^(?:\b[wW][hH][iI][lL][eE]\b)/,/^(?:=>)/,/^(?:<-)/,/^(?:<=)/,/^(?:@)/,/^(?::)/,/^(?:,)/,/^(?:\/)/,/^(?:\.)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:<)/,/^(?:-)/,/^(?:\+)/,/^(?:;)/,/^(?:~)/,/^(?:\*)/,/^(?:[0-9]+)/,/^(?:[a-z][a-zA-Z0-9_]*)/,/^(?:[A-Z][a-zA-Z0-9_]*)/,/^(?:\s+)/,/^(?:[ \n\f\r\t\v]+)/,/^(?:$)/,/^(?:.*)/],
 conditions: {"string":{"rules":[11,12,13,14,15,16,17],"inclusive":false},"mcomment":{"rules":[5,6,7,8,9],"inclusive":false},"scomment":{"rules":[1,2,3],"inclusive":false},"INITIAL":{"rules":[0,4,10,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62],"inclusive":true}}
 });
 return lexer;
