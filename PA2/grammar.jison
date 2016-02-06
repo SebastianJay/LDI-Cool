@@ -25,9 +25,10 @@
 <string>[\0]						return "NUL_IN_STRING";
 <string>[\x1a]						return "EOF_IN_STRING";
 <string>[\"]						%{ this.popState(); return "STRING"; %}
-<string>[\\]["]						strbuf += yytext;
-<string>[\\]						strbuf += yytext;
-<string>[^"\\\r\n\0\x1a]+			strbuf += yytext;
+<string>\\\\						strbuf += yytext;
+<string>\\\"						strbuf += yytext;
+<string>\\						strbuf += yytext;
+<string>[^\"\\\r\n\0\x1a]+			strbuf += yytext;
 
 \b[cC][aA][sS][eE]\b				return "CASE";
 \b[cC][lL][aA][sS][sS]\b			return "CLASS";
