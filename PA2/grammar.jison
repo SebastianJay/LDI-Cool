@@ -6,7 +6,7 @@
 <INITIAL>[\-]{2}					this.begin('scomment');
 <scomment><<EOF>>					%{ this.popState(); return "EOF"; %}
 <scomment>[\x1a]					%{ this.popState(); return "EOF"; %}
-<scomment>\n					%{ this.popState(); numscomments += 1; linenum += 1; %}		/* TODO resolve newline differences */
+<scomment>\n					%{ this.popState(); linenum += 1; %}		/* TODO resolve newline differences */
 <scomment>[^\n\x1a]				/* skip */
 
 <INITIAL>[(][*]						this.begin('mcomment');

@@ -571,7 +571,7 @@ case 1: this.popState(); return "EOF";
 break;
 case 2: this.popState(); return "EOF"; 
 break;
-case 3: this.popState(); numscomments += 1; linenum += 1; 
+case 3: this.popState(); linenum += 1; 
 break;
 case 4:/* skip */
 break;
