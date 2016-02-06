@@ -66,10 +66,8 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
 
         //valid tokens
         if (token === "STRING") {
-            //strbuf was declared in grammer.js
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + strbuf);
         } else if (token === "INTEGER") {
-            //parsednum was declared in grammar.js
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + parsednum);
         } else if (token === "IDENTIFIER" || token === "TYPE"){
             outtokens.push(linenum + '\n' + token.toLowerCase() + '\n' + lexer.yytext);

@@ -5,26 +5,29 @@
 %%
 <INITIAL>[\-]{2}					this.begin('scomment');
 <scomment><<EOF>>					%{ this.popState(); return "EOF"; %}
+<scomment>[\x1a]					%{ this.popState(); return "EOF"; %}
 <scomment>[\r\n]					%{ this.popState(); numscomments += 1; %}		/* TODO resolve newline differences */
-<scomment>.+						/* skip */
+<scomment>[^\r\n\x1a]				/* skip */
 
 <INITIAL>[(][*]						this.begin('mcomment');
 <mcomment>[(][*]					this.begin('mcomment');
 <mcomment><<EOF>>					return "EOF_IN_COMMENT";
+<mcomment>[\x1a]					return "EOF_IN_COMMENT";
 <mcomment>[*][)]					this.popState();
-<mcomment>[^\(\)*]+					/* skip */
 <mcomment>[*]						/* skip */
 <mcomment>[)]						/* skip */
-
+<mcomment>[(]						/* skip */
+<mcomment>[^()*\x1a]+				/* skip */
 
 <INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
 <string><<EOF>>						return "EOF_IN_STRING";
 <string>[\r\n]						return "NEWLINE_IN_STRING";
 <string>[\0]						return "NUL_IN_STRING";
+<string>[\x1a]						return "EOF_IN_STRING";
 <string>[\"]						%{ this.popState(); return "STRING"; %}
 <string>[\\]["]						strbuf += yytext;
 <string>[\\]						strbuf += yytext;
-<string>[^"\\\r\n\0]+				strbuf += yytext;
+<string>[^"\\\r\n\0\x1a]+			strbuf += yytext;
 
 \b[cC][aA][sS][eE]\b				return "CASE";
 \b[cC][lL][aA][sS][sS]\b			return "CLASS";
