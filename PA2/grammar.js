@@ -573,7 +573,7 @@ case 2: this.popState(); return "EOF";
 break;
 case 3: this.popState(); linenum += 1; 
 break;
-case 4:/* skip */
+case 4:/* skip, note: compiler doesn't like \x1a, not sure what it is */
 break;
 case 5:this.begin('mcomment');
 break;
@@ -607,7 +607,7 @@ case 19:return "NUL_IN_STRING";
 break;
 case 20:return "EOF_IN_STRING";
 break;
-case 21: this.popState(); return "STRING"; 
+case 21: this.popState(); if (strbuf.length > 1024) return "STRING_TOO_LONG"; else return "STRING"; 
 break;
 case 22:strbuf += yy_.yytext;
 break;

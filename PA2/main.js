@@ -64,6 +64,10 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
             errtext = 'ERROR: ' + linenum + ': Lexer: Invalid NUL in string';
             break;
         }
+	if (token == "STRING_TOO_LONG") {
+	    errtext = "ERROR: " + linenum + ": Lexer: String constant longer than 1024 characters";
+	    break;
+	}
         if (token === "INTEGER_TOO_LARGE") {
             errtext = 'ERROR: ' + linenum + ': Lexer: Integer constant not 32-bit unsigned: ' + lexer.yytext;
             break;
