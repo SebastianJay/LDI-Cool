@@ -13,6 +13,8 @@
 <mcomment><<EOF>>					return "EOF_IN_COMMENT";
 <mcomment>[*][)]					this.popState();
 <mcomment>[^\(\)*]+					/* skip */
+<mcomment>[*]						/* skip */
+<mcomment>[)]						/* skip */
 
 
 <INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
