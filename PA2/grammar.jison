@@ -9,11 +9,11 @@
 <scomment>.+						/* skip */
 
 <INITIAL>[(][*]						this.begin('mcomment');
+<mcomment>[(][*]					this.begin('mcomment');
 <mcomment><<EOF>>					return "EOF_IN_COMMENT";
 <mcomment>[*][)]					this.popState();
-<mcomment>[*]						/* skip */
-<mcomment>[)]+						/* skip */
-<mcomment>[^*)]+					/* skip */					/* TODO more elegant solution for *) ? */
+<mcomment>[^\(\)*]+					/* skip */
+
 
 <INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
 <string><<EOF>>						return "EOF_IN_STRING";
