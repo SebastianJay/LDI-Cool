@@ -48,7 +48,7 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
             break;
         }
         if (token === "NEWLINE_IN_STRING") {
-            errtext = 'ERROR: ' + linenum + ': Lexer: Invalid newline in string';
+            errtext = 'ERROR: ' + (linenum-1) + ': Lexer: Invalid newline in string';
             break;
         }
         if (token === "NUL_IN_STRING") {
