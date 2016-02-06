@@ -1,34 +1,42 @@
 //TODO fix global vars?
+
+// Stores parsed integers
 parsednum = 0;
-numscomments = 0;
+
+// Stores parsed strings
 strbuf = '';
+
+// Stores current line number
 linenum = 1;
 
+// Read in file from path in first commandline argument
 var fs = require('fs');
 var inpath = process.argv[2];
 fs.readFile(inpath, 'ASCII', function (err, data) {
+    // If file IO error
     if (err) {
     	console.log(err);
     	return;
     }
 
+    // Initialize jison lexer
     var parser= require('./grammar').parser;
     var lexer = parser.lexer;
 
+    // List of tokens, each element is a string of the form:
+    // linenum
+    // token
+    // [actual text]
     var outtokens = [];
+    // Message to output on lexer error
     var errtext = '';
 
+    // Lex the contents of the opened file
     lexer.setInput(data);
+
     while(!lexer.done) {
+	// Get next token
     	token = lexer.lex();
-        /// NOTE: lexer increments line number before newline,
-        ///       assignment wants after
-        //TODO on my machine the numbering starts at 1 and increments by 2 each line
-        //      probably a Windows line ending difference
-        //TODO on my machine single line comments cause the line counter to inc by 2
-        //var linenum = Math.floor(lexer.yylineno / 2) + 1;
-        // var linenum = lexer.yylineno + 1;
-        //var linenum = lexer.yylineno + 1 - numscomments;
 
         //file finished check
         if (token === "EOF" || token === 1) {
@@ -77,26 +85,33 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
         }
     }
 
+    // If there was an error print the error text
     if (errtext) {
         process.stdout.write(errtext + '\n');
     } else {
-        var i;
+        // Other wise print out the
+	var i;
         var outbuffer = '';
         for (i = 0; i < outtokens.length; i+=1) {
-            //process.stdout.write(outtokens[i]);
-            //process.stdout.write('\n');
             outbuffer += outtokens[i] + '\n';
         }
-
+	
+	// Find extension in input path
         var lastind = inpath.lastIndexOf('.');
-        var foutprefix = '';
+        
+	// Get input path without extension
+	var foutprefix = '';
         if (lastind === -1) {
             foutprefix = inpath;
         } else {
             foutprefix = inpath.substr(0, lastind);
         }
+	
+	// Output is input.cl-lex
         var foutname = foutprefix + '.cl-lex';
-        fs.writeFile(foutname, outbuffer, 'ASCII', function(err) {
+        
+	// Write out tokens
+	fs.writeFile(foutname, outbuffer, 'ASCII', function(err) {
             if (err) {
                 console.log(err);
             }
