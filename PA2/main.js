@@ -2,6 +2,7 @@
 parsednum = 0;
 numscomments = 0;
 strbuf = '';
+linenum = 1;
 
 var fs = require('fs');
 var inpath = process.argv[2];
@@ -26,7 +27,7 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
         //      probably a Windows line ending difference
         //TODO on my machine single line comments cause the line counter to inc by 2
         //var linenum = Math.floor(lexer.yylineno / 2) + 1;
-        var linenum = lexer.yylineno + 1;
+        // var linenum = lexer.yylineno + 1;
         //var linenum = lexer.yylineno + 1 - numscomments;
 
         //file finished check
@@ -48,7 +49,7 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
             break;
         }
         if (token === "NEWLINE_IN_STRING") {
-            errtext = 'ERROR: ' + (linenum-1) + ': Lexer: Invalid newline in string';
+            errtext = 'ERROR: ' + linenum + ': Lexer: Invalid newline in string';
             break;
         }
         if (token === "NUL_IN_STRING") {

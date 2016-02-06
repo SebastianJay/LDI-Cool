@@ -32,8 +32,9 @@ $compErr"
 $testErr"
 	# If both don't error, compare lex output
     elif [[ -z "$compErr" ]] && [[ -z "$testErr" ]]; then
-	result=`diff -w temp.cl-lex $x-lex`
+	result=`diff temp.cl-lex $x-lex`
 	rm temp.cl-lex
+	rm $x-lex
 	if [ -z "$result" ]; then
 	    echo "pass"
 	else
