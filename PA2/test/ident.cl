@@ -3,3 +3,11 @@ Ifthen
 esac2
 if2
 fAlse
+self
+Self
+SELF
+SELF_TYPE
+self_type
+_name_
+__name__
+_if

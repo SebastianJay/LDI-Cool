@@ -6,8 +6,8 @@
 <INITIAL>[\-]{2}					this.begin('scomment');
 <scomment><<EOF>>					%{ this.popState(); return "EOF"; %}
 <scomment>[\x1a]					%{ this.popState(); return "EOF"; %}
-<scomment>[\r\n]					%{ this.popState(); numscomments += 1; %}		/* TODO resolve newline differences */
-<scomment>[^\r\n\x1a]				/* skip */
+<scomment>\n					%{ this.popState(); linenum += 1; %}		/* TODO resolve newline differences */
+<scomment>[^\n\x1a]				/* skip, note: compiler doesn't like \x1a, not sure what it is */
 
 <INITIAL>[(][*]						this.begin('mcomment');
 <mcomment>[(][*]					this.begin('mcomment');
@@ -17,17 +17,20 @@
 <mcomment>[*]						/* skip */
 <mcomment>[)]						/* skip */
 <mcomment>[(]						/* skip */
-<mcomment>[^()*\x1a]+				/* skip */
+<mcomment>\n						linenum+=1;
+<mcomment>[^()*\x1a\n]+				/* skip */
 
 <INITIAL>[\"]						%{ this.begin('string'); strbuf = ''; %}
 <string><<EOF>>						return "EOF_IN_STRING";
-<string>[\r\n]						return "NEWLINE_IN_STRING";
+<string>\n						return "NEWLINE_IN_STRING";
+<string>\r						strbuf += yytext; /* apparently \r on its own is not a newline */
 <string>[\0]						return "NUL_IN_STRING";
 <string>[\x1a]						return "EOF_IN_STRING";
-<string>[\"]						%{ this.popState(); return "STRING"; %}
-<string>[\\]["]						strbuf += yytext;
-<string>[\\]						strbuf += yytext;
-<string>[^"\\\r\n\0\x1a]+			strbuf += yytext;
+<string>[\"]						%{ this.popState(); if (strbuf.length > 1024) return "STRING_TOO_LONG"; else return "STRING"; %}
+<string>\\\\						strbuf += yytext;
+<string>\\\"						strbuf += yytext;
+<string>\\						strbuf += yytext;
+<string>[^\"\\\r\n\0\x1a]+			strbuf += yytext;
 
 \b[cC][aA][sS][eE]\b				return "CASE";
 \b[cC][lL][aA][sS][sS]\b			return "CLASS";
@@ -76,14 +79,15 @@
 								%}
 [a-z][a-zA-Z0-9_]*  	 		return "IDENTIFIER";
 [A-Z][a-zA-Z0-9_]*				return "TYPE";
-\s+								return "WHITESPACE";
-[ \n\f\r\t\v]+					return "WHITESPACE";	/* being redundant but safe */
+\n						%{ linenum += 1; return "WHITESPACE"; %}
+[ \f\r\t\v]+					return "WHITESPACE";	/* being redundant but safe */
 <<EOF>>							return "EOF";
 .*								return "BAD_PATTERN";
 
 /lex
 %%
 
+/* Unnecessary, but keeps jison from crashing */
 TOKEN
 	: WHITESPACE
 	| NUMBER
