@@ -18,6 +18,7 @@ class TACGraph:
         for block in self.blocks:
             retval += 'Parents: ' + str([str(parent.first()) for parent in block.parents]) + '\n'
             retval += 'Children: ' + str([str(child.first()) for child in block.children]) + '\n'
+            retval += 'Live Out: ' + str(block.liveOut) + "\n"
             retval += str(block)
             retval += '\n'
         return retval

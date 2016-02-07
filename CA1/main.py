@@ -5,9 +5,31 @@ def localLiveCheck(block):
     
     # Iterate backwards over instructions
     for inst in reversed(block.instructions):
-        # Live when used, killed when assigned
-        # TODO
-    
+        # Killed when assigned
+        if isinstance(inst, TACOp):
+            liveIn.remove(inst.assignee)
+        elif isinstance(inst, TACAssign):
+            liveIn.remove(inst.assignee)
+        elif isinstance(inst, TACDeclare):
+            liveIn.remove(inst.assignee)
+        elif isinstance(inst, TACCall):
+            liveIn.remove(inst.assignee)
+
+
+        # Live when used
+        if isinstance(inst, TACOp):
+            liveIn.add(inst.op1)
+            if isinstance(inst,TACOp2):
+                liveIn.add(inst.op2)
+        elif isinstance(inst, TACAssign):
+            liveIn.add(inst.assignor)
+        elif isinstance(inst, TACCall):
+            liveIn.add(inst.op1) # TODO: Multiple method arguments?
+        elif isinstance(inst, TACReturn):
+            liveIn.add(inst.retval)
+        elif isinstance(inst, TACBT):
+            liveIn.add(inst.cond)
+
     return liveIn
 
 def globalLiveCheck(graph):
@@ -33,6 +55,5 @@ def globalLiveCheck(graph):
 
 if __name__ == "__main__":
     graph = serializeTAC(sys.stdin)
-    for block in graph.blocks:
-        print block.parents
-    
+    globalLiveCheck(graph)
+    print graph.verbosestr()

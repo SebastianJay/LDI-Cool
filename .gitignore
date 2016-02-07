@@ -4,3 +4,7 @@
 
 #Unix temporary files
 *~
+
+
+#Python compiled files
+*.pyc
