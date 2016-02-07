@@ -28,6 +28,7 @@ class TACBasicBlock:
         self.instructions = []
         self.parents = []
         self.children = []
+        self.liveOut = set()
     def addInstruction(self, instruction):
         self.instructions.append(instruction)
     def isEmpty(self):
