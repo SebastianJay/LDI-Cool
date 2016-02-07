@@ -573,7 +573,7 @@ case 2: this.popState(); return "EOF";
 break;
 case 3: this.popState(); linenum += 1; 
 break;
-case 4:/* skip, note: compiler doesn't like \x1a, not sure what it is */
+case 4:/* skip */
 break;
 case 5:this.begin('mcomment');
 break;
@@ -599,15 +599,21 @@ case 15: this.begin('string'); strbuf = '';
 break;
 case 16:return "EOF_IN_STRING";
 break;
-case 17:return "NEWLINE_IN_STRING";
+case 17:return "EOF_IN_STRING";
 break;
-case 18:strbuf += yy_.yytext; /* apparently \r on its own is not a newline */
+case 18:return "NEWLINE_IN_STRING";
 break;
-case 19:return "NUL_IN_STRING";
+case 19:strbuf += yy_.yytext; /* apparently \r on its own is not a newline */
 break;
-case 20:return "EOF_IN_STRING";
+case 20:return "NUL_IN_STRING";
 break;
-case 21: this.popState(); if (strbuf.length > 1024) return "STRING_TOO_LONG"; else return "STRING"; 
+case 21:	this.popState();
+										if (strbuf.length > 1024) {
+											return "STRING_TOO_LONG";
+										} else {
+											return "STRING";
+										}
+									
 break;
 case 22:strbuf += yy_.yytext;
 break;
@@ -711,12 +717,14 @@ case 68:return "WHITESPACE";	/* being redundant but safe */
 break;
 case 69:return "EOF";
 break;
-case 70:return "BAD_PATTERN";
+case 70:return "EOF";
+break;
+case 71:return "BAD_PATTERN";
 break;
 }
 },
-rules: [/^(?:[\-]{2})/,/^(?:$)/,/^(?:[\x1a])/,/^(?:\n)/,/^(?:[^\n\x1a])/,/^(?:[(][*])/,/^(?:[(][*])/,/^(?:$)/,/^(?:[\x1a])/,/^(?:[*][)])/,/^(?:[*])/,/^(?:[)])/,/^(?:[(])/,/^(?:\n)/,/^(?:[^()*\x1a\n]+)/,/^(?:[\"])/,/^(?:$)/,/^(?:\n)/,/^(?:\r)/,/^(?:[\0])/,/^(?:[\x1a])/,/^(?:[\"])/,/^(?:\\\\)/,/^(?:\\")/,/^(?:\\)/,/^(?:[^\"\\\r\n\0\x1a]+)/,/^(?:\b[cC][aA][sS][eE]\b)/,/^(?:\b[cC][lL][aA][sS][sS]\b)/,/^(?:\b[eE][lL][sS][eE]\b)/,/^(?:\b[eE][sS][aA][cC]\b)/,/^(?:\bf[aA][lL][sS][eE]\b)/,/^(?:\b[fF][iI]\b)/,/^(?:\b[iI][fF]\b)/,/^(?:\b[iI][nN][hH][eE][rR][iI][tT][sS]\b)/,/^(?:\b[iI][nN]\b)/,/^(?:\b[iI][sS][vV][oO][iI][dD]\b)/,/^(?:\b[lL][eE][tT]\b)/,/^(?:\b[lL][oO][oO][pP]\b)/,/^(?:\b[nN][eE][wW]\b)/,/^(?:\b[nN][oO][tT]\b)/,/^(?:\b[oO][fF]\b)/,/^(?:\b[pP][oO][oO][lL]\b)/,/^(?:\b[tT][hH][eE][nN]\b)/,/^(?:\bt[rR][uU][eE]\b)/,/^(?:\b[wW][hH][iI][lL][eE]\b)/,/^(?:=>)/,/^(?:<-)/,/^(?:<=)/,/^(?:@)/,/^(?::)/,/^(?:,)/,/^(?:\/)/,/^(?:\.)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:<)/,/^(?:-)/,/^(?:\+)/,/^(?:;)/,/^(?:~)/,/^(?:\*)/,/^(?:[0-9]+)/,/^(?:[a-z][a-zA-Z0-9_]*)/,/^(?:[A-Z][a-zA-Z0-9_]*)/,/^(?:\n)/,/^(?:[ \f\r\t\v]+)/,/^(?:$)/,/^(?:.*)/],
-conditions: {"string":{"rules":[16,17,18,19,20,21,22,23,24,25],"inclusive":false},"mcomment":{"rules":[6,7,8,9,10,11,12,13,14],"inclusive":false},"scomment":{"rules":[1,2,3,4],"inclusive":false},"INITIAL":{"rules":[0,5,15,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70],"inclusive":true}}
+rules: [/^(?:[\-]{2})/,/^(?:$)/,/^(?:[\x1a])/,/^(?:[\n])/,/^(?:[^\n\x1a])/,/^(?:[(][*])/,/^(?:[(][*])/,/^(?:$)/,/^(?:[\x1a])/,/^(?:[*][)])/,/^(?:[*])/,/^(?:[)])/,/^(?:[(])/,/^(?:[\n])/,/^(?:[^()*\x1a\n]+)/,/^(?:[\"])/,/^(?:$)/,/^(?:[\x1a])/,/^(?:[\n])/,/^(?:[\r])/,/^(?:[\0])/,/^(?:[\"])/,/^(?:[\\][\\])/,/^(?:[\\]["])/,/^(?:[\\])/,/^(?:[^\"\\\r\n\0\x1a]+)/,/^(?:\b[cC][aA][sS][eE]\b)/,/^(?:\b[cC][lL][aA][sS][sS]\b)/,/^(?:\b[eE][lL][sS][eE]\b)/,/^(?:\b[eE][sS][aA][cC]\b)/,/^(?:\bf[aA][lL][sS][eE]\b)/,/^(?:\b[fF][iI]\b)/,/^(?:\b[iI][fF]\b)/,/^(?:\b[iI][nN][hH][eE][rR][iI][tT][sS]\b)/,/^(?:\b[iI][nN]\b)/,/^(?:\b[iI][sS][vV][oO][iI][dD]\b)/,/^(?:\b[lL][eE][tT]\b)/,/^(?:\b[lL][oO][oO][pP]\b)/,/^(?:\b[nN][eE][wW]\b)/,/^(?:\b[nN][oO][tT]\b)/,/^(?:\b[oO][fF]\b)/,/^(?:\b[pP][oO][oO][lL]\b)/,/^(?:\b[tT][hH][eE][nN]\b)/,/^(?:\bt[rR][uU][eE]\b)/,/^(?:\b[wW][hH][iI][lL][eE]\b)/,/^(?:=>)/,/^(?:<-)/,/^(?:<=)/,/^(?:@)/,/^(?::)/,/^(?:,)/,/^(?:\/)/,/^(?:\.)/,/^(?:=)/,/^(?:\{)/,/^(?:\})/,/^(?:\()/,/^(?:\))/,/^(?:<)/,/^(?:-)/,/^(?:\+)/,/^(?:;)/,/^(?:~)/,/^(?:\*)/,/^(?:[0-9]+)/,/^(?:[a-z][a-zA-Z0-9_]*)/,/^(?:[A-Z][a-zA-Z0-9_]*)/,/^(?:\n)/,/^(?:[ \f\r\t\v]+)/,/^(?:$)/,/^(?:[\x1a])/,/^(?:.*)/],
+conditions: {"string":{"rules":[16,17,18,19,20,21,22,23,24,25],"inclusive":false},"mcomment":{"rules":[6,7,8,9,10,11,12,13,14],"inclusive":false},"scomment":{"rules":[1,2,3,4],"inclusive":false},"INITIAL":{"rules":[0,5,15,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71],"inclusive":true}}
 });
 return lexer;
 })();

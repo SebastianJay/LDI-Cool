@@ -1,5 +1,3 @@
-//TODO fix global vars?
-
 // Stores parsed integers
 parsednum = 0;
 
@@ -30,12 +28,14 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
     var outtokens = [];
     // Message to output on lexer error
     var errtext = '';
+    // Type of lexer's next match
+    var token;
 
     // Lex the contents of the opened file
     lexer.setInput(data);
 
     while(!lexer.done) {
-	// Get next token
+        // Get next token
     	token = lexer.lex();
 
         //file finished check
@@ -64,10 +64,10 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
             errtext = 'ERROR: ' + linenum + ': Lexer: Invalid NUL in string';
             break;
         }
-	if (token == "STRING_TOO_LONG") {
-	    errtext = "ERROR: " + linenum + ": Lexer: String constant longer than 1024 characters";
-	    break;
-	}
+    	if (token == "STRING_TOO_LONG") {
+    	    errtext = "ERROR: " + linenum + ": Lexer: String constant longer than 1024 characters";
+    	    break;
+    	}
         if (token === "INTEGER_TOO_LARGE") {
             errtext = 'ERROR: ' + linenum + ': Lexer: Integer constant not 32-bit unsigned: ' + lexer.yytext;
             break;
@@ -93,29 +93,29 @@ fs.readFile(inpath, 'ASCII', function (err, data) {
     if (errtext) {
         process.stdout.write(errtext + '\n');
     } else {
-        // Other wise print out the
-	var i;
+        // Otherwise print out the tokens
+        var i;
         var outbuffer = '';
         for (i = 0; i < outtokens.length; i+=1) {
             outbuffer += outtokens[i] + '\n';
         }
-	
-	// Find extension in input path
+
+        // Find extension in input path
         var lastind = inpath.lastIndexOf('.');
-        
-	// Get input path without extension
-	var foutprefix = '';
+
+        // Get input path without extension
+        var foutprefix = '';
         if (lastind === -1) {
             foutprefix = inpath;
         } else {
             foutprefix = inpath.substr(0, lastind);
         }
-	
-	// Output is input.cl-lex
+
+        // Output is input.cl-lex
         var foutname = foutprefix + '.cl-lex';
-        
-	// Write out tokens
-	fs.writeFile(foutname, outbuffer, 'ASCII', function(err) {
+
+        // Write out tokens
+        fs.writeFile(foutname, outbuffer, 'ASCII', function(err) {
             if (err) {
                 console.log(err);
             }
