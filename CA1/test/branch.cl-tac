@@ -1,0 +1,33 @@
+comment start
+label Main_main_0
+t$1 <- default Int
+t$1 <- call in_int
+t$2 <- t$1
+t$5 <- t$1
+t$6 <- int 10
+t$4 <- < t$5 t$6
+t$9 <- not t$4
+bt t$9 Main_main_4
+bt t$4 Main_main_3
+comment then branch
+label Main_main_3
+t$7 <- string
+less
+jmp Main_main_6
+comment else branch
+label Main_main_4
+t$8 <- string
+more
+jmp Main_main_8
+comment if-join
+label Main_main_5
+t$0 <- int 0
+return t$0
+comment fcall-pre to out_string
+label Main_main_6
+t$3 <- call out_string t$7
+jmp Main_main_5
+comment fcall-pre to out_string
+label Main_main_8
+t$3 <- call out_string t$8
+jmp Main_main_5

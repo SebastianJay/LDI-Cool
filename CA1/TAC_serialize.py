@@ -115,7 +115,7 @@ class TACConstant(TACDeclare):
         self.ptype = ptype
         self.const = const
     def __str__(self):
-        return self.assignee + ' <- ' + self.ptype + ' ' + self.const
+        return self.assignee + ' <- ' + self.ptype +("\n" if self.ptype=="string" else ' ') + self.const
 
 #TAC calls to in/out string/int
 class TACCall(TACInstruction):

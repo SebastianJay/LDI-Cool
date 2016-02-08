@@ -119,8 +119,15 @@ def globalDeadRemove(graph):
     
 
 if __name__ == "__main__":
+    debug = "-v" in sys.argv
+
     graph = serializeTAC(sys.stdin)
-    print graph
-    print "========================" 
-    globalDeadRemove(graph)
-    print graph.verbosestr()
+    if debug:
+        print graph.verbosestr()
+        print "========================" 
+        globalDeadRemove(graph)
+        print graph.verbosestr()
+    else:
+        globalDeadRemove(graph)
+        print graph
+    

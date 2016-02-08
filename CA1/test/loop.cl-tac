@@ -1,25 +1,34 @@
 comment start
 label Main_main_0
-t$1 <- int 0
+t$1 <- call in_int
 t$2 <- int 0
-jmp Main_main_1
+jmp Main_main_3
 comment while-pred
-label Main_main_1
+label Main_main_3
 t$5 <- t$1
 t$6 <- int 20
 t$4 <- < t$5 t$6
-t$10 <- not t$4
-bt t$10 Main_main_2
-bt t$4 Main_main_3
+t$15 <- not t$4
+bt t$15 Main_main_4
+bt t$4 Main_main_5
 comment while-join
-label Main_main_2
+label Main_main_4
 t$3 <- default Object
-t$0 <- int 0
-return t$0
+t$14 <- t$2
+jmp Main_main_6
 comment while-body
-label Main_main_3
+label Main_main_5
+t$9 <- t$2
+t$10 <- t$1
+t$2 <- + t$9 t$10
 t$8 <- t$2
-t$9 <- t$1
-t$2 <- + t$8 t$9
-t$7 <- t$2
-jmp Main_main_1
+t$11 <- t$1
+t$12 <- int 1
+t$1 <- + t$11 t$12
+t$7 <- t$1
+jmp Main_main_3
+comment fcall-pre to out_int
+label Main_main_6
+t$13 <- call out_int t$14
+t$0 <- t$2
+return t$0
