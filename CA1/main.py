@@ -26,8 +26,8 @@ def getWritten(inst):
         res = inst.assignee
     elif isinstance(inst, TACDeclare):
         res = inst.assignee
-    # elif isinstance(inst, TACCall):
-    #     res = inst.assignee
+    elif isinstance(inst, TACCall):
+        res = inst.assignee
     return res
 
 
@@ -52,6 +52,11 @@ def localLiveCheck(block):
     block.liveIn = liveIn
 
 def globalLiveCheck(graph):
+    # Reset liveness info
+    for block in graph.blocks:
+        block.liveIn = set()
+        block.liveOut = set()
+    
     # Recheck liveness until nothing changes
     done = False
     while not done:
@@ -79,7 +84,7 @@ def localDeadRemove(block):
         used = getRead(inst)
         
         # Instruction dead if asignee not live
-        if killed is not None and killed not in live:
+        if killed is not None and killed not in live and not isinstance(inst, TACCall):
             # List is reversed, remove instruction at len-ind
             deadLines.append(len(block.instructions)-ind-1)
             continue

@@ -60,10 +60,19 @@ for x in $files; do
 	$((failCount++))
     else
 	echo "passed"
-	lineDiff=`diff $x temp.cl-tac | grep '<' | grep -v 'comment' | wc -l`
-	compLineDiff=`diff $x compTemp.cl-tac | grep '<' | grep -v 'comment' | wc -l`
-	echo "    $lineDiff lines removed"
+	lines=`grep -v 'comment' $x | wc -l`
+	lineDiff=`grep -v 'comment' temp.cl-tac | wc -l`
+	compLineDiff=`grep -v 'comment' compTemp.cl-tac | wc -l`
+	echo "    vs $lines lines originally"
+	echo "    vs $lineDiff lines for ours"
 	echo "    vs $compLineDiff for compiler"
+	echo ""
+	grep -v 'comment' temp.cl-tac
+	echo ""
+	grep -v 'comment' compTemp.cl-tac
+	echo ""
+	diff temp.cl-tac compTemp.cl-tac | grep -v 'comment'
+	echo ""
     fi
     rm temp.cl-tac
     rm compTemp.cl-tac
