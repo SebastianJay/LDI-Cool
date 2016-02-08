@@ -30,13 +30,15 @@ for x in $files; do
     fi
     echo -n "    $x: "
     
-    optErr=`python main.py < $x > temp.cl-tac`
+    optErr=`python main.py $x > temp.cl-tac`
     if [[ ! -z $optErr ]]; then
 	echo "Optimizer error"
 	echo "$optErr"
 	$((failCount++))
 	continue
     fi
+
+    cool --out compTemp --tac --opt ${x:0: -4}
     
     runErr=`echo -e "$testStr" | cool temp.cl-tac > temp.out` 
     if [[ ! -z $runErr ]]; then
@@ -59,9 +61,12 @@ for x in $files; do
     else
 	echo "passed"
 	lineDiff=`diff $x temp.cl-tac | grep '<' | grep -v 'comment' | wc -l`
+	compLineDiff=`diff $x compTemp.cl-tac | grep '<' | grep -v 'comment' | wc -l`
 	echo "    $lineDiff lines removed"
+	echo "    vs $compLineDiff for compiler"
     fi
     rm temp.cl-tac
+    rm compTemp.cl-tac
 
 done
 if [[ $failCount == 0 ]]; then
