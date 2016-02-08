@@ -12,12 +12,13 @@ class TACGraph:
         retval = ''
         for block in self.blocks:
             retval += str(block)
-        return retval
+        return retval[:-1] # Remove trailing newline
     def verbosestr(self):
         retval = ''
         for block in self.blocks:
             retval += 'Parents: ' + str([str(parent.first()) for parent in block.parents]) + '\n'
             retval += 'Children: ' + str([str(child.first()) for child in block.children]) + '\n'
+            retval += 'Live In: ' + str(block.liveIn) + "\n"
             retval += 'Live Out: ' + str(block.liveOut) + "\n"
             retval += str(block)
             retval += '\n'
@@ -30,6 +31,7 @@ class TACBasicBlock:
         self.parents = []
         self.children = []
         self.liveOut = set()
+        self.liveIn = set()
     def addInstruction(self, instruction):
         self.instructions.append(instruction)
     def isEmpty(self):
@@ -42,6 +44,17 @@ class TACBasicBlock:
         self.children.append(block)
     def addParent(self, block):
         self.parents.append(block)
+    # Updates liveness info from children
+    # Returns True if liveness changed, false otherwise
+    def updateLiveOut(self):
+        nLiveOut = set()
+        for child in self.children:
+            nLiveOut |= child.liveIn
+        
+        if not nLiveOut == self.liveOut:
+            self.liveOut = nLiveOut
+            return True
+        return False
     def __str__(self):
         retval = ''
         for ins in self.instructions:
