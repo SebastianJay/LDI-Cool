@@ -1,0 +1,28 @@
+comment start
+label Main_main_0
+t$1 <- default Int
+t$2 <- default String
+t$1 <- call in_int
+t$3 <- t$1
+t$6 <- t$1
+t$7 <- int 10
+t$5 <- < t$6 t$7
+t$8 <- not t$5
+bt t$8 Main_main_4
+bt t$5 Main_main_3
+comment then branch
+label Main_main_3
+t$2 <- string
+less
+t$4 <- t$2
+jmp Main_main_5
+comment else branch
+label Main_main_4
+t$2 <- string
+more
+t$4 <- t$2
+jmp Main_main_5
+comment if-join
+label Main_main_5
+t$0 <- int 0
+return t$0
