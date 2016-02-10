@@ -1,8 +1,6 @@
 comment start
 label Main_main_0
-t$1 <- default Int
 t$1 <- call in_int
-t$2 <- t$1
 t$5 <- t$1
 t$6 <- int 0
 t$4 <- < t$5 t$6
@@ -14,14 +12,12 @@ label Main_main_3
 t$7 <- t$1
 t$8 <- int 1
 t$1 <- + t$7 t$8
-t$3 <- t$1
 jmp Main_main_5
 comment else branch
 label Main_main_4
 t$9 <- t$1
 t$10 <- int 1
 t$1 <- - t$9 t$10
-t$3 <- t$1
 jmp Main_main_5
 comment if-join
 label Main_main_5
@@ -33,17 +29,9 @@ bt t$20 Main_main_7
 bt t$12 Main_main_6
 comment then branch
 label Main_main_6
-t$15 <- t$1
-t$16 <- int 1
-t$1 <- + t$15 t$16
-t$11 <- t$1
 jmp Main_main_8
 comment else branch
 label Main_main_7
-t$17 <- t$1
-t$18 <- int 1
-t$1 <- - t$17 t$18
-t$11 <- t$1
 jmp Main_main_8
 comment if-join
 label Main_main_8

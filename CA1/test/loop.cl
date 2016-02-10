@@ -6,8 +6,7 @@ class Main inherits IO {
 		       i <- i + 1;
 		 }
 		 pool;
-		 out_int(sum);
-		 sum;
+		 0;
 	     }
       };
 };

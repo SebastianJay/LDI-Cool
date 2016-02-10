@@ -1,4 +1,4 @@
-We chose to use JavaScript as our language for PA2, as its weak, dynamic typing
+	We chose to use JavaScript as our language for PA2, as its weak, dynamic typing
 makes it difficult to work with in other (more complicated) projects in this
 class (recall that we cannot repeat languages, so we're saving the good ones for
 later). We used jison as the lexical analyzer generator as was suggested in the
@@ -8,7 +8,7 @@ right side. A simple context-free grammar was also specified so that code
 generation ran smoothly -- we did not use the parser, but jison expected a
 grammar to be written.
 
-The singleton tokens were recognized with regular expressions of the form
+	The singleton tokens were recognized with regular expressions of the form
 [iI][fF] to get the case insensitive behavior as defined in the reference
 manual. The word boundary metacharacter \b was helpful in separating out
 keywords from identifiers that happened to contain keywords (like "iff").
@@ -18,7 +18,7 @@ However, integers had extra code to check that they were within the range of a
 signed 32 bit int, and the newline character was recognized separately from the
 other whitespace characters to properly increment the line counter.
 
-Comments and string constants were recognized using a combination of regular
+      Comments and string constants were recognized using a combination of regular
 expressions and jison's state system. Single line comments simply used the state
 system to ignore input until the end of the line. Multiline comments made
 greater use of the state system to implement the nested comment behavior. Each
@@ -30,7 +30,7 @@ add extra logic to append the literal between the quotes to a string buffer,
 with special logic for the \" rule and errors for newlines and the end of file
 mark, and a final check on length at the end of the string.
 
-We tested as we wrote our lexer with a file containing simple tokens, both
+      We tested as we wrote our lexer with a file containing simple tokens, both
 positive and negative. This approach ensured that we caught all simple bugs
 early on. After finishing our first iteration, we tested on sample Cool code
 provided to us, comparing our results against the reference compiler's. We also
@@ -42,3 +42,12 @@ random characters was also somewhat helpful -- we found that the reference
 compiler treated the character with integer value 0x1A ("substitute" says
 Google) as EOF, so we added some checks in so that it produced the same
 behavior.
+
+	Our positive submitted test case includes tests for multiline comments (random
+parentheses and stars, with comment ending tokens added at the end until it
+stopped crashing), single line comments, strings, a simple class definition,
+the multi-character singleton tokens (e.g. <- and <=), and some strings with
+special edge cases like escaped backslashes and carriage returns. Our negative
+test case contains a very long string which violates the maximum of 1024
+characters as this was the last bug we found in our lexer and in that way was
+the most difficult.
