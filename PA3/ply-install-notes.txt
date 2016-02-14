@@ -1,0 +1,16 @@
+PLY setup for local Python environment
+===
+Go to http://www.dabeaz.com/ply/ and download the latest version, then unzip archive
+Alternatively, clone the repo from https://github.com/dabeaz/ply
+
+Run setup.py build
+Run setup.py install
+
+Test success by running "import ply" from Python console
+
+For submission
+===
+Copy the relevant scripts from the ply directory and import straight from those
+Copied script list:
+    lex.py
+    yacc.py
