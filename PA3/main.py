@@ -16,7 +16,7 @@ def p_expression_id(p):
 
 def p_error(p):
     if p:
-        print 'ERROR: '+str(p.lineno(0))+': Parser: syntax error'
+        print 'ERROR: '+str(p.lineno)+': Parser: syntax error'
     else:
         print 'ERROR: EOF: Parser: syntax error'
 
@@ -25,5 +25,6 @@ if __name__ == '__main__':
     lexer.loadFromFile(sys.argv[1])
 
     parser = yacc.yacc()
-    result = parser.parse(lexer=lexer, debug=True)
+    #turn debug off when submitting
+    result = parser.parse(lexer=lexer, debug=False)
     print result
