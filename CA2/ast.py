@@ -25,7 +25,7 @@ class ASTClass:
         self.name = ASTIdentifier()
         self.inherit = None
         self.features = []
-    
+
     def __str__(self):
         res = str(self.name)
         if self.inherit is not None:
@@ -33,7 +33,7 @@ class ASTClass:
             res += str(self.inherit)
         else:
             res += "no_inherits\n"
-        res += str(len(self.features)) + "\n"    
+        res += str(len(self.features)) + "\n"
         for f in self.features:
             res += str(f)
         return res
@@ -47,7 +47,7 @@ class ASTClass:
             l = self.inherit.load(l)
         else:
             self.inherit = None
-        
+
         nFeatures = int(l.next())
         for i in range(nFeatures):
             # Need to check what the next line is without consuming it
@@ -82,7 +82,7 @@ class ASTAttribute:
     def __str__(self):
         return ("attribute_no_init\n" if self.init is None else "attribute_init\n") + \
         str(self.name) + str(self.type) + \
-        (str(self.init) if self.init is not None else "") 
+        (str(self.init) if self.init is not None else "")
     def load(self,l):
         hasInit = (l.next() == "attribute_init")
         l = self.name.load(l)
@@ -120,10 +120,10 @@ class ASTMethod:
         l = self.type.load(l)
         l = self.body.load(l)
         return l
-        
+
 
 class ASTExpression:
-    # Classes of expressions, expressions in same class have same subparts, 
+    # Classes of expressions, expressions in same class have same subparts,
     # so treated the same
     exp1 = set(['not','negate','isvoid']) # One expression subpart
     exp2 = set(['while','plus','minus','times','divide','lt','le','eq']) # Two expression subparts
@@ -157,7 +157,7 @@ class ASTExpression:
         if not res[-1] == "\n":
             res += "\n"
         return res
-        
+
     def loadExpList(self, l):
         nExp = int(l.next())
         mExpL = []
@@ -170,7 +170,7 @@ class ASTExpression:
     def load(self,l):
         self.line = int(l.next())
         self.expr = l.next()
-        
+
         if self.expr in ASTExpression.exp1:
             self.args = ASTExpression()
             l = self.args.load(l)
@@ -196,52 +196,52 @@ class ASTExpression:
             l = mExp.load(l)
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-            
-            
+
+
             self.args = (mExp,mId,mExpL)
-            
+
         elif self.expr == "static_dispatch":
             mExp = ASTExpression()
-            mType = ASTIdentifier
+            mType = ASTIdentifier()
             mId = ASTIdentifier()
 
             l = mExp.load(l)
             l = mType.load(l)
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-            
+
             self.args = (mExp,mType,mId,mExpl)
-        
+
         elif self.expr == "self_dispatch":
             mId = ASTIdentifier()
-            
+
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-                
+
             self.args = (mId,mExpl)
-        
+
         elif self.expr == "if":
             self.args = (ASTExpression(),ASTExpression(),ASTExpression())
             l=self.args[0].load(l)
             l=self.args[1].load(l)
             l=self.args[2].load(l)
-        
+
         elif self.expr == "block":
             self.args, l = self.loadExpList(l)
-        
+
         elif self.expr == "integer":
             self.args = int(l.next())
-    
+
         elif self.expr == "string":
             self.args = l.next()
-        
+
         # No actual arguments for true and false, but values might be useful
         elif self.expr == "true":
             self.args = True
 
         elif self.expr == "false":
             self.args = False
-        
+
         elif self.expr == "let":
             # TODO: Something horrible
             pass
@@ -251,7 +251,7 @@ class ASTExpression:
             pass
         else:
             raise TypeError("Invalid Expression Type: " + self.expr)
-        
+
         return l
 
 
