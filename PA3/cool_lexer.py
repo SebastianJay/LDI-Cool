@@ -1,5 +1,52 @@
 from lex import LexToken
 
+#list of token names - used by yacc as terminal symbols
+#must be named "tokens" as that is the name the module searches for
+tokens = (
+	'at',
+	'case',
+	'class',
+	'colon',
+	'comma',
+	'divide',
+	'dot',
+	'else',
+	'equals',
+	'esac',
+	'false',
+	'fi',
+	'identifier',
+	'if',
+	'in',
+	'inherits',
+	'integer',
+	'isvoid',
+	'larrow',
+	'lbrace',
+	'le',
+	'let',
+	'loop',
+	'lparen',
+	'lt',
+	'minus',
+	'new',
+	'not',
+	'of',
+	'plus',
+	'pool',
+	'rarrow',
+	'rbrace',
+	'rparen',
+	'semi',
+	'string',
+	'then',
+	'tilde',
+	'times',
+	'true',
+	'type',
+	'while',
+)
+
 #definition for object passed to PLY's yacc parser to provide tokens
 #reads the file produced by PA2 into a list, provides an element on every call to token()
 class CoolLexer:
