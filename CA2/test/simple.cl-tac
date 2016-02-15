@@ -1,0 +1,4 @@
+comment start
+label Main_func_0
+t$0 <- new Int
+return t$0

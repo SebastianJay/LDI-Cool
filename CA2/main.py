@@ -14,7 +14,7 @@ astTacMap = {
     'le' :      '<=',
     'eq' :      '=',
     'integer' : 'int',
-    'string' :  'string'
+    'string' :  'string',
     'true' :    'bool',
     'false' :   'bool',
 }
@@ -26,19 +26,27 @@ class TACIndexer:
     lind = 0
     rind = 0
     varRegMap = {}
+
+    @staticmethod
     def label():
-        lind += 1
-        return cname + '_' + mname + '_' + str(lind-1)
+        TACIndexer.lind += 1
+        return TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind-1)
+
+    @staticmethod
     def reg():
-        rind += 1
-        return 't' + str(rind-1)
+        TACIndexer.rind += 1
+        return 't' + str(TACIndexer.rind-1)
+
+    @staticmethod
     def map(var, forceNew = False):
-        if var not in varRegMap:
-            varRegMap[var] = []
-        if forceNew or len(varRegMap[var]) == 0:
+        if var not in TACIndexer.varRegMap:
+            TACIndexer.varRegMap[var] = []
+        if forceNew or len(TACIndexer.varRegMap[var]) == 0:
             reg = TACIndexer.reg()
-            varRegMap[var].append(reg)
-        return varRegMap[var][-1]
+            TACIndexer.varRegMap[var].append(reg)
+        return TACIndexer.varRegMap[var][-1]
+
+    @staticmethod
     def pop(var):
         pass
 
@@ -67,7 +75,7 @@ def expConvert(node, inslst, args=[]):
         inslst.append(lbb)
         #create a default as the return value
         reg = TACIndexer.reg()
-        ins = TACAllocate(reg, 'default', mtype)
+        ins = TACAllocate(reg, 'default', TACIndexer.mtype)
         inslst.append(ins)
         return reg
     elif node.expr == 'if':
