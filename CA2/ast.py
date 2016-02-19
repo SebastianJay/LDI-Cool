@@ -198,7 +198,7 @@ class ASTExpression:
             mExpl, l = self.loadExpList(l)
 
 
-            self.args = (mExp,mId,mExpL)
+            self.args = (mExp,mId,mExpl)
 
         elif self.expr == "static_dispatch":
             mExp = ASTExpression()
@@ -235,25 +235,77 @@ class ASTExpression:
         elif self.expr == "string":
             self.args = l.next()
 
-        # No actual arguments for true and false, but values might be useful
         elif self.expr == "true":
-            self.args = True
+            self.args = ""
 
         elif self.expr == "false":
-            self.args = False
+            self.args = ""
 
+        # Let args are a list of ASTLetBindings and an expression body
         elif self.expr == "let":
-            # TODO: Something horrible
-            pass
+            nbind = int(l.next())
+            bindList = []
+            for i in range(nbind):
+                bind = ASTLetBinding()
+                l=bind.load(l)
+                bindList.append(bind)
+            exp = ASTExpression()
+            l=exp.load(l)
+            self.args=(bindList,exp)
 
+        # Case args are the case expression, and a list of ASTCase
         elif self.expr == "case":
-            # TODO: Also something horrible
-            pass
+            exp = ASTExpression()
+            l=exp.load(l)
+            ncase = int(l.next())
+            caseList = []
+            for i in range(ncase):
+                c = ASTCase()
+                l=c.load(l)
+                caseList.append(c)
+            self.args = (exp, caseList)
+
         else:
             raise TypeError("Invalid Expression Type: " + self.expr)
 
         return l
 
+class ASTLetBinding:
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.type = ASTIdentifier()
+        self.init = None
+
+    def __str__(self):
+        res = "let_binding_no_init\n"\
+              if self.init is None else "let_binding_init\n"
+        res += str(self.name)
+        res += str(self.type)
+        res += "" if self.init is None else str(self.init)
+        return res
+    
+    def load(self, l):
+        hasInit = l.next() == "let_binding_init"
+        l=self.name.load(l)
+        l=self.type.load(l)
+        if hasInit:
+            self.init = ASTExpression()
+            l=self.init.load(l)
+        return l
+
+class ASTCase:
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.type = ASTIdentifier()
+        self.body = ASTExpression()
+    def __str__(self):
+        return str(self.name) + str(self.type) + str(self.body)
+
+    def load(self,l):
+        l=self.name.load(l)
+        l=self.type.load(l)
+        l=self.body.load(l)
+        return l
 
 import sys
 
