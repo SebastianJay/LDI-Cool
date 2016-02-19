@@ -48,7 +48,7 @@ class TACIndexer:
 
     @staticmethod
     def pop(var):
-        pass
+        TACIndexer.varRegMap[var].pop()
 
 def expConvert(node, inslst, args=[]):
     if node.expr == 'while':
@@ -72,7 +72,7 @@ def expConvert(node, inslst, args=[]):
         inslst.append(ins)
         #generate the breakout label
         ins = TACLabel(lbb)
-        inslst.append(lbb)
+        inslst.append(ins)
         #create a default as the return value
         reg = TACIndexer.reg()
         ins = TACAllocate(reg, 'default', TACIndexer.mtype)
@@ -111,9 +111,26 @@ def expConvert(node, inslst, args=[]):
         inslst.append(ins)
         return regj
     elif node.expr == 'let':
-        pass
+        # Bind the let vars
+        for binding in node.args[0]:
+            reg = TACIndexer.map(binding.name.name,True)
+            # if there is an init, generate the init code
+            if binding.init is not None:
+                regi = expConvert(binding.init, inslst)
+                ins = TACAssign(reg,regi)
+                inslst.append(ins)
+        # Generate the body code
+        regr= expConvert(node.args[1], inslst)
+        # Unbind the let vars
+        for binding in node.args[0]:
+            TACIndexer.pop(binding.name.name)
+        return regr
+            
+    # NOTE: Case not required for this assignment,
+    #       see: https://piazza.com/class/ijen7n8b3bi1tc?cid=172
     elif node.expr == 'case':
         pass
+        
     elif node.expr == 'block':
         for sexpr in node.args:
             reg = expConvert(sexpr, inslst)
@@ -137,12 +154,22 @@ def expConvert(node, inslst, args=[]):
         ins = TACOp2(regl, astTacMap[node.expr], regr0, regr1)
         inslst.append(ins)
         return regl
+    
+    # NOTE: Don't think static or dynamic needed for this
     elif node.expr == 'dynamic_dispatch':
         pass
     elif node.expr == 'static_dispatch':
         pass
+    
+    # NOTE: out_* and in_* get treated as self-dispatch because of the inherits IO
     elif node.expr == 'self_dispatch':
-        pass
+        # Generate all the arguments for the function call
+        regs = [expConvert(e, inslst) for e in node.args[1]]
+        regr = TACIndexer.reg()
+        ins = TACCall(regr, node.args[0].name, regs[0]) # TACCall still takes one func arg
+        inslst.append(ins)
+        return regr
+
     elif node.expr == 'new':
         reg = TACIndexer.reg()
         ins = TACAllocate(reg, node.expr, node.args.name)
@@ -154,9 +181,7 @@ def expConvert(node, inslst, args=[]):
     elif node.expr == 'integer' or node.expr == 'string'    \
     or node.expr == 'true' or node.expr == 'false':
         reg = TACIndexer.reg()
-        constval = str(node.args)
-        if isinstance(node.args, bool):
-            constval = constval.lower()
+        constval = node.expr if node.expr in ['true','false'] else str(node.args)
         ins = TACConstant(reg, astTacMap[node.expr], constval)    #TODO double check
         inslst.append(ins)
         return reg
@@ -170,12 +195,12 @@ def methodConvert(node, inslst):
     TACIndexer.mtype = node.type.name
     #assign method args to registers
     for formal in node.formals:
-        reg = TACIndexer.map(formal.name, True)
-        ins = TACAssign(reg, formal.name)
+        reg = TACIndexer.map(formal[0].name, True)
+        ins = TACAssign(reg, formal[0].name)
         inslst.append(ins)
     #remove identifier -> register mappings
     for formal in node.formals:
-        TACIndexer.pop(formal.name)
+        TACIndexer.pop(formal[0].name)
     reg = expConvert(node.body, inslst)
     ins = TACReturn(reg)
     inslst.append(ins)
@@ -186,7 +211,7 @@ def mainConvert():
     lines = lines.split("\n")
     ast = AST()
     ast.load(iter(lines))
-    print ast
+    #print ast
 
     #only convert the first method of the first class
     inslst = []

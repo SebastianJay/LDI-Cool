@@ -138,6 +138,17 @@ class ASTExpression:
         for x in l:
             res += str(x)
         return res
+    
+    # Utility method for loading an expression list
+    def loadExpList(self, l):
+        nExp = int(l.next())
+        mExpL = []
+        for i in range(nExp):
+            exp = ASTExpression()
+            l = exp.load(l)
+            mExpL.append(exp)
+        return (mExpL, l)
+
     def __str__(self):
         res = str(self.line) + "\n"
         res += self.expr + "\n"
@@ -158,15 +169,6 @@ class ASTExpression:
             res += "\n"
         return res
 
-    def loadExpList(self, l):
-        nExp = int(l.next())
-        mExpL = []
-        for i in range(nExp):
-            exp = ASTExpression()
-            l = exp.load(l)
-            mExpL.append(exp)
-        return (mExpL, l)
-
     def load(self,l):
         self.line = int(l.next())
         self.expr = l.next()
@@ -183,12 +185,14 @@ class ASTExpression:
         elif self.expr in ASTExpression.id1:
             self.args = ASTIdentifier()
             l = self.args.load(l)
-
+        
+        # Assign args is tuple of (identifier, expression)
         elif self.expr == "assign":
             self.args = (ASTIdentifier(), ASTExpression())
             l = self.args[0].load(l)
             l = self.args[1].load(l)
 
+        # dynamic dispatch args is tuple of (expression, identifier, expression list)
         elif self.expr == "dynamic_dispatch":
             mExp = ASTExpression()
             mId = ASTIdentifier()
@@ -200,6 +204,7 @@ class ASTExpression:
 
             self.args = (mExp,mId,mExpl)
 
+        # Static dispatch args is tuple of (expression, type, identifier, expression list)
         elif self.expr == "static_dispatch":
             mExp = ASTExpression()
             mType = ASTIdentifier()
@@ -212,6 +217,7 @@ class ASTExpression:
 
             self.args = (mExp,mType,mId,mExpl)
 
+        # Self dispatch is a tuple of (identifier, expression list)
         elif self.expr == "self_dispatch":
             mId = ASTIdentifier()
 
@@ -220,21 +226,26 @@ class ASTExpression:
 
             self.args = (mId,mExpl)
 
+        # If args is a tuple of three expressions
         elif self.expr == "if":
             self.args = (ASTExpression(),ASTExpression(),ASTExpression())
             l=self.args[0].load(l)
             l=self.args[1].load(l)
             l=self.args[2].load(l)
 
+        # Block args is an expression list
         elif self.expr == "block":
             self.args, l = self.loadExpList(l)
 
+        # Integer args is an integer constant
         elif self.expr == "integer":
             self.args = int(l.next())
 
+        # String args is a string constant
         elif self.expr == "string":
             self.args = l.next()
 
+        # true and false have empty string argument to make printing logic work
         elif self.expr == "true":
             self.args = ""
 
@@ -277,7 +288,7 @@ class ASTLetBinding:
         self.init = None
 
     def __str__(self):
-        res = "let_binding_no_init\n"\
+        res = "let_binding_no_init\n" \
               if self.init is None else "let_binding_init\n"
         res += str(self.name)
         res += str(self.type)

@@ -1,5 +1,5 @@
 class Main inherits IO {
-    func(x : Int, y : String) : Object {
+    func() : Object {
         (*
         let zzz : Int in
         let z : Int <- x + 3 in
@@ -12,7 +12,7 @@ class Main inherits IO {
         *)
 
         {
-        let x : Int <- 0 in
+        let x : Int <- 0 in {
         while x < 5 loop {
             let x : String <- "HI" in
                 out_string(x);
@@ -25,7 +25,7 @@ class Main inherits IO {
         false;
         --let aaa : Int in
         --aaa <- bbb;
-
+	};
         let z : Int <- 0 in
         if z = 1 then
             2
@@ -33,8 +33,7 @@ class Main inherits IO {
             1
         fi;
 
-        }
-
+	}
     };
 
     main() : Object {

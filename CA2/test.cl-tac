@@ -1,0 +1,36 @@
+t1 <- int 0
+t0 <- t1
+label Main_func_0
+t2 <- int 5
+t3 <- < t0 t2
+t4 <- not t3
+bt t4 Main_func_1
+t6 <- string
+HI
+t5 <- t6
+t7 <- call out_string t5
+t8 <- call out_int t0
+t9 <- int 1
+t10 <- + t0 t9
+t0 <- t10
+jmp Main_func_0
+label Main_func_1
+t11 <- default Object
+t12 <- call out_int t0
+t13 <- new Int
+t14 <- bool false
+t16 <- int 0
+t15 <- t16
+t17 <- int 1
+t18 <- = t15 t17
+t19 <- not t18
+bt t19 Main_func_2
+t20 <- int 2
+t21 <- t20
+jmp Main_func_3
+label Main_func_2
+t22 <- int 1
+t21 <- t22
+label Main_func_3
+return t21
+
