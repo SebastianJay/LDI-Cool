@@ -53,6 +53,8 @@ class CoolLexer:
     def __init__(self):
         self.tokens = []
         self.tokindex = 0
+        self.lineno = 1
+        self.lexpos = 0
 
     #fill token list with input from .cl-lex file
     def loadFromFile(self, pathname):
@@ -91,8 +93,11 @@ class CoolLexer:
         if self.tokindex >= len(self.tokens):
             return None
         self.tokindex += 1
+        self.lexpos = self.tokindex
+        self.lineno = self.tokens[self.tokindex-1].lineno
         return self.tokens[self.tokindex - 1]
 
+        
 if __name__ == '__main__':
     lexer = CoolLexer()
     lexer.loadFromFile('test/readtest.cl-lex')
