@@ -29,7 +29,7 @@ class ASTClass:
         self.inherit = None
         self.features = []
 
-    def __init__(self, name, features, inherit = None):
+    def __init__(self, name, inherit, features):
         self.name = name
         self.inherit = inherit
         self.features = features
@@ -152,7 +152,7 @@ class ASTExpression:
         self.line = 0
         self.expr = "" # Actual expression type, as a string
         self.args = None # Expression sub-parts, single element if one subpart, tuple if multiple
-    def __init__(self, line, expr, args=""):
+    def __init__(self, line, expr, args):
         self.line = line
         self.expr = expr
         self.args = args
@@ -189,7 +189,7 @@ class ASTExpression:
                 res += self.expListStr(self.args)
             else:
                 res += str(self.args)
-        if not res[-1] == "\n":
+        if self.expr in ["string", "integer"]:
             res += "\n"
         return res
 
