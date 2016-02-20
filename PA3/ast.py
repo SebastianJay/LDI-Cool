@@ -189,7 +189,7 @@ class ASTExpression:
                 res += self.expListStr(self.args)
             else:
                 res += str(self.args)
-        if not res[-1] == "\n":
+        if self.expr in ["string", "integer"]:
             res += "\n"
         return res
 

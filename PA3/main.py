@@ -5,6 +5,17 @@ from ast import *
 
 #by default the first nonterminal specified is the start symbol
 # in this case it should be "program"
+precedence = (
+    ('right', 'larrow'),
+    ('nonassoc', 'not'),
+    ('nonassoc', 'lt', 'le', 'equals'),
+    ('left', 'plus', 'minus'),
+    ('left', 'times', 'divide'),
+    ('left', 'dot'),
+    ('left', 'at'),
+    ('nonassoc', 'tilde'),
+    ('nonassoc', 'isvoid')
+)
 
 #begin program grammar
 def p_program(p):
@@ -272,7 +283,7 @@ def p_expression_divide(p):
     'expr : expr divide expr'
     p[0] = ASTExpression(
         p.lineno(1),
-        "times",
+        "divide",
         (p[1],p[3]))
 
 def p_expression_negate(p):
@@ -280,7 +291,7 @@ def p_expression_negate(p):
     p[0] = ASTExpression(
         p.lineno(1),
         "negate",
-        p[1])
+        p[2])
 
 def p_expression_lt(p):
     'expr : expr lt expr'
@@ -293,7 +304,7 @@ def p_expression_lte(p):
     'expr : expr le expr'
     p[0] = ASTExpression(
         p.lineno(1),
-        "lte",
+        "le",
         (p[1],p[3]))
 
 def p_expression_equals(p):
@@ -308,7 +319,7 @@ def p_expression_not(p):
     p[0] = ASTExpression(
         p.lineno(1),
         "not",
-        p[1])
+        p[2])
 
 def p_expression_paren(p):
     'expr : lparen expr rparen'

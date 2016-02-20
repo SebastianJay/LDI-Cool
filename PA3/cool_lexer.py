@@ -61,7 +61,7 @@ class CoolLexer:
         #read in file from given path name, split by newline
         with open(pathname) as infile:
             lines = infile.readlines()
-        lines = [line.strip() for line in lines]
+        lines = [line[:-1] for line in lines]
 
         cnt = 0
         while cnt < len(lines):
