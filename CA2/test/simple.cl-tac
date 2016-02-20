@@ -1,4 +1,107 @@
 comment start
 label Main_func_0
-t$0 <- new Int
+t$3 <- int 0
+t$4 <- int 3
+t$2 <- < t$3 t$4
+t$34 <- not t$2
+bt t$34 Main_func_2
+bt t$2 Main_func_1
+comment then branch
+label Main_func_1
+t$1 <- int 1
+jmp Main_func_3
+comment else branch
+label Main_func_2
+t$1 <- int 2
+jmp Main_func_3
+comment if-join
+label Main_func_3
+jmp Main_func_4
+comment while-pred
+label Main_func_4
+t$7 <- int 0
+t$8 <- int 3
+t$6 <- < t$7 t$8
+t$35 <- not t$6
+bt t$35 Main_func_5
+bt t$6 Main_func_6
+comment while-join
+label Main_func_5
+t$5 <- default Object
+t$10 <- new Int
+jmp Main_func_7
+comment while-body
+label Main_func_6
+t$9 <- self
+jmp Main_func_4
+comment fcall-pre to in_int
+label Main_func_7
+t$12 <- call in_int
+t$14 <- t$12
+t$15 <- int 3
+t$13 <- < t$14 t$15
+t$36 <- not t$13
+bt t$36 Main_func_10
+bt t$13 Main_func_9
+comment then branch
+label Main_func_9
+t$17 <- t$12
+t$18 <- int 4
+t$16 <- < t$17 t$18
+t$37 <- not t$16
+bt t$37 Main_func_13
+bt t$16 Main_func_12
+comment else branch
+label Main_func_10
+t$11 <- self
+jmp Main_func_11
+comment if-join
+label Main_func_11
+t$24 <- string
+hello
+t$25 <- default String
+t$26 <- t$24
+jmp Main_func_20
+comment then branch
+label Main_func_12
+t$20 <- t$12
+t$21 <- int 5
+t$19 <- < t$20 t$21
+t$38 <- not t$19
+bt t$38 Main_func_16
+bt t$19 Main_func_15
+comment else branch
+label Main_func_13
+t$11 <- self
+jmp Main_func_14
+comment if-join
+label Main_func_14
+jmp Main_func_11
+comment then branch
+label Main_func_15
+t$22 <- t$12
+jmp Main_func_18
+comment else branch
+label Main_func_16
+t$11 <- self
+jmp Main_func_17
+comment if-join
+label Main_func_17
+jmp Main_func_14
+comment fcall-pre to out_int
+label Main_func_18
+t$11 <- call out_int t$22
+jmp Main_func_17
+comment fcall-pre to out_string
+label Main_func_20
+t$23 <- call out_string t$26
+t$27 <- int 2
+t$29 <- t$27
+t$30 <- int 2
+t$28 <- - t$29 t$30
+t$32 <- t$28
+t$33 <- t$27
+t$31 <- - t$32 t$33
+t$28 <- t$31
+t$0 <- t$28
 return t$0
