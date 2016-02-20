@@ -1,0 +1,23 @@
+comment start
+label Main_func_0
+t$1 <- int 0
+jmp Main_func_1
+comment while-pred
+label Main_func_1
+t$3 <- t$1
+t$4 <- int 1
+t$2 <- < t$3 t$4
+t$8 <- not t$2
+bt t$8 Main_func_2
+bt t$2 Main_func_3
+comment while-join
+label Main_func_2
+t$0 <- default Object
+return t$0
+comment while-body
+label Main_func_3
+t$6 <- t$1
+t$7 <- int 1
+t$1 <- + t$6 t$7
+t$5 <- t$1
+jmp Main_func_1

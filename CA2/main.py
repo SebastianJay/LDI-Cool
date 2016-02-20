@@ -84,7 +84,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbb))
         #create a default as the return value
         reg = TACIndexer.reg()
-        TACIndexer.pushIns(TACAllocate(reg, 'default', TACIndexer.mtype))
+        TACIndexer.pushIns(TACAllocate(reg, 'default', 'Object'))
         return reg
 
     elif node.expr == 'if':
@@ -116,13 +116,14 @@ def expConvert(node):
     elif node.expr == 'let':
         # Bind the let vars
         for binding in node.args[0]:
-            reg = TACIndexer.map(binding.name.name,True)
-            # if there is an init, generate the init code
             if binding.init is not None:
+                # if there is an init, generate the init code
                 regi = expConvert(binding.init)
+                reg = TACIndexer.map(binding.name.name,True)    #create reg here so previous binding holds in init expr
                 TACIndexer.pushIns(TACAssign(reg,regi))
             else:
                 #otherwise generate default init
+                reg = TACIndexer.map(binding.name.name,True)
                 TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
         # Generate the body code
         regr = expConvert(node.args[1])
@@ -205,10 +206,10 @@ def methodConvert(node):
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
         TACIndexer.pushIns(TACAssign(reg, formal[0].name))
+    reg = expConvert(node.body)
     #remove identifier -> register mappings
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
-    reg = expConvert(node.body)
     TACIndexer.pushIns(TACReturn(reg))
 
 #for CA2, looks for the first method of first class and generates its TAC code

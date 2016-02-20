@@ -1,0 +1,18 @@
+comment start
+label Main_func_0
+t$2 <- arg
+t$3 <- int 1
+t$1 <- - t$2 t$3
+t$6 <- t$1
+t$7 <- int 2
+t$5 <- * t$6 t$7
+t$10 <- t$5
+t$11 <- int 1
+t$9 <- + t$10 t$11
+t$12 <- t$9
+t$8 <- call out_int t$12
+t$13 <- t$5
+t$4 <- call out_int t$13
+t$14 <- t$1
+t$0 <- call out_int t$14
+return t$0

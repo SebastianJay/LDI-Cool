@@ -1,9 +1,9 @@
 class Main inherits IO {
     func() : Object {
         {
-        if 0 < 3 then 1 else 2 fi;
-        while 0 < 3 loop self pool;
-        new Int;
+        --if 0 < 3 then 1 else 2 fi;
+        --while 0 < 3 loop self pool;
+        --new Int;
         let x : Int <- in_int() in
             if x < 3 then
                 if x < 4 then
@@ -22,15 +22,13 @@ class Main inherits IO {
         let z : String in
             out_string(y);
         let x : Int <- 2 in
-        let xx : Int <- x - 2 in
-        let xxx : Int <- xx - x in
-            xx <- xxx;
-            --out_int(x);
+        let x : Int <- x - 2 in
+            out_int(x);
         }
 
     };
 
     main() : Object {
-        self
+        func()
     };
 };
