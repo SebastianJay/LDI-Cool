@@ -363,8 +363,10 @@ def p_empty(p):
 def p_error(p):
     if p:
         print 'ERROR: '+str(p.lineno)+': Parser: syntax error'
+        sys.exit(1)
     else:
         print 'ERROR: EOF: Parser: syntax error'
+        sys.exit(1)
 
 if __name__ == '__main__':
     lexer = CoolLexer()
