@@ -2,6 +2,7 @@ import sys
 from ast import *
 from TAC_serialize import *
 
+#const mapping from AST tokens to TAC tokens
 astTacMap = {
     'not' :     'not',
     'negate' :  '~',
@@ -19,24 +20,29 @@ astTacMap = {
     'false' :   'bool',
 }
 
+#using a static class because I have an aversion to many global vars
 class TACIndexer:
-    cname = ''
-    mname = ''
-    mtype = ''
-    lind = 0
-    rind = 0
-    varRegMap = {}
+    cname = ''      #class name for current instructions
+    mname = ''      #method name
+    mtype = ''      #method type
+    lind = -1       #counter for labels
+    rind = -1       #counter for registers
+    varRegMap = {}  #symbol table
+    inslst = []     #list of TACInstruction
 
+    #increments a counter and returns a string label
     @staticmethod
     def label():
         TACIndexer.lind += 1
-        return TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind-1)
+        return TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind)
 
+    #increments a counter a returns a register label
     @staticmethod
     def reg():
         TACIndexer.rind += 1
-        return 't' + str(TACIndexer.rind-1)
+        return 't' + str(TACIndexer.rind)
 
+    #looks up the symbol table for var; creates new register if forceNew or not found
     @staticmethod
     def map(var, forceNew = False):
         if var not in TACIndexer.varRegMap:
@@ -46,85 +52,80 @@ class TACIndexer:
             TACIndexer.varRegMap[var].append(reg)
         return TACIndexer.varRegMap[var][-1]
 
+    #unbinds a symbol table entry for var
     @staticmethod
     def pop(var):
         TACIndexer.varRegMap[var].pop()
 
-def expConvert(node, inslst, args=[]):
+    #adds a TACInstruction to the list
+    @staticmethod
+    def pushIns(ins):
+        TACIndexer.inslst.append(ins)
+
+#recursive routine for generating TAC for expressions
+def expConvert(node):
+
     if node.expr == 'while':
         #emit label for loop start (computing predicate)
         lbp = TACIndexer.label()
-        ins = TACLabel(lbp)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACLabel(lbp))
         #recurse on predicate expression
-        regp = expConvert(node.args[0], inslst)
+        regp = expConvert(node.args[0])
         #emit label for loop breakout -- if predicate is false, we jump there
         lbb = TACIndexer.label()
         regpbar = TACIndexer.reg()
-        ins = TACOp1(regpbar, 'not', regp)
-        inslst.append(ins)
-        ins = TACBT(regpbar, lbb)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACOp1(regpbar, 'not', regp))
+        TACIndexer.pushIns(TACBT(regpbar, lbb))
         #recurse on body expression
-        regb = expConvert(node.args[1], inslst)
+        regb = expConvert(node.args[1])
         #generate jump back to top
-        ins = TACJmp(lbp)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACJmp(lbp))
         #generate the breakout label
-        ins = TACLabel(lbb)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACLabel(lbb))
         #create a default as the return value
         reg = TACIndexer.reg()
-        ins = TACAllocate(reg, 'default', TACIndexer.mtype)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAllocate(reg, 'default', TACIndexer.mtype))
         return reg
+
     elif node.expr == 'if':
         #recurse on predicate expression
-        regp = expConvert(node.args[0], inslst)
+        regp = expConvert(node.args[0])
         regpbar = TACIndexer.reg()
-        ins = TACOp1(regpbar, 'not', regp)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACOp1(regpbar, 'not', regp))
         #emit label for else and branch there if predicate is false
         #NOTE I generate then first for readability, we can save the not op by doing else first
         lbe = TACIndexer.label()
-        ins = TACBT(regpbar, lbe)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACBT(regpbar, lbe))
         #recurse on then body, emit join label and jump there at end
         #also, place then result into join register
-        regt = expConvert(node.args[1], inslst)
+        regt = expConvert(node.args[1])
         regj = TACIndexer.reg()
-        ins = TACAssign(regj, regt)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAssign(regj, regt))
         lbj = TACIndexer.label()
-        ins = TACJmp(lbj)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACJmp(lbj))
         #insert label for else
-        ins = TACLabel(lbe)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACLabel(lbe))
         #recurse on else body
-        rege = expConvert(node.args[2], inslst)
+        rege = expConvert(node.args[2])
         #place result into join register
-        ins = TACAssign(regj, rege)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAssign(regj, rege))
         #insert join label
-        ins = TACLabel(lbj)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACLabel(lbj))
         return regj
+
     elif node.expr == 'let':
         # Bind the let vars
         for binding in node.args[0]:
             reg = TACIndexer.map(binding.name.name,True)
             # if there is an init, generate the init code
             if binding.init is not None:
-                regi = expConvert(binding.init, inslst)
-                ins = TACAssign(reg,regi)
-                inslst.append(ins)
+                regi = expConvert(binding.init)
+                TACIndexer.pushIns(TACAssign(reg,regi))
             else:
                 #otherwise generate default init
-                ins = TACAllocate(reg,'default',binding.type.name)
-                inslst.append(ins)
+                TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
         # Generate the body code
-        regr= expConvert(node.args[1], inslst)
+        regr = expConvert(node.args[1])
         # Unbind the let vars
         for binding in node.args[0]:
             TACIndexer.pop(binding.name.name)
@@ -137,26 +138,26 @@ def expConvert(node, inslst, args=[]):
 
     elif node.expr == 'block':
         for sexpr in node.args:
-            reg = expConvert(sexpr, inslst)
+            reg = expConvert(sexpr)
         return reg  #last expression evaluated is the return val
+
     elif node.expr == 'assign':
-        regr = expConvert(node.args[1], inslst)
+        regr = expConvert(node.args[1])
         reg = TACIndexer.map(node.args[0].name)
-        ins = TACAssign(reg, regr)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAssign(reg, regr))
         return reg
+
     elif node.expr in ASTExpression.exp1:
-        regr = expConvert(node.args, inslst)
+        regr = expConvert(node.args)
         regl = TACIndexer.reg()
-        ins = TACOp1(regl, astTacMap[node.expr], regr)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACOp1(regl, astTacMap[node.expr], regr))
         return regl
+
     elif node.expr in ASTExpression.exp2:
-        regr0 = expConvert(node.args[0], inslst)
-        regr1 = expConvert(node.args[1], inslst)
+        regr0 = expConvert(node.args[0])
+        regr1 = expConvert(node.args[1])
         regl = TACIndexer.reg()
-        ins = TACOp2(regl, astTacMap[node.expr], regr0, regr1)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACOp2(regl, astTacMap[node.expr], regr0, regr1))
         return regl
 
     # NOTE: Don't think static or dynamic needed for this
@@ -168,31 +169,34 @@ def expConvert(node, inslst, args=[]):
     # NOTE: out_* and in_* get treated as self-dispatch because of the inherits IO
     elif node.expr == 'self_dispatch':
         # Generate all the arguments for the function call
-        regs = [expConvert(e, inslst) for e in node.args[1]]
+        regs = [expConvert(e) for e in node.args[1]]
         regr = TACIndexer.reg()
-        ins = TACCall(regr, node.args[0].name, regs[0] if len(regs) > 0 else '') # TACCall still takes one func arg
-        inslst.append(ins)
+        #TODO if generalizing to all functions, allow TACCall to take multiple args
+        ins = TACCall(regr, node.args[0].name, regs[0] if len(regs) > 0 else '')
+        TACIndexer.pushIns(ins)
         return regr
 
     elif node.expr == 'new':
         reg = TACIndexer.reg()
-        ins = TACAllocate(reg, node.expr, node.args.name)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAllocate(reg, node.expr, node.args.name))
         return reg
+
     elif node.expr == 'identifier':
         reg = TACIndexer.map(node.args.name)
         return reg
+
     elif node.expr == 'integer' or node.expr == 'string'    \
     or node.expr == 'true' or node.expr == 'false':
         reg = TACIndexer.reg()
         constval = node.expr if node.expr in ['true','false'] else str(node.args)
-        ins = TACConstant(reg, astTacMap[node.expr], constval)    #TODO double check
-        inslst.append(ins)
+        TACIndexer.pushIns(TACConstant(reg, astTacMap[node.expr], constval))
         return reg
+
     print "ERROR: tried to convert unhandled case"
     return None
 
-def methodConvert(node, inslst):
+#routine for generating TAC for methods
+def methodConvert(node):
     #set prefix for future labels
     TACIndexer.mname = node.name.name
     #store return type (while expression uses this)
@@ -200,15 +204,14 @@ def methodConvert(node, inslst):
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
-        ins = TACAssign(reg, formal[0].name)
-        inslst.append(ins)
+        TACIndexer.pushIns(TACAssign(reg, formal[0].name))
     #remove identifier -> register mappings
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
-    reg = expConvert(node.body, inslst)
-    ins = TACReturn(reg)
-    inslst.append(ins)
+    reg = expConvert(node.body)
+    TACIndexer.pushIns(TACReturn(reg))
 
+#for CA2, looks for the first method of first class and generates its TAC code
 def mainConvert():
     with open(sys.argv[1]) as infile:
         lines = infile.read()
@@ -218,21 +221,20 @@ def mainConvert():
     #print ast
 
     #only convert the first method of the first class
-    inslst = []
     if ast.classes:
         mclass = ast.classes[0]
         #set prefix for future labels
         TACIndexer.cname = mclass.name.name
         for feature in mclass.features:
             if isinstance(feature, ASTMethod):
-                methodConvert(feature, inslst)
+                methodConvert(feature)
                 break
     else:
         print 'ERROR: could not find any classes in AST'
 
     #buffer up stored instructions and print
     outbuf = ''
-    for ins in inslst:
+    for ins in TACIndexer.inslst:
         outbuf += str(ins) + '\n'
     print outbuf
 
