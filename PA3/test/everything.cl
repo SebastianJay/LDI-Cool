@@ -1,5 +1,6 @@
 class Main inherits IO {
       x : Int <- 12 * 45;
+      xx : Foo;
       y : String <- "Hello" + ", World";
       main(a : Int, b : String) : Object {
       	     let z : Int <- in_int() in {
@@ -12,16 +13,17 @@ class Main inherits IO {
 			 m : Main => out_string("");
 			 o : Object => out_string("It's something");
 		    esac;
-		    
+
 		};
-		out_int(~12 * 2 + 43 / (34*0) + 12-34 -(18/3+3) - (((3+3)/2)*12));
-		let b: Bool <- false in {
-		    b <- not b;
-		    if b = true then out_string("true") else out_int(0) fi; 
+        out_string(12/11/10, 2*3*4, 13+24*2, 2*25/16, 15/14+3, 12 + isvoid 3, 2 + 33@Ff.gg(), 0 + ~2 <= not isvoid dd.ee() - 3);
+		out_int(~12 * 2 + 43 / (34*0) + ~~12-34 -(18/3+3) - (((3+3)/2)*12));
+		let b: Bool in {
+		    b <- not not not b;
+		    if b = true then out_string("true") else out_int(0) fi;
 	     	};
 		let f : Foo <- new Baz in {
-		    out_int(f.bar(3));
-		    out_int(f@Foo.bar(3));
+		    out_int(f.bar());
+		    out_int(f@Foo.bar(3, 3, 3, 3, 3));
 		};
 		0;
 	     }
@@ -35,7 +37,7 @@ class Foo {
 };
 
 class Baz inherits Foo {
-      bar(x : Int) : Int {
+      bar() : Int {
       	    x + x
       };
 };

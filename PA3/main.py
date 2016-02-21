@@ -3,19 +3,24 @@ from cool_lexer import CoolLexer, tokens
 import yacc
 from ast import *
 
-#by default the first nonterminal specified is the start symbol
-# in this case it should be "program"
 precedence = (
     ('right', 'larrow'),
     ('nonassoc', 'not'),
     ('nonassoc', 'lt', 'le', 'equals'),
     ('left', 'plus', 'minus'),
     ('left', 'times', 'divide'),
-    ('left', 'dot'),
-    ('left', 'at'),
+    ('nonassoc', 'isvoid'),
     ('nonassoc', 'tilde'),
-    ('nonassoc', 'isvoid')
+    ('left', 'at'),
+    ('left', 'dot'),
 )
+
+start = 'program'
+
+#Empty production
+def p_empty(p):
+    'empty :'
+    pass    #leave as is
 
 #begin program grammar
 def p_program(p):
@@ -88,7 +93,7 @@ def p_feature_field(p):
 
 def p_formal(p):
     'formal : identifier colon type'
-    p[0] = (ASTIdentifier(p.lineno(1), p[1]), 
+    p[0] = (ASTIdentifier(p.lineno(1), p[1]),
             ASTIdentifier(p.lineno(3), p[3]))
 #end class grammar
 
@@ -203,7 +208,7 @@ def p_expression_let(p):
             ASTIdentifier(p.lineno(4), p[4]),
             p[5])] + p[6],
          p[8]))
-         
+
 
 def p_optinit_nonempty(p):
     'optinit : larrow expr'
@@ -216,10 +221,10 @@ def p_optinit_empty(p):
 def p_letlist_head(p):
     'letlist : comma identifier colon type optinit letlist'
     p[0] = [ASTLetBinding(\
-                          ASTIdentifier(p.lineno(2), p[2]), 
+                          ASTIdentifier(p.lineno(2), p[2]),
                           ASTIdentifier(p.lineno(4), p[4]),
                           p[5])] + p[6]
-        
+
 def p_letlist_tail(p):
     'letlist : empty'
     p[0] = []
@@ -234,7 +239,7 @@ def p_expression_case(p):
         (p[2],[ASTCase(ASTIdentifier(p.lineno(4),p[4]),
                       ASTIdentifier(p.lineno(6),p[6]),
                       p[8])] + p[10]))
-                                    
+
 
 def p_caselist_head(p):
     'caselist : identifier colon type rarrow expr semi caselist'
@@ -262,7 +267,7 @@ def p_expression_plus(p):
         p.lineno(1),
         "plus",
         (p[1],p[3]))
-        
+
 
 def p_expression_minus(p):
     'expr : expr minus expr'
@@ -355,16 +360,12 @@ def p_expression_false(p):
                          "false",
                          "")
 
-#Empty production
-def p_empty(p):
-    'empty :'
-    pass    #leave as is
-
 def p_error(p):
     if p:
         print 'ERROR: '+str(p.lineno)+': Parser: syntax error'
         sys.exit(1)
     else:
+        #TODO report line number instead of EOF (low priority)
         print 'ERROR: EOF: Parser: syntax error'
         sys.exit(1)
 

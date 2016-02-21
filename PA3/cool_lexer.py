@@ -59,9 +59,9 @@ class CoolLexer:
     #fill token list with input from .cl-lex file
     def loadFromFile(self, pathname):
         #read in file from given path name, split by newline
-        with open(pathname) as infile:
+        with open(pathname, 'rU') as infile:
             lines = infile.readlines()
-        lines = [line[:-1] for line in lines]
+        lines = [line.rstrip('\n') for line in lines]
 
         cnt = 0
         while cnt < len(lines):
@@ -97,7 +97,7 @@ class CoolLexer:
         self.lineno = self.tokens[self.tokindex-1].lineno
         return self.tokens[self.tokindex - 1]
 
-        
+
 if __name__ == '__main__':
     lexer = CoolLexer()
     lexer.loadFromFile('test/readtest.cl-lex')
