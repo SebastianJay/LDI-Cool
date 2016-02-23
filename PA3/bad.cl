@@ -8,10 +8,11 @@ class Main {
             z fi
         of foo : Foo
         =>
-        false * false
-        of bar :
+        false * false;
+        bar :
             Bar
             =>
-            ~wut;
-    }
-}
+            ~wut
+        esac
+    };
+};
