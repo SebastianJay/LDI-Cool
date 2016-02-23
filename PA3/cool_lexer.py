@@ -59,6 +59,7 @@ class CoolLexer:
     #fill token list with input from .cl-lex file
     def loadFromFile(self, pathname):
         #read in file from given path name, split by newline
+		# the 'U' flag indicates that newlines are read as '\n'
         with open(pathname, 'rU') as infile:
             lines = infile.readlines()
         lines = [line.rstrip('\n') for line in lines]
@@ -84,7 +85,7 @@ class CoolLexer:
             tok.type = toktype
             tok.value = tokval
             tok.lineno = tokline
-            tok.lexpos = 0      #character position is not needed
+            tok.lexpos = 0      #character column is not needed
             self.tokens.append(tok)
             cnt += dcnt
 

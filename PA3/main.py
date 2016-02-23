@@ -1,8 +1,10 @@
 import sys
-from cool_lexer import CoolLexer, tokens
 import yacc
+from cool_lexer import CoolLexer, tokens
 from ast import *
 
+#precedence of terminals listed in ascending order
+#first string of each tuple shows left, right, or non associativity
 precedence = (
     ('right', 'larrow'),
     ('nonassoc', 'not'),
@@ -15,12 +17,14 @@ precedence = (
     ('left', 'dot'),
 )
 
+#start symbol
 start = 'program'
 
 #Empty production
+#Put at top so that reduce/reduce conflicts always choose this production
 def p_empty(p):
     'empty :'
-    pass    #leave as is
+    pass    #do nothing
 
 #begin program grammar
 def p_program(p):
@@ -52,6 +56,7 @@ def p_optinherits_empty(p):
     'optinherits : empty'
     p[0] = None
 
+##class features (methods and fields)
 def p_featurelist_head(p):
     'featurelist : feature semi featurelist'
     p[0] = [p[1]] + p[3]
@@ -98,10 +103,6 @@ def p_formal(p):
 #end class grammar
 
 ### BEGIN Expression Grammars
-def p_expression_assign(p):
-    'expr : identifier larrow expr'
-    p[0] = ASTExpression(p.lineno(1), "assign", (ASTIdentifier(p.lineno(1), p[1]), p[3]))
-
 #begin dynamic/static dispatch grammar
 def p_expression_dispatch(p):
     'expr : expr opttype dot identifier lparen funcargs rparen'
@@ -133,7 +134,7 @@ def p_opttype_nonempty(p):
 
 def p_opttype_empty(p):
     'opttype : empty'
-    return None
+    p[0] = None
 
 def p_funcargs_first(p):
     'funcargs : expr funclist'
@@ -165,6 +166,7 @@ def p_expression_selfdispatch(p):
     )
 #end self dispatch grammar
 
+##If expression
 def p_expression_if(p):
     'expr : if expr then expr else expr fi'
     p[0] = ASTExpression(
@@ -172,6 +174,7 @@ def p_expression_if(p):
         "if",
         (p[2],p[4],p[6]))
 
+##While expression
 def p_expression_while(p):
     'expr : while expr loop expr pool'
     p[0] = ASTExpression(
@@ -252,6 +255,11 @@ def p_caselist_tail(p):
     p[0] = []
 #end case statement grammar
 
+##expressions with unary and binary operators
+def p_expression_assign(p):
+    'expr : identifier larrow expr'
+    p[0] = ASTExpression(p.lineno(1), "assign", (ASTIdentifier(p.lineno(1), p[1]), p[3]))
+
 def p_expression_newtype(p):
     'expr : new type'
     p[0] = ASTExpression(p.lineno(1), "new", ASTIdentifier(p.lineno(2), p[2]))
@@ -262,12 +270,10 @@ def p_expression_isvoid(p):
 
 def p_expression_plus(p):
     'expr : expr plus expr'
-    #p[0] = ('addition', p[1], p[3])
     p[0] = ASTExpression(
         p.lineno(1),
         "plus",
         (p[1],p[3]))
-
 
 def p_expression_minus(p):
     'expr : expr minus expr'
@@ -278,7 +284,6 @@ def p_expression_minus(p):
 
 def p_expression_times(p):
     'expr : expr times expr'
-    #p[0] = ('multiplication', p[1], p[3])
     p[0] = ASTExpression(
         p.lineno(1),
         "times",
@@ -336,6 +341,7 @@ def p_expression_id(p):
                          "identifier",
                          ASTIdentifier(p.lineno(1),p[1]))
 
+##constant expressions
 def p_expression_integer(p):
     'expr : integer'
     p[0] = ASTExpression(p.lineno(1),
@@ -366,6 +372,7 @@ def p_error(p):
         sys.exit(1)
     else:
         #TODO report line number instead of EOF (low priority)
+        #(apparently no test cases check this condition)
         print 'ERROR: EOF: Parser: syntax error'
         sys.exit(1)
 
@@ -374,7 +381,6 @@ if __name__ == '__main__':
     lexer.loadFromFile(sys.argv[1])
 
     parser = yacc.yacc()
-    #turn debug off when submitting
     result = parser.parse(lexer=lexer, tracking=True, debug=False)
     with open(sys.argv[1].replace("-lex",'-ast'), 'w') as outFile:
         outFile.write(str(result))

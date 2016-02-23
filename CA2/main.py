@@ -20,7 +20,8 @@ astTacMap = {
     'false' :   'bool',
 }
 
-#using a static class because I have an aversion to many global vars
+#manager for all the data global to expression generation function calls
+#  using a static class because I have an aversion to many global vars
 class TACIndexer:
     cname = ''      #class name for current instructions
     mname = ''      #method name
@@ -219,7 +220,6 @@ def mainConvert():
     lines = lines.split("\n")
     ast = AST()
     ast.load(iter(lines))
-    #print ast
 
     #only convert the first method of the first class
     if ast.classes:

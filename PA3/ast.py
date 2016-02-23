@@ -1,5 +1,6 @@
 import itertools
 
+#top level AST node - contains a list of ASTClass
 class AST:
     def __init__(self):
         self.classes = []
@@ -23,6 +24,7 @@ class AST:
             self.classes.append(tClass)
         return l
 
+#node representing a class - contains a list of method and field features
 class ASTClass:
     def __init__(self):
         self.name = ASTIdentifier()
@@ -70,7 +72,7 @@ class ASTClass:
             self.features.append(feat)
         return l
 
-
+#node for identifier - contains name and line number
 class ASTIdentifier:
     def __init__(self):
         self.line = 0
@@ -85,6 +87,7 @@ class ASTIdentifier:
         self.name = l.next()
         return l
 
+#node for field of a class - contains var name and type
 class ASTAttribute:
     def __init__(self):
         self.name = ASTIdentifier()
@@ -107,6 +110,7 @@ class ASTAttribute:
             l = self.init.load(l)
         return l
 
+#node for method of class - contains name, arguments, return type, and body
 class ASTMethod:
     def __init__(self):
         self.name = ASTIdentifier()
@@ -141,7 +145,7 @@ class ASTMethod:
         l = self.body.load(l)
         return l
 
-
+#general purpose expression node - may contain expression children in "args"
 class ASTExpression:
     # Classes of expressions, expressions in same class have same subparts,
     # so treated the same
@@ -162,7 +166,7 @@ class ASTExpression:
         for x in l:
             res += str(x)
         return res
-    
+
     # Utility method for loading an expression list
     def loadExpList(self, l):
         nExp = int(l.next())
@@ -209,7 +213,7 @@ class ASTExpression:
         elif self.expr in ASTExpression.id1:
             self.args = ASTIdentifier()
             l = self.args.load(l)
-        
+
         # Assign args is tuple of (identifier, expression)
         elif self.expr == "assign":
             self.args = (ASTIdentifier(), ASTExpression())
@@ -224,7 +228,6 @@ class ASTExpression:
             l = mExp.load(l)
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-
 
             self.args = (mExp,mId,mExpl)
 
@@ -305,6 +308,7 @@ class ASTExpression:
 
         return l
 
+#node for let expressions - contains var name and optional initialization expression
 class ASTLetBinding:
     def __init__(self):
         self.name = ASTIdentifier()
@@ -321,7 +325,7 @@ class ASTLetBinding:
         res += str(self.type)
         res += "" if self.init is None else str(self.init)
         return res
-    
+
     def load(self, l):
         hasInit = l.next() == "let_binding_init"
         l=self.name.load(l)
@@ -331,6 +335,7 @@ class ASTLetBinding:
             l=self.init.load(l)
         return l
 
+#node for one part of a case statement - contains var name, type and expression to execute
 class ASTCase:
     def __init__(self):
         self.name = ASTIdentifier()
@@ -350,7 +355,6 @@ class ASTCase:
         return l
 
 import sys
-
 if __name__ == "__main__":
     lines = sys.stdin.read()
     lines = lines.split("\n")
