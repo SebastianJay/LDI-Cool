@@ -2,11 +2,11 @@ import itertools
 
 #top level AST node - contains a list of ASTClass
 class AST:
-    def __init__(self):
-        self.classes = []
-
     def __init__(self, classL):
         self.classes = classL
+
+    def __init__(self):
+        self.classes = []
 
     def __str__(self):
         res = str(len(self.classes)) + "\n"
@@ -26,15 +26,15 @@ class AST:
 
 #node representing a class - contains a list of method and field features
 class ASTClass:
-    def __init__(self):
-        self.name = ASTIdentifier()
-        self.inherit = None
-        self.features = []
-
     def __init__(self, name, inherit, features):
         self.name = name
         self.inherit = inherit
         self.features = features
+
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.inherit = None
+        self.features = []
 
     def __str__(self):
         res = str(self.name)
@@ -74,12 +74,12 @@ class ASTClass:
 
 #node for identifier - contains name and line number
 class ASTIdentifier:
-    def __init__(self):
-        self.line = 0
-        self.name = ""
     def __init__(self, line, name):
         self.line = line
         self.name = name
+    def __init__(self):
+        self.line = 0
+        self.name = ""
     def __str__(self):
         return str(self.line) + "\n" + self.name + "\n"
     def load(self, l):
@@ -89,14 +89,14 @@ class ASTIdentifier:
 
 #node for field of a class - contains var name and type
 class ASTAttribute:
-    def __init__(self):
-        self.name = ASTIdentifier()
-        self.type = ASTIdentifier()
-        self.init = None
     def __init__(self, name, type, init = None):
         self.name = name
         self.type = type
         self.init = init
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.type = ASTIdentifier()
+        self.init = None
     def __str__(self):
         return ("attribute_no_init\n" if self.init is None else "attribute_init\n") + \
         str(self.name) + str(self.type) + \
@@ -112,16 +112,16 @@ class ASTAttribute:
 
 #node for method of class - contains name, arguments, return type, and body
 class ASTMethod:
-    def __init__(self):
-        self.name = ASTIdentifier()
-        self.formals = [] # List of (name, type) ASTIdentifier tuples
-        self.type = ASTIdentifier()
-        self.body = ASTExpression()
     def __init__(self, name, formals, type, body):
         self.name = name
         self.formals = formals
         self.type = type
         self.body = body
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.formals = [] # List of (name, type) ASTIdentifier tuples
+        self.type = ASTIdentifier()
+        self.body = ASTExpression()
     def __str__(self):
         res = "method\n"
         res += str(self.name)
@@ -152,14 +152,14 @@ class ASTExpression:
     exp1 = set(['not','negate','isvoid']) # One expression subpart
     exp2 = set(['while','plus','minus','times','divide','lt','le','eq']) # Two expression subparts
     id1 =  set(['new', 'identifier']) # One identifier subpart
-    def __init__(self):
-        self.line = 0
-        self.expr = "" # Actual expression type, as a string
-        self.args = None # Expression sub-parts, single element if one subpart, tuple if multiple
     def __init__(self, line, expr, args):
         self.line = line
         self.expr = expr
         self.args = args
+    def __init__(self):
+        self.line = 0
+        self.expr = "" # Actual expression type, as a string
+        self.args = None # Expression sub-parts, single element if one subpart, tuple if multiple
     # Utility method for turning an expression list into a string
     def expListStr(self, l):
         res = str(len(l)) + "\n"
@@ -310,14 +310,14 @@ class ASTExpression:
 
 #node for let expressions - contains var name and optional initialization expression
 class ASTLetBinding:
-    def __init__(self):
-        self.name = ASTIdentifier()
-        self.type = ASTIdentifier()
-        self.init = None
     def __init__(self, name, type, init = None):
         self.name = name
         self.type = type
         self.init = init
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.type = ASTIdentifier()
+        self.init = None
     def __str__(self):
         res = "let_binding_no_init\n" \
               if self.init is None else "let_binding_init\n"
@@ -337,14 +337,14 @@ class ASTLetBinding:
 
 #node for one part of a case statement - contains var name, type and expression to execute
 class ASTCase:
-    def __init__(self):
-        self.name = ASTIdentifier()
-        self.type = ASTIdentifier()
-        self.body = ASTExpression()
     def __init__(self, name, type, body):
         self.name = name
         self.type = type
         self.body = body
+    def __init__(self):
+        self.name = ASTIdentifier()
+        self.type = ASTIdentifier()
+        self.body = ASTExpression()
     def __str__(self):
         return str(self.name) + str(self.type) + str(self.body)
 
