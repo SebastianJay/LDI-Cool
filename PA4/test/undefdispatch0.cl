@@ -1,5 +1,5 @@
 class Main {
     main() : Int {
-      func(1)
+      "hello".concatt("hi").length()
     };
 };

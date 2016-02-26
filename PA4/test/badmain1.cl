@@ -1,5 +1,5 @@
 class Main {
-    main(x : Int) : Int {
+    func(x : Int) : Int {
 	0
     };
 };
