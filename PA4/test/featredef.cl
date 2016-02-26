@@ -1,0 +1,8 @@
+class Main {
+    main() : Int {
+    	   0	
+    };
+    main() : Int {
+    	   1
+    };
+};
