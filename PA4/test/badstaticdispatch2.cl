@@ -1,14 +1,11 @@
 class Main {
     main() : Object {
-        (new Baz)@Foobar.func()
+        (new Baz)@SELF_TYPE.func()
     };
 };
 
-class Baz {
+class Baz inherits Main {
     func() : Object {
         0
     };
-};
-
-class Foobar {    
 };
