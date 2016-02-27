@@ -1,5 +1,5 @@
 import sys
-from ast import *
+from annast import *
 from TAC_serialize import *
 
 #const mapping from AST tokens to TAC tokens

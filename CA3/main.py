@@ -1,10 +1,46 @@
 from annast import AST
 import tacgen
 import TAC_serialize
+import deadcode
 
 import sys
 
- 
+def genRegGraph(cfg):
+    regGraph = {}
+    deadcode.globalLiveCheck(cfg)
+    for block in cfg.blocks:
+        live = set(block.liveOut)
+        
+        # Update graph connections
+        for t in live:
+            if t not in regGraph:
+                regGraph[t] = set()
+            regGraph[t] |= {r for r in live if r != t}
+
+        for inst in reversed(block.instructions):
+            # Killed when assigned
+            killed = deadcode.getWritten(inst)
+            if killed is not None and killed in live:
+                live.remove(killed)
+                
+            # Live when used
+            used = deadcode.getRead(inst)
+            if used is not None:
+                for r in used:
+                    live.add(r)
+            
+            print inst, "\t\t\t", live
+            
+            # Update graph connections
+            for t in live:
+                if t not in regGraph:
+                    regGraph[t] = set()
+
+                regGraph[t] |= {r for r in live if r != t}
+        
+    return regGraph
+
+        
 
 if __name__=="__main__":
     lines = []
@@ -23,11 +59,12 @@ if __name__=="__main__":
     
     # Generate TAC
     tacgen.mainConvert(ast)
-    taclst = tacgen.TACIndexer.inslst
+    taclist = tacgen.TACIndexer.inslst
     
     # Do dead code elimination to simplify register allocation
     cfg = TAC_serialize._constructCFG(taclist)
-    cfg = deadcode.globalDeadRemove(taclist)
-
+    deadcode.globalDeadRemove(cfg)
+    
+    print genRegGraph(cfg)
         
         
