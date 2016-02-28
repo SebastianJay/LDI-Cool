@@ -60,11 +60,13 @@ def degree(regGraph):
 def registerAllocate(cfg):
     regGraph = genRegGraph(cfg)
     
+
+    # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
     def colorGraph(graph, clim):
         
-        # Use degree order as heuristic for coloring
+        # Use degree order as heuristic for coloring order
         deg = degree(graph)
-        degreeOrder = sorted(graph, key=lambda x: deg[x])
+        degreeOrder = sorted(graph, key=lambda x: -deg[x])
         
         maxColor = 0
         for node in degreeOrder:
@@ -91,6 +93,8 @@ def registerAllocate(cfg):
         return True
 
     colorGraph(regGraph, NUM_REGISTERS)
+    for x in sorted(regGraph):
+        print x, ":\t", regGraph[x][1], ",\t", regGraph[x][0] 
     regMap = {}
     for node in regGraph:
         regMap[node] = regGraph[node][1]
@@ -123,8 +127,9 @@ if __name__=="__main__":
     deadcode.globalDeadRemove(cfg)
     print cfg
     
+    
     regGraph = registerAllocate(cfg)
 
-    for x in sorted(regGraph):
-        print x, ":\t", regGraph[x]
+    # for x in sorted(regGraph):
+    #     print x, ":\t", regGraph[x]
         
