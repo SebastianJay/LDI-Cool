@@ -79,15 +79,22 @@ def globalLiveCheck(graph):
 def localDeadRemove(block):
     live = set(block.liveOut)
     deadLines = []
+    killind = 0
     for ind, inst in enumerate(reversed(block.instructions)):
         killed = getWritten(inst)
         used = getRead(inst)
         
         # Instruction dead if asignee not live
-        if killed is not None and killed not in live and not isinstance(inst, TACCall):
-            # List is reversed, remove instruction at len-ind
-            deadLines.append(len(block.instructions)-ind-1)
-            continue
+        if killed is not None and killed not in live:
+            # If it's a call, replace the dead var with __dead__
+            if isinstance(inst,TACCall):
+                block.instructions[len(block.instructions)-ind-1].assignee = "__dead__"
+
+            # Othewise remove the instruction
+            else:
+                # List is reversed, remove instruction at len-ind
+                deadLines.append(len(block.instructions)-ind-1)
+                continue
             
         # If instruction not dead, update liveness info
         if killed is not None and killed in live:
@@ -99,7 +106,8 @@ def localDeadRemove(block):
 
     # Remove marked dead lines
     block.instructions = [x for ind,x in enumerate(block.instructions) 
-                          if ind not in deadLines]  
+                          if ind not in deadLines]
+
 
     # Update liveness info
     block.liveIn = live
