@@ -5,9 +5,11 @@ class TACGraph:
         self.blocks = []
     def addBlock(self, block):
         self.blocks.append(block)
-    #program entry should always be the first basic block
-    def entry(self):
-        return blocks[0]
+    def toList(self):
+        ins = []
+        for block in self.blocks:
+            ins += block.instructions
+        return ins
     def __str__(self):
         retval = ''
         for block in self.blocks:
@@ -50,7 +52,7 @@ class TACBasicBlock:
         nLiveOut = set()
         for child in self.children:
             nLiveOut |= child.liveIn
-        
+
         if not nLiveOut == self.liveOut:
             self.liveOut = nLiveOut
             return True
