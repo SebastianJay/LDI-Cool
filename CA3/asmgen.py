@@ -1,4 +1,5 @@
 from TAC_serialize import *
+from main import registerAllocate
 import sys
 
 #maps int result of graph coloring to x64 register name
@@ -20,6 +21,7 @@ cRegMap = {
 }
 rsp = '%rsp'
 rbp = '%rbp'
+retreg = 0
 tmpreg = 13
 
 #begin ASM class definitions - adapted from TAC
@@ -41,15 +43,15 @@ class ASMOp(ASMInstruction):
         self.operands = operands
     def expand(self):
         asm = []
-        if self.operands[1] != self.assignee:
-            asm.append(ASMAssign(self.assignee, self.operands[1]))
+        if self.operands[0] != self.assignee:
+            asm.append(ASMAssign(self.assignee, self.operands[0]))
         asm.append(self)
         return asm
     def __str__(self):
         if self.opcode == '+':
-            return 'addq ' + self.operands[0] + ' ' + self.assignee
+            return 'addq ' + self.operands[1] + ', ' + self.assignee
         elif self.opcode == '-':
-            pass
+            return 'subq ' + self.operands[1] + ', ' + self.assignee
         elif self.opcode == '*':
             pass
         elif self.opcode == '/':
@@ -74,7 +76,7 @@ class ASMAssign(ASMInstruction):
         self.assignee = assignee
         self.assignor = assignor
     def __str__(self):
-        return 'movq ' + self.assignor + ' ' + self.assignee
+        return 'movq ' + self.assignor + ', ' + self.assignee
 
 #"abstract" class for TAC instructions which declare variables
 class ASMDeclare(ASMInstruction):
@@ -96,7 +98,15 @@ class ASMConstant(ASMDeclare):
         self.ptype = ptype
         self.const = const
     def __str__(self):
-        return self.assignee + ' <- ' + self.ptype +("\n" if self.ptype=="string" else ' ') + self.const
+        if self.ptype == 'string':
+            raise TypeError('string not implemented')
+        if self.ptype == 'int':
+            return 'movq $' + str(self.const) + ', ' + self.assignee
+        if self.ptype == 'bool':
+            if self.const == 'true':
+                return 'movq $0, ' + self.assignee
+            else:
+                return 'movq $1, ' + self.assignee
 
 #ASM calls to functions
 class ASMCall(ASMInstruction):
@@ -104,6 +114,10 @@ class ASMCall(ASMInstruction):
         self.assignee = assignee
         self.funcname = funcname
         self.op1 = op1
+    def expand(self):
+        asm = []
+        asm.append(self)
+        return asm
     def __str__(self):
         if self.op1:
             return self.assignee + ' <- call ' + self.funcname + ' ' + self.op1
@@ -131,8 +145,14 @@ class ASMLabel(ASMControl):
 class ASMReturn(ASMControl):
     def __init__(self, retval):
         self.retval = retval
+    def expand(self):
+        asm = []
+        if self.retval != cRegMap[retreg]:
+            asm.append(ASMAssign(cRegMap[retreg], self.retval))
+        asm.append(self)
+        return asm
     def __str__(self):
-        return 'return ' + self.retval
+        return 'ret'
 
 #Bt instruction
 class ASMBT(ASMControl):
@@ -179,13 +199,14 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACBT):
             pass
         elif isinstance(ins, TACConstant):
-            pass
+            asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
     return asmlst
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as inFile:
         cfg = serializeTAC(inFile)
     #allocate 14 virtual registers - need coloring for more
+    #regMap = registerAllocate(cfg)
     regMap = {}
     for i in range(14):
         regMap['t$'+str(i)] = i
