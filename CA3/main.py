@@ -33,10 +33,13 @@ if __name__=="__main__":
     
     # Do dead code elimination to simplify register allocation
     cfg = TAC_serialize._constructCFG(taclist)
+    print cfg
+    print "-----"
     deadcode.globalDeadRemove(cfg)
     print cfg
+    print "-----"
         
-    regMap = registerAllocate(cfg,15)
+    regMap = registerAllocate(cfg)
 
     asmlst = asmgen.funcConvert(cfg,regMap)
 
@@ -46,3 +49,5 @@ if __name__=="__main__":
         for asmsubins in asminslst:
             outbuf = outbuf + str(asmsubins) + '\n'
     print outbuf
+    with open('out.s','w') as outfile:
+        outfile.write(outbuf)

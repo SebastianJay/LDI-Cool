@@ -43,19 +43,19 @@ class ASMOp(ASMInstruction):
         self.operands = operands
     def expand(self):
         asm = []
-        if self.operands[0] != self.assignee:
+        if self.operands[1] != self.assignee:
             asm.append(ASMAssign(self.assignee, self.operands[0]))
         asm.append(self)
         return asm
     def __str__(self):
         if self.opcode == '+':
-            return 'addq ' + self.operands[1] + ', ' + self.assignee
+            return 'addq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '-':
-            return 'subq ' + self.operands[1] + ', ' + self.assignee
+            return 'subq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '*':
-            return 'imulq ' + self.operands[1] + ', ' + self.assignee
+            return 'imulq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '/':
-            return 'idivq ' + self.operands[1] + ', ' + self.assignee
+            return 'idivq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '<':
             pass
         elif self.opcode == '<=':
