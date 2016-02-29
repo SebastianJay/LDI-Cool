@@ -53,9 +53,9 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '-':
             return 'subq ' + self.operands[1] + ', ' + self.assignee
         elif self.opcode == '*':
-            pass
+            return 'imulq ' + self.operands[1] + ', ' + self.assignee
         elif self.opcode == '/':
-            pass
+            return 'idivq ' + self.operands[1] + ', ' + self.assignee
         elif self.opcode == '<':
             pass
         elif self.opcode == '<=':

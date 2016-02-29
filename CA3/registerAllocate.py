@@ -1,7 +1,5 @@
 import deadcode
-
-
-NUM_REGISTERS = 8
+import TAC_serialize
 
 # Takes a control flow graph, returns a register conflict graph
 # with some precolored nodes on function returns
@@ -51,13 +49,13 @@ def degree(regGraph):
     return degrees
 
 # Takes a control flow graph and returns register allocations for each
-# temporary value and **TODO** modifies cfg code in place to include spills to memory 
+# temporary value, any register index higher than the allowed should go to memory
 def registerAllocate(cfg):
     regGraph = genRegGraph(cfg)
     
 
     # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
-    def colorGraph(graph, clim):
+    def colorGraph(graph):
         
         # Use degree order as heuristic for coloring order
         deg = degree(graph)
@@ -65,14 +63,18 @@ def registerAllocate(cfg):
         
         maxColor = 0
         for node in degreeOrder:
-            # Skip pre-colored nodes
-            if graph[node][1] != -1:
-                continue
             
             # Eliminate colors of adjacent nodes
             availableColors = set(range(maxColor+2)) # [0,..,maxColor+1]
             for adj in graph[node][0]:
                 availableColors -= {graph[adj][1]}
+
+            # Handle conflicts with pre-colored nodes
+            if graph[node][1] != -1:
+                if graph[node][1] not in availableColors:
+                    return False
+                else:
+                    continue
 
             # Set color to lowest available
             graph[node][1] = min(availableColors)
@@ -80,16 +82,8 @@ def registerAllocate(cfg):
             # Increment maxColor if we need a new color
             if graph[node][1] == maxColor+1:
                 maxColor += 1
-                
-            # Quit if we've gone past the color limit
-            if maxColor > clim:
-                return False
-
-        return True
-
-    colorGraph(regGraph, NUM_REGISTERS)
-    for x in sorted(regGraph):
-        print x, ":\t", regGraph[x][1], ",\t", regGraph[x][0] 
+    
+    colorGraph(regGraph)
     regMap = {}
     for node in regGraph:
         regMap[node] = regGraph[node][1]

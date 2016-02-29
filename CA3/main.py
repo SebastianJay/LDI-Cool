@@ -2,6 +2,9 @@ from annast import AST
 import tacgen
 import TAC_serialize
 import deadcode
+from registerAllocate import registerAllocate
+import asmgen
+
 
 import sys
 
@@ -32,10 +35,14 @@ if __name__=="__main__":
     cfg = TAC_serialize._constructCFG(taclist)
     deadcode.globalDeadRemove(cfg)
     print cfg
-    
-    
-    regGraph = registerAllocate(cfg)
-
-    # for x in sorted(regGraph):
-    #     print x, ":\t", regGraph[x]
         
+    regMap = registerAllocate(cfg,15)
+
+    asmlst = asmgen.funcConvert(cfg,regMap)
+
+    outbuf = ''
+    for asmins in asmlst:
+        asminslst = asmins.expand()
+        for asmsubins in asminslst:
+            outbuf = outbuf + str(asmsubins) + '\n'
+    print outbuf
