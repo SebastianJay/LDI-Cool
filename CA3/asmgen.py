@@ -43,7 +43,8 @@ class ASMOp(ASMInstruction):
         self.operands = operands
     def expand(self):
         asm = []
-        if self.operands[1] != self.assignee:
+        if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
+           or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
         asm.append(self)
         return asm
@@ -210,9 +211,14 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACJmp):
             asmlst.append(ASMJmp(ins.label))
         elif isinstance(ins, TACBT):
-            asmlst.append(ASMBT(ins.cond, ins.label))
+            asmlst.append(ASMBT(realReg(ins.cond), ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
+    rmlist = []
+    for i, ins in enumerate(asmlst):
+        if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
+            rmlist.append(i)
+    asmlst = [ins for i,ins in enumerate(asmlst) if i not in rmlist]
     return asmlst
 
 if __name__ == '__main__':
