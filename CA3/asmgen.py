@@ -57,17 +57,29 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '/':
             return 'idivq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '<':
-            pass
+            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
+            res += 'movq $0, ' + self.assignee + '\n'
+            res += 'cmovl ' + '$1' + ', ' + self.assignee
+            return res
         elif self.opcode == '<=':
-            pass
+            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
+            res += 'movq $0, ' + self.assignee + '\n'
+            res += 'cmovle ' + '$1' + ', ' + self.assignee
+            return res
         elif self.opcode == '=':
-            pass
+            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
+            res += 'movq $0, ' + self.assignee + '\n'
+            res += 'cmove ' + '$1' + ', ' + self.assignee
+            return res
         elif self.opcode == 'not':
-            pass
+            res = 'cmp ' + self.operands[0] + ', '+ self.operands[0] + '\n'
+            res += 'movq $0, ' + self.assignee + '\n'
+            res += 'cmovz ' + '$1' + ', ' + self.assignee
+            return res
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
-            pass
+            return 'neg ' + self.operands[0]
         return '\n'
 
 #ASM instruction which assigns one variable into another
@@ -160,7 +172,8 @@ class ASMBT(ASMControl):
         self.cond = cond
         self.label = label
     def __str__(self):
-        return 'bt ' + self.cond + ' ' + self.label
+        return 'cmp ' + self.cond + ', ' + self.cond + "\n" \
+            + 'jnz ' + self.label
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands
@@ -191,13 +204,13 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACCall):
             pass
         elif isinstance(ins, TACLabel):
-            asmlst.append(ASMLabel('l_' + ins.name))
+            asmlst.append(ASMLabel(ins.name))
         elif isinstance(ins, TACReturn):
             asmlst.append(ASMReturn(realReg(ins.retval)))
         elif isinstance(ins, TACJmp):
-            pass
+            asmlst.append(ASMJmp(ins.label))
         elif isinstance(ins, TACBT):
-            pass
+            asmlst.append(ASMBT(ins.cond, ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
     return asmlst

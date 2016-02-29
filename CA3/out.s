@@ -1,0 +1,20 @@
+movq $2, %rbx
+movq $2, %rax
+movq %rbx, %rbx
+movq %rax, %rax
+imulq %rbx, %rax
+movq $1, %rbx
+movq $2, %rcx
+movq %rbx, %rbx
+movq %rcx, %rcx
+addq %rbx, %rcx
+movq $3, %rbx
+movq %rcx, %rcx
+movq %rbx, %rbx
+addq %rcx, %rbx
+movq %rax, %rcx
+movq %rbx, %rax
+cmp %rcx, %rax
+movq $0, %rax
+cmove $1, %rax
+ret

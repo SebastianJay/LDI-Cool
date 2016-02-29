@@ -151,16 +151,20 @@ def expConvert(node):
 
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
-        regl = TACIndexer.reg()
-        TACIndexer.pushIns(TACOp1(regr, astTacMap[node.expr], regr))
-        return regr
+        op1 = TACIndexer.reg()
+        TACIndexer.pushIns(TACAssign(op1, regr))
+        TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], op1))
+        return op1
 
     elif node.expr in ASTExpression.exp2:
         regr0 = expConvert(node.args[0])
         regr1 = expConvert(node.args[1])
-        regl = TACIndexer.reg()
-        TACIndexer.pushIns(TACOp2(regr1, astTacMap[node.expr], regr0, regr1))
-        return regr1
+        op1 = TACIndexer.reg()
+        op2 = TACIndexer.reg()
+        TACIndexer.pushIns(TACAssign(op1, regr0))
+        TACIndexer.pushIns(TACAssign(op2, regr1))
+        TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
+        return op2
 
     # NOTE: Don't think static or dynamic needed for this
     elif node.expr == 'dynamic_dispatch':
