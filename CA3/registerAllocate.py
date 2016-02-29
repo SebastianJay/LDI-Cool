@@ -39,6 +39,9 @@ def genRegGraph(cfg):
                 regGraph[inst.assignee][1] = 0
             elif isinstance(inst,TAC_serialize.TACReturn):
                 regGraph[inst.retval][1] = 0
+            # Have to force multiplication and division result to rax
+            elif isinstance(inst,TAC_serialize.TACOp2) and inst.opcode in ['*','/']:
+                regGraph[inst.assignee][1] = 0
 
     return regGraph
 

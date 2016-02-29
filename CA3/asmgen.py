@@ -7,17 +7,17 @@ cRegMap = {
     0 : '%rax',     #return value for function calls
     1 : '%rbx',
     2 : '%rcx',
-    3 : '%rdx',
-    4 : '%rsi',
-    5 : '%rdi',
-    6 : '%r8',      #64 bit mode registers
-    7 : '%r9',
-    8 : '%r10',
-    9 : '%r11',
-    10 : '%r12',
-    11 : '%r13',
-    12 : '%r14',
-    13 : '%r15',
+#    3 : '%rdx',    # Save rdx for multiplication, division, and bool logic
+    3 : '%rsi',
+    4 : '%rdi',
+    5 : '%r8',      #64 bit mode registers
+    6 : '%r9',
+    7 : '%r10',
+    8 : '%r11',
+    9 : '%r12',
+    10 : '%r13',
+    11 : '%r14',
+    12 : '%r15',
 }
 rsp = '%rsp'
 rbp = '%rbp'
@@ -54,33 +54,37 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '-':
             return 'subq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '*':
-            return 'imulq ' + self.operands[0] + ', ' + self.assignee
+            return 'imulq ' + self.operands[0]
         elif self.opcode == '/':
-            return 'idivq ' + self.operands[0] + ', ' + self.assignee
+            return 'idivq ' + self.operands[0]
         elif self.opcode == '<':
             res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
             res += 'movq $0, ' + self.assignee + '\n'
-            res += 'cmovl ' + '$1' + ', ' + self.assignee
+            res += 'movq $1, %rdx\n'
+            res += 'cmovlq ' + '%rdx' + ', ' + self.assignee
             return res
         elif self.opcode == '<=':
             res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
             res += 'movq $0, ' + self.assignee + '\n'
-            res += 'cmovle ' + '$1' + ', ' + self.assignee
+            res += 'movq $1, %rdx\n'
+            res += 'cmovleq ' + '%rdx' + ', ' + self.assignee
             return res
         elif self.opcode == '=':
             res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
             res += 'movq $0, ' + self.assignee + '\n'
-            res += 'cmove ' + '$1' + ', ' + self.assignee
+            res += 'movq $1, %rdx\n'
+            res += 'cmoveq ' + '%rdx' + ', ' + self.assignee
             return res
         elif self.opcode == 'not':
             res = 'cmp ' + self.operands[0] + ', '+ self.operands[0] + '\n'
             res += 'movq $0, ' + self.assignee + '\n'
-            res += 'cmovz ' + '$1' + ', ' + self.assignee
+            res += 'movq $1, %rdx\n'
+            res += 'cmovzq ' + '%rdx' + ', ' + self.assignee
             return res
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
-            return 'neg ' + self.operands[0]
+            return 'negq ' + self.operands[0]
         return '\n'
 
 #ASM instruction which assigns one variable into another
