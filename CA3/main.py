@@ -19,6 +19,7 @@ if __name__=="__main__":
     # for 2n lines of class inheritance and 2 lines of parent_map and length
     lines = lines[2*int(lines[1])+2:]
 
+
     # Deserialize the ast
     ast = AST()
     ast.load(iter(lines))
@@ -39,7 +40,7 @@ if __name__=="__main__":
 
     regMap = registerAllocate(cfg)
 
-    asmlst = asmgen.funcConvert(cfg,regMap)
+    asmlst = asmgen.funcConvert(cfg,regMap)     #NOTE breaks on 6 test cases
 
     outbuf = asmgen.asmStr(asmlst)
     if debug:

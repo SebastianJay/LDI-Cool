@@ -33,7 +33,7 @@ def getWritten(inst):
 
 def localLiveCheck(block):
     liveIn = set(block.liveOut)
-    
+
     # Iterate backwards over instructions
     for inst in reversed(block.instructions):
         # Killed when assigned
@@ -44,7 +44,7 @@ def localLiveCheck(block):
         # Live when used
         used = getRead(inst)
         if used is not None:
-            # Currently at most two per instruction, 
+            # Currently at most two per instruction,
             # but this makes changing instructions easier
             for r in used:
                 liveIn.add(r)
@@ -56,16 +56,16 @@ def globalLiveCheck(graph):
     for block in graph.blocks:
         block.liveIn = set()
         block.liveOut = set()
-    
+
     # Recheck liveness until nothing changes
     done = False
     while not done:
         done = True
 
-        # Iterate over blocks backwards, will usually 
+        # Iterate over blocks backwards, will usually
         # then start at end of program and go back
         for block in reversed(graph.blocks):
-            # Update the block's liveIn 
+            # Update the block's liveIn
             localLiveCheck(block)
 
             # Propogate liveness to parents
@@ -73,8 +73,8 @@ def globalLiveCheck(graph):
                 # If something changed, not done
                 if parent.updateLiveOut():
                     done = False
-                
-                
+
+
 
 def localDeadRemove(block):
     live = set(block.liveOut)
@@ -83,8 +83,8 @@ def localDeadRemove(block):
     for ind, inst in enumerate(reversed(block.instructions)):
         killed = getWritten(inst)
         used = getRead(inst)
-        
-        # Instruction dead if asignee not live
+
+        # Instruction dead if assignee not live
         if killed is not None and killed not in live:
             # If it's a call, replace the dead var with __dead__
             if isinstance(inst,TACCall):
@@ -95,23 +95,23 @@ def localDeadRemove(block):
                 # List is reversed, remove instruction at len-ind
                 deadLines.append(len(block.instructions)-ind-1)
                 continue
-            
+
         # If instruction not dead, update liveness info
         if killed is not None and killed in live:
             live.remove(killed)
-        
+
         if used is not None:
             for x in used:
                 live.add(x)
 
     # Remove marked dead lines
-    block.instructions = [x for ind,x in enumerate(block.instructions) 
+    block.instructions = [x for ind,x in enumerate(block.instructions)
                           if ind not in deadLines]
 
 
     # Update liveness info
     block.liveIn = live
-            
+
 def globalDeadRemove(graph):
     done = False
     while not done:
@@ -128,8 +128,8 @@ def globalDeadRemove(graph):
             # If something changed, we need to start over
             if not done:
                 break
-            
-    
+
+
 
 if __name__ == "__main__":
     debug = "-v" in sys.argv
@@ -139,10 +139,9 @@ if __name__ == "__main__":
 
     if debug:
         print graph.verbosestr()
-        print "========================" 
+        print "========================"
         globalDeadRemove(graph)
         print graph.verbosestr()
     else:
         globalDeadRemove(graph)
         print graph
-    

@@ -198,7 +198,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACConstant(reg, astTacMap[node.expr], constval))
         return reg
 
-    print "ERROR: tried to convert unhandled case"
+    print "ERROR: tried to convert unhandled case: " + node.expr
     return None
 
 #routine for generating TAC for methods
@@ -219,7 +219,7 @@ def methodConvert(node):
 
 #for CA2, looks for the first method of first class and generates its TAC code
 def mainConvert(ast):
-    
+
     #only convert the first method of the first class
     if ast.classes:
         mclass = ast.classes[0]
@@ -232,7 +232,7 @@ def mainConvert(ast):
     else:
         print 'ERROR: could not find any classes in AST'
 
-    
+
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as infile:
         lines = infile.read()
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     ast.load(iter(lines))
 
     mainConvert(ast)
-    
+
     #buffer up stored instructions and print
     outbuf = ''
     for ins in TACIndexer.inslst:
