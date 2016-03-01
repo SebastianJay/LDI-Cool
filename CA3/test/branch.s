@@ -78,9 +78,7 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $2, %rbx
-	movq $2, %rax
-	imulq %rbx
+	call in_int
 	movq $4, %rbx
 	cmp %rbx, %rax
 	movq $1, %rbx

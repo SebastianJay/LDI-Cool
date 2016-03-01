@@ -44,8 +44,8 @@ if __name__=="__main__":
 
     outbuf = asmgen.asmStr(asmlst)
     if debug:
-        print outbuf
-    outbuf = asmgen.readInternals('internals.s') + outbuf
+        print outbuf[outbuf.index('main:'):]
+    
 
     with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
         outfile.write(outbuf)

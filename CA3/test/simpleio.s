@@ -23,10 +23,12 @@ out_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
+	pushq	%rax
 	movq	16(%rbp), %rsi
 	movl	$.LC0, %edi
-	movl	$0, %eax
+	##movl	$0, %eax		#not sure if necessary
 	call	printf
+	popq	%rax
 	leave
 	ret
 .LFE3:
@@ -61,10 +63,12 @@ out_string:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
+	pushq	%rax
 	movq	16(%rbp), %rsi
 	movl	$.LC1, %edi
-	movl	$0, %eax
+	##movl	$0, %eax		#not sure if necessary
 	call	printf
+	popq	%rax
 	leave
 	ret
 .LFE5:
@@ -72,14 +76,16 @@ out_string:
 	.globl main
 	.type main, @function
 main:
+	pushq %rbp
+	movq %rsp, %rbp
 	call in_int
-	addq $0, %rsp
 	pushq %rax
 	call out_int
 	addq $8, %rsp
 	call in_string
-	addq $0, %rsp
 	pushq %rax
 	call out_string
 	addq $8, %rsp
+	movq %rbp, %rsp
+	popq %rbp
 	ret
