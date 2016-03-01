@@ -44,7 +44,7 @@ class ASMOp(ASMInstruction):
     def expand(self):
         asm = []
         if self.opcode in ['<', '=', '<=']:
-            asm.append('cmp ' + self.operands[0] + ', '+ self.operands[1])
+            asm.append(ASMCmp(self.operands[0], self.operands[1]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
@@ -74,6 +74,13 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '~':
             return 'negq ' + self.operands[0]
         return '\n'
+
+class ASMCmp(ASMInstruction):
+    def __init__(self, op1, op2):
+        self.op1 = op1
+        self.op2 = op2
+    def __str__(self):
+        return 'cmp ' + self.op1 + ', ' + self.op2
 
 #ASM instruction which assigns one variable into another
 class ASMAssign(ASMInstruction):
@@ -172,9 +179,10 @@ class ASMBT(ASMControl):
     def __init__(self, cond, label):
         self.cond = cond
         self.label = label
+    def expand(self):
+        return [ASMCmp(self.cond, self.cond), self]
     def __str__(self):
-        return 'cmp ' + self.cond + ', ' + self.cond + "\n" \
-            + '\tjnz ' + self.label
+        return 'jnz ' + self.label
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands
@@ -223,7 +231,20 @@ def funcConvert(cfg, regMap):
         if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
             rmlist.append(i)
     asmlst = [ins for i,ins in enumerate(asmlst) if i not in rmlist]
-    return asmlst
+    
+    explst = []
+    for ins in asmlst:
+        explst += ins.expand()
+    
+    return explst
+
+def asmStr(asmlst):
+    outbuf = ''
+    for ins in asmlst:
+        if not isinstance(ins, ASMLabel):
+            outbuf += '\t'
+        outbuf += str(ins) + '\n'
+    return outbuf
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as inFile:

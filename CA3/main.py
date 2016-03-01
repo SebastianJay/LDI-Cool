@@ -42,14 +42,9 @@ if __name__=="__main__":
     regMap = registerAllocate(cfg)
 
     asmlst = asmgen.funcConvert(cfg,regMap)
-
-    outbuf = ''
-    for asmins in asmlst:
-        asminslst = asmins.expand()
-        for asmsubins in asminslst:
-            if not isinstance(asmsubins,asmgen.ASMLabel):
-                outbuf += '\t'
-            outbuf = outbuf + str(asmsubins) + '\n'
+    
+    outbuf = asmgen.asmStr(asmlst)
     print outbuf
+
     with open('out.s','w') as outfile:
         outfile.write(outbuf)
