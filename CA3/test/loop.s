@@ -23,10 +23,12 @@ out_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
+	pushq	%rax
 	movq	16(%rbp), %rsi
 	movl	$.LC0, %edi
-	movl	$0, %eax
+	##movl	$0, %eax		#not sure if necessary
 	call	printf
+	popq	%rax
 	leave
 	ret
 .LFE3:
@@ -61,10 +63,12 @@ out_string:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
+	pushq	%rax
 	movq	16(%rbp), %rsi
 	movl	$.LC1, %edi
-	movl	$0, %eax
+	##movl	$0, %eax		#not sure if necessary
 	call	printf
+	popq	%rax
 	leave
 	ret
 .LFE5:
@@ -72,14 +76,71 @@ out_string:
 	.globl main
 	.type main, @function
 main:
+	pushq %rbp
+	movq %rsp, %rbp
 	call in_int
 	addq $0, %rsp
+	movq %rax, %rbx
+	movq %rbx, %rax
+Main_main_0:
+	movq $5, %rsi
+	movq %rax, %rcx
+	cmp %rsi, %rcx
+	movq $1, %rsi
+	movq $0, %rdx
+	cmovlq %rdx, %rsi
+	movq %rsi, %rcx
+	xorq $1, %rcx
+	cmp $0, %rcx
+	je Main_main_1
+	movq $1, %rcx
+	addq %rax, %rcx
+	movq %rcx, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	call in_string
-	addq $0, %rsp
+	jmp Main_main_0
+Main_main_1:
+	movq %rbx, %rax
+Main_main_2:
+	movq $5, %rsi
+	movq %rax, %rcx
+	cmp %rsi, %rcx
+	movq $1, %rsi
+	movq $0, %rdx
+	cmovleq %rdx, %rsi
+	movq %rsi, %rcx
+	xorq $1, %rcx
+	cmp $0, %rcx
+	je Main_main_3
+	movq $1, %rcx
+	addq %rax, %rcx
+	movq %rcx, %rax
 	pushq %rax
-	call out_string
+	call out_int
 	addq $8, %rsp
+	jmp Main_main_2
+Main_main_3:
+	movq %rbx, %rax
+Main_main_4:
+	movq $5, %rcx
+	movq %rax, %rbx
+	cmp %rcx, %rbx
+	movq $1, %rcx
+	movq $0, %rdx
+	cmoveq %rdx, %rcx
+	movq %rcx, %rbx
+	xorq $1, %rbx
+	cmp $0, %rbx
+	je Main_main_5
+	movq $1, %rbx
+	addq %rax, %rbx
+	movq %rbx, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+	jmp Main_main_4
+Main_main_5:
+	movq %rbp, %rsp
+	popq %rbp
 	ret

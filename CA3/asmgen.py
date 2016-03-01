@@ -1,5 +1,5 @@
 from TAC_serialize import *
-from main import registerAllocate
+from registerAllocate import registerAllocate
 import sys
 
 #maps int result of graph coloring to x64 register name
@@ -44,7 +44,7 @@ class ASMOp(ASMInstruction):
     def expand(self):
         asm = []
         if self.opcode in ['<', '=', '<=']:
-            asm.append(ASMCmp(self.operands[0], self.operands[1]))
+            asm.append(ASMCmp(self.operands[1], self.operands[0]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
@@ -120,24 +120,43 @@ class ASMConstant(ASMDeclare):
             else:
                 return 'movq $1, ' + self.assignee
 
-#ASM calls to functions
-class ASMCall(ASMInstruction):
-    def __init__(self, assignee, funcname, op1=''):
-        self.assignee = assignee
-        self.funcname = funcname
-        self.op1 = op1
-    def expand(self):
-        asm = []
-        asm.append(self)
-        return asm
-    def __str__(self):
-        if self.op1:
-            return self.assignee + ' <- call ' + self.funcname + ' ' + self.op1
-        return self.assignee + ' <- call ' + self.funcname
-
 #"abstract" class for the control instructions
 class ASMControl(ASMInstruction):
     pass
+
+
+class ASMPush(ASMControl):
+    def __init__(self, reg):
+        self.reg = reg
+    def __str__(self):
+        return 'pushq ' + self.reg
+
+class ASMPop(ASMControl):
+    def __init__(self, reg):
+        self.reg = reg
+    def __str__(self):
+        return 'popq ' + self.reg
+
+#ASM calls to functions
+class ASMCall(ASMControl):
+    #for linux calls, "integer" parameters passed in order; rdi, rsi, rdx, rcx, r8, r9, stack
+    #paramorder = ['%rdi', '%rsi', '%rdx', '%rcx', '%r8', '%r9']
+    def __init__(self, assignee, funcname, args=[]):
+        self.assignee = assignee
+        self.funcname = funcname
+        self.args = args
+    def expand(self):
+        asm = []
+        #push args onto stack
+        for arg in self.args:
+            asm.append(ASMPush(arg))
+        asm.append(self)
+        #deallocate args
+        lisize = '$'+str(len(self.args) * 8)
+        asm.append(ASMOp(rsp, '+', [lisize, rsp]))
+        return asm
+    def __str__(self):
+        return 'call ' + self.funcname
 
 #Jmp instruction
 class ASMJmp(ASMControl):
@@ -169,6 +188,8 @@ class ASMReturn(ASMControl):
         asm = []
         if self.retval != cRegMap[retreg]:
             asm.append(ASMAssign(cRegMap[retreg], self.retval))
+        asm.append(ASMAssign(rsp, rbp))
+        asm.append(ASMPop(rbp))
         asm.append(self)
         return asm
     def __str__(self):
@@ -180,9 +201,9 @@ class ASMBT(ASMControl):
         self.cond = cond
         self.label = label
     def expand(self):
-        return [ASMCmp(self.cond, self.cond), self]
+        return [ASMCmp('$0', self.cond), self]
     def __str__(self):
-        return 'jnz ' + self.label
+        return 'je ' + self.label
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands
@@ -203,6 +224,11 @@ def funcConvert(cfg, regMap):
         ASMInfo('type', 'main', '@function'),
         ASMLabel('main')
     ]
+    #function prologue
+    asmlst += [
+        ASMPush(rbp),
+        ASMAssign(rbp, rsp),
+    ]
     #print inslst
     #print regMap
     for ins in inslst:
@@ -215,7 +241,9 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACAllocate):
             pass
         elif isinstance(ins, TACCall):
-            pass
+            #TODO make TAC take multiple args
+            lstargs = [realReg(ins.op1)] if ins.op1 != '' else []
+            asmlst.append(ASMCall(realReg(ins.assignee), ins.funcname, lstargs))
         elif isinstance(ins, TACLabel):
             asmlst.append(ASMLabel(ins.name))
         elif isinstance(ins, TACReturn):
@@ -231,11 +259,11 @@ def funcConvert(cfg, regMap):
         if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
             rmlist.append(i)
     asmlst = [ins for i,ins in enumerate(asmlst) if i not in rmlist]
-    
+
     explst = []
     for ins in asmlst:
         explst += ins.expand()
-    
+
     return explst
 
 def asmStr(asmlst):
@@ -245,6 +273,10 @@ def asmStr(asmlst):
             outbuf += '\t'
         outbuf += str(ins) + '\n'
     return outbuf
+
+def readInternals(path):
+    with open(path, 'U') as inFile:
+        return inFile.read()
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as inFile:

@@ -1,5 +1,9 @@
-class Main {
-    main() : Int {
-	if 2*2 < 4 then 25 else 52 fi
+class Main inherits IO {
+    main() : Object {
+        if 2*2 < 4 then
+            out_int(25)
+        else
+            out_int(52)
+        fi
     };
 };
