@@ -68,7 +68,7 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '=':
             return 'cmoveq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == 'not':
-            return 'xorq $1,' + self.assignee
+            return 'xorq $1, ' + self.assignee
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
