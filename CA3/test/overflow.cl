@@ -3,6 +3,10 @@ class Main inherits IO{
 	{
 	    out_int(2147483647+1);
 	    out_string("\n");
+	    out_int(2147483647*4);
+	    out_string("\n");
+	    out_int(~2147483647 + ~2);
+	    out_string("\n");
 	    0;
 	}
     };
