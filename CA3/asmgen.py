@@ -44,7 +44,7 @@ class ASMOp(ASMInstruction):
     def expand(self):
         asm = []
         if self.opcode in ['<', '=', '<=']:
-            asm.append('cmp ' + self.operands[0] + ', '+ self.operands[0])
+            asm.append('cmp ' + self.operands[0] + ', '+ self.operands[1])
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
