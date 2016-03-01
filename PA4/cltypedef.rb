@@ -1,16 +1,4 @@
 
-class ClassMap
-
-end
-
-class ImplementationMap
-
-end
-
-class ParentMap
-
-end
-
 #begin annotated AST class definitions
 #this implementation was artfully translated from our Python implementaton for PA3
 #load works assuming that .cl-ast is being loaded
@@ -22,6 +10,10 @@ class AST
 
     def to_s
         return [@classes.size.to_s + "\n", @classes.join].join
+    end
+    
+    def getClasses()
+      @classes
     end
 
     def load(en)
@@ -46,6 +38,18 @@ class ASTClass
         return [@name, inhstr, @features.size.to_s + "\n", @features.join].join
     end
 
+    def inherit
+      @inherit
+    end
+
+    def name
+      @name
+    end
+
+    def features
+      @features
+    end
+    
     def load(en)
         @name.load(en)
         if en.next == 'inherits'
@@ -73,6 +77,14 @@ class ASTIdentifier
     def initialize()
         @line = 0
         @name = ''
+    end
+
+    def name
+      @name
+    end
+
+    def line
+      @line
     end
 
     def to_s
