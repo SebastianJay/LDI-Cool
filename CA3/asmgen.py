@@ -146,6 +146,14 @@ class ASMLabel(ASMControl):
     def __str__(self):
         return self.name + ':'
 
+# Special instructions that pass info to the assembler
+class ASMInfo(ASMControl):
+    def __init__(self, name, *args):
+        self.name = name
+        self.args = args
+    def __str__(self):
+        return "." + self.name + " " + ', '.join(self.args)
+
 #Return instruction
 class ASMReturn(ASMControl):
     def __init__(self, retval):
@@ -182,7 +190,11 @@ def funcConvert(cfg, regMap):
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
-    asmlst = []
+    asmlst = [
+        ASMInfo('globl', 'main'),
+        ASMInfo('type', 'main', '@function'),
+        ASMLabel('main')
+    ]
     #print inslst
     #print regMap
     for ins in inslst:

@@ -47,6 +47,8 @@ if __name__=="__main__":
     for asmins in asmlst:
         asminslst = asmins.expand()
         for asmsubins in asminslst:
+            if not isinstance(asmsubins,asmgen.ASMLabel):
+                outbuf += '\t'
             outbuf = outbuf + str(asmsubins) + '\n'
     print outbuf
     with open('out.s','w') as outfile:
