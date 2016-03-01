@@ -1,5 +1,5 @@
 .LC0:
-	.string	"%ld"
+	.string	"%d"
 	.text
 	.globl	in_int
 	.type	in_int, @function

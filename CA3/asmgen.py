@@ -153,8 +153,9 @@ class ASMCall(ASMControl):
             asm.append(ASMPush(arg))
         asm.append(self)
         #deallocate args
-        lisize = '$'+str(len(self.args) * 8)
-        asm.append(ASMOp(rsp, '+', [lisize, rsp]))
+        if len(self.args) != 0:
+            lisize = '$'+str(len(self.args) * 8)
+            asm.append(ASMOp(rsp, '+', [lisize, rsp]))
         return asm
     def __str__(self):
         return 'call ' + self.funcname
@@ -275,8 +276,11 @@ def asmStr(asmlst):
         if not isinstance(ins, ASMLabel):
             outbuf += '\t'
         outbuf += str(ins) + '\n'
-    return outbuf
+    return readInternals('internals.s.txt') + outbuf
 
+def readInternals(path):
+    with open(path, 'rU') as inFile:
+        return inFile.read()
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as inFile:
@@ -293,8 +297,3 @@ if __name__ == '__main__':
         for asmsubins in asminslst:
             outbuf = outbuf + str(asmsubins) + '\n'
     print outbuf
-
-
-def readInternals(path):
-    with open(path, 'rU') as inFile:
-        return inFile.read()

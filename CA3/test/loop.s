@@ -1,5 +1,5 @@
 .LC0:
-	.string	"%ld"
+	.string	"%d"
 	.text
 	.globl	in_int
 	.type	in_int, @function
@@ -79,7 +79,6 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	call in_int
-	addq $0, %rsp
 	movq %rax, %rbx
 	movq %rbx, %rax
 Main_main_0:

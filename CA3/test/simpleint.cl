@@ -1,7 +1,7 @@
-class Main {
-    main():Int {
+class Main inherits IO{
+    main(): Object {
 	{
-	    ~1+2+3+4*22/~13;
+	    out_int(~1+2+3+4*22/~13);
 	}
     };
 };

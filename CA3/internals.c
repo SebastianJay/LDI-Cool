@@ -1,16 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-long in_int()
+int in_int()
 {
-    long i;
-    scanf("%ld", &i);
-    return i; 
+    int i;
+    scanf("%d", &i);
+    return i;
 }
 
-void out_int(long i)
+void out_int(int i)
 {
-    printf("%ld", i);
+    printf("%d", i);
 }
 
 char* in_string()
@@ -27,12 +27,10 @@ void out_string(char* c)
 
 int main(int argc, char** argv)
 {
-    //long i = in_int();
-    //out_int(i);
+    int i = in_int();
+    out_int(i);
     //printf("\n");
     char* c = in_string();
     out_string(c);
     return 0;
 }
-
-
