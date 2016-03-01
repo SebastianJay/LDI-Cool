@@ -43,6 +43,10 @@ class ASMOp(ASMInstruction):
         self.operands = operands
     def expand(self):
         asm = []
+        if self.opcode in ['<', '=', '<=']:
+            asm.append('cmp ' + self.operands[0] + ', '+ self.operands[0])
+            asm.append(ASMConstant(self.assignee, 'bool', 'false'))
+            asm.append(ASMConstant('%rdx', 'bool', 'true'))
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
@@ -58,29 +62,13 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '/':
             return 'idivq ' + self.operands[0]
         elif self.opcode == '<':
-            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
-            res += 'movq $0, ' + self.assignee + '\n'
-            res += 'movq $1, %rdx\n'
-            res += 'cmovlq ' + '%rdx' + ', ' + self.assignee
-            return res
+            return 'cmovlq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == '<=':
-            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
-            res += 'movq $0, ' + self.assignee + '\n'
-            res += 'movq $1, %rdx\n'
-            res += 'cmovleq ' + '%rdx' + ', ' + self.assignee
-            return res
+            return 'cmovleq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == '=':
-            res = 'cmp ' + self.operands[0] + ', '+ self.operands[1] + '\n'
-            res += 'movq $0, ' + self.assignee + '\n'
-            res += 'movq $1, %rdx\n'
-            res += 'cmoveq ' + '%rdx' + ', ' + self.assignee
-            return res
+            return 'cmoveq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == 'not':
-            res = 'cmp ' + self.operands[0] + ', '+ self.operands[0] + '\n'
-            res += 'movq $0, ' + self.assignee + '\n'
-            res += 'movq $1, %rdx\n'
-            res += 'cmovzq ' + '%rdx' + ', ' + self.assignee
-            return res
+            return 'xorq $1,' + self.assignee
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
@@ -178,7 +166,7 @@ class ASMBT(ASMControl):
         self.label = label
     def __str__(self):
         return 'cmp ' + self.cond + ', ' + self.cond + "\n" \
-            + 'jnz ' + self.label
+            + '\tjnz ' + self.label
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands
