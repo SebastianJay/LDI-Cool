@@ -4,39 +4,20 @@ import sys
 
 #maps int result of graph coloring to x64 register name
 cRegMap = {
-    0 : '%eax',     #return value for function calls
-    1 : '%ebx',
-    2 : '%ecx',
-#    3 : '%edx',    # Save rdx for multiplication, division, and bool logic
-    3 : '%esi',
-    4 : '%edi',
-    5 : '%r8d',      #32 bit mode registers
-    6 : '%r9d',
-    7 : '%r10d',
-    8 : '%r11d',
-    9 : '%r12d',
-    10 : '%r13d',
-    11 : '%r14d',
-    12 : '%r15d',
-}
-
-regs64 = {
-    '%eax' : '%rax',     #return value for function calls
-    '%ebx' : '%rbx',
-    '%ecx' : '%rcx',
-    '%edx' : '%rdx',    # Save rdx for multiplication, division, and bool logic
-    '%esi' : '%rsi',
-    '%edi' : '%rdi',
-    '%r8d' : '%r8',      #64 bit mode registers
-    '%r9d' : '%r9',
-    '%r10d': '%r10',
-    '%r11d': '%r11',
-    '%r12d': '%r12',
-    '%r13d': '%r13',
-    '%r14d': '%r14',
-    '%r15d': '%r15',
-    '%rsp' : '%rsp',
-    '%rbp' : '%rbp'
+    0 : '%rax',     #return value for function calls
+    1 : '%rbx',
+    2 : '%rcx',
+#    3 : '%rdx',    # Save rdx for multiplication, division, and bool logic
+    3 : '%rsi',
+    4 : '%rdi',
+    5 : '%r8',      #64 bit mode registers
+    6 : '%r9',
+    7 : '%r10',
+    8 : '%r11',
+    9 : '%r12',
+    10 : '%r13',
+    11 : '%r14',
+    12 : '%r15',
 }
 rsp = '%rsp'
 rbp = '%rbp'
@@ -73,28 +54,25 @@ class ASMOp(ASMInstruction):
         return asm
     def __str__(self):
         if self.opcode == '+':
-            if self.operands[0] in regs64.values() or self.assignee in regs64.values():
-                return 'addq ' + self.operands[0] + ', ' + regs64[self.assignee]
-            else:
-                return 'addl ' + self.operands[0] + ', ' + self.assignee
+            return 'addq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '-':
-            return 'subl ' + self.operands[0] + ', ' + self.assignee
+            return 'subq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '*':
-            return 'imull ' + self.operands[0]
+            return 'imulq ' + self.operands[0]
         elif self.opcode == '/':
-            return 'idivl ' + self.operands[0]
+            return 'idivq ' + self.operands[0]
         elif self.opcode == '<':
-            return 'cmovll ' + '%rdx' + ', ' + self.assignee
+            return 'cmovlq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == '<=':
-            return 'cmovlel ' + '%rdx' + ', ' + self.assignee
+            return 'cmovleq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == '=':
-            return 'cmovel ' + '%rdx' + ', ' + self.assignee
+            return 'cmoveq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == 'not':
-            return 'xorl $1, ' + self.assignee
+            return 'xorq $1, ' + self.assignee
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
-            return 'negl ' + self.operands[0]
+            return 'negq ' + self.operands[0]
         return '\n'
 
 class ASMCmp(ASMInstruction):
@@ -110,7 +88,7 @@ class ASMAssign(ASMInstruction):
         self.assignee = assignee
         self.assignor = assignor
     def __str__(self):
-        return 'mov ' + self.assignor + ', ' + self.assignee
+        return 'movq ' + self.assignor + ', ' + self.assignee
 
 #"abstract" class for TAC instructions which declare variables
 class ASMDeclare(ASMInstruction):
@@ -136,12 +114,12 @@ class ASMConstant(ASMDeclare):
             print 'Error: string not implemented'
             return ''
         if self.ptype == 'int':
-            return 'movl $' + str(self.const) + ', ' + self.assignee
+            return 'movq $' + str(self.const) + ', ' + self.assignee
         if self.ptype == 'bool':
             if self.const == 'true':
-                return 'movl $0, ' + self.assignee
+                return 'movq $0, ' + self.assignee
             else:
-                return 'movl $1, ' + self.assignee
+                return 'movq $1, ' + self.assignee
 
 #"abstract" class for the control instructions
 class ASMControl(ASMInstruction):
@@ -152,13 +130,13 @@ class ASMPush(ASMControl):
     def __init__(self, reg):
         self.reg = reg
     def __str__(self):
-        return 'pushq ' + regs64[self.reg]
+        return 'pushq ' + self.reg
 
 class ASMPop(ASMControl):
     def __init__(self, reg):
         self.reg = reg
     def __str__(self):
-        return 'popq ' + regs64[self.reg]
+        return 'popq ' + self.reg
 
 #ASM calls to functions
 class ASMCall(ASMControl):
@@ -318,24 +296,21 @@ if __name__ == '__main__':
     print outbuf
 
 
-internals = """	.section	.rodata
-.LC0:
+internals = """.LC0:
 	.string	"%d"
 	.text
 	.globl	in_int
 	.type	in_int, @function
 in_int:
-.LFB2:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	leaq	-4(%rbp), %rax
+	leaq	-8(%rbp), %rax
 	movq	%rax, %rsi
 	movl	$.LC0, %edi
 	movl	$0, %eax
-	call	__isoc99_scanf
-	movl	-4(%rbp), %eax
-	cltq
+	call	scanf
+	movq	-8(%rbp), %rax
 	leave
 	ret
 .LFE2:
@@ -343,15 +318,57 @@ in_int:
 	.globl	out_int
 	.type	out_int, @function
 out_int:
-.LFB3:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	movl	16(%rsp), %esi
+	subq	$16, %rsp
+	pushq	%rax
+	movq	16(%rbp), %rsi
 	movl	$.LC0, %edi
-	movl	$0, %eax
+	##movl	$0, %eax		#not sure if necessary
 	call	printf
+	popq	%rax
 	leave
 	ret
 .LFE3:
 	.size	out_int, .-out_int
+	.globl	in_string
+	.type	in_string, @function
+in_string:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	movl	$1, %esi
+	movl	$4096, %edi
+	call	calloc
+	movq	%rax, -8(%rbp)
+	movq	stdin(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movl	$4096, %esi
+	movq	%rax, %rdi
+	call	fgets
+	movq	-8(%rbp), %rax
+	leave
+	ret
+.LFE4:
+	.size	in_string, .-in_string
+	.section	.rodata
+.LC1:
+	.string	"%s"
+	.text
+	.globl	out_string
+	.type	out_string, @function
+out_string:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	subq	$16, %rsp
+	pushq	%rax
+	movq	16(%rbp), %rsi
+	movl	$.LC1, %edi
+	##movl	$0, %eax		#not sure if necessary
+	call	printf
+	popq	%rax
+	leave
+	ret
+.LFE5:
+	.size	out_string, .-out_string
 """

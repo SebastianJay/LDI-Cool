@@ -78,27 +78,26 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $2147483647, %rax
-	movq $1, %rbx
+	movq $1, %rax
+	movq %rax, %rbx
+	negq %rbx
+	movq $2, %rax
+	addq %rbx, %rax
+	movq $3, %rbx
 	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $2147483647, %rbx
-	movq $4, %rax
-	imulq %rbx
+	movq $4, %rcx
+	movq $22, %rax
+	imulq %rcx
+	movq $13, %rcx
+	movq %rcx, %rsi
+	negq %rsi
+	movq %rax, %rcx
+	movq %rsi, %rax
+	idivq %rcx
+	addq %rbx, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	movq $2147483647, %rax
-	negq %rax
-	movq $2, %rbx
-	negq %rbx
-	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $0, %rax
 	movq %rbp, %rsp
 	popq %rbp
 	ret
