@@ -172,14 +172,6 @@ class ASMCall(ASMControl):
         self.args = args
     def expand(self):
         asm = []
-        #caller save registers
-        asm.append(ASMPush('%rdi'))
-        asm.append(ASMPush('%rsi'))
-        asm.append(ASMPush('%rcx'))
-        asm.append(ASMPush('%r8'))
-        asm.append(ASMPush('%r9'))
-        asm.append(ASMPush('%r10'))
-        asm.append(ASMPush('%r11'))
         #push args onto stack
         for arg in self.args:
             asm.append(ASMPush(arg))
@@ -188,14 +180,6 @@ class ASMCall(ASMControl):
         if len(self.args) != 0:
             lisize = '$'+str(len(self.args) * 8)
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
-        #restore registers
-        asm.append(ASMPop('%r11'))
-        asm.append(ASMPop('%r10'))
-        asm.append(ASMPop('%r9'))
-        asm.append(ASMPop('%r8'))
-        asm.append(ASMPop('%rcx'))
-        asm.append(ASMPop('%rsi'))
-        asm.append(ASMPop('%rdi'))
         return asm
     def __str__(self):
         return 'call ' + self.funcname
