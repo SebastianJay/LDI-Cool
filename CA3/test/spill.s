@@ -1,4 +1,7 @@
 .LC0:
+	.string	"%ld"
+	.text
+.LC00:
 	.string	"%d"
 	.text
 	.globl	in_int
@@ -25,8 +28,8 @@ out_int:
 	subq	$16, %rsp
 	pushq	%rax
 	movq	16(%rbp), %rsi
-	movl	$.LC0, %edi
-	##movl	$0, %eax		#not sure if necessary
+	movl	$.LC00, %edi
+	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
 	popq	%rax
 	leave
@@ -79,8 +82,7 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
-	movq $56, %rdx
-	subq %rdx, %rsp
+	subq $56, %rsp
 	movq $1, %rax
 	movq %rax, %r13
 	movq $2, %rax
@@ -105,54 +107,61 @@ main:
 	movq %rax, %rbx
 	movq $12, %rax
 	movq $13, %r15
-	movq %r15, 48(%rsp)
+	movq %r15, -56(%rbp)
 	movq $14, %r15
-	movq %r15, 40(%rsp)
+	movq %r15, -48(%rbp)
 	movq $15, %r15
-	movq %r15, 32(%rsp)
+	movq %r15, -40(%rbp)
 	movq $16, %r15
-	movq %r15, 24(%rsp)
+	movq %r15, -32(%rbp)
 	movq $17, %r15
-	movq %r15, 16(%rsp)
+	movq %r15, -24(%rbp)
 	movq $19, %r15
-	movq %r15, 8(%rsp)
+	movq %r15, -16(%rbp)
 	movq $20, %r15
-	movq %r15, 0(%rsp)
-	addq %r13, %r14
-	movq %r14, %r13
-	addq %r13, %r12
-	addq %r12, %r11
-	addq %r11, %r10
-	addq %r10, %r9
-	addq %r9, %r8
-	addq %r8, %rdi
-	addq %rdi, %rsi
-	addq %rsi, %rcx
-	addq %rcx, %rbx
+	movq %r15, -8(%rbp)
+	addq %r14, %r13
+	addq %r12, %r13
+	movq %r13, %r12
+	addq %r11, %r12
+	movq %r12, %r11
+	addq %r10, %r11
+	movq %r11, %r10
+	addq %r9, %r10
+	movq %r10, %r9
+	addq %r8, %r9
+	movq %r9, %r8
+	addq %rdi, %r8
+	movq %r8, %rdi
+	addq %rsi, %rdi
+	movq %rdi, %rsi
+	addq %rcx, %rsi
+	movq %rsi, %rcx
+	addq %rbx, %rcx
+	movq %rcx, %rbx
+	addq %rax, %rbx
+	movq %rbx, %rax
+	movq -56(%rbp), %rbx
 	addq %rbx, %rax
-	movq 48(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 40(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 32(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 24(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 16(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 8(%rsp), %rbx
-	addq %rax, %rbx
-	movq %rbx, %rax
-	movq 0(%rsp), %rbx
-	addq %rax, %rbx
-	pushq %rbx
+	movq -48(%rbp), %rbx
+	addq %rbx, %rax
+	movq -40(%rbp), %rbx
+	addq %rbx, %rax
+	movq -32(%rbp), %rbx
+	addq %rbx, %rax
+	movq -24(%rbp), %rbx
+	addq %rbx, %rax
+	movq -16(%rbp), %rbx
+	addq %rbx, %rax
+	movq -8(%rbp), %rbx
+	addq %rbx, %rax
+	pushq %rdi
+	pushq %rsi
+	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq %rbp, %rsp
 	popq %rbp
 	ret

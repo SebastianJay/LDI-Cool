@@ -29,7 +29,7 @@ out_int:
 	pushq	%rax
 	movq	16(%rbp), %rsi
 	movl	$.LC00, %edi
-	##movl	$0, %eax		#not sure if necessary
+	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
 	popq	%rax
 	leave

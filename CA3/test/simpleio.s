@@ -1,4 +1,7 @@
 .LC0:
+	.string	"%ld"
+	.text
+.LC00:
 	.string	"%d"
 	.text
 	.globl	in_int
@@ -25,8 +28,8 @@ out_int:
 	subq	$16, %rsp
 	pushq	%rax
 	movq	16(%rbp), %rsi
-	movl	$.LC0, %edi
-	##movl	$0, %eax		#not sure if necessary
+	movl	$.LC00, %edi
+	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
 	popq	%rax
 	leave
@@ -79,10 +82,18 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
+	pushq %rdi
+	pushq %rsi
 	call in_int
+	popq %rsi
+	popq %rdi
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq %rbp, %rsp
 	popq %rbp
 	ret

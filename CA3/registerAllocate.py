@@ -93,28 +93,28 @@ def registerAllocate(cfg, nregs):
                     return False
         return True
 
-    # maxSpill = 1
-    # spillMap = {}
+    maxSpill = 1
+    spillMap = {}
 
-    # while not colorGraph(regGraph):
-    #     # Reinitialize graph coloring
-    #     regGraph = genRegGraph(cfg)
-    #     for s in spillMap:
-    #         regGraph[s][1] = spillMap[s]
+    while not colorGraph(regGraph):
+        # Reinitialize graph coloring
+        regGraph = genRegGraph(cfg)
+        for s in spillMap:
+            regGraph[s][1] = spillMap[s]
 
-    #     # Spill a temp
-    #     nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
-    #     availableSpills = set(range(nregs+1,nregs+maxSpill+2))
+        # Spill a temp
+        nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
+        availableSpills = set(range(nregs+1,nregs+maxSpill+2))
 
-    #     for adj in regGraph[nspill][0]:
-    #         availableSpills -= {regGraph[adj][1]}
+        for adj in regGraph[nspill][0]:
+            availableSpills -= {regGraph[adj][1]}
 
-    #     spillMap[nspill] = min(availableSpills)
+        spillMap[nspill] = min(availableSpills)
 
-    #     if spillMap[nspill] == nregs+maxSpill+1:
-    #         maxSpill+=1
+        if spillMap[nspill] == nregs+maxSpill+1:
+            maxSpill+=1
 
-    #     regGraph[nspill][1] = spillMap[nspill]
+        regGraph[nspill][1] = spillMap[nspill]
     
     colorGraph(regGraph)
     regMap = {}
