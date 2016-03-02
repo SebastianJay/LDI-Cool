@@ -111,21 +111,21 @@ main:
 	movq %rax, %rbx
 	movq $11, %rax
 	movq $12, %r14
-	movq %r14, -64(%rbp)
-	movq $13, %r14
 	movq %r14, -56(%rbp)
-	movq $14, %r14
+	movq $13, %r14
 	movq %r14, -48(%rbp)
-	movq $15, %r14
+	movq $14, %r14
 	movq %r14, -40(%rbp)
-	movq $16, %r14
+	movq $15, %r14
 	movq %r14, -32(%rbp)
-	movq $17, %r14
+	movq $16, %r14
 	movq %r14, -24(%rbp)
-	movq $19, %r14
+	movq $17, %r14
 	movq %r14, -16(%rbp)
-	movq $20, %r14
+	movq $19, %r14
 	movq %r14, -8(%rbp)
+	movq $20, %r14
+	movq %r14, -0(%rbp)
 	movq %r13, %r15
 	movq %r12, %r14
 	addq %r14, %r15
@@ -149,8 +149,6 @@ main:
 	movq %rax, %r15
 	addq %r15, %r14
 	movq %r14, %r15
-	movq -64(%rbp), %r14
-	addq %r14, %r15
 	movq -56(%rbp), %r14
 	addq %r14, %r15
 	movq -48(%rbp), %r14
@@ -159,12 +157,14 @@ main:
 	addq %r14, %r15
 	movq -32(%rbp), %r14
 	addq %r14, %r15
+	movq -24(%rbp), %r14
+	addq %r14, %r15
 	movq %r15, %r14
-	movq -24(%rbp), %r15
-	addq %r15, %r14
 	movq -16(%rbp), %r15
 	addq %r15, %r14
 	movq -8(%rbp), %r15
+	addq %r15, %r14
+	movq -0(%rbp), %r15
 	addq %r15, %r14
 	pushq %rdi
 	pushq %rsi
@@ -203,8 +203,6 @@ main:
 	movq %rcx, %rbx
 	addq %rax, %rbx
 	movq %rbx, %rax
-	movq -64(%rbp), %rbx
-	addq %rbx, %rax
 	movq -56(%rbp), %rbx
 	addq %rbx, %rax
 	movq -48(%rbp), %rbx
@@ -218,6 +216,8 @@ main:
 	movq -16(%rbp), %rbx
 	addq %rbx, %rax
 	movq -8(%rbp), %rbx
+	addq %rbx, %rax
+	movq -0(%rbp), %rbx
 	addq %rbx, %rax
 	pushq %rdi
 	pushq %rsi

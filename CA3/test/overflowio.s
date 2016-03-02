@@ -88,9 +88,6 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
-	movq $2147483647, %rax
-	movq $1, %rbx
-	addq %rbx, %rax
 	pushq %rdi
 	pushq %rsi
 	pushq %rcx
@@ -98,9 +95,7 @@ main:
 	pushq %r9
 	pushq %r10
 	pushq %r11
-	pushq %rax
-	call out_int
-	addq $8, %rsp
+	call in_int
 	popq %r11
 	popq %r10
 	popq %r9
@@ -108,73 +103,7 @@ main:
 	popq %rcx
 	popq %rsi
 	popq %rdi
-	movq $2147483647, %rax
-	movq $4, %rbx
-	imulq %rbx
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
-	pushq %rax
-	call out_int
-	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
-	movq $2147483647, %rax
-	negq %rax
-	movq $2, %rbx
-	negq %rbx
-	addq %rbx, %rax
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
-	pushq %rax
-	call out_int
-	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
-	movq $2147483647, %rax
-	movq %rax, %rbx
-	negq %rbx
-	movq $1, %rax
-	subq %rax, %rbx
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
-	movq $2147483647, %rax
-	negq %rax
-	movq $2, %rbx
+	movq $3, %rbx
 	cqto
 	idivq %rbx
 	pushq %rdi
@@ -194,7 +123,7 @@ main:
 	popq %rcx
 	popq %rsi
 	popq %rdi
-	movq $0, %rax
+	movq $22, %rax
 	movq %rbp, %rsp
 	popq %rbp
 	ret

@@ -12,10 +12,10 @@ in_int:
 	subq	$16, %rsp
 	leaq	-8(%rbp), %rax
 	movq	%rax, %rsi
-	movl	$.LC0, %edi
+	movl	$.LC00, %edi
 	movl	$0, %eax
 	call	scanf
-		testl	%eax, %eax
+	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
 	jmp	.L4
