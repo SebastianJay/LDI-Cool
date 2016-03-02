@@ -104,20 +104,6 @@ main:
 	popq %rsi
 	popq %rdi
 	movq %rax, %rbx
-	movq %rbx, %rax
-Main_main_0:
-	movq $5, %rsi
-	movq %rax, %rcx
-	cmp %rsi, %rcx
-	movq $1, %rsi
-	movq $0, %rdx
-	cmovlq %rdx, %rsi
-	movq %rsi, %rcx
-	xorq $1, %rcx
-	cmp $0, %rcx
-	je Main_main_1
-	movq $1, %rcx
-	addq %rcx, %rax
 	pushq %rdi
 	pushq %rsi
 	pushq %rcx
@@ -125,9 +111,7 @@ Main_main_0:
 	pushq %r9
 	pushq %r10
 	pushq %r11
-	pushq %rax
-	call out_int
-	addq $8, %rsp
+	call in_int
 	popq %r11
 	popq %r10
 	popq %r9
@@ -135,55 +119,10 @@ Main_main_0:
 	popq %rcx
 	popq %rsi
 	popq %rdi
-	jmp Main_main_0
-Main_main_1:
-	movq %rbx, %rax
-Main_main_2:
-	movq $5, %rsi
 	movq %rax, %rcx
-	cmp %rsi, %rcx
-	movq $1, %rsi
-	movq $0, %rdx
-	cmovleq %rdx, %rsi
-	movq %rsi, %rcx
-	xorq $1, %rcx
-	cmp $0, %rcx
-	je Main_main_3
-	movq $1, %rcx
-	addq %rcx, %rax
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
-	pushq %rax
-	call out_int
-	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
-	jmp Main_main_2
-Main_main_3:
 	movq %rbx, %rax
-Main_main_4:
-	movq $5, %rcx
-	movq %rax, %rbx
-	cmp %rcx, %rbx
-	movq $1, %rcx
-	movq $0, %rdx
-	cmoveq %rdx, %rcx
 	movq %rcx, %rbx
-	xorq $1, %rbx
-	cmp $0, %rbx
-	je Main_main_5
-	movq $1, %rbx
-	addq %rbx, %rax
+	imulq %rbx
 	pushq %rdi
 	pushq %rsi
 	pushq %rcx
@@ -201,8 +140,6 @@ Main_main_4:
 	popq %rcx
 	popq %rsi
 	popq %rdi
-	jmp Main_main_4
-Main_main_5:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

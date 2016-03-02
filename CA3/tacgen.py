@@ -197,7 +197,12 @@ def expConvert(node):
         #TODO if generalizing to all functions, allow TACCall to take multiple args
         ins = TACCall(regr, node.args[0].name, regs[0] if len(regs) > 0 else '')
         TACIndexer.pushIns(ins)
-        return regr
+
+        # Hacky workaround for rax conflicts
+        spillreg = TACIndexer.reg()
+        TACIndexer.pushIns(TACAssign(spillreg, regr))
+
+        return spillreg
 
     elif node.expr == 'new':
         reg = TACIndexer.reg()

@@ -15,7 +15,13 @@ in_int:
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
+		testl	%eax, %eax
+	jne	.L2
+	movl	$0, %eax
+	jmp	.L4
+.L2:
 	movq	-8(%rbp), %rax
+.L4:
 	leave
 	ret
 .LFE2:
@@ -97,12 +103,12 @@ main:
 	popq %rcx
 	popq %rsi
 	popq %rdi
-	movq $4, %rbx
-	cmp %rbx, %rax
-	movq $1, %rbx
+	movq %rax, %rbx
+	movq $4, %rax
+	cmp %rax, %rbx
+	movq $1, %rax
 	movq $0, %rdx
-	cmovlq %rdx, %rbx
-	movq %rbx, %rax
+	cmovlq %rdx, %rax
 	xorq $1, %rax
 	cmp $0, %rax
 	je Main_main_0

@@ -4,7 +4,9 @@
 int in_int()
 {
     int i;
-    scanf("%d", &i);
+    // Return 0 on bad input
+    if (scanf("%d", &i) == 0)
+      return 0;
     return i;
 }
 

@@ -15,7 +15,13 @@ in_int:
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
+		testl	%eax, %eax
+	jne	.L2
+	movl	$0, %eax
+	jmp	.L4
+.L2:
 	movq	-8(%rbp), %rax
+.L4:
 	leave
 	ret
 .LFE2:
