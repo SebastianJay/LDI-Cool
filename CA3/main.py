@@ -38,7 +38,7 @@ if __name__=="__main__":
         print cfg
         print "-----"
 
-    regMap = registerAllocate(cfg, 12)
+    regMap = registerAllocate(cfg)
     if debug:
         print '-----'
 

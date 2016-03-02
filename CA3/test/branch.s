@@ -1,4 +1,7 @@
 .LC0:
+	.string	"%ld"
+	.text
+.LC00:
 	.string	"%d"
 	.text
 	.globl	in_int
@@ -25,7 +28,7 @@ out_int:
 	subq	$16, %rsp
 	pushq	%rax
 	movq	16(%rbp), %rsi
-	movl	$.LC0, %edi
+	movl	$.LC00, %edi
 	##movl	$0, %eax		#not sure if necessary
 	call	printf
 	popq	%rax
@@ -79,7 +82,11 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
+	pushq %rdi
+	pushq %rsi
 	call in_int
+	popq %rsi
+	popq %rdi
 	movq $4, %rbx
 	cmp %rbx, %rax
 	movq $1, %rbx
@@ -90,15 +97,23 @@ main:
 	cmp $0, %rax
 	je Main_main_0
 	movq $25, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	jmp Main_main_1
 Main_main_0:
 	movq $52, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp
