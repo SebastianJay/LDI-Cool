@@ -1,4 +1,10 @@
 .LC0:
+<<<<<<< HEAD
+=======
+	.string	"%ld"
+	.text
+.LC00:
+>>>>>>> 4a35928b8a6540d2b84bdd271e737b26a60c098a
 	.string	"%d"
 	.text
 	.globl	in_int
@@ -25,7 +31,11 @@ out_int:
 	subq	$16, %rsp
 	pushq	%rax
 	movq	16(%rbp), %rsi
+<<<<<<< HEAD
 	movl	$.LC0, %edi
+=======
+	movl	$.LC00, %edi
+>>>>>>> 4a35928b8a6540d2b84bdd271e737b26a60c098a
 	##movl	$0, %eax		#not sure if necessary
 	call	printf
 	popq	%rax
@@ -77,6 +87,7 @@ out_string:
 	.type main, @function
 main:
 	pushq %rbp
+<<<<<<< HEAD
 	movq %rsp, %rdx
 	movq %rdx, %rbp
 	movq $2, %rbx
@@ -93,6 +104,44 @@ main:
 	movq $1, %rax
 	movq $0, %rdx
 	cmoveq %rdx, %rax
+=======
+	movq %rsp, %rbp
+	movq $2, %rax
+	movq $2, %rbx
+	imulq %rbx
+	movq $1, %rbx
+	movq $2, %rcx
+	addq %rcx, %rbx
+	movq $3, %rcx
+	addq %rcx, %rbx
+	cmp %rbx, %rax
+	movq $1, %rbx
+	movq $0, %rdx
+	cmoveq %rdx, %rbx
+	movq %rbx, %rax
+	xorq $1, %rax
+	cmp $0, %rax
+	je Main_main_0
+	movq $12, %rax
+	pushq %rdi
+	pushq %rsi
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+	popq %rsi
+	popq %rdi
+	jmp Main_main_1
+Main_main_0:
+	movq $34, %rax
+	pushq %rdi
+	pushq %rsi
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+	popq %rsi
+	popq %rdi
+Main_main_1:
+>>>>>>> 4a35928b8a6540d2b84bdd271e737b26a60c098a
 	movq %rbp, %rsp
 	popq %rbp
 	ret

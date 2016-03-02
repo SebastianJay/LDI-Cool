@@ -163,8 +163,13 @@ def expConvert(node):
         op2 = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(op1, regr0))
         TACIndexer.pushIns(TACAssign(op2, regr1))
-        TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
-        return op2
+        if node.expr in ['plus','minus','times','divide']:
+            #abuse of notation - for non-commutative operators, having op2 as 1st operand is useful
+            TACIndexer.pushIns(TACOp2(op1, astTacMap[node.expr], op2, op1))
+            return op1
+        else:
+            TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
+            return op2
 
     # NOTE: Don't think static or dynamic needed for this
     elif node.expr == 'dynamic_dispatch':

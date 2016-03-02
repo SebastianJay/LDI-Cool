@@ -22,7 +22,6 @@ cRegMap = {
 rsp = '%rsp'
 rbp = '%rbp'
 retreg = 0
-tmpreg = 13
 
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
@@ -57,7 +56,10 @@ class ASMOp(ASMInstruction):
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
         
-        # Make sure last operand is also destination
+        if self.opcode == '/':
+            asm.append(ASMAssign('%rdx', '$0'))     #clear out top half of dividend
+            asm.append(ASMMisc('cltq'))             #sign extend TODO review command
+        
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
@@ -170,6 +172,9 @@ class ASMCall(ASMControl):
         self.args = args
     def expand(self):
         asm = []
+        #caller save registers
+        asm.append(ASMPush('%rdi'))
+        asm.append(ASMPush('%rsi'))
         #push args onto stack
         for arg in self.args:
             asm.append(ASMPush(arg))
@@ -178,6 +183,9 @@ class ASMCall(ASMControl):
         if len(self.args) != 0:
             lisize = '$'+str(len(self.args) * 8)
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
+        #restore registers
+        asm.append(ASMPop('%rsi'))
+        asm.append(ASMPop('%rdi'))
         return asm
     def __str__(self):
         return 'call ' + self.funcname
@@ -228,6 +236,18 @@ class ASMBT(ASMControl):
         return [ASMCmp('$0', self.cond), self]
     def __str__(self):
         return 'je ' + self.label
+
+class ASMMisc(ASMInstruction):
+    def __init__(self, cmd, args=[]):
+        self.cmd = cmd
+        self.args = args
+    def __str__(self):
+        retval = self.cmd
+        for i, arg in enumerate(self.args):
+            retval += arg
+            if i < len(self.args) - 1:
+                retval += ', '
+        return retval
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands
@@ -307,8 +327,11 @@ def asmStr(asmlst):
         if not isinstance(ins, ASMLabel):
             outbuf += '\t'
         outbuf += str(ins) + '\n'
-    return internals + outbuf
+    return readInternals('internals.s.txt') + outbuf
 
+def readInternals(path):
+    with open(path, 'rU') as inFile:
+        return inFile.read()
 
 if __name__ == '__main__':
     with open(sys.argv[1], 'U') as inFile:
@@ -325,81 +348,3 @@ if __name__ == '__main__':
         for asmsubins in asminslst:
             outbuf = outbuf + str(asmsubins) + '\n'
     print outbuf
-
-
-internals = """.LC0:
-	.string	"%d"
-	.text
-	.globl	in_int
-	.type	in_int, @function
-in_int:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$16, %rsp
-	leaq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	movl	$.LC0, %edi
-	movl	$0, %eax
-	call	scanf
-	movq	-8(%rbp), %rax
-	leave
-	ret
-.LFE2:
-	.size	in_int, .-in_int
-	.globl	out_int
-	.type	out_int, @function
-out_int:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$16, %rsp
-	pushq	%rax
-	movq	16(%rbp), %rsi
-	movl	$.LC0, %edi
-	##movl	$0, %eax		#not sure if necessary
-	call	printf
-	popq	%rax
-	leave
-	ret
-.LFE3:
-	.size	out_int, .-out_int
-	.globl	in_string
-	.type	in_string, @function
-in_string:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$16, %rsp
-	movl	$1, %esi
-	movl	$4096, %edi
-	call	calloc
-	movq	%rax, -8(%rbp)
-	movq	stdin(%rip), %rdx
-	movq	-8(%rbp), %rax
-	movl	$4096, %esi
-	movq	%rax, %rdi
-	call	fgets
-	movq	-8(%rbp), %rax
-	leave
-	ret
-.LFE4:
-	.size	in_string, .-in_string
-	.section	.rodata
-.LC1:
-	.string	"%s"
-	.text
-	.globl	out_string
-	.type	out_string, @function
-out_string:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$16, %rsp
-	pushq	%rax
-	movq	16(%rbp), %rsi
-	movl	$.LC1, %edi
-	##movl	$0, %eax		#not sure if necessary
-	call	printf
-	popq	%rax
-	leave
-	ret
-.LFE5:
-	.size	out_string, .-out_string
-"""

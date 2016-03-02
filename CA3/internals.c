@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-long in_int()
+int in_int()
 {
     int i;
     scanf("%d", &i);
-    return i; 
+    return i;
 }
 
 void out_int(int i)
@@ -34,5 +34,3 @@ int main(int argc, char** argv)
     out_string(c);
     return 0;
 }
-
-

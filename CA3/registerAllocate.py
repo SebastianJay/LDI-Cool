@@ -9,7 +9,7 @@ def genRegGraph(cfg):
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
-        
+
         # Update graph connections
         for t in live:
             if t not in regGraph:
@@ -21,19 +21,19 @@ def genRegGraph(cfg):
             killed = deadcode.getWritten(inst)
             if killed is not None and killed in live:
                 live.remove(killed)
-                
+
             # Live when used
             used = deadcode.getRead(inst)
             if used is not None:
                 for r in used:
                     live.add(r)
-            
+
             # Update graph connections
             for t in live:
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
                 regGraph[t][0] |= {r for r in live if r != t}
-        
+
             # Allocate accumulator to return val of a function
             if isinstance(inst,TAC_serialize.TACCall):
                 regGraph[inst.assignee][1] = 0
@@ -60,10 +60,10 @@ def registerAllocate(cfg, nregs):
 
     # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
     def colorGraph(graph):
-        
+
         # Use degree order as heuristic for coloring order
         degreeOrder = sorted(graph, key=lambda x: -deg[x])
-        
+
         maxColor = 0
         for node in degreeOrder:
             
@@ -85,7 +85,7 @@ def registerAllocate(cfg, nregs):
 
             # Set color to lowest available
             graph[node][1] = min(availableColors)
-            
+
             # Increment maxColor if we need a new color
             if graph[node][1] == maxColor+1:
                 maxColor += 1
@@ -93,35 +93,32 @@ def registerAllocate(cfg, nregs):
                     return False
         return True
 
-    maxSpill = 1
-    spillMap = {}
+    # maxSpill = 1
+    # spillMap = {}
 
-    while not colorGraph(regGraph):
-        # Reinitialize graph coloring
-        regGraph = genRegGraph(cfg)
-        for s in spillMap:
-            regGraph[s][1] = spillMap[s]
+    # while not colorGraph(regGraph):
+    #     # Reinitialize graph coloring
+    #     regGraph = genRegGraph(cfg)
+    #     for s in spillMap:
+    #         regGraph[s][1] = spillMap[s]
 
-        # Spill a temp
-        nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
-        availableSpills = set(range(nregs+1,nregs+maxSpill+2))
+    #     # Spill a temp
+    #     nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
+    #     availableSpills = set(range(nregs+1,nregs+maxSpill+2))
 
-        for adj in regGraph[nspill][0]:
-            availableSpills -= {regGraph[adj][1]}
+    #     for adj in regGraph[nspill][0]:
+    #         availableSpills -= {regGraph[adj][1]}
 
-        spillMap[nspill] = min(availableSpills)
+    #     spillMap[nspill] = min(availableSpills)
 
-        if spillMap[nspill] == nregs+maxSpill+1:
-            maxSpill+=1
+    #     if spillMap[nspill] == nregs+maxSpill+1:
+    #         maxSpill+=1
 
-        regGraph[nspill][1] = spillMap[nspill]
-
-
-        
-
-
+    #     regGraph[nspill][1] = spillMap[nspill]
+    
+    colorGraph(regGraph)
     regMap = {}
     for node in regGraph:
         regMap[node] = regGraph[node][1]
-    
+
     return regMap
