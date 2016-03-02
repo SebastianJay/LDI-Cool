@@ -22,7 +22,6 @@ cRegMap = {
 rsp = '%rsp'
 rbp = '%rbp'
 retreg = 0
-tmpreg = 13
 
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
@@ -47,6 +46,9 @@ class ASMOp(ASMInstruction):
             asm.append(ASMCmp(self.operands[1], self.operands[0]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
+        if self.opcode == '/':
+            asm.append(ASMAssign('%rdx', '$0'))     #clear out top half of dividend
+            asm.append(ASMMisc('cltq'))             #sign extend TODO review command
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
@@ -206,6 +208,18 @@ class ASMBT(ASMControl):
         return [ASMCmp('$0', self.cond), self]
     def __str__(self):
         return 'je ' + self.label
+
+class ASMMisc(ASMInstruction):
+    def __init__(self, cmd, args=[]):
+        self.cmd = cmd
+        self.args = args
+    def __str__(self):
+        retval = self.cmd
+        for i, arg in enumerate(self.args):
+            retval += arg
+            if i < len(self.args) - 1:
+                retval += ', '
+        return retval
 #end ASM class definitions
 
 #returns list of colors of registers that must be used for specified x86 commands

@@ -81,26 +81,33 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $1, %rax
-	negq %rax
+	movq $2, %rax
 	movq $2, %rbx
-	addq %rbx, %rax
+	imulq %rbx
+	movq $1, %rbx
+	movq $2, %rcx
+	addq %rcx, %rbx
 	movq $3, %rcx
-	movq %rax, %rbx
-	movq %rcx, %rax
-	subq %rax, %rbx
-	movq $4, %rax
-	movq $22, %rcx
-	imulq %rcx
-	movq $13, %rcx
-	negq %rcx
+	addq %rcx, %rbx
+	cmp %rbx, %rax
+	movq $1, %rbx
 	movq $0, %rdx
-	cltq
-	idivq %rcx
-	addq %rax, %rbx
-	pushq %rbx
+	cmoveq %rdx, %rbx
+	movq %rbx, %rax
+	xorq $1, %rax
+	cmp $0, %rax
+	je Main_main_0
+	movq $12, %rax
+	pushq %rax
 	call out_int
 	addq $8, %rsp
+	jmp Main_main_1
+Main_main_0:
+	movq $34, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp
 	ret
