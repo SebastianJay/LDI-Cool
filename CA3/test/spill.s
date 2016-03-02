@@ -162,9 +162,19 @@ main:
 	addq %r15, %r14
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	pushq %r14
 	call out_int
 	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	addq %r12, %r13
@@ -205,9 +215,19 @@ main:
 	addq %rbx, %rax
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	movq %rbp, %rsp

@@ -84,7 +84,17 @@ main:
 	movq %rdx, %rbp
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	call in_int
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	movq %rax, %rbx
@@ -104,9 +114,19 @@ Main_main_0:
 	addq %rcx, %rax
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	jmp Main_main_0
@@ -127,9 +147,19 @@ Main_main_2:
 	addq %rcx, %rax
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	jmp Main_main_2
@@ -150,9 +180,19 @@ Main_main_4:
 	addq %rbx, %rax
 	pushq %rdi
 	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rsi
 	popq %rdi
 	jmp Main_main_4
