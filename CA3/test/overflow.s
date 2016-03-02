@@ -103,13 +103,14 @@ main:
 	popq %rsi
 	popq %rdi
 	movq $2147483647, %rax
-	negq %rax
-	movq $2, %rbx
+	movq %rax, %rbx
 	negq %rbx
-	addq %rbx, %rax
+	movq $2, %rax
+	negq %rax
+	addq %rax, %rbx
 	pushq %rdi
 	pushq %rsi
-	pushq %rax
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	popq %rsi

@@ -163,14 +163,26 @@ def expConvert(node):
         op2 = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(op1, regr0))
         TACIndexer.pushIns(TACAssign(op2, regr1))
+        resreg = op1
         if node.expr in ['plus','minus','times','divide']:
             #abuse of notation - for non-commutative operators, having op2 as 1st operand is useful
             TACIndexer.pushIns(TACOp2(op1, astTacMap[node.expr], op2, op1))
-            return op1
+            resreg = op1
         else:
             TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
-            return op2
+            resreg = op2
+        
+        # Hacky solution for conflicts with consecutive divides,
+        # Spill result over to another temporary to give result
+        # a chance to get out of rax
+        if node.expr in ['times', 'divide']:
+            spillreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(spillreg, resreg))
+            resreg = spillreg
 
+        return resreg
+
+            
     # NOTE: Don't think static or dynamic needed for this
     elif node.expr == 'dynamic_dispatch':
         pass
