@@ -7,7 +7,7 @@ cRegMap = {
     0 : '%rax',     #return value for function calls
     1 : '%rbx',
     2 : '%rcx',
-#    3 : '%rdx',    # Save rdx for multiplication, division, and bool logic
+#    3 : '%rdx',    # Save rdx for multiplication, division, double memory, and bool logic
     3 : '%rsi',
     4 : '%rdi',
     5 : '%r8',      #64 bit mode registers
@@ -43,14 +43,27 @@ class ASMOp(ASMInstruction):
         self.operands = operands
     def expand(self):
         asm = []
+
+        # If operating on two memory addresses
+        if len(self.operands)==2 and not (self.operands[0] in cRegMap.values() 
+                or self.operands[1] in cRegMap.values()):
+            asm.append(ASMAssign('%rdx',self.operands[0]))
+            self.operands[0] = '%rdx'
+        
+        # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
             asm.append(ASMCmp(self.operands[1], self.operands[0]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
+        
+        # Make sure last operand is also destination
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
+        
         asm.append(self)
+
+
         return asm
     def __str__(self):
         if self.opcode == '+':
@@ -87,6 +100,14 @@ class ASMAssign(ASMInstruction):
     def __init__(self, assignee, assignor):
         self.assignee = assignee
         self.assignor = assignor
+    def expand(self):
+        # Memory-memory move fix
+        asm = []
+        if not (self.assignor in cRegMap.values() or self.assignee in cRegMap.values()):
+            asm.append(ASMAssign('%rdx', self.assignor))
+            self.assignor = '%rdx'
+        asm.append(self)
+        return asm
     def __str__(self):
         return 'movq ' + self.assignor + ', ' + self.assignee
 
@@ -219,7 +240,7 @@ def funcConvert(cfg, regMap):
 
     def realReg(vreg):
         if regMap[vreg] not in cRegMap:
-            return '%r15'   ##TODO throw error (or remove when spilling done)
+            return str(8*(regMap[vreg]-len(cRegMap))) + "(%rsp)"
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
@@ -228,13 +249,20 @@ def funcConvert(cfg, regMap):
         ASMInfo('type', 'main', '@function'),
         ASMLabel('main')
     ]
+
     #function prologue
     asmlst += [
         ASMPush(rbp),
         ASMAssign(rbp, rsp),
     ]
-    #print inslst
-    #print regMap
+
+    # Allocate stack space for temporaries
+    stackmem = 8*(max(regMap.values()) - len(cRegMap) + 1)
+    if stackmem > 0:
+        asmlst+=[
+            ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
+        ]
+
     for ins in inslst:
         if isinstance(ins, TACOp):
             operands = [realReg(ins.op1), realReg(ins.op2)] \
@@ -258,6 +286,8 @@ def funcConvert(cfg, regMap):
             asmlst.append(ASMBT(realReg(ins.cond), ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
+            
+    # Remove useless mov instructions
     rmlist = []
     for i, ins in enumerate(asmlst):
         if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:

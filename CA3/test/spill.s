@@ -79,27 +79,73 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
-	movq $2147483647, %rax
-	movq $1, %rbx
-	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $2147483647, %rbx
+	movq $48, %rdx
+	subq %rdx, %rsp
+	movq $1, %rax
+	movq %rax, 32(%rsp)
+	movq $2, %rax
+	movq %rax, 40(%rsp)
+	movq $3, %rax
+	movq %rax, 24(%rsp)
 	movq $4, %rax
-	imulq %rbx
+	movq %rax, 16(%rsp)
+	movq $5, %rax
+	movq %rax, 8(%rsp)
+	movq $6, %rax
+	movq %rax, 0(%rsp)
+	movq $7, %rax
+	movq %rax, %r15
+	movq $8, %rax
+	movq %rax, %r14
+	movq $9, %rax
+	movq %rax, %r13
+	movq $10, %rax
+	movq %rax, %r12
+	movq $11, %rax
+	movq %rax, %r11
+	movq $12, %rax
+	movq %rax, %r10
+	movq $13, %rax
+	movq %rax, %r9
+	movq $14, %rax
+	movq %rax, %r8
+	movq $15, %rax
+	movq %rax, %rdi
+	movq $16, %rax
+	movq %rax, %rsi
+	movq $17, %rax
+	movq %rax, %rcx
+	movq $19, %rax
+	movq %rax, %rbx
+	movq $20, %rax
+	movq 32(%rsp), %rdx
+	addq %rdx, 40(%rsp)
+	movq 40(%rsp), %rdx
+	movq %rdx, 32(%rsp)
+	movq 32(%rsp), %rdx
+	addq %rdx, 24(%rsp)
+	movq 24(%rsp), %rdx
+	addq %rdx, 16(%rsp)
+	movq 16(%rsp), %rdx
+	addq %rdx, 8(%rsp)
+	movq 8(%rsp), %rdx
+	addq %rdx, 0(%rsp)
+	addq 0(%rsp), %r15
+	addq %r15, %r14
+	addq %r14, %r13
+	addq %r13, %r12
+	addq %r12, %r11
+	addq %r11, %r10
+	addq %r10, %r9
+	addq %r9, %r8
+	addq %r8, %rdi
+	addq %rdi, %rsi
+	addq %rsi, %rcx
+	addq %rcx, %rbx
+	addq %rbx, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	movq $2147483647, %rax
-	negq %rax
-	movq $2, %rbx
-	negq %rbx
-	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $0, %rax
 	movq %rbp, %rsp
 	popq %rbp
 	ret

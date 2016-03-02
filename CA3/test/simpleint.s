@@ -77,7 +77,8 @@ out_string:
 	.type main, @function
 main:
 	pushq %rbp
-	movq %rsp, %rbp
+	movq %rsp, %rdx
+	movq %rdx, %rbp
 	movq $1, %rax
 	movq %rax, %rbx
 	negq %rbx

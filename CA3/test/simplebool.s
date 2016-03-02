@@ -79,27 +79,20 @@ main:
 	pushq %rbp
 	movq %rsp, %rdx
 	movq %rdx, %rbp
-	movq $2147483647, %rax
-	movq $1, %rbx
-	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $2147483647, %rbx
-	movq $4, %rax
-	imulq %rbx
-	pushq %rax
-	call out_int
-	addq $8, %rsp
-	movq $2147483647, %rax
-	negq %rax
 	movq $2, %rbx
-	negq %rbx
-	addq %rax, %rbx
-	pushq %rbx
-	call out_int
-	addq $8, %rsp
-	movq $0, %rax
+	movq $2, %rax
+	imulq %rbx
+	movq $1, %rbx
+	movq $2, %rcx
+	addq %rbx, %rcx
+	movq $3, %rbx
+	addq %rcx, %rbx
+	movq %rax, %rcx
+	movq %rbx, %rax
+	cmp %rax, %rcx
+	movq $1, %rax
+	movq $0, %rdx
+	cmoveq %rdx, %rax
 	movq %rbp, %rsp
 	popq %rbp
 	ret
