@@ -84,23 +84,35 @@ main:
 	movq $2147483647, %rax
 	movq $1, %rbx
 	addq %rbx, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq $2147483647, %rax
 	movq $4, %rbx
 	imulq %rbx
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq $2147483647, %rax
 	negq %rax
 	movq $2, %rbx
 	negq %rbx
 	addq %rbx, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq $0, %rax
 	movq %rbp, %rsp
 	popq %rbp

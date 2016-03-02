@@ -98,15 +98,23 @@ main:
 	cmp $0, %rax
 	je Main_main_0
 	movq $12, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	jmp Main_main_1
 Main_main_0:
 	movq $34, %rax
+	pushq %rdi
+	pushq %rsi
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp

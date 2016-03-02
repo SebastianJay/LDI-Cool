@@ -98,9 +98,13 @@ main:
 	cltq
 	idivq %rcx
 	addq %rax, %rbx
+	pushq %rdi
+	pushq %rsi
 	pushq %rbx
 	call out_int
 	addq $8, %rsp
+	popq %rsi
+	popq %rdi
 	movq %rbp, %rsp
 	popq %rbp
 	ret
