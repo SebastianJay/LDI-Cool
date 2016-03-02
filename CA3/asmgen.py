@@ -45,8 +45,9 @@ class ASMOp(ASMInstruction):
         asm = []
 
         # If operating on two memory addresses
-        if len(self.operands)==2 and not (self.operands[0] in cRegMap.values() 
-                or self.operands[1] in cRegMap.values()):
+        if len(self.operands)==2 and not (
+                self.operands[0] in cRegMap.values() or self.operands[0][0] == '$' 
+                or self.operands[1] in cRegMap.values() or self.operands[1][0] == '$'):
             asm.append(ASMAssign('%rdx',self.operands[0]))
             self.operands[0] = '%rdx'
         
@@ -240,7 +241,7 @@ def funcConvert(cfg, regMap):
 
     def realReg(vreg):
         if regMap[vreg] not in cRegMap:
-            return str(8*(regMap[vreg]-len(cRegMap))) + "(%rsp)"
+            return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + "(%rbp)"
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
