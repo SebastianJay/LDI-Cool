@@ -55,30 +55,33 @@ def degree(regGraph):
 # temporary value, any register index higher than the allowed should go to memory
 def registerAllocate(cfg, nregs):
     regGraph = genRegGraph(cfg)
+    deg = degree(regGraph)
     
 
     # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
     def colorGraph(graph):
         
         # Use degree order as heuristic for coloring order
-        deg = degree(graph)
         degreeOrder = sorted(graph, key=lambda x: -deg[x])
         
         maxColor = 0
         for node in degreeOrder:
             
+
+            # Handle conflicts with pre-colored nodes
+            if graph[node][1] != -1:
+                continue
+
             # Eliminate colors of adjacent nodes
             availableColors = set(range(maxColor+2)) # [0,..,maxColor+1]
             for adj in graph[node][0]:
                 availableColors -= {graph[adj][1]}
-
-            # Handle conflicts with pre-colored nodes
-            if graph[node][1] != -1:
-                if graph[node][1] not in availableColors:
-                    return False
-                else:
-                    continue
-
+            
+            # When all registers used and something has already been spilled,
+            # the maxColor+1 is blocked and availableColors will be empty
+            if len(availableColors) == 0:
+                return False
+            
             # Set color to lowest available
             graph[node][1] = min(availableColors)
             
@@ -97,7 +100,6 @@ def registerAllocate(cfg, nregs):
         regGraph = genRegGraph(cfg)
         for s in spillMap:
             regGraph[s][1] = spillMap[s]
-
         # Spill a temp
         nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
         availableSpills = set(range(nregs+1,nregs+maxSpill+2))

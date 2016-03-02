@@ -85,16 +85,14 @@ main:
 	movq $2, %rax
 	movq $2, %rbx
 	imulq %rbx
-	movq $1, %rbx
-	movq $2, %rcx
-	addq %rcx, %rbx
-	movq $3, %rcx
-	addq %rcx, %rbx
-	cmp %rbx, %rax
-	movq $1, %rbx
+	movq %rax, %rbx
+	movq $3, %rax
+	movq $4, %rcx
+	imulq %rcx
+	cmp %rax, %rbx
+	movq $1, %rax
 	movq $0, %rdx
-	cmoveq %rdx, %rbx
-	movq %rbx, %rax
+	cmoveq %rdx, %rax
 	xorq $1, %rax
 	cmp $0, %rax
 	je Main_main_0
