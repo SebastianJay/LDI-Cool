@@ -57,7 +57,6 @@ def registerAllocate(cfg, nregs):
     regGraph = genRegGraph(cfg)
     deg = degree(regGraph)
     
-
     # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
     def colorGraph(graph):
         
@@ -102,19 +101,19 @@ def registerAllocate(cfg, nregs):
             regGraph = genRegGraph(cfg)
             for s in spillMap:
                 regGraph[s][1] = spillMap[s]
-                # Spill a temp
-                nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
-                availableSpills = set(range(nregs+1,nregs+maxSpill+2))
+            # Spill a temp
+            nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
+            availableSpills = set(range(nregs+1,nregs+maxSpill+2))
+            
+            for adj in regGraph[nspill][0]:
+                availableSpills -= {regGraph[adj][1]}
                 
-                for adj in regGraph[nspill][0]:
-                    availableSpills -= {regGraph[adj][1]}
-                    
-                    spillMap[nspill] = min(availableSpills)
-                    
-                    if spillMap[nspill] == nregs+maxSpill+1:
-                        maxSpill+=1
-                        
-                        regGraph[nspill][1] = spillMap[nspill]
+            spillMap[nspill] = min(availableSpills)
+            
+            if spillMap[nspill] == nregs+maxSpill+1:
+                maxSpill+=1
+                
+            regGraph[nspill][1] = spillMap[nspill]
                         
     else:
         colorGraph(regGraph)
