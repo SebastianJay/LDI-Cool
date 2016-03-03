@@ -139,18 +139,29 @@ main:
 	negq %rax
 	movq $2, %rbx
 	addq %rbx, %rax
+	shlq $32, %rax
+	shrq $32, %rax
 	movq $3, %rcx
 	movq %rax, %rbx
 	movq %rcx, %rax
 	subq %rax, %rbx
+	shlq $32, %rbx
+	shrq $32, %rbx
 	movq $4, %rax
 	movq $22, %rcx
 	imulq %rcx
+	shlq $32, %rax
+	shrq $32, %rax
 	movq $13, %rcx
 	negq %rcx
+	cltq
 	cqto
 	idivq %rcx
+	shlq $32, %rax
+	shrq $32, %rax
 	addq %rax, %rbx
+	shlq $32, %rbx
+	shrq $32, %rbx
 	pushq %rbx
 	call out_int
 	addq $8, %rsp

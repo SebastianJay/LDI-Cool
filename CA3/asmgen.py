@@ -47,7 +47,7 @@ class ASMOp(ASMInstruction):
 
         # If operating on two memory addresses
         if len(self.operands)==2 and not (
-            self.operands[0] in registers or self.operands[0][0] == '$' 
+            self.operands[0] in registers or self.operands[0][0] == '$'
             or self.operands[1] in registers or self.operands[1][0] == '$'):
 
             asm.append(ASMAssign('%rdx',self.operands[0]))
@@ -60,7 +60,8 @@ class ASMOp(ASMInstruction):
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
 
         if self.opcode == '/':
-            asm.append(ASMMisc('cqto'))     #sign extend dividend (rdx:rax)
+            asm.append(ASMMisc('cltq'))     #sign extend eax to rax
+            asm.append(ASMMisc('cqto'))     #sign extend rax to rdx:rax
 
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
@@ -68,6 +69,10 @@ class ASMOp(ASMInstruction):
 
         asm.append(self)
 
+        if self.opcode in ['+', '-', '*', '/'] and self.assignee not in [rsp, rbp]:
+            #0- or 1-extend the upper half of the 64 bit register
+            asm.append(ASMOp(self.assignee, '<<', ['$32', self.assignee]))
+            asm.append(ASMOp(self.assignee, '>>', ['$32', self.assignee]))
 
         return asm
     def __str__(self):
@@ -91,6 +96,14 @@ class ASMOp(ASMInstruction):
             pass
         elif self.opcode == '~':
             return 'negq ' + self.operands[0]
+        elif self.opcode == '&':
+            return 'andq ' + self.operands[0] + ', ' + self.assignee
+        elif self.opcode == '|':
+            return 'orq ' + self.operands[0] + ', ' + self.assignee
+        elif self.opcode == '<<':
+            return 'shlq ' + self.operands[0] + ', ' + self.assignee
+        elif self.opcode == '>>':
+            return 'sarq ' + self.operands[0] + ', ' + self.assignee    #arithmetic, so sign is preserved
         return '\n'
 
 class ASMCmp(ASMInstruction):

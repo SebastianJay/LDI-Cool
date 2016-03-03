@@ -135,17 +135,115 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	call in_int
-	movq $3, %rbx
+	movq $2, %rax
+	movq $2, %rbx
+	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rbx
+	movq $3, %rax
+	movq $4, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq %rbx, %rax
+	movq %rcx, %rbx
+	cmpq %rbx, %rax
+	movq $1, %rbx
+	movq $0, %rdx
+	cmovleq %rdx, %rbx
+	movq %rbx, %rax
+	xorq $1, %rax
+	cmpq $0, %rax
+	je Main_main_0
+	movq $14, %rax
+	negq %rax
+	negq %rax
+	movq $35, %rcx
+	movq $90, %rbx
+	subq %rbx, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
+	movq %rax, %rbx
+	movq %rcx, %rax
+	addq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	movq $0, %rcx
+	movq $44, %rsi
+	movq $22, %rax
+	movq $11, %rdi
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rdi
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
+	addq %rax, %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq %rbx, %rax
+	movq %rcx, %rbx
+	cmpq %rbx, %rax
+	movq $1, %rbx
+	movq $0, %rdx
+	cmovlq %rdx, %rbx
+	movq %rbx, %rax
+	xorq $1, %rax
+	cmpq $0, %rax
+	je Main_main_1
+	movq $2, %rbx
+	movq $2, %rax
+	addq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	movq $2, %rax
+	movq $2, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq %rbx, %rax
+	movq %rcx, %rbx
+	cmpq %rbx, %rax
+	movq $1, %rbx
+	movq $0, %rdx
+	cmoveq %rdx, %rbx
+	movq %rbx, %rax
+	xorq $1, %rax
+	cmpq $0, %rax
+	je Main_main_2
+	movq $1, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	movq $22, %rax
+	jmp Main_main_3
+Main_main_2:
+	movq $2, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+Main_main_3:
+	jmp Main_main_4
+Main_main_1:
+	movq $3, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+Main_main_4:
+	jmp Main_main_5
+Main_main_0:
+	movq $4, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+Main_main_5:
 	movq %rbp, %rsp
 	popq %rbp
 	ret
