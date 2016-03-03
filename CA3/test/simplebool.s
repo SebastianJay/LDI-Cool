@@ -142,12 +142,12 @@ main:
 	movq $3, %rax
 	movq $4, %rcx
 	imulq %rcx
-	cmp %rax, %rbx
+	cmpq %rax, %rbx
 	movq $1, %rax
 	movq $0, %rdx
 	cmoveq %rdx, %rax
 	xorq $1, %rax
-	cmp $0, %rax
+	cmpq $0, %rax
 	je Main_main_0
 	movq $12, %rax
 	pushq %rax

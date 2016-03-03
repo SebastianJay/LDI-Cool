@@ -98,7 +98,7 @@ class ASMCmp(ASMInstruction):
         self.op1 = op1
         self.op2 = op2
     def __str__(self):
-        return 'cmp ' + self.op1 + ', ' + self.op2
+        return 'cmpq ' + self.op1 + ', ' + self.op2
 
 #ASM instruction which assigns one variable into another
 class ASMAssign(ASMInstruction):
