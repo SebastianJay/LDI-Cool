@@ -139,13 +139,13 @@ main:
 	movq $2, %rbx
 	imulq %rbx
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	movq %rax, %rbx
 	movq $3, %rax
 	movq $4, %rcx
 	imulq %rcx
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	cmpq %rax, %rbx
 	movq $1, %rax
 	movq $0, %rdx

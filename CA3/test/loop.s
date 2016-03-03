@@ -151,6 +151,8 @@ Main_main_0:
 	je Main_main_1
 	movq $1, %rcx
 	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -170,6 +172,8 @@ Main_main_2:
 	je Main_main_3
 	movq $1, %rcx
 	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -189,6 +193,8 @@ Main_main_4:
 	je Main_main_5
 	movq $1, %rbx
 	addq %rbx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp

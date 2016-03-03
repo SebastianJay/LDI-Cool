@@ -141,7 +141,7 @@ main:
 	cqto
 	idivq %rbx
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp

@@ -139,7 +139,7 @@ main:
 	movq $1, %rbx
 	addq %rbx, %rax
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -147,7 +147,7 @@ main:
 	movq $4, %rbx
 	imulq %rbx
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -157,7 +157,7 @@ main:
 	negq %rbx
 	addq %rbx, %rax
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -167,7 +167,7 @@ main:
 	movq $1, %rax
 	subq %rax, %rbx
 	shlq $32, %rbx
-	shrq $32, %rbx
+	sarq $32, %rbx
 	pushq %rbx
 	call out_int
 	addq $8, %rsp
@@ -178,7 +178,7 @@ main:
 	cqto
 	idivq %rbx
 	shlq $32, %rax
-	shrq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp

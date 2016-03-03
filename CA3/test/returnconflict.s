@@ -189,53 +189,103 @@ main:
 	call in_int
 	movq %r9, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r8, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r12, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r10, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r11, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r14, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r15, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -0(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %r13, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -48(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -40(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -32(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -8(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -24(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -16(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -64(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -72(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -80(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -56(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -104(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -96(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq -88(%rbp), %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %rsi, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq %rdi, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	addq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	pushq %rbx
 	call out_int
 	addq $8, %rsp

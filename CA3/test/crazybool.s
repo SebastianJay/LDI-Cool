@@ -172,25 +172,41 @@ Main_main_2:
 	movq $1170, %rcx
 	movq $33472, %rax
 	movq $7201, %rsi
+	cltq
 	cqto
 	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
 	movq %rax, %rsi
 	movq %rcx, %rax
 	movq %rsi, %rcx
 	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $46167, %rsi
 	movq %rax, %rcx
 	movq %rsi, %rax
 	addq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	movq $1823, %rax
 	movq $177, %rsi
+	cltq
 	cqto
 	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $32704, %rsi
 	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $16280, %rsi
 	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
 	subq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	call in_int
 	movq %rax, %rsi
 	movq %rcx, %rax
@@ -239,6 +255,8 @@ Main_main_5:
 	negq %rax
 	movq $11440, %rbx
 	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -248,6 +266,8 @@ Main_main_4:
 	movq $17155, %rcx
 	movq $30215, %rax
 	subq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	call in_int
 	movq %rax, %rsi
 	movq %rcx, %rax
@@ -264,6 +284,8 @@ Main_main_4:
 	movq $18046, %rcx
 	movq $29790, %rsi
 	subq %rsi, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	cmpq %rcx, %rax
 	movq $1, %rcx
 	movq $0, %rdx
@@ -362,8 +384,11 @@ Main_main_11:
 Main_main_19:
 	movq $63133, %rax
 	movq $31786, %rcx
+	cltq
 	cqto
 	idivq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq %rax, %rcx
 	call in_int
 	movq %rcx, %rbx
@@ -376,10 +401,15 @@ Main_main_19:
 	je Main_main_21
 	movq $8937, %rax
 	movq $45402, %rbx
+	cltq
 	cqto
 	idivq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $12855, %rbx
 	addq %rbx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -461,6 +491,8 @@ Main_main_14:
 	movq $22520, %rbx
 	movq $40813, %rcx
 	addq %rcx, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	cmpq %rbx, %rax
 	movq $1, %rbx
 	movq $0, %rdx
@@ -495,11 +527,16 @@ Main_main_13:
 	je Main_main_35
 	movq $9042, %rax
 	movq $58652, %rcx
+	cltq
 	cqto
 	idivq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq %rax, %rcx
 	movq $38511, %rax
 	subq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	call in_int
 	movq %rax, %rsi
 	movq %rcx, %rax
@@ -532,6 +569,8 @@ Main_main_37:
 	negq %rax
 	movq $33636, %rbx
 	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -554,15 +593,24 @@ Main_main_36:
 	movq $55166, %rax
 	negq %rax
 	movq $15469, %rbx
+	cltq
 	cqto
 	idivq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $12618, %rbx
 	negq %rbx
 	addq %rbx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $57963, %rbx
 	subq %rbx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $43177, %rbx
 	subq %rbx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
@@ -588,6 +636,8 @@ Main_main_10:
 	movq $4844, %rax
 	movq $42968, %rbx
 	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $9556, %rbx
 	cmpq %rbx, %rax
 	movq $1, %rbx
@@ -600,6 +650,8 @@ Main_main_10:
 	movq $21060, %rax
 	movq $19990, %rbx
 	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp

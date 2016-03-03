@@ -19,7 +19,7 @@ def boolexpgen():
         'E = in_int()'
     ]
     
-    closeProb = .5
+    closeProb = .2
     maxint = 65556
     maxits = 100
 
@@ -49,10 +49,12 @@ def boolexpgen():
         e = ne
         its+=1
 
-    return expgen(e, .7)
+    return expgen(e, .4)
 
 if __name__ == "__main__":
+    print "class Main inherits IO { main():Object {\n"
     print boolexpgen()
+    print "};};"
     
 
     
