@@ -1,5 +1,5 @@
 .LC0:
-	.string	"%ld"
+	.string	"%d"
 	.text
 .LC00:
 	.string	"%d"
@@ -27,8 +27,6 @@ in_int:
 	popq	%r9
 	popq	%r8
 	popq	%rcx
-	popq	%rsi
-	popq	%rdi
 	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
@@ -36,6 +34,13 @@ in_int:
 .L2:
 	movq	-8(%rbp), %rax
 .L4:
+	movq $0, %rsi
+	cmpq $2147483647, %rax
+	cmovgq %rsi, %rax
+	cmpq  $-2147483648, %rax
+	cmovlq %rsi, %rax
+	popq	%rsi
+	popq	%rdi
 	leave
 	ret
 .LFE2:
