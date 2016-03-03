@@ -140,7 +140,7 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def __str__(self):
-        return self.assignee + ' <- ' + self.allop + ' ' + self.ptype
+        return 'movq $0, ' + self.assignee 
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -156,9 +156,9 @@ class ASMConstant(ASMDeclare):
             return 'movq $' + str(self.const) + ', ' + self.assignee
         if self.ptype == 'bool':
             if self.const == 'true':
-                return 'movq $0, ' + self.assignee
-            else:
                 return 'movq $1, ' + self.assignee
+            else:
+                return 'movq $0, ' + self.assignee
 
 #"abstract" class for the control instructions
 class ASMControl(ASMInstruction):
@@ -244,7 +244,7 @@ class ASMBT(ASMControl):
     def expand(self):
         return [ASMCmp('$0', self.cond), self]
     def __str__(self):
-        return 'je ' + self.label
+        return 'jne ' + self.label
 
 class ASMMisc(ASMInstruction):
     def __init__(self, cmd, args=[]):
@@ -301,7 +301,7 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACAssign):
             asmlst.append(ASMAssign(realReg(ins.assignee), realReg(ins.assignor)))
         elif isinstance(ins, TACAllocate):
-            pass
+            asmlst.append(ASMAllocate(realReg(ins.assignee), ins.allop, ins.ptype))
         elif isinstance(ins, TACCall):
             #TODO make TAC take multiple args
             lstargs = [realReg(ins.op1)] if ins.op1 != '' else []

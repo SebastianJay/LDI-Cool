@@ -135,35 +135,10 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $2, %rax
-	movq $2, %rbx
-	imulq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, %rbx
-	movq $3, %rax
-	movq $4, %rcx
-	imulq %rcx
-	shlq $32, %rax
-	sarq $32, %rax
-	cmpq %rax, %rbx
 	movq $0, %rax
-	movq $1, %rdx
-	cmoveq %rdx, %rax
-	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_0
-	movq $12, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	jmp Main_main_1
-Main_main_0:
-	movq $34, %rax
-	pushq %rax
-	call out_int
-	addq $8, %rsp
-Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

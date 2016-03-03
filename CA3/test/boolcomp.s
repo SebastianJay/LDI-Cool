@@ -138,24 +138,24 @@ main:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rbx
 	movq $1, %rcx
 	cmpq %rcx, %rbx
-	movq $1, %rcx
-	movq $0, %rdx
+	movq $0, %rcx
+	movq $1, %rdx
 	cmovlq %rdx, %rcx
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_0
+	jne Main_main_0
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -170,23 +170,23 @@ Main_main_1:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rcx
 	movq $2, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_2
+	jne Main_main_2
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -201,23 +201,23 @@ Main_main_3:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rcx
 	movq $1, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_4
+	jne Main_main_4
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -232,23 +232,23 @@ Main_main_5:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rcx
 	movq $2, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_6
+	jne Main_main_6
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -267,23 +267,23 @@ Main_main_7:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rcx
 	movq $1, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_8
+	jne Main_main_8
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -298,23 +298,23 @@ Main_main_9:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rcx
 	movq $2, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_10
+	jne Main_main_10
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -329,23 +329,23 @@ Main_main_11:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rcx
 	movq $1, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_12
+	jne Main_main_12
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -360,23 +360,23 @@ Main_main_13:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rcx
 	movq $2, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_14
+	jne Main_main_14
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -395,24 +395,24 @@ Main_main_15:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rbx
 	movq $1, %rcx
 	cmpq %rcx, %rbx
-	movq $1, %rcx
-	movq $0, %rdx
+	movq $0, %rcx
+	movq $1, %rdx
 	cmovlq %rdx, %rcx
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_16
+	jne Main_main_16
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -427,24 +427,24 @@ Main_main_17:
 	movq $1, %rbx
 	movq $2, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rbx
 	movq $2, %rcx
 	cmpq %rcx, %rbx
-	movq $1, %rcx
-	movq $0, %rdx
+	movq $0, %rcx
+	movq $1, %rdx
 	cmovlq %rdx, %rcx
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_18
+	jne Main_main_18
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -459,23 +459,23 @@ Main_main_19:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $2, %rcx
 	movq $1, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_20
+	jne Main_main_20
 	movq $1, %rax
 	pushq %rax
 	call out_int
@@ -490,23 +490,23 @@ Main_main_21:
 	movq $2, %rbx
 	movq $1, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	movq $1, %rcx
 	movq $2, %rbx
 	cmpq %rbx, %rcx
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_22
+	jne Main_main_22
 	movq $1, %rax
 	pushq %rax
 	call out_int

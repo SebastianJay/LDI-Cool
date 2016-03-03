@@ -139,12 +139,12 @@ main:
 	movq %rax, %rbx
 	movq $4, %rax
 	cmpq %rax, %rbx
-	movq $1, %rax
-	movq $0, %rdx
+	movq $0, %rax
+	movq $1, %rdx
 	cmovlq %rdx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_0
+	jne Main_main_0
 	movq $25, %rax
 	pushq %rax
 	call out_int

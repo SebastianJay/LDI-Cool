@@ -150,13 +150,13 @@ main:
 	movq %rbx, %rax
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_0
+	jne Main_main_0
 	movq $14, %rax
 	negq %rax
 	negq %rax
@@ -191,13 +191,13 @@ main:
 	movq %rbx, %rax
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_1
+	jne Main_main_1
 	movq $2, %rbx
 	movq $2, %rax
 	addq %rax, %rbx
@@ -212,13 +212,13 @@ main:
 	movq %rbx, %rax
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
-	movq $1, %rbx
-	movq $0, %rdx
+	movq $0, %rbx
+	movq $1, %rdx
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
 	cmpq $0, %rax
-	je Main_main_2
+	jne Main_main_2
 	movq $1, %rax
 	pushq %rax
 	call out_int

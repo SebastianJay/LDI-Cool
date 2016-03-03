@@ -142,13 +142,13 @@ Main_main_0:
 	movq $5, %rsi
 	movq %rax, %rcx
 	cmpq %rsi, %rcx
-	movq $1, %rsi
-	movq $0, %rdx
+	movq $0, %rsi
+	movq $1, %rdx
 	cmovlq %rdx, %rsi
 	movq %rsi, %rcx
 	xorq $1, %rcx
 	cmpq $0, %rcx
-	je Main_main_1
+	jne Main_main_1
 	movq $1, %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
@@ -163,13 +163,13 @@ Main_main_2:
 	movq $5, %rsi
 	movq %rax, %rcx
 	cmpq %rsi, %rcx
-	movq $1, %rsi
-	movq $0, %rdx
+	movq $0, %rsi
+	movq $1, %rdx
 	cmovleq %rdx, %rsi
 	movq %rsi, %rcx
 	xorq $1, %rcx
 	cmpq $0, %rcx
-	je Main_main_3
+	jne Main_main_3
 	movq $1, %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
@@ -184,13 +184,13 @@ Main_main_4:
 	movq $5, %rcx
 	movq %rax, %rbx
 	cmpq %rcx, %rbx
-	movq $1, %rcx
-	movq $0, %rdx
+	movq $0, %rcx
+	movq $1, %rdx
 	cmoveq %rdx, %rcx
 	movq %rcx, %rbx
 	xorq $1, %rbx
 	cmpq $0, %rbx
-	je Main_main_5
+	jne Main_main_5
 	movq $1, %rbx
 	addq %rbx, %rax
 	shlq $32, %rax
