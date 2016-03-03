@@ -23,6 +23,8 @@ rsp = '%rsp'
 rbp = '%rbp'
 retreg = 0
 
+registers = cRegMap.values() + [rsp, rbp]
+
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
 # some may require auxiliary instructions like shifting between registers/stack
@@ -45,8 +47,8 @@ class ASMOp(ASMInstruction):
 
         # If operating on two memory addresses
         if len(self.operands)==2 and not (
-                self.operands[0] in cRegMap.values() or self.operands[0][0] == '$' 
-                or self.operands[1] in cRegMap.values() or self.operands[1][0] == '$'):
+                self.operands[0] in registers or self.operands[0][0] == '$' 
+                or self.operands[1] in registers or self.operands[1][0] == '$'):
             asm.append(ASMAssign('%rdx',self.operands[0]))
             self.operands[0] = '%rdx'
         
@@ -106,7 +108,7 @@ class ASMAssign(ASMInstruction):
     def expand(self):
         # Memory-memory move fix
         asm = []
-        if not (self.assignor in cRegMap.values() or self.assignee in cRegMap.values()):
+        if not (self.assignor in registers or self.assignor[0] == '$' or self.assignee in registers):
             asm.append(ASMAssign('%rdx', self.assignor))
             self.assignor = '%rdx'
         asm.append(self)

@@ -10,12 +10,26 @@ in_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	leaq	-8(%rbp), %rax
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	leaq	-8(%rbp), %rax	
 	movq	%rax, %rsi
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
-		testl	%eax, %eax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
+	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
 	jmp	.L4
@@ -33,10 +47,24 @@ out_int:
 	movq	%rsp, %rbp
 	subq	$16, %rsp
 	pushq	%rax
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movq	16(%rbp), %rsi
 	movl	$.LC00, %edi
 	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	popq	%rax
 	leave
 	ret
@@ -86,23 +114,8 @@ out_string:
 	.type main, @function
 main:
 	pushq %rbp
-	movq %rsp, %rdx
-	movq %rdx, %rbp
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
+	movq %rsp, %rbp
 	call in_int
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	movq %rax, %rbx
 	movq %rbx, %rax
 Main_main_0:
@@ -118,23 +131,9 @@ Main_main_0:
 	je Main_main_1
 	movq $1, %rcx
 	addq %rcx, %rax
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	jmp Main_main_0
 Main_main_1:
 	movq %rbx, %rax
@@ -151,23 +150,9 @@ Main_main_2:
 	je Main_main_3
 	movq $1, %rcx
 	addq %rcx, %rax
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	jmp Main_main_2
 Main_main_3:
 	movq %rbx, %rax
@@ -184,23 +169,9 @@ Main_main_4:
 	je Main_main_5
 	movq $1, %rbx
 	addq %rbx, %rax
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	jmp Main_main_4
 Main_main_5:
 	movq %rbp, %rsp

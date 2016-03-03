@@ -10,12 +10,26 @@ in_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	leaq	-8(%rbp), %rax
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	leaq	-8(%rbp), %rax	
 	movq	%rax, %rsi
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
-		testl	%eax, %eax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
+	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
 	jmp	.L4
@@ -33,10 +47,24 @@ out_int:
 	movq	%rsp, %rbp
 	subq	$16, %rsp
 	pushq	%rax
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movq	16(%rbp), %rsi
 	movl	$.LC00, %edi
 	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	popq	%rax
 	leave
 	ret
@@ -86,8 +114,7 @@ out_string:
 	.type main, @function
 main:
 	pushq %rbp
-	movq %rsp, %rdx
-	movq %rdx, %rbp
+	movq %rsp, %rbp
 	subq $64, %rsp
 	movq $1, %rax
 	movq %rax, -48(%rbp)
@@ -193,23 +220,9 @@ main:
 	movq %rax, -64(%rbp)
 	movq -64(%rbp), %rdx
 	addq %rdx, -56(%rbp)
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq -56(%rbp)
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	movq -40(%rbp), %rdx
 	addq %rdx, -48(%rbp)
 	movq -48(%rbp), %rdx
@@ -255,23 +268,9 @@ main:
 	addq %rbx, %rcx
 	movq %rcx, %rbx
 	addq %rax, %rbx
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq %rbx
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	movq %rbp, %rsp
 	popq %rbp
 	ret

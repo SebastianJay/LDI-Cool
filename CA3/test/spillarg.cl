@@ -5,8 +5,24 @@ class Main inherits IO {
 	    out_int(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+s+t);
 	    out_int(a);
 	    out_int(b);
+	    out_int(c);
+	    out_int(d);
+	    out_int(e);
+	    out_int(f);
+	    out_int(g);
+	    out_int(h);
+	    out_int(i);
+	    out_int(j);
+	    out_int(k);
+	    out_int(l);
+	    out_int(m);
+	    out_int(n);
+	    out_int(o);
+	    out_int(p);
+	    out_int(q);
+	    out_int(r);
 	    out_int(s);
-	    out_int(t);
+	    out_int(t);	    
 	}
     };
 };
