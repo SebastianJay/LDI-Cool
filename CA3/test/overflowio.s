@@ -15,13 +15,18 @@ in_int:
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
-		testl	%eax, %eax
+	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
 	jmp	.L4
 .L2:
 	movq	-8(%rbp), %rax
 .L4:
+	movq $0, %rsi
+	cmpq $2147483647, %rax
+	cmovg %rsi, %rax
+	cmpq $-2147483648, %rax
+	cmovl %rsi, %rax
 	leave
 	ret
 .LFE2:

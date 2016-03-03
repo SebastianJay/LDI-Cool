@@ -12,7 +12,7 @@ in_int:
 	subq	$16, %rsp
 	leaq	-8(%rbp), %rax
 	movq	%rax, %rsi
-	movl	$.LC00, %edi
+	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
 	testl	%eax, %eax
@@ -22,6 +22,11 @@ in_int:
 .L2:
 	movq	-8(%rbp), %rax
 .L4:
+	movq	$0, %rsi
+	cmpq	$2147483647, %rax
+	cmovg	%rsi, %rax
+	cmpq	$-2147483648, %rax
+	cmovl	%rsi, %rax
 	leave
 	ret
 .LFE2:
