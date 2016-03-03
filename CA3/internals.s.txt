@@ -27,6 +27,8 @@ in_int:
 	popq	%r9
 	popq	%r8
 	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	testl	%eax, %eax
 	jne	.L2
 	movl	$0, %eax
@@ -34,13 +36,12 @@ in_int:
 .L2:
 	movq	-8(%rbp), %rax
 .L4:
-	movq $0, %rsi
+	movq $0, %rdx
 	cmpq $2147483647, %rax
-	cmovgq %rsi, %rax
+	cmovgq %rdx, %rax
 	cmpq  $-2147483648, %rax
-	cmovlq %rsi, %rax
-	popq	%rsi
-	popq	%rdi
+	cmovlq %rdx, %rax
+
 	leave
 	ret
 .LFE2:
