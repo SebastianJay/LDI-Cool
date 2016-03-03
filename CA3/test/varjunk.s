@@ -135,43 +135,61 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $0, %rcx
-	movq $1, %rsi
-	movq %rcx, %rax
-	movq %rsi, %rcx
-	addq %rcx, %rax
+	movq $0, %rsi
+	movq $1, %rax
+	movq %rax, %rbx
+	movq $1, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
+	addq %rsi, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rcx
+	movq %rax, %rsi
 	movq $2, %rax
-	imulq %rcx
+	imulq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rcx
+	movq %rax, %rsi
 	movq $12, %rax
 	cltq
 	cqto
-	idivq %rcx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rcx
-	movq $12, %rsi
-	movq %rcx, %rax
-	movq %rsi, %rcx
+	movq %rax, %rsi
+	movq $12, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
 	cltq
 	cqto
-	idivq %rcx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rcx
+	movq %rax, %rsi
 	call in_int
-	movq %rcx, %rbx
-	imulq %rbx
+	movq %rsi, %rcx
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
+	movq %rbx, %rax
+	xorq $1, %rax
+	xorq $1, %rax
+	cmpq $0, %rax
+	jne Main_main_0
+	movq $1, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+	jmp Main_main_1
+Main_main_0:
+	movq $0, %rax
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

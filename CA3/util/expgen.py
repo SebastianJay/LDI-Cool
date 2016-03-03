@@ -1,11 +1,12 @@
 import random
+from string import ascii_lowercase
 
 def expgen(start='E', closeProb = .3):
     rules = [
         'E+E',
         'E-E',
         'E*E',
-        'E/E',
+        'E/12',
         '~E',
         '(E)'
     ]
@@ -22,7 +23,7 @@ def expgen(start='E', closeProb = .3):
         for i,x in enumerate(e):
             if x == 'E':
                 if random.random() < closeProb or its > maxits:
-                    ne = e[:i] + str(random.randint(0, maxint)) + e[i+1:]
+                    ne = e[:i] + random.choice(ascii_lowercase)+ e[i+1:]
                 else:
                     ne = e[:i] + random.choice(rules) + e[i+1:]
         e = ne
@@ -30,4 +31,10 @@ def expgen(start='E', closeProb = .3):
     return e
         
 if __name__ == "__main__":
-    print 'out_int(' + expgen() + ');'
+    print "class Main inherits IO { main():Object {\nlet " + ': Int <- in_int(), '.join(ascii_lowercase) + ": Int <- in_int() in {"
+    for x in range(50):
+        dest = random.choice(ascii_lowercase)
+        print "\t" + dest + "<-" + expgen('E') + ";"
+        print "out_int(" + dest + ");\n"
+    
+    print "}};};"
