@@ -10,23 +10,52 @@ in_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	leaq	-8(%rbp), %rax
-	movq	%rax, %rsi
-	movl	$.LC0, %edi
-	movl	$0, %eax
-	call	scanf
-	testl	%eax, %eax
-	jne	.L2
-	movl	$0, %eax
-	jmp	.L4
-.L2:
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movl	$1, %esi
+	movl	$4096, %edi
+	call	calloc
+	movq	%rax, -8(%rbp)
+	movq	stdin(%rip), %rdx
 	movq	-8(%rbp), %rax
+	movl	$4096, %esi
+	movq	%rax, %rdi
+	call	fgets
+	leaq	-16(%rbp), %rdx
+	movq	-8(%rbp), %rax
+	movl	$.LC0, %esi
+	movq	%rax, %rdi
+	movl	$0, %eax
+	call	__isoc99_sscanf
+	cmpl	$1, %eax
+	je	.L2
+	movl	$0, %eax
+	jmp	.L6
+.L2:
+	movq	-16(%rbp), %rax
+	cmpq	$2147483647, %rax
+	jg	.L4
+	movq	-16(%rbp), %rax
+	cmpq	$-2147483648, %rax
+	jge	.L5
 .L4:
-	movq $0, %rsi
-	cmpq $2147483647, %rax
-	cmovg %rsi, %rax
-	cmpq $-2147483648, %rax
-	cmovl %rsi, %rax
+	movl	$0, %eax
+	jmp	.L6
+.L5:
+	movq	-16(%rbp), %rax
+.L6:
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	leave
 	ret
 .LFE2:
@@ -38,10 +67,24 @@ out_int:
 	movq	%rsp, %rbp
 	subq	$16, %rsp
 	pushq	%rax
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movq	16(%rbp), %rsi
 	movl	$.LC00, %edi
 	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	popq	%rax
 	leave
 	ret
@@ -91,43 +134,14 @@ out_string:
 	.type main, @function
 main:
 	pushq %rbp
-	movq %rsp, %rdx
-	movq %rdx, %rbp
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
+	movq %rsp, %rbp
 	call in_int
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	movq $3, %rbx
 	cqto
 	idivq %rbx
-	pushq %rdi
-	pushq %rsi
-	pushq %rcx
-	pushq %r8
-	pushq %r9
-	pushq %r10
-	pushq %r11
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	popq %r11
-	popq %r10
-	popq %r9
-	popq %r8
-	popq %rcx
-	popq %rsi
-	popq %rdi
 	movq $22, %rax
 	movq %rbp, %rsp
 	popq %rbp

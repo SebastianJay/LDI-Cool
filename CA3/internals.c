@@ -3,9 +3,13 @@
 
 int in_int()
 {
-    int i;
+    long i;
+    char* c = (char*)calloc(4096, 1);
+    fgets(c, 4096, stdin);
     // Return 0 on bad input
-    if (scanf("%d", &i) == 0)
+    if (sscanf(c, "%ld", &i) != 1)
+      return 0;
+    if (i > 2147483647 || i < -2147483648)
       return 0;
     return i;
 }

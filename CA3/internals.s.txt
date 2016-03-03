@@ -17,11 +17,38 @@ in_int:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	leaq	-8(%rbp), %rax	
-	movq	%rax, %rsi
-	movl	$.LC0, %edi
+	movl	$1, %esi
+	movl	$4096, %edi
+	call	calloc
+	movq	%rax, -8(%rbp)
+	movq	stdin(%rip), %rdx
+	movq	-8(%rbp), %rax
+	movl	$4096, %esi
+	movq	%rax, %rdi
+	call	fgets
+	leaq	-16(%rbp), %rdx
+	movq	-8(%rbp), %rax
+	movl	$.LC0, %esi
+	movq	%rax, %rdi
 	movl	$0, %eax
-	call	scanf
+	call	__isoc99_sscanf
+	cmpl	$1, %eax
+	je	.L2
+	movl	$0, %eax
+	jmp	.L6
+.L2:
+	movq	-16(%rbp), %rax
+	cmpq	$2147483647, %rax
+	jg	.L4
+	movq	-16(%rbp), %rax
+	cmpq	$-2147483648, %rax
+	jge	.L5
+.L4:
+	movl	$0, %eax
+	jmp	.L6
+.L5:
+	movq	-16(%rbp), %rax
+.L6:
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -29,18 +56,6 @@ in_int:
 	popq	%rcx
 	popq	%rsi
 	popq	%rdi
-	cmpl	$1, %eax
-	je	.L2
-	movl	$0, %eax
-	jmp	.L4
-.L2:
-	movq	-8(%rbp), %rax
-.L4:
-	movq $0, %rdx
-	cmpq $2147483647, %rax
-	cmovgq %rdx, %rax
-	cmpq  $-2147483648, %rax
-	cmovlq %rdx, %rax
 	leave
 	ret
 .LFE2:
