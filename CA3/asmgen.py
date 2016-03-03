@@ -47,25 +47,25 @@ class ASMOp(ASMInstruction):
 
         # If operating on two memory addresses
         if len(self.operands)==2 and not (
-                self.operands[0] in registers or self.operands[0][0] == '$' 
-                or self.operands[1] in registers or self.operands[1][0] == '$'):
+            self.operands[0] in registers or self.operands[0][0] == '$' 
+            or self.operands[1] in registers or self.operands[1][0] == '$'):
+
             asm.append(ASMAssign('%rdx',self.operands[0]))
             self.operands[0] = '%rdx'
-        
+
         # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
             asm.append(ASMCmp(self.operands[1], self.operands[0]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
-        
+
         if self.opcode == '/':
-            asm.append(ASMAssign('%rdx', '$0'))     #clear out top half of dividend
-            asm.append(ASMMisc('cltq'))             #sign extend TODO review command
-        
+            asm.append(ASMMisc('cqto'))     #sign extend dividend (rdx:rax)
+
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
-        
+
         asm.append(self)
 
 
@@ -257,7 +257,7 @@ def funcConvert(cfg, regMap):
 
     def realReg(vreg):
         if regMap[vreg] not in cRegMap:
-            return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + "(%rbp)"
+            return '-' + str(8*(regMap[vreg]-len(cRegMap))) + "(%rbp)"
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
@@ -303,7 +303,7 @@ def funcConvert(cfg, regMap):
             asmlst.append(ASMBT(realReg(ins.cond), ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
-            
+
     # Remove useless mov instructions
     rmlist = []
     for i, ins in enumerate(asmlst):

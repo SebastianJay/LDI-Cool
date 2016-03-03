@@ -10,37 +10,23 @@ in_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	leaq	-8(%rbp), %rax	
+	leaq	-8(%rbp), %rax
 	movq	%rax, %rsi
 	movl	$.LC0, %edi
 	movl	$0, %eax
 	call	scanf
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	cmpl	$1, %eax
-	je	.L2
+	testl	%eax, %eax
+	jne	.L2
 	movl	$0, %eax
 	jmp	.L4
 .L2:
 	movq	-8(%rbp), %rax
 .L4:
-	movq $0, %rdx
+	movq $0, %rsi
 	cmpq $2147483647, %rax
-	cmovgq %rdx, %rax
-	cmpq  $-2147483648, %rax
-	cmovlq %rdx, %rax
+	cmovg %rsi, %rax
+	cmpq $-2147483648, %rax
+	cmovl %rsi, %rax
 	leave
 	ret
 .LFE2:
@@ -52,24 +38,10 @@ out_int:
 	movq	%rsp, %rbp
 	subq	$16, %rsp
 	pushq	%rax
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
 	movq	16(%rbp), %rsi
 	movl	$.LC00, %edi
 	movl	$0, %eax		# Apparently sets the number of float args
 	call	printf
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
 	popq	%rax
 	leave
 	ret
@@ -115,3 +87,48 @@ out_string:
 	ret
 .LFE5:
 	.size	out_string, .-out_string
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rdx
+	movq %rdx, %rbp
+	pushq %rdi
+	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
+	call in_int
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
+	popq %rsi
+	popq %rdi
+	movq $3, %rbx
+	cqto
+	idivq %rbx
+	pushq %rdi
+	pushq %rsi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
+	pushq %rax
+	call out_int
+	addq $8, %rsp
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
+	popq %rsi
+	popq %rdi
+	movq $22, %rax
+	movq %rbp, %rsp
+	popq %rbp
+	ret
