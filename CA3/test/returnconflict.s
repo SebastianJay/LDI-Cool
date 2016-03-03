@@ -135,14 +135,108 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
+	subq $112, %rsp
 	call in_int
 	movq %rax, %rbx
 	call in_int
-	movq %rax, %rcx
-	movq %rbx, %rax
-	movq %rcx, %rbx
-	imulq %rbx
-	pushq %rax
+	movq %rax, %r9
+	call in_int
+	movq %rax, %r8
+	call in_int
+	movq %rax, %r12
+	call in_int
+	movq %rax, %r10
+	call in_int
+	movq %rax, %r11
+	call in_int
+	movq %rax, %r14
+	call in_int
+	movq %rax, %r15
+	call in_int
+	movq %rax, -0(%rbp)
+	call in_int
+	movq %rax, %r13
+	call in_int
+	movq %rax, -48(%rbp)
+	call in_int
+	movq %rax, -40(%rbp)
+	call in_int
+	movq %rax, -32(%rbp)
+	call in_int
+	movq %rax, -8(%rbp)
+	call in_int
+	movq %rax, -24(%rbp)
+	call in_int
+	movq %rax, -16(%rbp)
+	call in_int
+	movq %rax, -64(%rbp)
+	call in_int
+	movq %rax, -72(%rbp)
+	call in_int
+	movq %rax, -80(%rbp)
+	call in_int
+	movq %rax, -56(%rbp)
+	call in_int
+	movq %rax, -104(%rbp)
+	call in_int
+	movq %rax, -96(%rbp)
+	call in_int
+	movq %rax, -88(%rbp)
+	call in_int
+	movq %rax, %rsi
+	call in_int
+	movq %rax, %rdi
+	call in_int
+	movq %r9, %rcx
+	addq %rcx, %rbx
+	movq %r8, %rcx
+	addq %rcx, %rbx
+	movq %r12, %rcx
+	addq %rcx, %rbx
+	movq %r10, %rcx
+	addq %rcx, %rbx
+	movq %r11, %rcx
+	addq %rcx, %rbx
+	movq %r14, %rcx
+	addq %rcx, %rbx
+	movq %r15, %rcx
+	addq %rcx, %rbx
+	movq -0(%rbp), %rcx
+	addq %rcx, %rbx
+	movq %r13, %rcx
+	addq %rcx, %rbx
+	movq -48(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -40(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -32(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -8(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -24(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -16(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -64(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -72(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -80(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -56(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -104(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -96(%rbp), %rcx
+	addq %rcx, %rbx
+	movq -88(%rbp), %rcx
+	addq %rcx, %rbx
+	movq %rsi, %rcx
+	addq %rcx, %rbx
+	movq %rdi, %rcx
+	addq %rcx, %rbx
+	addq %rax, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq %rbp, %rsp
