@@ -1,5 +1,5 @@
 .LC0:
-	.string	"%d"
+	.string	"%ld"
 	.text
 .LC00:
 	.string	"%d"
@@ -29,8 +29,8 @@ in_int:
 	popq	%rcx
 	popq	%rsi
 	popq	%rdi
-	testl	%eax, %eax
-	jne	.L2
+	cmpl	$1, %eax
+	je	.L2
 	movl	$0, %eax
 	jmp	.L4
 .L2:
