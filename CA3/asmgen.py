@@ -49,7 +49,6 @@ class ASMOp(ASMInstruction):
         if len(self.operands)==2 and not (
             self.operands[0] in registers or self.operands[0][0] == '$'
             or self.operands[1] in registers or self.operands[1][0] == '$'):
-
             asm.append(ASMAssign('%rdx',self.operands[0]))
             self.operands[0] = '%rdx'
 
@@ -59,17 +58,17 @@ class ASMOp(ASMInstruction):
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
 
-        if self.opcode == '/':
-            asm.append(ASMMisc('cltq'))     #sign extend eax to rax
-            asm.append(ASMMisc('cqto'))     #sign extend rax to rdx:rax
-
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
 
+        if self.opcode == '/':
+            asm.append(ASMMisc('cltq'))     #sign extend eax to rax
+            asm.append(ASMMisc('cqto'))     #sign extend rax to rdx:rax
+
         asm.append(self)
 
-        if self.opcode in ['+', '-', '*', '/'] and self.assignee not in [rsp, rbp]:
+        if self.opcode in ['+', '-', '*', '/', '~'] and self.assignee not in [rsp, rbp]:
             #0- or 1-extend the upper half of the 64 bit register
             asm.append(ASMOp(self.assignee, '<<', ['$32', self.assignee]))
             asm.append(ASMOp(self.assignee, '>>', ['$32', self.assignee]))
@@ -106,6 +105,7 @@ class ASMOp(ASMInstruction):
             return 'sarq ' + self.operands[0] + ', ' + self.assignee    #arithmetic, so sign is preserved
         return '\n'
 
+#compare two numbers and set appropriate flags for conditional moves/jumps
 class ASMCmp(ASMInstruction):
     def __init__(self, op1, op2):
         self.op1 = op1
@@ -140,7 +140,7 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def __str__(self):
-        return 'movq $0, ' + self.assignee 
+        return 'movq $0, ' + self.assignee
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -164,13 +164,14 @@ class ASMConstant(ASMDeclare):
 class ASMControl(ASMInstruction):
     pass
 
-
+#move data onto the stack
 class ASMPush(ASMControl):
     def __init__(self, reg):
         self.reg = reg
     def __str__(self):
         return 'pushq ' + self.reg
 
+#move data off the stack and into a register
 class ASMPop(ASMControl):
     def __init__(self, reg):
         self.reg = reg
@@ -242,10 +243,11 @@ class ASMBT(ASMControl):
         self.cond = cond
         self.label = label
     def expand(self):
-        return [ASMCmp('$0', self.cond), self]
+        return [ASMCmp('$1', self.cond), self]
     def __str__(self):
-        return 'jne ' + self.label
+        return 'je ' + self.label
 
+#catchall for instructions that have no strong association with category
 class ASMMisc(ASMInstruction):
     def __init__(self, cmd, args=[]):
         self.cmd = cmd
@@ -268,6 +270,7 @@ def getConflicts(tacIns):
 #returns list of x64 instructions as ASM* instances
 def funcConvert(cfg, regMap):
 
+    #return either register name or place in memory (if index too high)
     def realReg(vreg):
         if regMap[vreg] not in cRegMap:
             return '-' + str(8*(regMap[vreg]-len(cRegMap))) + "(%rbp)"
@@ -293,6 +296,7 @@ def funcConvert(cfg, regMap):
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
 
+    #make list of ASM instructions from TAC instructions
     for ins in inslst:
         if isinstance(ins, TACOp):
             operands = [realReg(ins.op1), realReg(ins.op2)] \

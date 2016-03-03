@@ -171,7 +171,7 @@ def expConvert(node):
         else:
             TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
             resreg = op2
-        
+
         # Hacky solution for conflicts with consecutive divides,
         # Spill result over to another temporary to give result
         # a chance to get out of rax
@@ -182,7 +182,7 @@ def expConvert(node):
 
         return resreg
 
-            
+
     # NOTE: Don't think static or dynamic needed for this
     elif node.expr == 'dynamic_dispatch':
         pass
