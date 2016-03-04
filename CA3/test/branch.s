@@ -145,14 +145,14 @@ main:
 	xorq $1, %rax
 	cmpq $1, %rax
 	je .Main_main_0
-	movq $25, %rax
-	pushq %rax
+	movq $25, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	jmp .Main_main_1
 .Main_main_0:
-	movq $52, %rax
-	pushq %rax
+	movq $52, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 .Main_main_1:

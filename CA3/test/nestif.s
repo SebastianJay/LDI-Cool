@@ -136,10 +136,11 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	call in_int
-	movq %rax, %rbx
+	movq %rax, %rsi
 	call in_int
 	movq %rax, %rcx
-	movq %rbx, %rax
+	call in_int
+	movq %rsi, %rax
 	movq %rcx, %rbx
 	cmpq %rbx, %rax
 	movq $0, %rbx
@@ -157,14 +158,14 @@ main:
 	xorq $1, %rax
 	cmpq $1, %rax
 	je .Main_main_2
-	movq $1, %rax
-	pushq %rax
+	movq $1, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	jmp .Main_main_3
 .Main_main_2:
-	movq $0, %rax
-	pushq %rax
+	movq $0, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 .Main_main_3:

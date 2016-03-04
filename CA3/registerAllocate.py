@@ -5,7 +5,7 @@ import TAC_serialize
 # with some precolored nodes on function returns
 # of form temp => [set of conflicts, color(default to -1)]
 def genRegGraph(cfg):
-    regGraph = {"__dead__":[set(),0]} # __dead__ for dead function calls
+    regGraph = {"t0":[set(),0]} # Fuction return val
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
@@ -33,10 +33,13 @@ def genRegGraph(cfg):
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
                 regGraph[t][0] |= {r for r in live if r != t}
-
+            
+                
             # Allocate accumulator to return val of a function
             if isinstance(inst,TAC_serialize.TACCall):
                 regGraph[inst.assignee][1] = 0
+                for t in live:
+                    regGraph[t][0].add(inst.assignee)
             elif isinstance(inst,TAC_serialize.TACReturn):
                 regGraph[inst.retval][1] = 0
             # Have to force multiplication and division result to rax

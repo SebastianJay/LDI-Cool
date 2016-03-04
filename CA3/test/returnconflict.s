@@ -137,25 +137,17 @@ main:
 	movq %rsp, %rbp
 	subq $112, %rsp
 	call in_int
-	movq %rax, %rbx
+	movq %rax, -96(%rbp)
 	call in_int
-	movq %rax, %r9
+	movq %rax, -88(%rbp)
 	call in_int
-	movq %rax, %r8
+	movq %rax, -80(%rbp)
 	call in_int
-	movq %rax, %r12
+	movq %rax, -72(%rbp)
 	call in_int
-	movq %rax, %r10
+	movq %rax, -64(%rbp)
 	call in_int
-	movq %rax, %r11
-	call in_int
-	movq %rax, %r14
-	call in_int
-	movq %rax, %r15
-	call in_int
-	movq %rax, -0(%rbp)
-	call in_int
-	movq %rax, %r13
+	movq %rax, -56(%rbp)
 	call in_int
 	movq %rax, -48(%rbp)
 	call in_int
@@ -163,126 +155,158 @@ main:
 	call in_int
 	movq %rax, -32(%rbp)
 	call in_int
-	movq %rax, -8(%rbp)
-	call in_int
 	movq %rax, -24(%rbp)
 	call in_int
 	movq %rax, -16(%rbp)
 	call in_int
-	movq %rax, -64(%rbp)
+	movq %rax, -8(%rbp)
 	call in_int
-	movq %rax, -72(%rbp)
+	movq %rax, -0(%rbp)
 	call in_int
-	movq %rax, -80(%rbp)
+	movq %rax, %r15
 	call in_int
-	movq %rax, -56(%rbp)
+	movq %rax, %r14
 	call in_int
-	movq %rax, -104(%rbp)
+	movq %rax, %r13
 	call in_int
-	movq %rax, -96(%rbp)
+	movq %rax, %r12
 	call in_int
-	movq %rax, -88(%rbp)
+	movq %rax, %r11
 	call in_int
-	movq %rax, %rsi
+	movq %rax, %r10
+	call in_int
+	movq %rax, %r9
+	call in_int
+	movq %rax, %r8
 	call in_int
 	movq %rax, %rdi
 	call in_int
-	movq %r9, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r8, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r12, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r10, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r11, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r14, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r15, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -0(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %r13, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -48(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -40(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -32(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -8(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -24(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -16(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -64(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -72(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -80(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -56(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -104(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -96(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -88(%rbp), %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
+	movq %rax, %rsi
+	call in_int
+	movq %rax, %rcx
+	call in_int
+	movq %rax, %rbx
+	call in_int
+	movq -88(%rbp), %rdx
+	addq %rdx, -96(%rbp)
+	shlq $32, -96(%rbp)
+	sarq $32, -96(%rbp)
+	movq -96(%rbp), %rdx
+	movq %rdx, -88(%rbp)
+	movq -80(%rbp), %rdx
+	addq %rdx, -88(%rbp)
+	shlq $32, -88(%rbp)
+	sarq $32, -88(%rbp)
+	movq -88(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq -72(%rbp), %rdx
+	addq %rdx, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -72(%rbp)
+	movq -64(%rbp), %rdx
+	addq %rdx, -72(%rbp)
+	shlq $32, -72(%rbp)
+	sarq $32, -72(%rbp)
+	movq -72(%rbp), %rdx
+	movq %rdx, -64(%rbp)
+	movq -56(%rbp), %rdx
+	addq %rdx, -64(%rbp)
+	shlq $32, -64(%rbp)
+	sarq $32, -64(%rbp)
+	movq -64(%rbp), %rdx
+	movq %rdx, -56(%rbp)
+	movq -48(%rbp), %rdx
+	addq %rdx, -56(%rbp)
+	shlq $32, -56(%rbp)
+	sarq $32, -56(%rbp)
+	movq -56(%rbp), %rdx
+	movq %rdx, -48(%rbp)
+	movq -40(%rbp), %rdx
+	addq %rdx, -48(%rbp)
+	shlq $32, -48(%rbp)
+	sarq $32, -48(%rbp)
+	movq -48(%rbp), %rdx
+	movq %rdx, -40(%rbp)
+	movq -32(%rbp), %rdx
+	addq %rdx, -40(%rbp)
+	shlq $32, -40(%rbp)
+	sarq $32, -40(%rbp)
+	movq -40(%rbp), %rdx
+	movq %rdx, -32(%rbp)
+	movq -24(%rbp), %rdx
+	addq %rdx, -32(%rbp)
+	shlq $32, -32(%rbp)
+	sarq $32, -32(%rbp)
+	movq -32(%rbp), %rdx
+	movq %rdx, -24(%rbp)
+	movq -16(%rbp), %rdx
+	addq %rdx, -24(%rbp)
+	shlq $32, -24(%rbp)
+	sarq $32, -24(%rbp)
+	movq -24(%rbp), %rdx
+	movq %rdx, -16(%rbp)
+	movq -8(%rbp), %rdx
+	addq %rdx, -16(%rbp)
+	shlq $32, -16(%rbp)
+	sarq $32, -16(%rbp)
+	movq -16(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	movq -0(%rbp), %rdx
+	addq %rdx, -8(%rbp)
+	shlq $32, -8(%rbp)
+	sarq $32, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -0(%rbp)
+	addq %r15, -0(%rbp)
+	shlq $32, -0(%rbp)
+	sarq $32, -0(%rbp)
+	movq -0(%rbp), %r15
+	addq %r14, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq %r15, %r14
+	addq %r13, %r14
+	shlq $32, %r14
+	sarq $32, %r14
+	movq %r14, %r13
+	addq %r12, %r13
+	shlq $32, %r13
+	sarq $32, %r13
+	movq %r13, %r12
+	addq %r11, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq %r12, %r11
+	addq %r10, %r11
+	shlq $32, %r11
+	sarq $32, %r11
+	movq %r11, %r10
+	addq %r9, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq %r10, %r9
+	addq %r8, %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq %r9, %r8
+	addq %rdi, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq %r8, %rdi
+	addq %rsi, %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	movq %rdi, %rsi
+	addq %rcx, %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
 	movq %rsi, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rdi, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
+	addq %rbx, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
+	movq %rcx, %rbx
 	addq %rax, %rbx
 	shlq $32, %rbx
 	sarq $32, %rbx

@@ -135,12 +135,12 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $2147483647, %rax
-	movq $1, %rbx
-	addq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
+	movq $2147483647, %rbx
+	movq $1, %rax
+	addq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq $2147483647, %rax
@@ -148,21 +148,23 @@ main:
 	imulq %rbx
 	shlq $32, %rax
 	sarq $32, %rax
-	pushq %rax
+	movq %rax, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq $2147483647, %rax
-	negq %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $2, %rbx
+	movq %rax, %rbx
 	negq %rbx
 	shlq $32, %rbx
 	sarq $32, %rbx
-	addq %rbx, %rax
+	movq $2, %rax
+	negq %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	pushq %rax
+	addq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq $2147483647, %rax
@@ -187,7 +189,8 @@ main:
 	idivq %rbx
 	shlq $32, %rax
 	sarq $32, %rax
-	pushq %rax
+	movq %rax, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq $0, %rax

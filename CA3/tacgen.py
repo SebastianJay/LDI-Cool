@@ -27,9 +27,11 @@ class TACIndexer:
     mname = ''      #method name
     mtype = ''      #method type
     lind = -1       #counter for labels
-    rind = -1       #counter for registers
+    rind = 0       #counter for registers
     varRegMap = {}  #symbol table
     inslst = []     #list of TACInstruction
+
+    returnReg = 't0'
 
     #increments a counter and returns a string label
     @staticmethod
@@ -196,14 +198,12 @@ def expConvert(node):
         regs = [expConvert(e) for e in node.args[1]]
         regr = TACIndexer.reg()
         #TODO if generalizing to all functions, allow TACCall to take multiple args
-        ins = TACCall(regr, node.args[0].name, regs[0] if len(regs) > 0 else '')
+        ins = TACCall(TACIndexer.returnReg, node.args[0].name, regs[0] if len(regs) > 0 else '')
         TACIndexer.pushIns(ins)
 
-        # Hacky workaround for rax conflicts
-        spillreg = TACIndexer.reg()
-        TACIndexer.pushIns(TACAssign(spillreg, regr))
+        TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
 
-        return spillreg
+        return regr
 
     elif node.expr == 'new':
         reg = TACIndexer.reg()

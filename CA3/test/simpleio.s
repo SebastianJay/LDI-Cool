@@ -136,7 +136,8 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	call in_int
-	pushq %rax
+	movq %rax, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq %rbp, %rsp

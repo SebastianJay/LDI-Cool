@@ -138,13 +138,10 @@ main:
 	movq $0, %rsi
 	movq $1, %rax
 	movq %rax, %rbx
-	movq $1, %rdi
-	movq %rsi, %rax
-	movq %rdi, %rsi
-	addq %rsi, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, %rsi
+	movq $1, %rax
+	addq %rax, %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
 	movq $2, %rax
 	imulq %rsi
 	shlq $32, %rax
@@ -171,7 +168,8 @@ main:
 	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	pushq %rax
+	movq %rax, %rcx
+	pushq %rcx
 	call out_int
 	addq $8, %rsp
 	movq %rbx, %rax
@@ -179,14 +177,14 @@ main:
 	xorq $1, %rax
 	cmpq $1, %rax
 	je .Main_main_0
-	movq $1, %rax
-	pushq %rax
+	movq $1, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	jmp .Main_main_1
 .Main_main_0:
-	movq $0, %rax
-	pushq %rax
+	movq $0, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 .Main_main_1:

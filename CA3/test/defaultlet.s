@@ -135,8 +135,8 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $0, %rax
-	pushq %rax
+	movq $0, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq %rbp, %rsp

@@ -142,7 +142,8 @@ main:
 	idivq %rbx
 	shlq $32, %rax
 	sarq $32, %rax
-	pushq %rax
+	movq %rax, %rbx
+	pushq %rbx
 	call out_int
 	addq $8, %rsp
 	movq $22, %rax
