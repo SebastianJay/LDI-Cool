@@ -71,7 +71,7 @@ class ASMOp(ASMInstruction):
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
             asm.append(self)
-            
+
             # Restore the temporary register and put the result in the right place
             if self.operands[1] not in registers:
                 asm.append(ASMAssign(self.operands[1], self.assignee))
@@ -291,9 +291,10 @@ def getConflicts(tacIns):
 def funcConvert(cfg, regMap):
 
     #return either register name or place in memory (if index too high)
+    #TODO review indexing of temporaries relative to rbp
     def realReg(vreg):
         if regMap[vreg] not in cRegMap:
-            return '-' + str(8*(regMap[vreg]-len(cRegMap))) + "(%rbp)"
+            return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + '('+rbp+')'
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
@@ -310,6 +311,7 @@ def funcConvert(cfg, regMap):
     ]
 
     # Allocate stack space for temporaries
+    # TODO review number of spaces allocated
     stackmem = 8*(max(regMap.values()) - len(cRegMap) + 1)
     if stackmem > 0:
         asmlst+=[
