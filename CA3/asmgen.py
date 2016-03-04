@@ -54,11 +54,14 @@ class ASMOp(ASMInstruction):
 
         # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
+            # Can't do cmove on a memory address, so have to push/pop some stuff
             if self.assignee not in registers:
+                # Can't use rax as a temp if it's one of the operands
                 if '%rax' not in self.operands:
                     asm.append(ASMPush('%rax'))
                     asm.append(ASMAssign('%rax', self.assignee))
                     self.assignee = '%rax'
+                # If rax is an operand, rbx isn't because the other is memory
                 else:
                     asm.append(ASMPush('%rbx'))
                     asm.append(ASMAssign('%rbx', self.assignee))
@@ -69,6 +72,7 @@ class ASMOp(ASMInstruction):
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
             asm.append(self)
             
+            # Restore the temporary register and put the result in the right place
             if self.operands[1] not in registers:
                 asm.append(ASMAssign(self.operands[1], self.assignee))
                 asm.append(ASMPop(self.assignee))
