@@ -136,36 +136,38 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	call in_int
+	movq %rax, %rbx
+	call in_int
 	movq %rax, %rcx
-	call in_int
-	call in_int
+	movq %rbx, %rax
 	movq %rcx, %rbx
-	cmpq %rax, %rbx
-	movq $0, %rax
+	cmpq %rbx, %rax
+	movq $0, %rbx
 	movq $1, %rdx
-	cmoveq %rdx, %rax
+	cmoveq %rdx, %rbx
+	movq %rbx, %rax
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_0
+	cmpq $1, %rax
+	je .Main_main_0
 	movq $1, %rax
-	jmp Main_main_1
-Main_main_0:
+	jmp .Main_main_1
+.Main_main_0:
 	movq $0, %rax
-Main_main_1:
+.Main_main_1:
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_2
+	cmpq $1, %rax
+	je .Main_main_2
 	movq $1, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	jmp Main_main_3
-Main_main_2:
+	jmp .Main_main_3
+.Main_main_2:
 	movq $0, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-Main_main_3:
+.Main_main_3:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

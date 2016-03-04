@@ -155,11 +155,15 @@ main:
 	cmovleq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_0
+	cmpq $1, %rax
+	je .Main_main_0
 	movq $14, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $35, %rcx
 	movq $90, %rbx
 	subq %rbx, %rcx
@@ -196,8 +200,8 @@ main:
 	cmovlq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_1
+	cmpq $1, %rax
+	je .Main_main_1
 	movq $2, %rbx
 	movq $2, %rax
 	addq %rax, %rbx
@@ -217,33 +221,33 @@ main:
 	cmoveq %rdx, %rbx
 	movq %rbx, %rax
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_2
+	cmpq $1, %rax
+	je .Main_main_2
 	movq $1, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	jmp Main_main_3
-Main_main_2:
+	jmp .Main_main_3
+.Main_main_2:
 	movq $2, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-Main_main_3:
-	jmp Main_main_4
-Main_main_1:
+.Main_main_3:
+	jmp .Main_main_4
+.Main_main_1:
 	movq $3, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-Main_main_4:
-	jmp Main_main_5
-Main_main_0:
+.Main_main_4:
+	jmp .Main_main_5
+.Main_main_0:
 	movq $4, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-Main_main_5:
+.Main_main_5:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

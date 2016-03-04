@@ -153,8 +153,12 @@ main:
 	addq $8, %rsp
 	movq $2147483647, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $2, %rbx
 	negq %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	addq %rbx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -164,6 +168,8 @@ main:
 	movq $2147483647, %rax
 	movq %rax, %rbx
 	negq %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	movq $1, %rax
 	subq %rax, %rbx
 	shlq $32, %rbx
@@ -173,6 +179,8 @@ main:
 	addq $8, %rsp
 	movq $2147483647, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $2, %rbx
 	cltq
 	cqto

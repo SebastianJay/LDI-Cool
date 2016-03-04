@@ -35,7 +35,7 @@ class TACIndexer:
     @staticmethod
     def label():
         TACIndexer.lind += 1
-        return TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind)
+        return "." + TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind)
 
     #increments a counter a returns a register label
     @staticmethod
@@ -92,7 +92,8 @@ def expConvert(node):
         #recurse on predicate expression
         regp = expConvert(node.args[0])
         regpbar = TACIndexer.reg()
-        TACIndexer.pushIns(TACOp1(regpbar, 'not', regp))
+        TACIndexer.pushIns(TACAssign(regpbar, regp))
+        TACIndexer.pushIns(TACOp1(regpbar, 'not', regpbar))
         #emit label for else and branch there if predicate is false
         #NOTE I generate then first for readability, we can save the not op by doing else first
         lbe = TACIndexer.label()

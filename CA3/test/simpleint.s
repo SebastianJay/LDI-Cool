@@ -137,6 +137,8 @@ main:
 	movq %rsp, %rbp
 	movq $1, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $2, %rbx
 	addq %rbx, %rax
 	shlq $32, %rax
@@ -154,6 +156,8 @@ main:
 	sarq $32, %rax
 	movq $13, %rcx
 	negq %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	cltq
 	cqto
 	idivq %rcx

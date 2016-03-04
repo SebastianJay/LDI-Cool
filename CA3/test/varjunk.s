@@ -177,19 +177,19 @@ main:
 	movq %rbx, %rax
 	xorq $1, %rax
 	xorq $1, %rax
-	cmpq $0, %rax
-	jne Main_main_0
+	cmpq $1, %rax
+	je .Main_main_0
 	movq $1, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-	jmp Main_main_1
-Main_main_0:
+	jmp .Main_main_1
+.Main_main_0:
 	movq $0, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
-Main_main_1:
+.Main_main_1:
 	movq %rbp, %rsp
 	popq %rbp
 	ret

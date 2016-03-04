@@ -153,6 +153,8 @@ main:
 	movq $46509, %rax
 	movq %rax, %rcx
 	negq %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	movq $3306, %rsi
 	movq $61695, %rax
 	movq $50213, %rdi
@@ -173,7 +175,11 @@ main:
 	sarq $32, %rax
 	movq $60575, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	imulq %r8
 	shlq $32, %rax
 	sarq $32, %rax
@@ -185,14 +191,24 @@ main:
 	sarq $32, %rax
 	movq $60858, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	imulq %r8
 	shlq $32, %rax
 	sarq $32, %rax
 	movq $2438, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	cltq
 	cqto
 	idivq %r8
@@ -225,7 +241,11 @@ main:
 	sarq $32, %rax
 	movq $58210, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	imulq %r8
 	shlq $32, %rax
 	sarq $32, %rax
@@ -237,6 +257,8 @@ main:
 	sarq $32, %rax
 	movq $12660, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	cltq
 	cqto
 	idivq %r8
@@ -260,6 +282,8 @@ main:
 	sarq $32, %rdi
 	movq $48608, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $3828, %r8
 	cltq
 	cqto
@@ -280,7 +304,11 @@ main:
 	sarq $32, %rax
 	movq $8340, %rdi
 	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
 	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
 	addq %rdi, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -291,6 +319,8 @@ main:
 	movq $29181, %rdi
 	movq %rdi, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	movq %rax, %rdi
 	movq %r8, %rax
 	addq %rax, %rdi
@@ -305,6 +335,8 @@ main:
 	sarq $32, %rax
 	movq $47308, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	cltq
 	cqto
 	idivq %r8
@@ -343,6 +375,8 @@ main:
 	sarq $32, %rdi
 	movq $17376, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $9569, %r8
 	imulq %r8
 	shlq $32, %rax
@@ -395,6 +429,8 @@ main:
 	shlq $32, %rax
 	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	subq %rax, %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
@@ -525,6 +561,8 @@ main:
 	movq $36010, %rdi
 	movq %rdi, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	movq %rax, %rdi
 	movq %r8, %rax
 	subq %rax, %rdi
@@ -539,6 +577,8 @@ main:
 	sarq $32, %rax
 	movq $39267, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	cltq
 	cqto
 	idivq %r8
@@ -556,6 +596,8 @@ main:
 	sarq $32, %rax
 	movq $16420, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	cltq
 	cqto
 	idivq %r8
@@ -625,6 +667,8 @@ main:
 	sarq $32, %rax
 	movq $29252, %r9
 	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
 	addq %r9, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -643,6 +687,8 @@ main:
 	sarq $32, %rax
 	movq $36212, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	imulq %r8
 	shlq $32, %rax
 	sarq $32, %rax
@@ -845,6 +891,8 @@ main:
 	sarq $32, %rax
 	movq $2985, %r12
 	negq %r12
+	shlq $32, %r12
+	sarq $32, %r12
 	imulq %r12
 	shlq $32, %rax
 	sarq $32, %rax
@@ -884,7 +932,11 @@ main:
 	sarq $32, %r11
 	movq $7429, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $50691, %r12
 	imulq %r12
 	shlq $32, %rax
@@ -903,11 +955,19 @@ main:
 	sarq $32, %r11
 	movq $18444, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq %rax, %r12
 	negq %r12
+	shlq $32, %r12
+	sarq $32, %r12
 	movq $48391, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $58688, %r13
 	cltq
 	cqto
@@ -916,6 +976,8 @@ main:
 	sarq $32, %rax
 	movq %rax, %r13
 	negq %r13
+	shlq $32, %r13
+	sarq $32, %r13
 	movq %r12, %rax
 	movq %r13, %r12
 	imulq %r12
@@ -1006,6 +1068,8 @@ main:
 	movq $24320, %rax
 	movq $3520, %r10
 	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
 	cltq
 	cqto
 	idivq %r10
@@ -1024,6 +1088,8 @@ main:
 	sarq $32, %rdi
 	movq $40488, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $58419, %r8
 	imulq %r8
 	shlq $32, %rax
@@ -1050,6 +1116,8 @@ main:
 	sarq $32, %rax
 	movq $52306, %rsi
 	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
 	cltq
 	cqto
 	idivq %rsi
@@ -1077,6 +1145,8 @@ main:
 	sarq $32, %rax
 	movq $39037, %rcx
 	negq %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	cltq
 	cqto
 	idivq %rcx
@@ -1102,10 +1172,14 @@ main:
 	movq $64947, %rax
 	movq %rax, %rcx
 	negq %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	movq $38220, %rsi
 	movq $48887, %rax
 	movq %rax, %rdi
 	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
 	movq $7493, %rax
 	addq %rax, %rdi
 	shlq $32, %rdi
@@ -1113,9 +1187,13 @@ main:
 	movq $26972, %rax
 	movq %rax, %r8
 	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
 	movq $62150, %rax
 	movq %rax, %r9
 	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
 	movq $30797, %r10
 	movq $3233, %r11
 	movq $26083, %rax
@@ -1129,6 +1207,8 @@ main:
 	movq $55273, %r13
 	movq $38801, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $17979, %r14
 	imulq %r14
 	shlq $32, %rax
@@ -1139,6 +1219,8 @@ main:
 	sarq $32, %rax
 	movq $61208, %r14
 	negq %r14
+	shlq $32, %r14
+	sarq $32, %r14
 	subq %r14, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1150,6 +1232,8 @@ main:
 	sarq $32, %r14
 	movq $47041, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $65097, %r15
 	imulq %r15
 	shlq $32, %rax
@@ -1179,6 +1263,8 @@ main:
 	sarq $32, %r14
 	movq $47353, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $2951, %r15
 	cltq
 	cqto
@@ -1212,6 +1298,8 @@ main:
 	sarq $32, %r15
 	movq $15079, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $64582, -0(%rbp)
 	cltq
 	cqto
@@ -1239,6 +1327,8 @@ main:
 	sarq $32, %r14
 	movq %r14, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	subq %rax, %r13
 	shlq $32, %r13
 	sarq $32, %r13
@@ -1269,6 +1359,8 @@ main:
 	sarq $32, %rax
 	movq %rax, %r9
 	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
 	movq %r8, %rax
 	movq %r9, %r8
 	cltq
@@ -1327,6 +1419,8 @@ main:
 	sarq $32, %rdi
 	movq $55049, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $57936, %r8
 	cltq
 	cqto
@@ -1366,6 +1460,8 @@ main:
 	shlq $32, %rax
 	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $30631, %rcx
 	cltq
 	cqto
@@ -1384,8 +1480,14 @@ main:
 	addq $8, %rsp
 	movq $48557, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $38915, %rbx
 	cltq
 	cqto
@@ -1427,6 +1529,8 @@ main:
 	sarq $32, %rdi
 	movq $28147, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $15714, %r8
 	cltq
 	cqto
@@ -1455,8 +1559,12 @@ main:
 	sarq $32, %rcx
 	movq $48118, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $20470, %rsi
 	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
 	imulq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1466,9 +1574,13 @@ main:
 	movq $50347, %rax
 	movq %rax, %rsi
 	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
 	movq $1202, %rax
 	movq $51824, %rdi
 	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
 	cltq
 	cqto
 	idivq %rdi
@@ -1487,9 +1599,15 @@ main:
 	sarq $32, %r9
 	movq $8022, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq $33788, %r10
 	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
 	cltq
 	cqto
 	idivq %r10
@@ -1512,6 +1630,8 @@ main:
 	movq $62723, %r9
 	movq %r9, %r10
 	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
 	movq %rax, %r9
 	movq %r10, %rax
 	addq %rax, %r9
@@ -1530,6 +1650,8 @@ main:
 	movq $60159, %rax
 	movq %rax, %r10
 	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
 	movq $1357, %rax
 	movq $9886, %r11
 	imulq %r11
@@ -1609,6 +1731,8 @@ main:
 	sarq $32, %rax
 	movq $7258, %rcx
 	negq %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	cltq
 	cqto
 	idivq %rcx
@@ -1625,6 +1749,8 @@ main:
 	addq $8, %rsp
 	movq $31515, %rax
 	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
 	call out_int
 	addq $8, %rsp
