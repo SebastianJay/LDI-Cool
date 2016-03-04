@@ -54,9 +54,25 @@ class ASMOp(ASMInstruction):
 
         # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
+            if self.assignee not in registers:
+                if '%rax' not in self.operands:
+                    asm.append(ASMPush('%rax'))
+                    asm.append(ASMAssign('%rax', self.assignee))
+                    self.assignee = '%rax'
+                else:
+                    asm.append(ASMPush('%rbx'))
+                    asm.append(ASMAssign('%rbx', self.assignee))
+                    self.assignee = '%rbx'
+
             asm.append(ASMCmp(self.operands[1], self.operands[0]))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
+            asm.append(self)
+            
+            if self.operands[1] not in registers:
+                asm.append(ASMAssign(self.operands[1], self.assignee))
+                asm.append(ASMPop(self.assignee))
+            return asm
 
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
