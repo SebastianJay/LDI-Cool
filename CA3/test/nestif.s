@@ -136,12 +136,11 @@ main:
 	pushq %rbp
 	movq %rsp, %rbp
 	call in_int
-	movq %rax, %rsi
-	call in_int
 	movq %rax, %rcx
 	call in_int
-	movq %rsi, %rax
-	movq %rcx, %rbx
+	movq %rax, %rbx
+	call in_int
+	movq %rcx, %rax
 	cmpq %rbx, %rax
 	movq $0, %rbx
 	movq $1, %rdx

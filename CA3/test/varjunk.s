@@ -135,36 +135,35 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq $0, %rsi
+	movq $0, %rcx
 	movq $1, %rax
 	movq %rax, %rbx
 	movq $1, %rax
-	addq %rax, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
+	addq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
 	movq $2, %rax
-	imulq %rsi
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rsi
+	movq %rax, %rcx
 	movq $12, %rax
 	cltq
 	cqto
-	idivq %rsi
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rsi
-	movq $12, %rdi
-	movq %rsi, %rax
-	movq %rdi, %rsi
+	movq %rax, %rcx
+	movq $12, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
 	cltq
 	cqto
-	idivq %rsi
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rsi
+	movq %rax, %rcx
 	call in_int
-	movq %rsi, %rcx
 	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax

@@ -40,6 +40,7 @@ if __name__=="__main__":
 
     regMap = registerAllocate(cfg,0)
     if debug:
+        print regMap
         print '-----'
 
     asmlst = asmgen.funcConvert(cfg,regMap)     #NOTE breaks on 6 test cases

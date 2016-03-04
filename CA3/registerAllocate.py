@@ -32,6 +32,8 @@ def genRegGraph(cfg):
             for t in live:
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
+                if t == '':
+                    print inst
                 regGraph[t][0] |= {r for r in live if r != t}
             
                 

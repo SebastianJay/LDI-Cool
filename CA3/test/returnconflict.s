@@ -135,7 +135,7 @@ out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	subq $112, %rsp
+	subq $104, %rsp
 	call in_int
 	movq %rax, -96(%rbp)
 	call in_int

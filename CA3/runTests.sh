@@ -14,6 +14,8 @@ else
     files=$@
 fi
 
+python util/ingen.py > in.txt
+
 failCount=0
 # For each .cl file
 for x in $files; do
@@ -33,8 +35,8 @@ for x in $files; do
     gcc "${x%.cl}.s"
 
     # Run reference compiler and our code, store output for error compare
-    comp=`cool $x < test/iotestfile.txt`
-    test=`./a.out < test/iotestfile.txt`
+    comp=`cool $x < in.txt`
+    test=`./a.out < in.txt`
 
     rm a.out
     
