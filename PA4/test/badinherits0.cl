@@ -1,4 +1,5 @@
-class Main inherits Int {
+class Main inherits
+Int {
     main() : Int {
         0
     };

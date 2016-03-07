@@ -1,4 +1,5 @@
-class Main inherits SELF_TYPE {
+class Main inherits
+SELF_TYPE {
     main() : Int {
         0
     };

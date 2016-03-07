@@ -8,7 +8,10 @@ class Main {
 };
 
 class Foo inherits Main {
-    func(x : String) : Object {
+
+    func(
+        x :
+        String) : Object {
         0
     };
 };
