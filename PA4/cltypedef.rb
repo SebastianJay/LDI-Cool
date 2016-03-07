@@ -1,3 +1,48 @@
+class TypeMaps
+    @@forbid_define = ['Object', 'SELF_TYPE']
+    @@forbid_inherit = ['Int', 'String', 'Bool', 'SELF_TYPE']
+
+    def initialize()
+        @pmap = {}
+        @cmap = {}
+        @imap = {}
+        @errtext = ''
+    end
+
+    #goes through AST class array and builds map from class name -> parent name
+    #checks whether any class is redefined or inherits from wrong classes
+    def load(ast)
+        #add predefined mappings
+        @pmap['IO'] = 'Object'
+        @pmap['Int'] = 'Object'
+        @pmap['String'] = 'Object'
+        @pmap['Bool'] = 'Object'
+        ast.classes.each do |c|
+            if @@forbid_define.include?(c.name.name) || @pmap.has_key?(c.name.name)
+                @errtext = "ERROR: #{c.name.line}: Type-Check: Class #{c.name.name} cannot be (re)defined"
+                break
+            end
+            if c.inherit.nil?
+                @pmap[c.name.name] = 'Object'
+            else
+                if @@forbid_inherit.include?(c.inherit.name)
+                    @errtext = "ERROR: #{c.name.line}: Type-Check: Class #{c.name.name} cannot inherit from #{c.inherit.name}"
+                    break
+                end
+                @pmap[c.name.name] = c.inherit.name
+            end
+        end
+        self
+    end
+
+    def err
+        @errtext
+    end
+
+    def getMap
+        @pmap
+    end
+end
 
 #begin annotated AST class definitions
 #this implementation was artfully translated from our Python implementaton for PA3
@@ -11,9 +56,41 @@ class AST
     def to_s
         return [@classes.size.to_s + "\n", @classes.join].join
     end
-    
-    def getClasses()
-      @classes
+
+    def classes
+        @classes
+    end
+
+    def preload()
+        mObject = ASTClass.new.preload('Object', nil, [
+            ASTMethod.new.preload('abort', [], 'Object', 'Object.abort'),
+            ASTMethod.new.preload('copy', [], 'SELF_TYPE', 'Object.copy'),
+            ASTMethod.new.preload('type_name', [], 'String', 'Object.type_name'),
+            ])
+        mIO = ASTClass.new.preload('IO', 'Object', [
+            ASTMethod.new.preload('in_int', [], 'Int', 'IO.in_int'),
+            ASTMethod.new.preload('in_string', [], 'String', 'IO.in_string'),
+            ASTMethod.new.preload('out_int', [
+                [ASTIdentifier.new.preload('x'), ASTIdentifier.new.preload('Int')]
+                ], 'SELF_TYPE', 'IO.out_int'),
+            ASTMethod.new.preload('out_string', [
+                [ASTIdentifier.new.preload('x'), ASTIdentifier.new.preload('String')]
+                ], 'SELF_TYPE', 'IO.out_string'),
+            ])
+        mInt = ASTClass.new.preload('Int', 'Object', [])
+        mString = ASTClass.new.preload('String', 'Object', [
+            ASTMethod.new.preload('concat', [
+                [ASTIdentifier.new.preload('s'), ASTIdentifier.new.preload('String')]
+                ], 'String', 'String.concat'),
+            ASTMethod.new.preload('length', [], 'Int', 'String.length'),
+            ASTMethod.new.preload('substr', [
+                [ASTIdentifier.new.preload('i'), ASTIdentifier.new.preload('Int')],
+                [ASTIdentifier.new.preload('l'), ASTIdentifier.new.preload('Int')]
+                ], 'String', 'String.substr')
+            ])
+        mBool = ASTClass.new.preload('Bool', 'Object', [])
+        @classes.concat([mBool, mInt, mIO, mObject, mString])
+        return self
     end
 
     def load(en)
@@ -39,17 +116,26 @@ class ASTClass
     end
 
     def inherit
-      @inherit
+        @inherit
     end
 
     def name
-      @name
+        @name
     end
 
     def features
-      @features
+        @features
     end
-    
+
+    def preload(name, inherit, features)
+        @name.preload(name)
+        if !inherit.nil?
+            @inherit = ASTIdentifier.new.preload(inherit)
+        end
+        @features = features
+        return self
+    end
+
     def load(en)
         @name.load(en)
         if en.next == 'inherits'
@@ -80,15 +166,20 @@ class ASTIdentifier
     end
 
     def name
-      @name
+        @name
     end
 
     def line
-      @line
+        @line
     end
 
     def to_s
         return [@line.to_s + "\n", @name + "\n"].join
+    end
+
+    def preload(name)
+        @name = name
+        return self
     end
 
     def load(en)
@@ -137,8 +228,16 @@ class ASTMethod
     def initialize()
         @name = ASTIdentifier.new
         @formals = []
-        @type = ASTIdentifier.new
+        @type = ASTIdentifier.new   #type of return value
         @body = ASTExpression.new
+    end
+
+    def preload(name, formals, type, expr)
+        @name.preload(name)
+        @formals = formals
+        @type.preload(type)
+        @body.preload(expr)
+        return self
     end
 
     def to_s
@@ -161,15 +260,21 @@ class ASTMethod
 end
 
 class ASTExpression
-    @@pa4c = false
+    @@cltype = true
     @@exp1 = ['not','negate','isvoid']
     @@exp2 = ['while','plus','minus','times','divide','lt','le','eq']
     @@id1 = ['new', 'identifier']
     def initialize()
         @line = 0
-        @type = nil
-        @expr = ''
-        @args = nil
+        @type = nil         #static type of the expression e.g. "Int"
+        @internal = nil     #if internal expr, has string e.g. "Object.abort"
+        @expr = ''          #node type e.g. "dynamic_dispatch"
+        @args = nil         #data specific to the node type
+    end
+
+    def preload(expr)
+        @internal = expr
+        return self
     end
 
     def to_s
@@ -189,8 +294,12 @@ class ASTExpression
         else
             argsstr = @args.to_s
         end
-        if @@pa4c
-            return [@line.to_s + "\n", @type + "\n", @expr + "\n", argsstr].join
+        if @@cltype
+            if @internal.nil?
+                return [@line.to_s + "\n", @type.to_s + "\n", @expr + "\n", argsstr].join
+            else
+                return [@line.to_s + "\n", @type.to_s + "\n", "internal\n", @internal + "\n"].join
+            end
         else
             return [@line.to_s + "\n", @expr + "\n", argsstr].join
         end
@@ -286,6 +395,7 @@ end
 
 if __FILE__ == $0
     lines = File.read(ARGV[0]).split("\n")
-    ast = AST.new.load(lines.each)
+    ast = AST.new.preload.load(lines.each)
     File.write(ARGV[0]+"-echo", "#{ast}")
+    #puts ast.classes.to_s
 end
