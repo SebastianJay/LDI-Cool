@@ -2,7 +2,8 @@ load 'cltypedef.rb'
 
 if __FILE__ == $0
     intxt = File.read(ARGV[0])
-    ast = AST.new.preload.load(intxt.split(/\r?\n/).each)
+    en = ASTEnumerator.new.load(intxt.split(/\r?\n/))
+    ast = AST.new.preload.load(en)
     maps = TypeMaps.new.load(ast)
     if maps.err.nil?
         adhocErr = checkAdhoc(maps)

@@ -423,7 +423,7 @@ class ASTClass
         for i in 1..nFeatures
             featType = en.peek
             feat = nil
-            if featType.start_with?('attribute')
+            if featType.include?('attribute')
                 feat = ASTBinding.new('attribute').load(en)
             else
                 feat = ASTMethod.new.load(en)
@@ -709,6 +709,25 @@ class ASTExpression
             raise Exception.new("Invalid Expression Type #{@expr}")
         end
         return self
+    end
+end
+
+#"custom" enumerator made because Ruby 1.8.5 does not have built-in support
+class ASTEnumerator
+    def initialize()
+        @ptr = 0
+    end
+    def load(lines)
+        @lines = lines
+        return self
+    end
+    def next()
+        line = @lines[@ptr]
+        @ptr += 1
+        return line
+    end
+    def peek()
+        return @lines[@ptr]
     end
 end
 
