@@ -1,4 +1,6 @@
-load 'cltypedef.rb'
+load 'ast.rb'
+load 'typemaps.rb'
+load 'typechecks.rb'
 
 if __FILE__ == $0
     intxt = File.read(ARGV[0])
