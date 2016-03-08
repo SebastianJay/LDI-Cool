@@ -1,3 +1,4 @@
+load 'typechecks.rb'
 #wrapper around Hashes that define class, implementation, and parent maps
 #takes AST as input to load() and builds maps, performing checks on the way
 #any ERRORs are captured in errtext
@@ -97,6 +98,8 @@ class TypeMaps
         return self
     end
 
+    #recursive method for filling out the implementation and attribute tables
+    #takes cls as current ASTClass to fill out, basename as key to imap/cmap entry
     def addFeatureMaps(cls, basename)
         if cls.name.name != 'Object'
             retval = addFeatureMaps(@pmap[cls], basename)

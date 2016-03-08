@@ -21,6 +21,7 @@ def checkInheritCycle(pmaps)
             n = pmaps[n]
         end
 
+        #if we are back at the start
         if n == c
             return true
         end
@@ -28,6 +29,8 @@ def checkInheritCycle(pmaps)
     return false
 end
 
+#perform type-checks on all things except expressions
+#i.e. class, method, attribute
 def checkAdhoc(maps)
     #check for Main class with 0-param main method
     if maps.imap.has_key?('Main')

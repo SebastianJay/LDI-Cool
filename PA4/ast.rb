@@ -7,14 +7,15 @@ class AST
         @classes = []
     end
 
-    def to_s
-        return [@classes.size,"\n", @classes.join].join
-    end
-
     def classes
         @classes
     end
 
+    def to_s
+        return [@classes.size,"\n", @classes.join].join
+    end
+
+    #append built-in classes and their corresponding methods to classes list
     def preload()
         mObject = ASTClass.new.preload('Object', nil, [
             ASTMethod.new.preload('abort', [], 'Object', 'Object.abort'),
@@ -64,11 +65,6 @@ class ASTClass
         @features = []
     end
 
-    def to_s
-        inhstr = (@inherit.nil? ? "no_inherits\n" : ["inherits\n", @inherit].join)
-        return [@name, inhstr, @features.size, "\n", @features.join].join
-    end
-
     def name
         @name
     end
@@ -79,6 +75,11 @@ class ASTClass
 
     def features
         @features
+    end
+
+    def to_s
+        inhstr = (@inherit.nil? ? "no_inherits\n" : ["inherits\n", @inherit].join)
+        return [@name, inhstr, @features.size, "\n", @features.join].join
     end
 
     def preload(name, inherit, features)
@@ -218,16 +219,16 @@ class ASTMethod
         @body
     end
 
+    def to_s
+        return ["method\n", @name, @formals.size,"\n", @formals, @type, @body].join
+    end
+
     def preload(name, formals, type, expr)
         @name.preload(name)
         @formals = formals
         @type.preload(type)
         @body.preload(expr)
         return self
-    end
-
-    def to_s
-        return ["method\n", @name, @formals.size,"\n", @formals, @type, @body].join
     end
 
     def load(en)
@@ -270,11 +271,6 @@ class ASTExpression
         @expr
     end
 
-    def preload(expr)
-        @internal = expr
-        return self
-    end
-
     def to_s
         argsstr = ''
         if @args.is_a? Array
@@ -301,6 +297,11 @@ class ASTExpression
         else
             return [@line, "\n", @expr, "\n", argsstr].join
         end
+    end
+
+    def preload(expr)
+        @internal = expr
+        return self
     end
 
     def loadExpList(en)
