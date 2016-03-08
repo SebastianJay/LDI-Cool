@@ -71,6 +71,11 @@ def checkAdhoc(maps)
                 end
                 fnames.push(fname.name)
             end
+            #check return with unknown type
+            if !maps.imap.keys.include?(method.type.name) && method.type.name != 'SELF_TYPE'
+                return "ERROR: #{method.type.line}: Type-Check: "\
+                "Return type of #{method.name.name} has unknown name #{method.type.name}"
+            end
         end
     end
 
