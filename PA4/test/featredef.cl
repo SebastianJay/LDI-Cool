@@ -1,8 +1,11 @@
 class Main {
     main() : Int {
-    	   0	
+    	   0
     };
-    main() : Int {
-    	   1
+    func() : Int {
+           0
+    };
+    func() : Int {
+           1
     };
 };
