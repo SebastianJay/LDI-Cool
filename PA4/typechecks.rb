@@ -96,3 +96,198 @@ def checkAdhoc(maps)
     end
     return nil
 end
+
+# Does type checking on an expressino
+# exp: ASTExpression object, type information modified in place,
+# symbs: dictionary of form: string identifier => string type
+# tmap: a TypeMaps object
+# c: Current containing type (used for SELF_TYPE)
+# Prints error string and exits on error
+def checkExp(exp, symbs, tmap, c)
+    case exp.expr
+        when 'identifier'
+        if not symbs.include?(exp.args.name)
+            puts 'Error: #{exp.args.line}: Type-Check: Undeclared identifier #{exp.args.name}
+'
+            exit
+        else
+            exp.type = symbs[exp.args.name]
+        end
+
+        when 'assign'
+        checkExp(exp.args[1], symbs, tmap, c)
+        # If assignor not subclass of identifier
+        if not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name])
+            puts 'Error: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}'
+            exit
+        else
+            exp.type = exp.args[1].type
+        end
+
+        when 'true', 'false'
+        exp.type = 'Bool'
+
+        when 'integer'
+        exp.type = 'Int'
+
+        when 'string'
+        exp.type = 'String'
+
+        when 'new'
+        if exp.args.name == 'SELF_TYPE' # TODO: verify this, not sure how SELF_TYPE works
+            exp.type = c
+        else
+            exp.type = exp.args.name
+        end
+        
+        when 'self_dispatch'
+        # Find method in imap
+        meth=nil
+        tmap.imap[c].each do |m|
+            if m.name.name == exp.args[0].name
+                meth = m
+                break
+            end
+        end
+        
+        # Method not found
+        if meth.nil?
+            puts 'Error: #{exp.args[0].line}: Type-Checker: Unknown method "#{c}@#{exp.args[0].name}"'
+            exit
+        end
+        
+        # Check number of arguments
+        if meth.formals.size != exp.args[1].size
+            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[1].size} expected #{meth.formals.size}'
+            exit
+        end
+        
+        # Type each argument
+        exp.args[1].each do |subexp|
+            checkExp(subexp, symbs, tmap, c)
+        end
+
+        # Check actuals against formals
+        meth.formals.zip(exp.args[1]) do |formal, actual|
+            if not tmap.isChild(actual.type, formal[1].name)
+                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                exit
+            end
+        end
+        
+        if meth.type.name == 'SELF_TYPE'
+            exp.type = c
+        else
+            exp.type = meth.type.name
+        end
+
+        ### END self_dispatch
+
+
+        when 'dynamic_dispatch'
+        # Type check caller expression
+        checkExp(exp.args[0], symbs, tmap, c)
+        
+        
+        # Find method in imap
+        meth=nil
+        tmap.imap[exp.args[0].type].each do |m|
+            if m.name.name == exp.args[1].name
+                meth = m
+                break
+            end
+        end
+        
+        # Method not found
+        if meth.nil?
+            puts 'Error: #{exp.args[1].line}: Type-Checker: Unknown method "#{exp.args[0].type}@#{exp.args[1].name}"'
+            exit
+        end
+        
+        # Check number of arguments
+        if meth.formals.size != exp.args[2].size
+            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[2].size} expected #{meth.formals.size}'
+            exit
+        end
+        
+        # Type each argument
+        exp.args[2].each do |subexp|
+            checkExp(subexp, symbs, tmap, c)
+        end
+
+        # Check actuals against formals
+        meth.formals.zip(exp.args[2]) do |formal, actual|
+            if not tmap.isChild(actual.type, formal[1].name)
+                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                exit
+            end
+        end
+        
+        if meth.type.name == 'SELF_TYPE'
+            exp.type = exp.args[0].type
+        else
+            exp.type = meth.type.name
+        end
+        
+        ### END dynamic_dispatch
+        
+        when 'static_dispatch'
+        # Type check caller expression
+        checkExp(exp.args[0], symbs, tmap, c)
+        
+        # Error if caller expression does not conform to static type
+        # TODO: Verify line number
+        if not tmap.isChild(exp.args[0], exp.args[1].name)
+            puts 'Error: #{exp.line}: Type-Check: Caller does not conform to static type'
+            exit
+        end
+        
+        # Find method in imap
+        meth=nil
+        tmap.imap[exp.args[1].name].each do |m|
+            if m.name.name == exp.args[1].name
+                meth = m
+                break
+            end
+        end
+        
+        # Method not found
+        if meth.nil?
+            puts 'Error: #{exp.args[2].line}: Type-Checker: Unknown method "#{exp.args[1].name}@#{exp.args[2].name}"'
+            exit
+        end
+        
+        # Check number of arguments
+        if meth.formals.size != exp.args[3].size
+            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[3].size} expected #{meth.formals.size}'
+            exit
+        end
+        
+        # Type each argument
+        exp.args[2].each do |subexp|
+            checkExp(subexp, symbs, tmap, c)
+        end
+
+        # Check actuals against formals
+        meth.formals.zip(exp.args[3]) do |formal, actual|
+            if not tmap.isChild(actual.type, formal[1].name)
+                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                exit
+            end
+        end
+        
+        if meth.type.name == 'SELF_TYPE'
+            exp.type = exp.args[0].type
+        else
+            exp.type = meth.type.name
+        end
+        
+        ### END static_dispatch
+
+        else
+        puts "Unhandled expression: #{exp.expr}"
+        
+            
+        
+    end
+end

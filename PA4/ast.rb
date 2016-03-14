@@ -267,6 +267,10 @@ class ASTExpression
         @type
     end
 
+    def setType(t)
+        @type = t
+    end
+
     def expr
         @expr
     end

@@ -98,6 +98,20 @@ class TypeMaps
         return self
     end
 
+    # Checks if child is a subclass of parent
+    def isChild(child, parent)
+        # Every class is a subclass of itself
+        if child == parent
+            return true
+        # If we get to the root of the tree without finding parent, not a subclass
+        elsif child == 'Object'
+            return false
+        # Otherwise walk up the tree
+        else
+            return isChild(pmap[child], parent)
+        end
+    end
+
     #recursive method for filling out the implementation and attribute tables
     #takes cls as current ASTClass to fill out, basename as key to imap/cmap entry
     def addFeatureMaps(cls, basename)
