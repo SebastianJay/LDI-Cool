@@ -227,7 +227,7 @@ class ASTMethod
         @name.preload(name)
         @formals = formals
         @type.preload(type)
-        @body.preload(expr)
+        @body.preload([type,expr])
         return self
     end
 
@@ -247,7 +247,7 @@ class ASTMethod
 end
 
 class ASTExpression
-    @@cltype = false
+    @@cltype = true
     @@exp1 = ['not','negate','isvoid']
     @@exp2 = ['while','plus','minus','times','divide','lt','le','eq']
     @@id1 = ['new', 'identifier']
@@ -267,12 +267,16 @@ class ASTExpression
         @type
     end
 
-    def setType(t)
+    def type=(t)
         @type = t
     end
 
     def expr
         @expr
+    end
+
+    def args
+        @args
     end
 
     def to_s
@@ -304,7 +308,9 @@ class ASTExpression
     end
 
     def preload(expr)
-        @internal = expr
+        @internal = expr[1]
+        @type = expr[0]
+        @expr = 'internal'
         return self
     end
 

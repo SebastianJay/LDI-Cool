@@ -98,20 +98,6 @@ class TypeMaps
         return self
     end
 
-    # Checks if child is a subclass of parent
-    def isChild(child, parent)
-        # Every class is a subclass of itself
-        if child == parent
-            return true
-        # If we get to the root of the tree without finding parent, not a subclass
-        elsif child == 'Object'
-            return false
-        # Otherwise walk up the tree
-        else
-            return isChild(pmap[child], parent)
-        end
-    end
-
     #recursive method for filling out the implementation and attribute tables
     #takes cls as current ASTClass to fill out, basename as key to imap/cmap entry
     def addFeatureMaps(cls, basename)
@@ -219,7 +205,7 @@ class TypeMaps
                 method.formals.each do |fname, _|
                     formallst.push([fname.name,"\n"].join)
                 end
-                methodlst.push([method.name.name,"\n",formals.size,"\n",formallst.join,orig,"\n",method.body].join)
+                methodlst.push([method.name.name,"\n",method.formals.size,"\n",formallst.join,orig,"\n",method.body].join)
             end
             clslst.push([cls,"\n",lsttuples.size,"\n",methodlst.join].join)
         end
@@ -234,7 +220,7 @@ class TypeMaps
         end
         #do actual serialization
         clslst = []
-        pmap.sort.map do |k, v|
+        pmaps.sort.map do |k, v|
             clslst.push([k,"\n",v,"\n"])
         end
         return ["parent_map\n",@pmap.size,"\n",clslst.join].join
@@ -242,5 +228,48 @@ class TypeMaps
 
     def to_s
         return [cmap_to_s, imap_to_s, pmap_to_s].join
+    end
+
+    # Checks if child is a subclass of parent
+    def isChild(child, parent, selftype)
+        # pmap wants ASTClass objects, so convert string class names to ASTClass
+        if child.is_a? String
+            if child == 'SELF_TYPE'
+                child = selftype
+            end 
+            pmap.keys.each do |c|
+                if c.name.name == child
+                    child = c
+                    break
+                end
+            end
+        end
+        
+        if parent.is_a? String
+            if parent == 'SELF_TYPE'
+                parent = selftype
+            end
+            # Everything is a subclass of object
+            if parent == 'Object'
+                return true
+            end
+            pmap.keys.each do |c|
+                if c.name.name == parent
+                    parent = c
+                    break
+                end
+            end
+        end
+        
+        # Every class is a subclass of itself
+        if child.name.name == parent.name.name
+            return true
+        # If we get to the root of the tree without finding parent, not a subclass
+        elsif child.name.name == 'Object'
+            return false
+        # Otherwise walk up the tree
+        else
+            return isChild(@pmap[child], parent)
+        end
     end
 end

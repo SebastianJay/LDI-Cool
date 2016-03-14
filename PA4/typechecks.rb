@@ -117,7 +117,7 @@ def checkExp(exp, symbs, tmap, c)
         when 'assign'
         checkExp(exp.args[1], symbs, tmap, c)
         # If assignor not subclass of identifier
-        if not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name])
+        if not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name], c)
             puts 'Error: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}'
             exit
         else
@@ -169,7 +169,7 @@ def checkExp(exp, symbs, tmap, c)
 
         # Check actuals against formals
         meth.formals.zip(exp.args[1]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name)
+            if not tmap.isChild(actual.type, formal[1].name,c)
                 puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
                 exit
             end
@@ -217,7 +217,7 @@ def checkExp(exp, symbs, tmap, c)
 
         # Check actuals against formals
         meth.formals.zip(exp.args[2]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name)
+            if not tmap.isChild(actual.type, formal[1].name, c)
                 puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
                 exit
             end
@@ -237,7 +237,7 @@ def checkExp(exp, symbs, tmap, c)
         
         # Error if caller expression does not conform to static type
         # TODO: Verify line number
-        if not tmap.isChild(exp.args[0], exp.args[1].name)
+        if not tmap.isChild(exp.args[0], exp.args[1].name, c)
             puts 'Error: #{exp.line}: Type-Check: Caller does not conform to static type'
             exit
         end
@@ -270,7 +270,7 @@ def checkExp(exp, symbs, tmap, c)
 
         # Check actuals against formals
         meth.formals.zip(exp.args[3]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name)
+            if not tmap.isChild(actual.type, formal[1].name, c)
                 puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
                 exit
             end
@@ -283,6 +283,25 @@ def checkExp(exp, symbs, tmap, c)
         end
         
         ### END static_dispatch
+
+        when 'plus', 'minus', 'times', 'divide'
+        checkExp(exp.args[0], symbs, tmap, c)
+        checkExp(exp.args[1], symbs, tmap, c)
+        if not (exp.args[0].type == "Int" and exp.args[1].type == "Int")
+            puts 'Error: #{exp.line}: Type-Checker: Non-integer arithmetic'
+            exit
+        end
+        exp.type = "Int"
+        
+        when 'block'
+        exp.args.each do |e|
+            checkExp(e, symbs, tmap, c)
+        end
+        exp.type = exp.args[exp.args.size-1]
+        
+
+        when 'internal'
+        # do nothing
 
         else
         puts "Unhandled expression: #{exp.expr}"
