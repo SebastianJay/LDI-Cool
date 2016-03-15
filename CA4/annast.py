@@ -1,6 +1,110 @@
 import itertools
 
-# Slightly modified from our ast.py to handle types in expressions
+def readClType(path):
+    lines = []
+    with open(path, 'U') as inFile:
+        lines = inFile.read().split('\n')
+
+    cmapind = lines.index("class_map")
+    imapind = lines.index("implementation_map")
+    pmapind = lines.index("parent_map")
+    astind = pmapind + 2*int(lines[pmapind+1]) + 2  #start of AST not explicitly marked
+
+    cmap = CMap()
+    cmap.load(iter(lines[cmapind+1:imapind]))
+    imap = IMap()
+    imap.load(iter(lines[imapind+1:pmapind]))
+    pmap = PMap()
+    pmap.load(iter(lines[pmapind+1:astind]))
+    ast = AST()
+    ast.load(iter(lines[astind:]))
+    return (cmap.classMap, imap.implMap, pmap.parentMap, ast)
+
+#class map
+class CMap:
+    def __init__(self, *args):
+        self.classMap = {}  #string class -> (string attr name -> CMapAttr field)
+
+    def load(self, l):
+        nClasses = int(l.next())
+        for i in range(nClasses):
+            clsName = l.next()
+            self.classMap[clsName] = {}
+            nAttr = int(l.next())
+            for j in range(nAttr):
+                cAttr = CMapAttr()
+                cAttr.load(l)
+                self.classMap[clsName][cAttr.name] = cAttr
+        return l
+
+#wrapper for info about one field of a class
+class CMapAttr:
+    def __init__(self, *args):
+        self.name = ''
+        self.type = ''
+        self.init = None
+
+    def load(self, l):
+        hasInit = l.next()
+        self.name = l.next()
+        self.type = l.next()
+        self.init = None
+        if hasInit == "initializer":
+            self.init = ASTExpression()
+            self.init.load(l)
+        return l
+
+#implementation map
+class IMap:
+    def __init__(self, *args):
+        self.implMap = {}   #string class -> (string method name -> IMapMethod method)
+
+    def load(self, l):
+        nClasses = int(l.next())
+        for i in range(nClasses):
+            clsName = l.next()
+            self.implMap[clsName] = {}
+            nMethods = int(l.next())
+            for j in range(nMethods):
+                iMethod = IMapMethod()
+                iMethod.load(l)
+                self.implMap[clsName][iMethod.name] = iMethod
+        return l
+
+#wrapper for info about one method of a class
+class IMapMethod:
+    def __init__(self, *args):
+        self.name = ''
+        self.formals = []
+        self.orig = ''  #name of original class where method was defined
+        self.body = None
+
+    def load(self, l):
+        self.name = l.next()
+        nFormals = int(l.next())
+        self.formals = []
+        for i in range(nFormals):
+            self.formals.append(l.next())
+        self.orig = l.next()
+        self.body = ASTExpression()
+        self.body.load(l)
+        return l
+
+#parent map
+class PMap:
+    def __init__(self, *args):
+        self.parentMap = {}     #string child class name -> string parent class name
+
+    def load(self, l):
+        nRelations = int(l.next())
+        for i in range(nRelations):
+            childName = l.next()
+            parentName = l.next()
+            self.parentMap[childName] = parentName
+        return l
+
+
+## Slightly modified from our ast.py to handle types in expressions
 
 #top level AST node - contains a list of ASTClass
 class AST:
@@ -177,7 +281,7 @@ class ASTExpression:
             self.type = args[1]
             self.expr = args[2]
             self.args = args[3]
-            
+
     # Utility method for turning an expression list into a string
     def expListStr(self, l):
         res = str(len(l)) + "\n"
@@ -244,11 +348,9 @@ class ASTExpression:
         elif self.expr == "dynamic_dispatch":
             mExp = ASTExpression()
             mId = ASTIdentifier()
-
             l = mExp.load(l)
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-
             self.args = (mExp,mId,mExpl)
 
         # Static dispatch args is tuple of (expression, type, identifier, expression list)
@@ -256,22 +358,22 @@ class ASTExpression:
             mExp = ASTExpression()
             mType = ASTIdentifier()
             mId = ASTIdentifier()
-
             l = mExp.load(l)
             l = mType.load(l)
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-
             self.args = (mExp,mType,mId,mExpl)
 
         # Self dispatch is a tuple of (identifier, expression list)
         elif self.expr == "self_dispatch":
             mId = ASTIdentifier()
-
             l = mId.load(l)
             mExpl, l = self.loadExpList(l)
-
             self.args = (mId,mExpl)
+
+        #Internal expressions are a set of functions defined for Object, String, IO
+        elif self.expr == "internal":
+            self.args = l.next()    #extra detail, e.g. "Object.copy"
 
         # If args is a tuple of three expressions
         elif self.expr == "if":
@@ -383,8 +485,8 @@ class ASTCase:
 
 import sys
 if __name__ == "__main__":
-    lines = sys.stdin.read()
-    lines = lines.split("\n")
-    ast = AST()
-    ast.load(iter(lines))
-    print ast
+    cmap, imap, pmap, ast = readClType(sys.argv[1])
+    print cmap
+    print imap
+    print pmap
+    #print ast
