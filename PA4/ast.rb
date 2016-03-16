@@ -12,7 +12,8 @@ class AST
     end
 
     def to_s
-        return [@classes.size,"\n", @classes.join].join
+        # Reference doesn't print internal classes
+        return [@classes[5..-1].size,"\n", @classes[5..-1].join].join
     end
 
     #append built-in classes and their corresponding methods to classes list
@@ -285,7 +286,7 @@ class ASTExpression
             if @args[-1].is_a? Array
                 argsstr = [@args.slice(0,@args.size-1).join, @args[-1].size,"\n", @args[-1]].join
             elsif @args[0].is_a? Array
-                argsstr = [@args[0].size,"\n", @args[0], @args.slice(1,@args.size-1).join].join
+                argsstr = [@args[0].size,"\n", @args[0], @args.slice(1,@args.size).join].join
             elsif @expr == 'block'
                 argsstr = [@args.size,"\n", @args].join
             else

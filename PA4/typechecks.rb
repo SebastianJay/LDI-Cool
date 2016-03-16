@@ -296,7 +296,7 @@ def checkExp(exp, symbs, tmap, c)
         exp.args.each do |e|
             checkExp(e, symbs, tmap, c)
         end
-        exp.type = exp.args[exp.args.size-1]
+        exp.type = exp.args[exp.args.size-1].type
         
 
         when 'internal'
