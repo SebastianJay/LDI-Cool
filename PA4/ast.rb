@@ -12,7 +12,8 @@ class AST
     end
 
     def to_s
-        return [@classes.size,"\n", @classes.join].join
+        # Reference doesn't print internal classes
+        return [@classes[5..-1].size,"\n", @classes[5..-1].join].join
     end
 
     #append built-in classes and their corresponding methods to classes list
@@ -227,7 +228,7 @@ class ASTMethod
         @name.preload(name)
         @formals = formals
         @type.preload(type)
-        @body.preload(expr)
+        @body.preload([type,expr])
         return self
     end
 
@@ -247,7 +248,7 @@ class ASTMethod
 end
 
 class ASTExpression
-    @@cltype = false
+    @@cltype = true
     @@exp1 = ['not','negate','isvoid']
     @@exp2 = ['while','plus','minus','times','divide','lt','le','eq']
     @@id1 = ['new', 'identifier']
@@ -267,8 +268,16 @@ class ASTExpression
         @type
     end
 
+    def type=(t)
+        @type = t
+    end
+
     def expr
         @expr
+    end
+
+    def args
+        @args
     end
 
     def to_s
@@ -277,7 +286,7 @@ class ASTExpression
             if @args[-1].is_a? Array
                 argsstr = [@args.slice(0,@args.size-1).join, @args[-1].size,"\n", @args[-1]].join
             elsif @args[0].is_a? Array
-                argsstr = [@args[0].size,"\n", @args[0], @args.slice(1,@args.size-1).join].join
+                argsstr = [@args[0].size,"\n", @args[0], @args.slice(1,@args.size).join].join
             elsif @expr == 'block'
                 argsstr = [@args.size,"\n", @args].join
             else
@@ -300,7 +309,9 @@ class ASTExpression
     end
 
     def preload(expr)
-        @internal = expr
+        @internal = expr[1]
+        @type = expr[0]
+        @expr = 'internal'
         return self
     end
 

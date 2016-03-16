@@ -205,7 +205,7 @@ class TypeMaps
                 method.formals.each do |fname, _|
                     formallst.push([fname.name,"\n"].join)
                 end
-                methodlst.push([method.name.name,"\n",formals.size,"\n",formallst.join,orig,"\n",method.body].join)
+                methodlst.push([method.name.name,"\n",method.formals.size,"\n",formallst.join,orig,"\n",method.body].join)
             end
             clslst.push([cls,"\n",lsttuples.size,"\n",methodlst.join].join)
         end
@@ -220,7 +220,7 @@ class TypeMaps
         end
         #do actual serialization
         clslst = []
-        pmap.sort.map do |k, v|
+        pmaps.sort.map do |k, v|
             clslst.push([k,"\n",v,"\n"])
         end
         return ["parent_map\n",@pmap.size,"\n",clslst.join].join
@@ -228,5 +228,72 @@ class TypeMaps
 
     def to_s
         return [cmap_to_s, imap_to_s, pmap_to_s].join
+    end
+    
+    # Returns the name of the parent class to the given class name (as a string)
+    def getParent(child) 
+        @pmap.keys.each do |c|
+            if c.name.name == child
+                return @pmap[c].name.name
+            end
+        end
+        return 'Object'
+    end
+
+    # Checks if child is a subclass of parent
+    def isChild(child, parent, selftype)
+        
+        if child == 'SELF_TYPE'
+            # SELF_TYPE_c <= T if c <= T
+            if parent != 'SELF_TYPE'
+                return isChild(selftype, parent, selftype)
+            else
+                return true # Supposedly never happens
+            end
+        # SELF_TYPE not <= SELF_TYPE    
+        elsif parent == 'SELF_TYPE'
+            return false
+        end
+        
+        # Every class is a subclass of itself
+        if child == parent
+            return true
+        # If we get to the root of the tree without finding parent, not a subclass
+        elsif child == 'Object'
+            return false
+        # Otherwise walk up the tree
+        else
+            return isChild(getParent(child), parent, selftype)
+        end
+    end
+
+    def lub(a,b, selftype)
+        if a == 'SELF_TYPE' and b == 'SELF_TYPE'
+            return 'SELF_TYPE'
+        elsif a == 'SELF_TYPE'
+            return lub(selftype, b, selftype)
+        elsif b == 'SELF_TYPE'
+            return lub(a, selftype, selftype)
+        else
+            # Enumerate a's parents
+            apars = [a]
+            n = a
+            while n != 'Object'
+                n = getParent(n)
+                apars.push(n)
+            end
+            
+            # Walk up b's parents until we find one in a's parents
+            n = b
+            while not apars.include? n and n != 'Object'
+                n = getParent(n)
+            end
+            
+            if apars.include? n
+                return n
+            else 
+                return 'Object'
+            end
+        end
     end
 end
