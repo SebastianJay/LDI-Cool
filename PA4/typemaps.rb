@@ -229,47 +229,71 @@ class TypeMaps
     def to_s
         return [cmap_to_s, imap_to_s, pmap_to_s].join
     end
+    
+    # Returns the name of the parent class to the given class name (as a string)
+    def getParent(child) 
+        @pmap.keys.each do |c|
+            if c.name.name == child
+                return @pmap[c].name.name
+            end
+        end
+        return 'Object'
+    end
 
     # Checks if child is a subclass of parent
     def isChild(child, parent, selftype)
-        # pmap wants ASTClass objects, so convert string class names to ASTClass
-        if child.is_a? String
-            if child == 'SELF_TYPE'
-                child = selftype
-            end 
-            pmap.keys.each do |c|
-                if c.name.name == child
-                    child = c
-                    break
-                end
-            end
-        end
         
-        if parent.is_a? String
-            if parent == 'SELF_TYPE'
-                parent = selftype
+        if child == 'SELF_TYPE'
+            # SELF_TYPE_c <= T if c <= T
+            if parent != 'SELF_TYPE'
+                return isChild(selftype, parent, selftype)
+            else
+                return true # Supposedly never happens
             end
-            # Everything is a subclass of object
-            if parent == 'Object'
-                return true
-            end
-            pmap.keys.each do |c|
-                if c.name.name == parent
-                    parent = c
-                    break
-                end
-            end
+        # SELF_TYPE not <= SELF_TYPE    
+        elsif parent == 'SELF_TYPE'
+            return false
         end
         
         # Every class is a subclass of itself
-        if child.name.name == parent.name.name
+        if child == parent
             return true
         # If we get to the root of the tree without finding parent, not a subclass
-        elsif child.name.name == 'Object'
+        elsif child == 'Object'
             return false
         # Otherwise walk up the tree
         else
-            return isChild(@pmap[child], parent)
+            return isChild(getParent(child), parent, selftype)
+        end
+    end
+
+    def lub(a,b, selftype)
+        if a == 'SELF_TYPE' and b == 'SELF_TYPE'
+            return selftype
+        elsif a == 'SELF_TYPE'
+            return lub(selftype, b, selftype)
+        elsif b == 'SELF_TYPE'
+            return lub(a, selftype, selftype)
+        else
+            # Enumerate a's parents
+            apars = [a]
+            n = a
+            while n != 'Object'
+                n = getParent(n)
+                apars.push(n)
+            end
+            
+            # Walk up b's parents until we find one in a's parents
+            n = b
+            while not apars.include? n and n != 'Object'
+                n = getParent(n)
+            end
+            
+            if apars.include? n
+                return n
+            else 
+                return 'Object'
+            end
         end
     end
 end

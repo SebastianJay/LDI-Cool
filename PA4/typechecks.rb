@@ -107,8 +107,7 @@ def checkExp(exp, symbs, tmap, c)
     case exp.expr
         when 'identifier'
         if not symbs.include?(exp.args.name)
-            puts 'Error: #{exp.args.line}: Type-Check: Undeclared identifier #{exp.args.name}
-'
+            puts "Error: #{exp.args.line}: Type-Check: Undeclared identifier #{exp.args.name}"
             exit
         else
             exp.type = symbs[exp.args.name]
@@ -118,7 +117,7 @@ def checkExp(exp, symbs, tmap, c)
         checkExp(exp.args[1], symbs, tmap, c)
         # If assignor not subclass of identifier
         if not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name], c)
-            puts 'Error: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}'
+            puts "Error: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}"
             exit
         else
             exp.type = exp.args[1].type
@@ -134,8 +133,8 @@ def checkExp(exp, symbs, tmap, c)
         exp.type = 'String'
 
         when 'new'
-        if exp.args.name == 'SELF_TYPE' # TODO: verify this, not sure how SELF_TYPE works
-            exp.type = c
+        if exp.args.name == 'SELF_TYPE'
+            exp.type = 'SELF_TYPE'
         else
             exp.type = exp.args.name
         end
@@ -143,7 +142,7 @@ def checkExp(exp, symbs, tmap, c)
         when 'self_dispatch'
         # Find method in imap
         meth=nil
-        tmap.imap[c].each do |m|
+        tmap.imap[c].each do |_,m|
             if m.name.name == exp.args[0].name
                 meth = m
                 break
@@ -152,13 +151,13 @@ def checkExp(exp, symbs, tmap, c)
         
         # Method not found
         if meth.nil?
-            puts 'Error: #{exp.args[0].line}: Type-Checker: Unknown method "#{c}@#{exp.args[0].name}"'
+            puts "Error: #{exp.args[0].line}: Type-Checker: Unknown method \"#{c}@#{exp.args[0].name}\""
             exit
         end
         
         # Check number of arguments
         if meth.formals.size != exp.args[1].size
-            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[1].size} expected #{meth.formals.size}'
+            puts "Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[1].size} expected #{meth.formals.size}"
             exit
         end
         
@@ -170,7 +169,7 @@ def checkExp(exp, symbs, tmap, c)
         # Check actuals against formals
         meth.formals.zip(exp.args[1]) do |formal, actual|
             if not tmap.isChild(actual.type, formal[1].name,c)
-                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                puts "Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
                 exit
             end
         end
@@ -191,7 +190,7 @@ def checkExp(exp, symbs, tmap, c)
         
         # Find method in imap
         meth=nil
-        tmap.imap[exp.args[0].type].each do |m|
+        tmap.imap[exp.args[0].type].each do |_,m|
             if m.name.name == exp.args[1].name
                 meth = m
                 break
@@ -200,13 +199,13 @@ def checkExp(exp, symbs, tmap, c)
         
         # Method not found
         if meth.nil?
-            puts 'Error: #{exp.args[1].line}: Type-Checker: Unknown method "#{exp.args[0].type}@#{exp.args[1].name}"'
+            puts "Error: #{exp.args[1].line}: Type-Checker: Unknown method \"#{exp.args[0].type}@#{exp.args[1].name}\""
             exit
         end
         
         # Check number of arguments
         if meth.formals.size != exp.args[2].size
-            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[2].size} expected #{meth.formals.size}'
+            puts "Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[2].size} expected #{meth.formals.size}"
             exit
         end
         
@@ -218,7 +217,7 @@ def checkExp(exp, symbs, tmap, c)
         # Check actuals against formals
         meth.formals.zip(exp.args[2]) do |formal, actual|
             if not tmap.isChild(actual.type, formal[1].name, c)
-                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                puts "Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
                 exit
             end
         end
@@ -237,15 +236,15 @@ def checkExp(exp, symbs, tmap, c)
         
         # Error if caller expression does not conform to static type
         # TODO: Verify line number
-        if not tmap.isChild(exp.args[0], exp.args[1].name, c)
-            puts 'Error: #{exp.line}: Type-Check: Caller does not conform to static type'
+        if not tmap.isChild(exp.args[0].type, exp.args[1].name, c)
+            puts "Error: #{exp.line}: Type-Check: Caller type #{exp.args[0].type} does not conform to static type #{exp.args[1].name}"
             exit
         end
         
         # Find method in imap
         meth=nil
-        tmap.imap[exp.args[1].name].each do |m|
-            if m.name.name == exp.args[1].name
+        tmap.imap[exp.args[1].name].each do |_,m|
+            if m.name.name == exp.args[2].name
                 meth = m
                 break
             end
@@ -253,25 +252,25 @@ def checkExp(exp, symbs, tmap, c)
         
         # Method not found
         if meth.nil?
-            puts 'Error: #{exp.args[2].line}: Type-Checker: Unknown method "#{exp.args[1].name}@#{exp.args[2].name}"'
+            puts "Error: #{exp.args[2].line}: Type-Checker: Unknown method \"#{exp.args[1].name}@#{exp.args[2].name}\""
             exit
         end
         
         # Check number of arguments
         if meth.formals.size != exp.args[3].size
-            puts 'Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[3].size} expected #{meth.formals.size}'
+            puts "Error: #{exp.line}: Type-Checker: Invalid number of arguments, got #{exp.args[3].size} expected #{meth.formals.size}"
             exit
         end
         
         # Type each argument
-        exp.args[2].each do |subexp|
+        exp.args[3].each do |subexp|
             checkExp(subexp, symbs, tmap, c)
         end
 
         # Check actuals against formals
         meth.formals.zip(exp.args[3]) do |formal, actual|
             if not tmap.isChild(actual.type, formal[1].name, c)
-                puts 'Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}'
+                puts "Error: #{exp.line}: Type-Checker: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
                 exit
             end
         end
@@ -288,7 +287,7 @@ def checkExp(exp, symbs, tmap, c)
         checkExp(exp.args[0], symbs, tmap, c)
         checkExp(exp.args[1], symbs, tmap, c)
         if not (exp.args[0].type == "Int" and exp.args[1].type == "Int")
-            puts 'Error: #{exp.line}: Type-Checker: Non-integer arithmetic'
+            puts "Error: #{exp.line}: Type-Checker: Non-integer arithmetic"
             exit
         end
         exp.type = "Int"
