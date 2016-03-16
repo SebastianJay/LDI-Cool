@@ -269,7 +269,7 @@ class TypeMaps
 
     def lub(a,b, selftype)
         if a == 'SELF_TYPE' and b == 'SELF_TYPE'
-            return selftype
+            return 'SELF_TYPE'
         elsif a == 'SELF_TYPE'
             return lub(selftype, b, selftype)
         elsif b == 'SELF_TYPE'

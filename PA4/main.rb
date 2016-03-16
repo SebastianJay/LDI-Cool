@@ -30,6 +30,18 @@ if __FILE__ == $0
             symbs[attr.name.name] = attr.type.name
         end
         symbs['self'] = 'SELF_TYPE'
+        
+        # Type check attributes
+        maps.cmap[cname].each do |attr|
+            if not attr.init.nil?
+                checkExp(attr.init, symbs, maps, cname)
+                if not maps.isChild(attr.init.type, attr.type.name, cname)
+                    puts "ERROR: #{attr.name.line}: Type-Check: #{attr.init.type} does not conform to #{attr.type.name} in attribute initializer"
+                    exit
+                end
+            end
+        end
+
         maps.imap[cname].each do |imp, meth|
             # Skip superclass methods, avoid double checking
             if imp != cname
@@ -45,7 +57,7 @@ if __FILE__ == $0
             # Type check method
             checkExp(meth.body, mSymbs, maps, cname)
             if not maps.isChild(meth.body.type, meth.type.name, cname)
-                puts 'Error: #{meth.name.name}: Type-Check: Method body does not conform to return type'
+                puts "ERROR: #{meth.name.line}: Type-Check: Method body does not conform to return type"
                 exit
             end
         end
