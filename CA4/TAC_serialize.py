@@ -119,8 +119,13 @@ class TACConstant(TACDeclare):
     def __str__(self):
         return self.assignee + ' <- ' + self.ptype +("\n" if self.ptype=="string" else ' ') + self.const
 
+
+#"abstract" class for the control instructions
+class TACControl(TACInstruction):
+    pass
+
 #generic calls - used for self, static, and dynamic dispatch
-class TACCall(TACInstruction):
+class TACCall(TACControl):
     def __init__(self, assignee, funcname, args):
         self.assignee = assignee
         self.funcname = funcname
@@ -131,10 +136,6 @@ class TACCall(TACInstruction):
     def __str__(self):
         argstr = ' '.join(self.args)
         return self.assignee + ' <- call ' + self.funcname + ' ' + argstr
-
-#"abstract" class for the control instructions
-class TACControl(TACInstruction):
-    pass
 
 #Jmp instruction
 class TACJmp(TACControl):
@@ -165,6 +166,27 @@ class TACBT(TACControl):
     def __str__(self):
         return 'bt ' + self.cond + ' ' + self.label
 
+#abstract class for meta-instructions related to ASM gen
+class TACAux(TACInstruction):
+    pass
+
+#create space on heap for a class
+#TODO worry about freeing memory?
+class TACMalloc(TACAux):
+    def __init__(self, assignee, cname):
+        self.assignee = assignee
+        self.cname = cname
+    def __str__(self):
+        return self.assignee + ' <- ' + 'malloc ' + self.cname
+
+#represents a lookup in a virtual method table for a function
+class TACVTable(TACAux):
+    def __init__(self, assignee, obj, method):
+        self.assignee = assignee
+        self.obj = obj
+        self.method = method
+    def __str__(self):
+        return self.assignee + ' <- ' + 'vtable ' + self.obj + ' ' + self.method
 
 ### Functions for converting input stream to TACGraph
 def serializeTAC(streamptr):

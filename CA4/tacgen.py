@@ -72,8 +72,6 @@ class TACIndexer:
     #looks up the symbol table for var; creates new register if forceNew or not found
     @staticmethod
     def map(var, forceNew = False):
-        if var == 'self':
-            return '#self'  #special TAC annotation for self
         if var not in TACIndexer.varRegMap:
             TACIndexer.varRegMap[var] = []
         if len(TACIndexer.varRegMap[var]) == 0:
@@ -165,9 +163,14 @@ def expConvert(node):
             TACIndexer.pop(binding.name.name)
         return regr
 
-    # NOTE: Case not required for this assignment,
-    #       see: https://piazza.com/class/ijen7n8b3bi1tc?cid=172
     elif node.expr == 'case':
+        #generate code for case expression
+        #loop: generate labels for branches
+        #create join reg
+        #generate type evaluation to find least type
+        #jump to least type label, OR fail if no type found
+        #loop over branches: emit label, generate code, result in join reg + jump to join label
+        #join label
         pass
 
     elif node.expr == 'block':
@@ -214,30 +217,42 @@ def expConvert(node):
 
         return resreg
 
-    #TODO clean up
+    #all dispatch follows form:
+    #   generate the executor of function (regexec)
+    #   generate all explicit parameters of function (regs)
+    #   prepend exec as the self param to regs
+    #   find function to call in vtable if necessary
+    #   call function and assign result into new register
     elif node.expr == 'dynamic_dispatch':
-        # Generate all the arguments for the function call
+        regexec = expConvert(node.args[0])
         regs = [expConvert(e) for e in node.args[2]]
+        regs = [regexec] + regs
+        reglb = TACIndexer.reg()
+        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[1].name))
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
-        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[1].name, regs))
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
-    #TODO clean up
     elif node.expr == 'static_dispatch':
-        # Generate all the arguments for the function call
+        regexec = expConvert(node.args[0])
         regs = [expConvert(e) for e in node.args[3]]
+        regs = [regexec] + regs
+        calllb = node.args[1].name + '_' + node.args[2].name + '_1'
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
-        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[2].name, regs))
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
     # NOTE: out_* and in_* get treated as self-dispatch because of the inherits IO
     elif node.expr == 'self_dispatch':
-        # Generate all the arguments for the function call
+        regexec = TACIndexer.map('self')
         regs = [expConvert(e) for e in node.args[1]]
+        regs = [regexec] + regs
+        reglb = TACIndexer.reg()
+        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[0].name))
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
-        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[0].name, regs))
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
@@ -264,12 +279,16 @@ def expConvert(node):
 def methodConvert(node):
     #emit start label of func
     TACIndexer.pushIns(TACIndexer.label())
+    #add the implicit "self" parameter
+    reg = TACIndexer.map('self', True)
+    TACIndexer.pushIns(TACAssign(reg, 'self'))
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
         TACIndexer.pushIns(TACAssign(reg, formal[0].name))
     reg = expConvert(node.body)
     #remove formal -> register mappings
+    TACIndexer.pop('self')
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
     TACIndexer.pushIns(TACReturn(reg))
@@ -310,11 +329,12 @@ def attrConvert(ast):
     for mclass in ast.classes:
         attrlst = [feat for feat in mclass.features if isinstance(feat, ASTAttribute)]
         TACIndexer.init(mclass.name.name, 'new')
-        TACIndexer.pushIns(TACIndexer.label())
-        #make call to parent constructor
-        #TODO separate memory allocation and attribute initialization either in TAC or ASM
-        #TODO clean up syntax
-        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'_new_XXX', [TACIndexer.map('self')]))
+        TACIndexer.pushIns(TACIndexer.label())  #start of constructor = mem alloc
+        TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
+        TACIndexer.pushIns(TACIndexer.label())  #next step = init fields
+        #make call to initializer portion of parent constructor
+        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'_new_2', [TACIndexer.map('self')]))
+            #TODO review parent call - maybe split into two different functions
         #make first pass to default initialize fields
         for mattr in attrlst:
             TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name.name), 'default', mattr.type.name))
@@ -324,6 +344,7 @@ def attrConvert(ast):
                 reg = expConvert(mattr.init)
                 TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name.name), reg))
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
+        TACIndexer.pop('self')
 
 if __name__ == '__main__':
     cmap, imap, pmap, ast = readClType(sys.argv[1])
