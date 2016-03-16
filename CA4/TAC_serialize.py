@@ -119,16 +119,18 @@ class TACConstant(TACDeclare):
     def __str__(self):
         return self.assignee + ' <- ' + self.ptype +("\n" if self.ptype=="string" else ' ') + self.const
 
-#TAC calls to in/out string/int
+#generic calls - used for self, static, and dynamic dispatch
 class TACCall(TACInstruction):
-    def __init__(self, assignee, funcname, op1=''):
+    def __init__(self, assignee, funcname, args):
         self.assignee = assignee
         self.funcname = funcname
-        self.op1 = op1
+        if args:
+            self.args = args
+        else:
+            self.args = []
     def __str__(self):
-        if self.op1:
-            return self.assignee + ' <- call ' + self.funcname + ' ' + self.op1
-        return self.assignee + ' <- call ' + self.funcname
+        argstr = ' '.join(self.args)
+        return self.assignee + ' <- call ' + self.funcname + ' ' + argstr
 
 #"abstract" class for the control instructions
 class TACControl(TACInstruction):
@@ -252,7 +254,7 @@ def _readToTACInstructions(streamptr):
                 ins = TACAllocate(lineargs[0], lineargs[2], lineargs[3])
             elif lineargs[2] == 'call':
                 if len(lineargs) >= 5:
-                    ins = TACCall(lineargs[0], lineargs[3], lineargs[4])
+                    ins = TACCall(lineargs[0], lineargs[3], [lineargs[4]])
                 else:
                     ins = TACCall(lineargs[0], lineargs[3])
             elif lineargs[2] == 'int' or lineargs[2] == 'bool':

@@ -24,14 +24,38 @@ astTacMap = {
 #  using a static class because I have an aversion to many global vars
 class TACIndexer:
     cname = ''      #class name for current instructions
-    mname = ''      #method name
-    mtype = ''      #method type
-    lind = -1       #counter for labels
-    rind = 0       #counter for registers
-    varRegMap = {}  #symbol table
+    mname = ''      #method name for current instructions
+    lind = 0        #counter for labels
+    rind = 0        #counter for registers
+    varRegMap = {}  #symbol table, map string var -> lst of string registers bound to var
+    classAttrs = {} #map string class name -> set of strings of attr names
     inslst = []     #list of TACInstruction
 
+    cmap = {}       #class map
+    imap = {}       #implementation map
+    pmap = {}       #parent map
+
     returnReg = 't0'
+
+    @staticmethod
+    def setTypeMaps(cmap, imap, pmap):
+        TACIndexer.cmap = cmap
+        TACIndexer.imap = imap
+        TACIndexer.pmap = pmap
+
+    #resets counters and sets the names for labels
+    @staticmethod
+    def init(cname, mname):
+        TACIndexer.lind = 0
+        TACIndexer.rind = 0
+        TACIndexer.cname = cname
+        TACIndexer.mname = mname
+
+    @staticmethod
+    def addClassAttr(cname, attrname):
+        if cname not in TACIndexer.classAttrs:
+            TACIndexer.classAttrs[cname] = set()
+        TACIndexer.classAttrs[cname].add(attrname)
 
     #increments a counter and returns a string label
     @staticmethod
@@ -48,11 +72,16 @@ class TACIndexer:
     #looks up the symbol table for var; creates new register if forceNew or not found
     @staticmethod
     def map(var, forceNew = False):
+        if var == 'self':
+            return '#self'  #special TAC annotation for self
         if var not in TACIndexer.varRegMap:
             TACIndexer.varRegMap[var] = []
-        if forceNew or len(TACIndexer.varRegMap[var]) == 0:
-            reg = TACIndexer.reg()
-            TACIndexer.varRegMap[var].append(reg)
+        if len(TACIndexer.varRegMap[var]) == 0:
+            if not forceNew and var in TACIndexer.classAttrs[TACIndexer.cname]:
+                return '$' + var    #special TAC annotation referring to class attributes
+            else:
+                reg = TACIndexer.reg()
+                TACIndexer.varRegMap[var].append(reg)
         return TACIndexer.varRegMap[var][-1]
 
     #unbinds a symbol table entry for var
@@ -185,24 +214,31 @@ def expConvert(node):
 
         return resreg
 
-
-    # NOTE: Don't think static or dynamic needed for this
+    #TODO clean up
     elif node.expr == 'dynamic_dispatch':
-        pass
+        # Generate all the arguments for the function call
+        regs = [expConvert(e) for e in node.args[2]]
+        regr = TACIndexer.reg()
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[1].name, regs))
+        TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
+        return regr
+
+    #TODO clean up
     elif node.expr == 'static_dispatch':
-        pass
+        # Generate all the arguments for the function call
+        regs = [expConvert(e) for e in node.args[3]]
+        regr = TACIndexer.reg()
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[2].name, regs))
+        TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
+        return regr
 
     # NOTE: out_* and in_* get treated as self-dispatch because of the inherits IO
     elif node.expr == 'self_dispatch':
         # Generate all the arguments for the function call
         regs = [expConvert(e) for e in node.args[1]]
         regr = TACIndexer.reg()
-        #TODO if generalizing to all functions, allow TACCall to take multiple args
-        ins = TACCall(TACIndexer.returnReg, node.args[0].name, regs[0] if len(regs) > 0 else '')
-        TACIndexer.pushIns(ins)
-
+        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, node.args[0].name, regs))
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
-
         return regr
 
     elif node.expr == 'new':
@@ -226,23 +262,20 @@ def expConvert(node):
 
 #routine for generating TAC for methods
 def methodConvert(node):
-    #set prefix for future labels
-    TACIndexer.mname = node.name.name
-    #store return type (while expression uses this)
-    TACIndexer.mtype = node.type.name
+    #emit start label of func
+    TACIndexer.pushIns(TACIndexer.label())
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
         TACIndexer.pushIns(TACAssign(reg, formal[0].name))
     reg = expConvert(node.body)
-    #remove identifier -> register mappings
+    #remove formal -> register mappings
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
     TACIndexer.pushIns(TACReturn(reg))
 
 #for CA2, looks for the first method of first class and generates its TAC code
 def mainConvert(ast):
-
     #only convert the first method of the first class
     if ast.classes:
         mclass = ast.classes[0]
@@ -250,20 +283,53 @@ def mainConvert(ast):
         TACIndexer.cname = mclass.name.name
         for feature in mclass.features:
             if isinstance(feature, ASTMethod):
+                #set prefix for future labels
+                TACIndexer.mname = feature.name.name
                 methodConvert(feature)
                 break
     else:
         print 'ERROR: could not find any classes in AST'
 
 
-if __name__ == '__main__':
-    with open(sys.argv[1], 'U') as infile:
-        lines = infile.read()
-    lines = lines.split("\n")
-    ast = AST()
-    ast.load(iter(lines))
+#for CA4, go through all methods of user-defined classes and generate TAC for bodies
+def implConvert(ast):
+    for mclass in ast.classes:
+        for feature in mclass.features:
+            if isinstance(feature, ASTMethod):
+                TACIndexer.init(mclass.name.name, feature.name.name)
+                methodConvert(feature)
 
-    mainConvert(ast)
+#define constructors for user-defined classes
+def attrConvert(ast):
+    #add mappings of attributes so TACIndexer can find them if not in symbol table
+    for mclass in TACIndexer.cmap:
+        TACIndexer.classAttrs[mclass] = set()   #TODO review
+        for mattr in TACIndexer.cmap[mclass]:
+            TACIndexer.addClassAttr(mclass, mattr.name)
+    #go through user-defined attributes
+    for mclass in ast.classes:
+        attrlst = [feat for feat in mclass.features if isinstance(feat, ASTAttribute)]
+        TACIndexer.init(mclass.name.name, 'new')
+        TACIndexer.pushIns(TACIndexer.label())
+        #make call to parent constructor
+        #TODO separate memory allocation and attribute initialization either in TAC or ASM
+        #TODO clean up syntax
+        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'_new_XXX', [TACIndexer.map('self')]))
+        #make first pass to default initialize fields
+        for mattr in attrlst:
+            TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name.name), 'default', mattr.type.name))
+        #make second pass for those with initializer expressions
+        for mattr in attrlst:
+            if mattr.init is not None:
+                reg = expConvert(mattr.init)
+                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name.name), reg))
+        TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
+
+if __name__ == '__main__':
+    cmap, imap, pmap, ast = readClType(sys.argv[1])
+    TACIndexer.setTypeMaps(cmap, imap, pmap)
+    attrConvert(ast)
+    implConvert(ast)
 
     #buffer up stored instructions and print
     outbuf = ''

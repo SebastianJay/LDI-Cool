@@ -329,9 +329,7 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACAllocate):
             asmlst.append(ASMAllocate(realReg(ins.assignee), ins.allop, ins.ptype))
         elif isinstance(ins, TACCall):
-            #TODO make TAC take multiple args
-            lstargs = [realReg(ins.op1)] if ins.op1 != '' else []
-            asmlst.append(ASMCall(realReg(ins.assignee), ins.funcname, lstargs))
+            asmlst.append(ASMCall(realReg(ins.assignee), ins.funcname, ins.args))
         elif isinstance(ins, TACLabel):
             asmlst.append(ASMLabel(ins.name))
         elif isinstance(ins, TACReturn):

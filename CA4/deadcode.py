@@ -9,8 +9,8 @@ def getRead(inst):
     elif isinstance(inst, TACAssign):
         res = [inst.assignor]
     elif isinstance(inst, TACCall):
-        if inst.op1:
-            res = [inst.op1] # TODO: Multiple method arguments?
+        if inst.args:
+            res = inst.args
     elif isinstance(inst, TACReturn):
         res = [inst.retval]
     elif isinstance(inst, TACBT):

@@ -23,18 +23,18 @@ def readClType(path):
 #class map
 class CMap:
     def __init__(self, *args):
-        self.classMap = {}  #string class -> (string attr name -> CMapAttr field)
+        self.classMap = {}  #string class -> [] of CMapAttr field
 
     def load(self, l):
         nClasses = int(l.next())
         for i in range(nClasses):
             clsName = l.next()
-            self.classMap[clsName] = {}
+            self.classMap[clsName] = []
             nAttr = int(l.next())
             for j in range(nAttr):
                 cAttr = CMapAttr()
                 cAttr.load(l)
-                self.classMap[clsName][cAttr.name] = cAttr
+                self.classMap[clsName].append(cAttr)
         return l
 
 #wrapper for info about one field of a class
@@ -57,18 +57,18 @@ class CMapAttr:
 #implementation map
 class IMap:
     def __init__(self, *args):
-        self.implMap = {}   #string class -> (string method name -> IMapMethod method)
+        self.implMap = {}   #string class -> [] of IMapMethod method
 
     def load(self, l):
         nClasses = int(l.next())
         for i in range(nClasses):
             clsName = l.next()
-            self.implMap[clsName] = {}
+            self.implMap[clsName] = []
             nMethods = int(l.next())
             for j in range(nMethods):
                 iMethod = IMapMethod()
                 iMethod.load(l)
-                self.implMap[clsName][iMethod.name] = iMethod
+                self.implMap[clsName].append(iMethod)
         return l
 
 #wrapper for info about one method of a class
