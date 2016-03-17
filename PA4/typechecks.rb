@@ -115,8 +115,12 @@ def checkExp(exp, symbs, tmap, c)
 
     when 'assign'
         checkExp(exp.args[1], symbs, tmap, c)
+        #cannot assign to self
+        if exp.args[0].name == 'self'
+            puts "ERROR: #{exp.line}: Type-Check: Cannot assign to self"
+            exit
         # If assignor not subclass of identifier
-        if not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name], c)
+        elsif not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name], c)
             puts "ERROR: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}"
             exit
         else

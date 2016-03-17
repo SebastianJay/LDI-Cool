@@ -1,5 +1,5 @@
 class Main inherits IO {
     main() : Object {
-        self <- 0
+        self <- new SELF_TYPE
     };
 };
