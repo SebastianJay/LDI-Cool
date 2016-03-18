@@ -229,9 +229,9 @@ class TypeMaps
     def to_s
         return [cmap_to_s, imap_to_s, pmap_to_s].join
     end
-    
+
     # Returns the name of the parent class to the given class name (as a string)
-    def getParent(child) 
+    def getParent(child)
         @pmap.keys.each do |c|
             if c.name.name == child
                 return @pmap[c].name.name
@@ -241,8 +241,8 @@ class TypeMaps
     end
 
     # Checks if child is a subclass of parent
+    # child, parent, selftype are all strings
     def isChild(child, parent, selftype)
-        
         if child == 'SELF_TYPE'
             # SELF_TYPE_c <= T if c <= T
             if parent != 'SELF_TYPE'
@@ -250,11 +250,11 @@ class TypeMaps
             else
                 return true # Supposedly never happens
             end
-        # SELF_TYPE not <= SELF_TYPE    
+        # SELF_TYPE not <= SELF_TYPE
         elsif parent == 'SELF_TYPE'
             return false
         end
-        
+
         # Every class is a subclass of itself
         if child == parent
             return true
@@ -267,7 +267,10 @@ class TypeMaps
         end
     end
 
-    def lub(a,b, selftype)
+    #least upper bound
+    #finds the name of the least class that is a common ancestor to a and b
+    # all args are strings
+    def lub(a, b, selftype)
         if a == 'SELF_TYPE' and b == 'SELF_TYPE'
             return 'SELF_TYPE'
         elsif a == 'SELF_TYPE'
@@ -282,16 +285,16 @@ class TypeMaps
                 n = getParent(n)
                 apars.push(n)
             end
-            
+
             # Walk up b's parents until we find one in a's parents
             n = b
             while not apars.include? n and n != 'Object'
                 n = getParent(n)
             end
-            
+
             if apars.include? n
                 return n
-            else 
+            else
                 return 'Object'
             end
         end

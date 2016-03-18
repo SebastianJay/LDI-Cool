@@ -1,5 +1,6 @@
 require 'set'
-#takes string => string mapping
+#takes string => string mapping (child => parent)
+#returns true if cycle is found, false otherwise
 def checkInheritCycle(pmaps)
     visited = Set.new
     pmaps.each do |c,_|
@@ -30,7 +31,8 @@ def checkInheritCycle(pmaps)
 end
 
 #perform type-checks on all things except expressions
-#i.e. class, method, attribute
+#i.e. verifies that attributes and method signatures look OK, Main.main is present, etc
+#if error is found, an info string is returned; if all checks pass nil is returned
 def checkAdhoc(maps)
     #check for Main class with 0-param main method
     if maps.imap.has_key?('Main')
@@ -97,6 +99,52 @@ def checkAdhoc(maps)
     return nil
 end
 
+#Type check the expression bodies of attribute initializers and method bodies
+# can terminate if error occurs (calls to checkExp can also terminate on error)
+# maps - TypeMaps object
+def checkAttrImpl(maps)
+    maps.pmap.keys.each do |c|
+        cname = c.name.name
+        symbs = {}
+        # Bind attributes
+        maps.cmap[cname].each do |cattr|
+            symbs[cattr.name.name] = cattr.type.name
+        end
+        symbs['self'] = 'SELF_TYPE'
+
+        # Type check attributes
+        maps.cmap[cname].each do |cattr|
+            if not cattr.init.nil?
+                checkExp(cattr.init, symbs, maps, cname)
+                if not maps.isChild(cattr.init.type, cattr.type.name, cname)
+                    puts "ERROR: #{cattr.name.line}: Type-Check: #{cattr.init.type} does not conform to #{cattr.type.name} in attribute initializer"
+                    exit
+                end
+            end
+        end
+
+        maps.imap[cname].each do |imp, meth|
+            # Skip superclass methods, avoid double checking
+            if imp != cname
+                next
+            end
+
+            mSymbs = symbs.clone()
+            # Bind parameters
+            meth.formals.each do |name, type|
+                mSymbs[name.name] = type.name
+            end
+
+            # Type check method
+            checkExp(meth.body, mSymbs, maps, cname)
+            if not maps.isChild(meth.body.type, meth.type.name, cname)
+                puts "ERROR: #{meth.name.line}: Type-Check: Method body does not conform to return type"
+                exit
+            end
+        end
+    end
+end
+
 # Does type checking on an expression
 # exp: ASTExpression object, type information modified in place,
 # symbs: dictionary of form: string identifier => string type
@@ -106,6 +154,7 @@ end
 def checkExp(exp, symbs, tmap, c)
     case exp.expr
     when 'identifier'
+        #if symbol is not in table the identifier is undeclared
         if not symbs.include?(exp.args.name)
             puts "ERROR: #{exp.args.line}: Type-Check: Undeclared identifier #{exp.args.name}"
             exit
@@ -119,7 +168,7 @@ def checkExp(exp, symbs, tmap, c)
         if exp.args[0].name == 'self'
             puts "ERROR: #{exp.line}: Type-Check: Cannot assign to self"
             exit
-        # If assignor not subclass of identifier
+        #if assignor not subclass of identifier
         elsif not tmap.isChild(exp.args[1].type, symbs[exp.args[0].name], c)
             puts "ERROR: #{exp.line}: Type-Check: Bad assignment, #{exp.args[1].type} does not conform to #{symbs[exp.args[0].name]}"
             exit
@@ -137,159 +186,17 @@ def checkExp(exp, symbs, tmap, c)
         exp.type = 'String'
 
     when 'new'
-        if exp.args.name == 'SELF_TYPE'
-            exp.type = 'SELF_TYPE'
-        else
-            exp.type = exp.args.name
-        end
+        #all types, including SELF_TYPE, are allowed here
+        exp.type = exp.args.name
 
     when 'self_dispatch'
-        # Find method in imap
-        meth=nil
-        if not tmap.imap[c].nil?
-            tmap.imap[c].each do |_,m|
-                if m.name.name == exp.args[0].name
-                    meth = m
-                    break
-                end
-            end
-        end
-        # Method not found
-        if meth.nil?
-            puts "ERROR: #{exp.args[0].line}: Type-Check: Unknown method \"#{c}@#{exp.args[0].name}\""
-            exit
-        end
-
-        # Check number of arguments
-        if meth.formals.size != exp.args[1].size
-            puts "ERROR: #{exp.line}: Type-Check: Invalid number of arguments, got #{exp.args[1].size} expected #{meth.formals.size}"
-            exit
-        end
-
-        # Type each argument
-        exp.args[1].each do |subexp|
-            checkExp(subexp, symbs, tmap, c)
-        end
-
-        # Check actuals against formals
-        meth.formals.zip(exp.args[1]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name,c)
-                puts "ERROR: #{exp.line}: Type-Check: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
-                exit
-            end
-        end
-
-        if meth.type.name == 'SELF_TYPE'
-            exp.type = 'SELF_TYPE'
-        else
-            exp.type = meth.type.name
-        end
-        ### END self_dispatch
+        checkDispatch(exp, symbs, tmap, c, nil, nil, exp.args[0], exp.args[1])
 
     when 'dynamic_dispatch'
-        # Type check caller expression
-        checkExp(exp.args[0], symbs, tmap, c)
-
-        t0 = exp.args[0].type
-        if t0 == 'SELF_TYPE'
-            t0 = c
-        end
-
-        # Find method in imap
-        meth=nil
-        if not tmap.imap[t0].nil?
-            tmap.imap[t0].each do |_,m|
-                if m.name.name == exp.args[1].name
-                    meth = m
-                    break
-                end
-            end
-        end
-
-        # Method not found
-        if meth.nil?
-            puts "ERROR: #{exp.args[1].line}: Type-Check: Unknown method \"#{exp.args[0].type}@#{exp.args[1].name}\""
-            exit
-        end
-
-        # Check number of arguments
-        if meth.formals.size != exp.args[2].size
-            puts "ERROR: #{exp.line}: Type-Check: Invalid number of arguments, got #{exp.args[2].size} expected #{meth.formals.size}"
-            exit
-        end
-
-        # Type each argument
-        exp.args[2].each do |subexp|
-            checkExp(subexp, symbs, tmap, c)
-        end
-
-        # Check actuals against formals
-        meth.formals.zip(exp.args[2]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name, c)
-                puts "ERROR: #{exp.line}: Type-Check: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
-                exit
-            end
-        end
-
-        if meth.type.name == 'SELF_TYPE'
-            exp.type = exp.args[0].type
-        else
-            exp.type = meth.type.name
-        end
-        ### END dynamic_dispatch
+        checkDispatch(exp, symbs, tmap, c, exp.args[0], nil, exp.args[1], exp.args[2])
 
     when 'static_dispatch'
-        # Type check caller expression
-        checkExp(exp.args[0], symbs, tmap, c)
-
-        # ERROR if caller expression does not conform to static type
-        if not tmap.isChild(exp.args[0].type, exp.args[1].name, c)
-            puts "ERROR: #{exp.line}: Type-Check: Caller type #{exp.args[0].type} does not conform to static type #{exp.args[1].name}"
-            exit
-        end
-
-        # Find method in imap
-        meth=nil
-        if not tmap.imap[exp.args[1].name].nil?
-            tmap.imap[exp.args[1].name].each do |_,m|
-                if m.name.name == exp.args[2].name
-                    meth = m
-                    break
-                end
-            end
-        end
-
-        # Method not found
-        if meth.nil?
-            puts "ERROR: #{exp.args[2].line}: Type-Check: Unknown method \"#{exp.args[1].name}@#{exp.args[2].name}\""
-            exit
-        end
-
-        # Check number of arguments
-        if meth.formals.size != exp.args[3].size
-            puts "ERROR: #{exp.line}: Type-Check: Invalid number of arguments, got #{exp.args[3].size} expected #{meth.formals.size}"
-            exit
-        end
-
-        # Type each argument
-        exp.args[3].each do |subexp|
-            checkExp(subexp, symbs, tmap, c)
-        end
-
-        # Check actuals against formals
-        meth.formals.zip(exp.args[3]) do |formal, actual|
-            if not tmap.isChild(actual.type, formal[1].name, c)
-                puts "ERROR: #{exp.line}: Type-Check: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
-                exit
-            end
-        end
-
-        if meth.type.name == 'SELF_TYPE'
-            exp.type = exp.args[0].type
-        else
-            exp.type = meth.type.name
-        end
-        ### END static_dispatch
+        checkDispatch(exp, symbs, tmap, c, exp.args[0], exp.args[1], exp.args[2], exp.args[3])
 
     when 'if'
         checkExp(exp.args[0], symbs, tmap, c)
@@ -300,7 +207,6 @@ def checkExp(exp, symbs, tmap, c)
         end
         checkExp(exp.args[1], symbs, tmap, c)
         checkExp(exp.args[2], symbs, tmap, c)
-
         exp.type = tmap.lub(exp.args[1].type, exp.args[2].type, c)
 
     when 'block'
@@ -328,33 +234,38 @@ def checkExp(exp, symbs, tmap, c)
             end
             nsymbs[bind.name.name] = bind.type.name
         end
-
         checkExp(exp.args[1], nsymbs, tmap, c)
         exp.type = exp.args[1].type
 
     when 'case'
-        checkExp(exp.args[0], symbs,tmap,c)
-
+        checkExp(exp.args[0], symbs, tmap, c)
         nsymbs = symbs.clone()
         mtype = nil
         usedTypes = []
+        #iterate over all case branches
         exp.args[1].each do |bind|
+            #prevent self binding
             if bind.name.name == 'self'
                 puts "ERROR: #{bind.name.line}: Type-Check: Can't bind self in case expression"
                 exit
             end
+            #prevent case checking for SELF_TYPE
             if bind.type.name == 'SELF_TYPE'
                 puts "ERROR: #{bind.type.line}: Type-Check: Can't use SELF_TYPE as case branch type"
                 exit
             end
+            #prevent multiple branches checking same type
             if usedTypes.include? bind.type.name
                 puts "ERROR: #{bind.type.line}: Type-Check: #{bind.type.name} used twice as case branch type"
                 exit
             end
             usedTypes.push(bind.type.name)
+            #bind case var and type check the branch
             nsymbs[bind.name.name] = bind.type.name
             checkExp(bind.body, nsymbs, tmap, c)
+            #remove binding so it's not visible to other branches
             nsymbs[bind.name.name] = symbs[bind.name.name]
+            #final type of case is least upper bound of all branch expressions
             if mtype.nil?
                 mtype = bind.body.type
             else
@@ -365,11 +276,11 @@ def checkExp(exp, symbs, tmap, c)
 
     when 'while'
         checkExp(exp.args[0], symbs, tmap, c)
+        #predicate of while must be Bool
         if exp.args[0].type != 'Bool'
             puts "ERROR: #{exp.line}: Type-Check: Non-boolean loop condition"
             exit
         end
-
         checkExp(exp.args[1], symbs, tmap, c)
         exp.type = 'Object'
 
@@ -379,6 +290,7 @@ def checkExp(exp, symbs, tmap, c)
 
     when 'not'
         checkExp(exp.args, symbs, tmap, c)
+        #not only operates on Bool
         if exp.args.type != 'Bool'
             puts "ERROR: #{exp.line}: Type-Check: Can't perform not on #{exp.type}, expected Bool"
         end
@@ -386,6 +298,7 @@ def checkExp(exp, symbs, tmap, c)
 
     when 'negate'
         checkExp(exp.args, symbs, tmap, c)
+        #negate only operates on Int
         if exp.args.type != 'Int'
             puts "ERROR: #{exp.line}: Type-Check: Can't negate #{exp.type}, expected Int"
         end
@@ -394,6 +307,7 @@ def checkExp(exp, symbs, tmap, c)
     when 'plus', 'minus', 'times', 'divide'
         checkExp(exp.args[0], symbs, tmap, c)
         checkExp(exp.args[1], symbs, tmap, c)
+        #args must be Int for arithmetic
         if not (exp.args[0].type == "Int" and exp.args[1].type == "Int")
             puts "ERROR: #{exp.line}: Type-Check: Non-integer arithmetic"
             exit
@@ -403,12 +317,14 @@ def checkExp(exp, symbs, tmap, c)
     when 'eq', 'lt', 'le'
         checkExp(exp.args[0], symbs, tmap, c)
         checkExp(exp.args[1], symbs, tmap, c)
-        canComp = ['Int', 'String', 'Bool']
-        if not ((canComp.include?(exp.args[0].type) \
-                and canComp.include?(exp.args[1].type) \
+        #if one arg is Int, String, or Bool, the other must be same type
+        #otherwise, the two args can be of any type
+        sameComp = ['Int', 'String', 'Bool']
+        if not ((sameComp.include?(exp.args[0].type) \
+                and sameComp.include?(exp.args[1].type) \
                 and exp.args[0].type == exp.args[1].type) \
-                or (not canComp.include?(exp.args[0].type) \
-                and not canComp.include?(exp.args[1].type)))
+                or (not sameComp.include?(exp.args[0].type) \
+                and not sameComp.include?(exp.args[1].type)))
             puts "ERROR: #{exp.line}: Type-Check: Can't compare #{exp.args[0].type} and #{exp.args[1].type}"
             exit
         end
@@ -420,5 +336,85 @@ def checkExp(exp, symbs, tmap, c)
     else
         puts "Unhandled expression: #{exp.expr}"
 
+    end
+end
+
+# helper function for type checking the three dispatch expr nodes
+#  exp - from checkExp - modified in place
+#  symbs - from checkExp
+#  tmap - from checkExp
+#  c - from checkExp
+#  callobj - if self dispatch, nil; otherwise an ASTExpression object for caller
+#  statid - if static dispatch, ASTIdentifier class whose method is being called; otherwise nil
+#  methid - ASTIdentifier method being called
+#  args - list of ASTExpression for actual arguments
+def checkDispatch(exp, symbs, tmap, c, callobj, statid, methid, args)
+    #get type of the caller
+    calltype = nil
+    if callobj.nil?
+        calltype = 'SELF_TYPE'
+    else
+        # Type check caller expression
+        checkExp(callobj, symbs, tmap, c)
+        calltype = callobj.type
+    end
+
+    #get class name to look up in implementation map
+    methtype = calltype
+    #if caller is SELF_TYPE, we look up enclosing class
+    if calltype == 'SELF_TYPE'
+        methtype = c
+    end
+    #if doing static dispatch, we look up the specified class
+    if not statid.nil?
+        # ERROR if caller expression does not conform to static type specified
+        if not tmap.isChild(calltype, statid.name, c)
+            puts "ERROR: #{exp.line}: Type-Check: Caller type #{calltype} does not conform to static type #{statid.name}"
+            exit
+        end
+        methtype = statid.name
+    end
+
+    # Find method in imap
+    meth=nil
+    if not tmap.imap[methtype].nil?
+        tmap.imap[methtype].each do |_,m|
+            if m.name.name == methid.name
+                meth = m
+                break
+            end
+        end
+    end
+
+    # Method not found
+    if meth.nil?
+        puts "ERROR: #{methid.line}: Type-Check: Unknown method \"#{methtype}@#{methid.name}\""
+        exit
+    end
+
+    # Check number of arguments
+    if meth.formals.size != args.size
+        puts "ERROR: #{exp.line}: Type-Check: Invalid number of arguments, got #{args.size} expected #{meth.formals.size}"
+        exit
+    end
+
+    # Type check each argument
+    args.each do |subexp|
+        checkExp(subexp, symbs, tmap, c)
+    end
+
+    # Check actuals against formals
+    meth.formals.zip(args) do |formal, actual|
+        if not tmap.isChild(actual.type, formal[1].name, c)
+            puts "ERROR: #{exp.line}: Type-Check: Invalid actual parameter type, got #{actual.type} expected #{formal[1].name}"
+            exit
+        end
+    end
+
+    #if return type of method is SELF_TYPE, dispatch expression's type is type of the caller
+    if meth.type.name == 'SELF_TYPE'
+        exp.type = calltype
+    else
+        exp.type = meth.type.name
     end
 end

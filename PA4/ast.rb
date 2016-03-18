@@ -12,7 +12,7 @@ class AST
     end
 
     def to_s
-        # Reference doesn't print internal classes
+        # Reference doesn't print internal classes, so the first five classes are omitted
         return [@classes[5..-1].size,"\n", @classes[5..-1].join].join
     end
 
@@ -59,6 +59,8 @@ class AST
     end
 end
 
+#represents a Cool class node
+#name, possible parent name, and list of features (attributes, methods)
 class ASTClass
     def initialize()
         @name = ASTIdentifier.new
@@ -115,6 +117,7 @@ class ASTClass
     end
 end
 
+#represents an identifier - name and line number
 class ASTIdentifier
     def initialize()
         @line = 0
@@ -145,6 +148,7 @@ class ASTIdentifier
     end
 end
 
+#represents either a let binding, case binding, or class attribute
 class ASTBinding
     def initialize(bindtype)
         @name = ASTIdentifier.new
@@ -196,6 +200,8 @@ class ASTBinding
     end
 end
 
+#represents a method for a class
+#name, return type, list of formal parameters, and body expression
 class ASTMethod
     def initialize()
         @name = ASTIdentifier.new
@@ -247,6 +253,9 @@ class ASTMethod
     end
 end
 
+#represents an expression
+#line number, static type, and cl-ast expression type
+#uses @args as general purpose data; its type size differ depending on expression type
 class ASTExpression
     @@cltype = true
     @@exp1 = ['not','negate','isvoid']
