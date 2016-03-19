@@ -1,5 +1,16 @@
 class Main inherits IO {
     main() : Object {
-        abort()
+        {
+        out_int(1);
+        func();
+        out_int(2);
+        }
+    };
+
+    func() : Object {
+        {
+        out_int(0);
+        abort();
+        }
     };
 };
