@@ -3,6 +3,9 @@ from annast import *
 from TAC_serialize import *
 from graphsort import *
 
+#import TAC_serialize
+#import deadcode
+
 #const mapping from AST tokens to TAC tokens
 astTacMap = {
     'not' :     'not',
@@ -77,7 +80,7 @@ class TACIndexer:
             TACIndexer.varRegMap[var] = []
         if len(TACIndexer.varRegMap[var]) == 0:
             if not forceNew and var in TACIndexer.classAttrs[TACIndexer.cname]:
-                return '$' + var    #special TAC annotation referring to class attributes
+                return TACIndexer.map('self') + '@' + TACIndexer.cname + ':' + var
             else:
                 reg = TACIndexer.reg()
                 TACIndexer.varRegMap[var].append(reg)
@@ -350,16 +353,17 @@ def expConvert(node):
     return None
 
 #routine for generating TAC for methods
+#special annotations are added to method args so offset is easy to find in ASM gen
 def methodConvert(node):
     #emit start label of func
     TACIndexer.pushIns(TACIndexer.label())
     #add the implicit "self" parameter
     reg = TACIndexer.map('self', True)
-    TACIndexer.pushIns(TACAssign(reg, 'self'))
+    TACIndexer.pushIns(TACAssign(reg, '#self@' + TACIndexer.cname + ':' + TACIndexer.mname))
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
-        TACIndexer.pushIns(TACAssign(reg, formal[0].name))
+        TACIndexer.pushIns(TACAssign(reg, '#' + formal[0].name + '@' + TACIndexer.cname + ':' + TACIndexer.mname))
     reg = expConvert(node.body)
     #remove formal -> register mappings
     TACIndexer.pop('self')
@@ -383,7 +387,6 @@ def mainConvert(ast):
     else:
         print 'ERROR: could not find any classes in AST'
 
-
 #for CA4, go through all methods of user-defined classes and generate TAC for bodies
 def implConvert(ast):
     for mclass in ast.classes:
@@ -401,23 +404,21 @@ def attrConvert(ast):
             TACIndexer.addClassAttr(mclass, mattr.name)
     #go through user-defined attributes
     for mclass in ast.classes:
-        attrlst = [feat for feat in mclass.features if isinstance(feat, ASTAttribute)]
+        attrlst = TACIndexer.cmap[mclass.name.name]
         TACIndexer.init(mclass.name.name, 'new')
-        TACIndexer.pushIns(TACIndexer.label())  #start of constructor = mem alloc
+        #emit label for start of constructor
+        TACIndexer.pushIns(TACIndexer.label())
+        #allocate memory on heap for object
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
-        TACIndexer.pushIns(TACIndexer.label())  #next step = init fields
-        #make call to initializer portion of parent constructor
-        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'_new_2', [TACIndexer.map('self')]))
-            #TODO review parent call - maybe split into two different functions
         #make first pass to default initialize fields
         for mattr in attrlst:
-            TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name.name), 'default', mattr.type.name))
+            TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name), 'default', mattr.type))
         #make second pass for those with initializer expressions
         for mattr in attrlst:
             if mattr.init is not None:
                 reg = expConvert(mattr.init)
-                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name.name), reg))
-        #TODO special case for self type attributes, or restructure so no super class constructor called
+                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
+        #return pointer to new object
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')
 
@@ -432,3 +433,8 @@ if __name__ == '__main__':
     for ins in TACIndexer.inslst:
         outbuf += str(ins) + '\n'
     print outbuf
+
+    #cfg = TAC_serialize._constructCFG(TACIndexer.inslst)
+    #print "-----"
+    #deadcode.globalDeadRemove(cfg)
+    #print cfg

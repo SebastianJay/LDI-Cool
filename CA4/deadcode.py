@@ -1,3 +1,5 @@
+#TODO analyze how deadcode must change with method arg and class attribute annotations
+
 from TAC_serialize import *
 
 def getRead(inst):
@@ -15,6 +17,16 @@ def getRead(inst):
         res = [inst.retval]
     elif isinstance(inst, TACBT):
         res = [inst.cond]
+    elif isinstance(inst, TACVTable):
+        res = [inst.obj]
+    elif isinstance(inst, TACTypeEq):
+        res = [inst.obj]
+
+    #TODO review
+    if res is not None:
+        #filter out method args
+        res = [x for x in res if x[0] != '#']
+
     return res
 
 def getWritten(inst):
@@ -29,8 +41,20 @@ def getWritten(inst):
         res = inst.assignee
     elif isinstance(inst, TACCall):
         res = inst.assignee
-    return res
+    elif isinstance(inst, TACMalloc):
+        res = inst.assignee
+    elif isinstance(inst, TACVTable):
+        res = inst.assignee
+    elif isinstance(inst, TACTypeEq):
+        res = inst.assignee
 
+    #TODO review
+    if res is not None:
+        #truncate class attr annotation
+        if res[0] != '#' and '@' in res:
+            res = res[:res.index('@')]
+
+    return res
 
 def localLiveCheck(block):
     liveIn = set(block.liveOut)
@@ -45,8 +69,7 @@ def localLiveCheck(block):
         # Live when used
         used = getRead(inst)
         if used is not None:
-            # Currently at most two per instruction,
-            # but this makes changing instructions easier
+            #iterate over all live args
             for r in used:
                 liveIn.add(r)
 
@@ -74,8 +97,6 @@ def globalLiveCheck(graph):
                 # If something changed, not done
                 if parent.updateLiveOut():
                     done = False
-
-
 
 def localDeadRemove(block):
     live = set(block.liveOut)
@@ -129,8 +150,6 @@ def globalDeadRemove(graph):
             # If something changed, we need to start over
             if not done:
                 break
-
-
 
 if __name__ == "__main__":
     debug = "-v" in sys.argv

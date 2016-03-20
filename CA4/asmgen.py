@@ -25,6 +25,18 @@ retreg = 0
 
 registers = cRegMap.values() + [rsp, rbp]
 
+#static class that turns cmap, imap, and pmap into offset and label mappings
+class ASMIndexer:
+    attrOffset = {}     #string class => (string attribute => int index of attr)
+    methOffset = {}     #string class => (string method => (string formal => int index of formal))
+    vtableMap = {}      #string class => list of string labels
+    strMap = {}         #string literal => string label where literal stored
+
+    #the map definitions are the unboxed definitions provided in annast.py
+    @staticmethod
+    def load(cmap, imap, pmap):
+        pass
+
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
 # some may require auxiliary instructions like shifting between registers/stack
