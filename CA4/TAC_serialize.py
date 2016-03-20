@@ -188,6 +188,23 @@ class TACVTable(TACAux):
     def __str__(self):
         return self.assignee + ' <- ' + 'vtable ' + self.obj + ' ' + self.method
 
+#represents a runtime error - contains line number and error code
+class TACError(TACAux):
+    def __init__(self, lineno, reason):
+        self.lineno = lineno
+        self.reason = reason
+    def __str__(self):
+        return 'error ' + str(self.lineno) + ' ' + self.reason
+
+#represents a check on the object's dynamic type - used for case statements
+class TACTypeEq(TACAux):
+    def __init__(self, assignee, obj, dtype):
+        self.assignee = assignee
+        self.obj = obj
+        self.dtype = dtype
+    def __str__(self):
+        return self.assignee + ' <- typeeq ' + self.obj + ' ' + self.dtype
+
 ### Functions for converting input stream to TACGraph
 def serializeTAC(streamptr):
     return _constructCFG(_readToTACInstructions(streamptr))

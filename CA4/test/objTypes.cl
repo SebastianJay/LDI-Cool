@@ -7,21 +7,27 @@ class Main {
 		func(f.setX(f.setX(12).getX()));
 		let b : Bar <- new Bar in {
 			b.setX(2);
+            b@Foo.getX();
 			func(b);
 			b.setX(f.setX(10).setX(12).setX(324).getX());
-		    };
+		};
+
+        case f of
+            x : Foo => 0;
+            y : Object => "hello";
+        esac;
 	}
     };
     func(f : Foo) : Foo {
-	f.setX(f.getX() * f.getX())
+        f.setX(f.getX() * f.getX())
     };
 };
 
 class Foo {
     x : Int <- 0;
     getX() : Int {
-	x
-	    };
+        x
+	};
     setX(nx : Int) : SELF_TYPE {
 	{
 	    x <- nx;
@@ -32,6 +38,6 @@ class Foo {
 
 class Bar inherits Foo {
     getX() : Int {
-	x*x
+        x*x
     };
 };

@@ -1,6 +1,7 @@
 import sys
 from annast import *
 from TAC_serialize import *
+from graphsort import *
 
 #const mapping from AST tokens to TAC tokens
 astTacMap = {
@@ -81,6 +82,13 @@ class TACIndexer:
                 reg = TACIndexer.reg()
                 TACIndexer.varRegMap[var].append(reg)
         return TACIndexer.varRegMap[var][-1]
+
+    #binds a symbol to an existing register, provided as an arg
+    @staticmethod
+    def bind(var, reg):
+        if var not in TACIndexer.varRegMap:
+            TACIndexer.varRegMap[var] = []
+        TACIndexer.varRegMap[var].append(reg)
 
     #unbinds a symbol table entry for var
     @staticmethod
@@ -165,13 +173,50 @@ def expConvert(node):
 
     elif node.expr == 'case':
         #generate code for case expression
-        #loop: generate labels for branches
-        #create join reg
-        #generate type evaluation to find least type
-        #jump to least type label, OR fail if no type found
+        regc = expConvert(node.args[0])
+        #fail if case "caller" is void
+        regv = TACIndexer.reg()
+        regvbar = TACIndexer.reg()
+        lbc = TACIndexer.label()
+        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
+        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
+        TACIndexer.pushIns(TACBT(regvbar, lbc))
+        TACIndexer.pushIns(TACError(node.line, 'casevoid'))
+        TACIndexer.pushIns(TACLabel(lbc))
+        #generate labels for branches, and record branch types
+        blabels = [TACIndexer.label() for i in range(len(node.args[1]))]
+        btypes = [branch.type.name for branch in node.args[1]]
+        #create join reg and label
+        regj = TACIndexer.reg()
+        lbj = TACIndexer.label()
+        #generate type evaluation to find least type and jump to appropriate label
+        #   reverse toposort to get least to greatest order
+        usedtypes = set()
+        for clsname in reversed(toposort(TACIndexer.pmap)):
+            if clsname not in btypes:
+                continue
+            ind = btypes.index(clsname)
+            sublst = subtreeList(clsname, TACIndexer.pmap)
+            for subclsname in sublst:
+                if subclsname in usedtypes:
+                    continue
+                usedtypes.add(subclsname)
+                rege = TACIndexer.reg()
+                TACIndexer.pushIns(TACTypeEq(rege, regc, subclsname))
+                TACIndexer.pushIns(TACBT(rege, blabels[ind]))
+        #fail if no type found
+        TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
         #loop over branches: emit label, generate code, result in join reg + jump to join label
-        #join label
-        pass
+        for i in range(len(node.args[1])):
+            TACIndexer.pushIns(TACLabel(blabels[i]))
+            TACIndexer.bind(node.args[1][i].name.name, regc)
+            regb = expConvert(node.args[1][i].body)
+            TACIndexer.pop(node.args[1][i].name.name)
+            TACIndexer.pushIns(TACAssign(regj, regb))
+            TACIndexer.pushIns(TACJmp(lbj))
+        #emit join label
+        TACIndexer.pushIns(TACLabel(lbj))
+        return regj
 
     elif node.expr == 'block':
         for sexpr in node.args:
@@ -199,6 +244,18 @@ def expConvert(node):
         TACIndexer.pushIns(TACAssign(op1, regr0))
         TACIndexer.pushIns(TACAssign(op2, regr1))
         resreg = op1
+        #check if divisor is zero, and if so, err and exit
+        if node.expr == 'divide':
+            regz = TACIndexer.reg()
+            rege = TACIndexer.reg()
+            regebar = TACIndexer.reg()
+            lba = TACIndexer.label()
+            TACIndexer.pushIns(TACConstant(regz, 'int', '0'))
+            TACIndexer.pushIns(TACOp2(rege, '=', op2, regz))
+            TACIndexer.pushIns(TACOp1(regebar, 'not', rege))
+            TACIndexer.pushIns(TACBT(regebar, lba))
+            TACIndexer.pushIns(TACError(node.line, 'dividezero'))
+            TACIndexer.pushIns(TACLabel(lba))
         if node.expr in ['plus','minus','times','divide']:
             #abuse of notation - for non-commutative operators, having op2 as 1st operand is useful
             TACIndexer.pushIns(TACOp2(op1, astTacMap[node.expr], op2, op1))
@@ -218,39 +275,56 @@ def expConvert(node):
         return resreg
 
     #all dispatch follows form:
-    #   generate the executor of function (regexec)
+    #   generate the caller of function (regc)
+    #   check if caller is void, and if so, err and exit
     #   generate all explicit parameters of function (regs)
     #   prepend exec as the self param to regs
     #   find function to call in vtable if necessary
     #   call function and assign result into new register
     elif node.expr == 'dynamic_dispatch':
-        regexec = expConvert(node.args[0])
+        regc = expConvert(node.args[0])
+        regv = TACIndexer.reg()
+        regvbar = TACIndexer.reg()
+        lbd = TACIndexer.label()
+        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
+        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
+        TACIndexer.pushIns(TACBT(regvbar, lbd))
+        TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
+        TACIndexer.pushIns(TACLabel(lbd))
         regs = [expConvert(e) for e in node.args[2]]
-        regs = [regexec] + regs
+        regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[1].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
     elif node.expr == 'static_dispatch':
-        regexec = expConvert(node.args[0])
+        regc = expConvert(node.args[0])
+        regv = TACIndexer.reg()
+        regvbar = TACIndexer.reg()
+        lbd = TACIndexer.label()
+        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
+        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
+        TACIndexer.pushIns(TACBT(regvbar, lbd))
+        TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
+        TACIndexer.pushIns(TACLabel(lbd))
         regs = [expConvert(e) for e in node.args[3]]
-        regs = [regexec] + regs
+        regs = [regc] + regs
         calllb = node.args[1].name + '_' + node.args[2].name + '_1'
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
-    # NOTE: out_* and in_* get treated as self-dispatch because of the inherits IO
+    #note: no dispatch on void check needed here since "self" is always valid
     elif node.expr == 'self_dispatch':
-        regexec = TACIndexer.map('self')
+        regc = TACIndexer.map('self')
         regs = [expConvert(e) for e in node.args[1]]
-        regs = [regexec] + regs
+        regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[0].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -322,7 +396,7 @@ def implConvert(ast):
 def attrConvert(ast):
     #add mappings of attributes so TACIndexer can find them if not in symbol table
     for mclass in TACIndexer.cmap:
-        TACIndexer.classAttrs[mclass] = set()   #TODO review
+        TACIndexer.classAttrs[mclass] = set()
         for mattr in TACIndexer.cmap[mclass]:
             TACIndexer.addClassAttr(mclass, mattr.name)
     #go through user-defined attributes
@@ -343,6 +417,7 @@ def attrConvert(ast):
             if mattr.init is not None:
                 reg = expConvert(mattr.init)
                 TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name.name), reg))
+        #TODO special case for self type attributes, or restructure so no super class constructor called
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')
 
