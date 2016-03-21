@@ -298,11 +298,6 @@ def funcConvert(cfg, regMap):
         return cRegMap[regMap[vreg]]
 
     inslst = cfg.toList()
-    asmlst = [
-        ASMInfo('globl', 'main'),
-        ASMInfo('type', 'main', '@function'),
-        ASMLabel('main')
-    ]
 
     #function prologue
     asmlst += [
@@ -340,6 +335,8 @@ def funcConvert(cfg, regMap):
             asmlst.append(ASMBT(realReg(ins.cond), ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
+        else:
+            asmlst.append("UNHANDLED: "+ str(ins))
 
     # Remove useless mov instructions
     rmlist = []
@@ -350,7 +347,10 @@ def funcConvert(cfg, regMap):
 
     explst = []
     for ins in asmlst:
-        explst += ins.expand()
+        if hasattr(ins, 'expand'):
+            explst += ins.expand()
+        else:
+            explst += [ins]
 
     return explst
 

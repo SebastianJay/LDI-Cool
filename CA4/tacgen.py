@@ -35,7 +35,7 @@ class TACIndexer:
     imap = {}       #implementation map
     pmap = {}       #parent map
 
-    returnReg = 't0'
+    returnReg = 't0' # Special register for call return values, helps with register allocation
 
     @staticmethod
     def setTypeMaps(cmap, imap, pmap):
@@ -61,7 +61,7 @@ class TACIndexer:
     @staticmethod
     def label():
         TACIndexer.lind += 1
-        return "." + TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind)
+        return "." + TACIndexer.cname + '.' + TACIndexer.mname + '_' + str(TACIndexer.lind)
 
     #increments a counter a returns a register label
     @staticmethod
@@ -228,7 +228,7 @@ def expConvert(node):
         regs = [expConvert(e) for e in node.args[2]]
         regs = [regexec] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[1].name))
+        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[0].type + '.' + node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -238,7 +238,7 @@ def expConvert(node):
         regexec = expConvert(node.args[0])
         regs = [expConvert(e) for e in node.args[3]]
         regs = [regexec] + regs
-        calllb = node.args[1].name + '_' + node.args[2].name + '_1'
+        calllb = node.args[1].name + '.' + node.args[2].name
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -250,7 +250,7 @@ def expConvert(node):
         regs = [expConvert(e) for e in node.args[1]]
         regs = [regexec] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regexec, node.args[0].name))
+        TACIndexer.pushIns(TACVTable(reglb, regexec, TACIndexer.cname + '.' + node.args[0].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -278,15 +278,18 @@ def expConvert(node):
 #routine for generating TAC for methods
 def methodConvert(node):
     #emit start label of func
-    TACIndexer.pushIns(TACIndexer.label())
+    TACIndexer.pushIns(TACLabel(TACIndexer.cname + '.' + TACIndexer.mname))
+
     #add the implicit "self" parameter
     reg = TACIndexer.map('self', True)
     TACIndexer.pushIns(TACAssign(reg, 'self'))
+
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
         TACIndexer.pushIns(TACAssign(reg, formal[0].name))
     reg = expConvert(node.body)
+
     #remove formal -> register mappings
     TACIndexer.pop('self')
     for formal in node.formals:
@@ -328,16 +331,24 @@ def attrConvert(ast):
     #go through user-defined attributes
     for mclass in ast.classes:
         attrlst = [feat for feat in mclass.features if isinstance(feat, ASTAttribute)]
+
         TACIndexer.init(mclass.name.name, 'new')
-        TACIndexer.pushIns(TACIndexer.label())  #start of constructor = mem alloc
+        TACIndexer.pushIns(TACLabel(mclass.name.name + '.new'))
+
+        #start of constructor = mem alloc
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
-        TACIndexer.pushIns(TACIndexer.label())  #next step = init fields
+
+        #next step = init fields
+        TACIndexer.pushIns(TACLabel(TACIndexer.label())) 
+
         #make call to initializer portion of parent constructor
-        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'_new_2', [TACIndexer.map('self')]))
-            #TODO review parent call - maybe split into two different functions
+        TACIndexer.pushIns(TACCall(TACIndexer.map('self'), TACIndexer.pmap[mclass.name.name]+'.new_2', [TACIndexer.map('self')]))
+        
+        #TODO review parent call - maybe split into two different functions
         #make first pass to default initialize fields
         for mattr in attrlst:
             TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name.name), 'default', mattr.type.name))
+
         #make second pass for those with initializer expressions
         for mattr in attrlst:
             if mattr.init is not None:

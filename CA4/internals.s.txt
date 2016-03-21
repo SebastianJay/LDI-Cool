@@ -156,8 +156,8 @@ String_vtable:
 	.quad	Object.abort
 	.quad	Object.copy
 	.quad	Object.type_name
-	.quad	String.length
 	.quad 	String.concat
+	.quad	String.length
 	.quad	String.substr
 .LC4:
 	.string	""
@@ -356,13 +356,12 @@ String.substr:
 IO_vtable:
 	.quad	.name_IO
 	.quad	IO.new
-	.quad	Object.new
 	.quad	Object.abort
 	.quad	Object.copy
 	.quad	Object.type_name
 	.quad	IO.in_int
-	.quad	IO.out_int
 	.quad	IO.in_string
+	.quad	IO.out_int
 	.quad	IO.out_string
 	.text
 IO.new:
@@ -378,7 +377,7 @@ IO.new:
 	call	calloc
 	movq	$3, (%rax)	#IO id is 3
 	movq	$IO_vtable, 8(%rax)
-	movq	$0, 16(%rax)
+	movq	$0, 16(%rax)	#0 fields
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -518,3 +517,7 @@ IO.out_string:
 .LFE5:
 	.size	IO.out_string, .-IO.out_string
 	.globl	main
+	.type	main, @function
+main:
+	call Main.main
+	ret

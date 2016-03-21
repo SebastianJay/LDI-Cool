@@ -156,8 +156,8 @@ String_vtable:
 	.quad	Object.abort
 	.quad	Object.copy
 	.quad	Object.type_name
-	.quad	String.length
 	.quad 	String.concat
+	.quad	String.length
 	.quad	String.substr
 .LC4:
 	.string	""
@@ -356,13 +356,12 @@ String.substr:
 IO_vtable:
 	.quad	.name_IO
 	.quad	IO.new
-	.quad	Object.new
 	.quad	Object.abort
 	.quad	Object.copy
 	.quad	Object.type_name
 	.quad	IO.in_int
-	.quad	IO.out_int
 	.quad	IO.in_string
+	.quad	IO.out_int
 	.quad	IO.out_string
 	.text
 IO.new:
@@ -378,7 +377,7 @@ IO.new:
 	call	calloc
 	movq	$3, (%rax)	#IO id is 3
 	movq	$IO_vtable, 8(%rax)
-	movq	$0, 16(%rax)
+	movq	$0, 16(%rax)	#0 fields
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -523,74 +522,158 @@ IO.out_string:
 main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq %rax, %rcx
+Main.new:
+	UNHANDLED: t1 <- malloc Main
+.Main.new_1:
+	pushq t1
+	call Object.new_2
+	addq $8, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Foo.new:
+	UNHANDLED: t1 <- malloc Foo
+.Foo.new_1:
+	pushq t1
+	call Object.new_2
+	addq $8, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Bar.new:
+	UNHANDLED: t1 <- malloc Bar
+.Bar.new_1:
+	pushq t1
+	call Foo.new_2
+	addq $8, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Main.main:
 	movq $0, %rax
 	movq %rax, %rbx
-	movq $3, %rax
+	movq $3, %rcx
+	UNHANDLED: t7 <- vtable t5 Foo.setX
 	pushq t5
 	pushq t6
 	call t7
 	addq $16, %rsp
+	UNHANDLED: t9 <- vtable t5 Foo.getX
 	pushq t5
 	call t9
 	addq $8, %rsp
+	movq %rax, %rcx
+	UNHANDLED: t11 <- vtable t5 Foo.setX
 	pushq t5
 	pushq t10
 	call t11
 	addq $16, %rsp
+	UNHANDLED: t13 <- vtable t1 Main.func
 	pushq t1
 	pushq t5
 	call t13
 	addq $16, %rsp
-	movq $12, %rax
+	movq $12, %rcx
+	UNHANDLED: t16 <- vtable t5 Foo.setX
 	pushq t5
 	pushq t15
 	call t16
 	addq $16, %rsp
+	movq %rax, %rcx
+	UNHANDLED: t18 <- vtable t17 Foo.getX
 	pushq t17
 	call t18
 	addq $8, %rsp
+	movq %rax, %rcx
+	UNHANDLED: t20 <- vtable t5 Foo.setX
 	pushq t5
 	pushq t19
 	call t20
 	addq $16, %rsp
+	movq %rax, %rcx
+	UNHANDLED: t22 <- vtable t1 Main.func
 	pushq t1
 	pushq t21
 	call t22
 	addq $16, %rsp
-	movq $0, %rax
-	movq %rax, %rsi
-	movq $2, %rax
+	movq $0, %rcx
+	movq $2, %rsi
+	UNHANDLED: t27 <- vtable t25 Bar.setX
 	pushq t25
 	pushq t26
 	call t27
 	addq $16, %rsp
+	UNHANDLED: t29 <- vtable t1 Main.func
 	pushq t1
 	pushq t25
 	call t29
 	addq $16, %rsp
 	movq $10, %rax
+	UNHANDLED: t32 <- vtable t5 Foo.setX
 	pushq t5
 	pushq t31
 	call t32
 	addq $16, %rsp
 	movq $12, %rbx
+	UNHANDLED: t35 <- vtable t33 Foo.setX
 	pushq t33
 	pushq t34
 	call t35
 	addq $16, %rsp
 	movq $324, %rbx
+	UNHANDLED: t38 <- vtable t36 Foo.setX
 	pushq t36
 	pushq t37
 	call t38
 	addq $16, %rsp
+	UNHANDLED: t40 <- vtable t39 Foo.getX
 	pushq t39
 	call t40
 	addq $8, %rsp
+	UNHANDLED: t42 <- vtable t25 Bar.setX
 	pushq t25
 	pushq t41
 	call t42
 	addq $16, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Main.func:
+	UNHANDLED: t3 <- vtable t2 Foo.getX
+	pushq t2
+	call t3
+	addq $8, %rsp
+	UNHANDLED: t5 <- vtable t2 Foo.getX
+	pushq t2
+	call t5
+	addq $8, %rsp
+	movq %rax, %rcx
+	movq %rcx, %rbx
+	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rbx
+	UNHANDLED: t10 <- vtable t2 Foo.setX
+	pushq t2
+	pushq t9
+	call t10
+	addq $16, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Foo.getX:
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Foo.setX:
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Bar.getX:
+	movq %rax, %rbx
+	imulq %rbx
+	shlq $32, %rax
+	sarq $32, %rax
 	movq %rbp, %rsp
 	popq %rbp
 	ret
