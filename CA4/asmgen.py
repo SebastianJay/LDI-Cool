@@ -35,6 +35,50 @@ class ASMIndexer:
     #the map definitions are the unboxed definitions provided in annast.py
     @staticmethod
     def load(cmap, imap, pmap):
+        #create attrOffset
+        for cname in cmap:
+            attrmap = {}
+            #attr index 0 = class tag
+            #attr index 1 = object size
+            #attr index 2 = vtable pointer
+            # other attributes start at index 3
+            for i, cattr in enumerate(cmap[cname]):
+                attrmap[cattr] = i+3
+            ASMIndexer.attrOffset[cname] = attrmap
+
+        #create methOffset
+        for cname in imap:
+            methmap = {}
+            for imeth in imap[cname]:
+                formmap = {}
+                for i, fname in enumerate(imeth.formals):
+                    formmap[fname] = i
+                methmap[imeth.name] = formmap
+            ASMIndexer.methOffset[cname] = methmap
+
+        #create strMap
+        for i, cname in enumerate(cmap):
+            ASMIndexer.strMap[cname] = '.string' + i
+        #TODO add other strings, e.g. error
+        #TODO traverse TAC list to find literals
+
+        #create vtableMap
+        for i, cname in enumerate(imap):
+            #entry 0 of vtable is string of class name
+            labels = [ASMIndexer.strMap[cname]]
+            # methods start at index 1 of table
+            for imeth in imap[cname]:
+                labels.append(cname + '_' + imeth.name + '_1')
+            ASMIndexer.vtableMap[cname] = labels
+
+    #returns a list of ASMInstruction corresponding to vtables in vtableMap
+    @staticmethod
+    def genVtable():
+        pass
+
+    #returns a list of ASMInstruction corresponding to literals in strMap
+    @staticmethod
+    def genStr():
         pass
 
 #begin ASM class definitions - adapted from TAC
