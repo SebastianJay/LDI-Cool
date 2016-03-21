@@ -518,3 +518,79 @@ IO.out_string:
 .LFE5:
 	.size	IO.out_string, .-IO.out_string
 	.globl	main
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq %rax, %rcx
+	movq $0, %rax
+	movq %rax, %rbx
+	movq $3, %rax
+	pushq t5
+	pushq t6
+	call t7
+	addq $16, %rsp
+	pushq t5
+	call t9
+	addq $8, %rsp
+	pushq t5
+	pushq t10
+	call t11
+	addq $16, %rsp
+	pushq t1
+	pushq t5
+	call t13
+	addq $16, %rsp
+	movq $12, %rax
+	pushq t5
+	pushq t15
+	call t16
+	addq $16, %rsp
+	pushq t17
+	call t18
+	addq $8, %rsp
+	pushq t5
+	pushq t19
+	call t20
+	addq $16, %rsp
+	pushq t1
+	pushq t21
+	call t22
+	addq $16, %rsp
+	movq $0, %rax
+	movq %rax, %rsi
+	movq $2, %rax
+	pushq t25
+	pushq t26
+	call t27
+	addq $16, %rsp
+	pushq t1
+	pushq t25
+	call t29
+	addq $16, %rsp
+	movq $10, %rax
+	pushq t5
+	pushq t31
+	call t32
+	addq $16, %rsp
+	movq $12, %rbx
+	pushq t33
+	pushq t34
+	call t35
+	addq $16, %rsp
+	movq $324, %rbx
+	pushq t36
+	pushq t37
+	call t38
+	addq $16, %rsp
+	pushq t39
+	call t40
+	addq $8, %rsp
+	pushq t25
+	pushq t41
+	call t42
+	addq $16, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
