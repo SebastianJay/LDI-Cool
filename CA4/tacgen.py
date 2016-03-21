@@ -3,9 +3,6 @@ from annast import *
 from TAC_serialize import *
 from graphsort import *
 
-#import TAC_serialize
-#import deadcode
-
 #const mapping from AST tokens to TAC tokens
 astTacMap = {
     'not' :     'not',
@@ -31,15 +28,15 @@ class TACIndexer:
     mname = ''      #method name for current instructions
     lind = 0        #counter for labels
     rind = 0        #counter for registers
-    varRegMap = {}  #symbol table, map string var -> lst of string registers bound to var
-    classAttrs = {} #map string class name -> set of strings of attr names
+    varRegMap = {}  #symbol table, map string var => lst of string registers bound to var
+    classAttrs = {} #string class name => (string attr names => TACClassAttr obj)
     inslst = []     #list of TACInstruction
 
     cmap = {}       #class map
     imap = {}       #implementation map
     pmap = {}       #parent map
 
-    returnReg = 't0'
+    returnReg = TACRegister('t0')
 
     @staticmethod
     def setTypeMaps(cmap, imap, pmap):
@@ -50,8 +47,8 @@ class TACIndexer:
     #resets counters and sets the names for labels
     @staticmethod
     def init(cname, mname):
+        #TACIndexer.rind = 0
         TACIndexer.lind = 0
-        TACIndexer.rind = 0
         TACIndexer.cname = cname
         TACIndexer.mname = mname
 
@@ -71,16 +68,16 @@ class TACIndexer:
     @staticmethod
     def reg():
         TACIndexer.rind += 1
-        return 't' + str(TACIndexer.rind)
+        return TACRegister('t' + str(TACIndexer.rind))
 
     #looks up the symbol table for var; creates new register if forceNew or not found
     @staticmethod
     def map(var, forceNew = False):
         if var not in TACIndexer.varRegMap:
             TACIndexer.varRegMap[var] = []
-        if len(TACIndexer.varRegMap[var]) == 0:
+        if len(TACIndexer.varRegMap[var]) == 0 or forceNew:
             if not forceNew and var in TACIndexer.classAttrs[TACIndexer.cname]:
-                return TACIndexer.map('self') + '@' + TACIndexer.cname + ':' + var
+                return TACClassAttr(TACIndexer.map('self'), TACIndexer.cname, var)
             else:
                 reg = TACIndexer.reg()
                 TACIndexer.varRegMap[var].append(reg)
@@ -356,14 +353,14 @@ def expConvert(node):
 #special annotations are added to method args so offset is easy to find in ASM gen
 def methodConvert(node):
     #emit start label of func
-    TACIndexer.pushIns(TACIndexer.label())
+    TACIndexer.pushIns(TACLabel(TACIndexer.label()))
     #add the implicit "self" parameter
     reg = TACIndexer.map('self', True)
-    TACIndexer.pushIns(TACAssign(reg, '#self@' + TACIndexer.cname + ':' + TACIndexer.mname))
+    TACIndexer.pushIns(TACAssign(reg, TACMethodArg(TACIndexer.cname, TACIndexer.mname, 'self')))
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
-        TACIndexer.pushIns(TACAssign(reg, '#' + formal[0].name + '@' + TACIndexer.cname + ':' + TACIndexer.mname))
+        TACIndexer.pushIns(TACAssign(reg, TACMethodArg(TACIndexer.cname, TACIndexer.mname, formal[0].name)))
     reg = expConvert(node.body)
     #remove formal -> register mappings
     TACIndexer.pop('self')
@@ -407,7 +404,7 @@ def attrConvert(ast):
         attrlst = TACIndexer.cmap[mclass.name.name]
         TACIndexer.init(mclass.name.name, 'new')
         #emit label for start of constructor
-        TACIndexer.pushIns(TACIndexer.label())
+        TACIndexer.pushIns(TACLabel(TACIndexer.label()))
         #allocate memory on heap for object
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
         #make first pass to default initialize fields
@@ -422,6 +419,9 @@ def attrConvert(ast):
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')
 
+
+#import TAC_serialize
+#import deadcode
 if __name__ == '__main__':
     cmap, imap, pmap, ast = readClType(sys.argv[1])
     TACIndexer.setTypeMaps(cmap, imap, pmap)

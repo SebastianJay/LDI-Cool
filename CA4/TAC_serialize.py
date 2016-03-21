@@ -134,7 +134,7 @@ class TACCall(TACControl):
         else:
             self.args = []
     def __str__(self):
-        argstr = ' '.join(self.args)
+        argstr = ' '.join([str(arg) for arg in self.args])
         return str(self.assignee) + ' <- call ' + str(self.funcname) + ' ' + argstr
 
 #Jmp instruction
@@ -188,7 +188,7 @@ class TACVTable(TACAux):
     def __str__(self):
         return str(self.assignee) + ' <- ' + 'vtable ' + str(self.obj) + ' ' + str(self.method)
 
-#represents a runtime error - contains line number and error code
+#represents an unconditional runtime error - contains line number and error code
 class TACError(TACAux):
     def __init__(self, lineno, reason):
         self.lineno = lineno

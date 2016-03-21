@@ -1,4 +1,4 @@
-from annast import AST
+from annast import AST, readClType
 import tacgen
 import TAC_serialize
 import deadcode
@@ -6,28 +6,17 @@ from registerAllocate import registerAllocate
 import asmgen
 import sys
 
-debug = False
+debug = True
 if __name__=="__main__":
-    lines = []
-    with open(sys.argv[1], 'U') as inFile:
-        lines = inFile.read().split('\n')[:-1] # Cuts off empty line at the end
+    #load the cl-type file
+    cmap, imap, pmap, ast = readClType(sys.argv[1])
 
-    # AST isn't marked, so have to find it after the parent map
-    lines = lines[lines.index("parent_map"):]
-
-    # Get the number of classes in parent map, skip 2n+2 lines ahead
-    # for 2n lines of class inheritance and 2 lines of parent_map and length
-    lines = lines[2*int(lines[1])+2:]
-
-
-    # Deserialize the ast
-    ast = AST()
-    ast.load(iter(lines))
-
-    # Generate TAC
-    tacgen.mainConvert(ast)
+    #generate TAC for the user-generated Cool
+    tacgen.TACIndexer.setTypeMaps(cmap, imap, pmap)
+    tacgen.attrConvert(ast)
+    tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
-
+    
     # Do dead code elimination to simplify register allocation
     cfg = TAC_serialize._constructCFG(taclist)
     if debug:
@@ -44,6 +33,8 @@ if __name__=="__main__":
         print regMap
         print '-----'
 
+    #load type maps into ASM offset/label generator
+    asmgen.ASMIndexer.load(cmap, imap, pmap)
     #create list of ASM instructions
     asmlst = asmgen.funcConvert(cfg,regMap)
 
@@ -53,5 +44,5 @@ if __name__=="__main__":
         print outbuf[outbuf.index('main:'):]
 
     #write result buffer to output file
-    with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
-        outfile.write(outbuf)
+    #with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
+    #    outfile.write(outbuf)

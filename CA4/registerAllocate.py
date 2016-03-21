@@ -37,13 +37,25 @@ def genRegGraph(cfg):
                 regGraph[t][0] |= {r for r in live if r != t}
 
             # Allocate accumulator to return val of a function
+            #TODO review TACClassAttr - probably change tacgen so that it never shows up here
             if isinstance(inst,TAC_serialize.TACCall):
-                regGraph[inst.assignee][1] = 0
+                if isinstance(inst.assignee, TAC_serialize.TACRegister):
+                    regGraph[inst.assignee.name][1] = 0
+                elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
+                    regGraph[inst.assignee.reg.name][1] = 0
+
             elif isinstance(inst,TAC_serialize.TACReturn):
-                regGraph[inst.retval][1] = 0
+                if isinstance(inst.retval, TAC_serialize.TACRegister):
+                    regGraph[inst.retval.name][1] = 0
+                elif isinstance(inst.retval, TAC_serialize.TACClassAttr):
+                    regGraph[inst.retval.reg.name][1] = 0
+
             # Have to force multiplication and division result to rax
             elif isinstance(inst,TAC_serialize.TACOp2) and inst.opcode in ['*','/']:
-                regGraph[inst.assignee][1] = 0
+                if isinstance(inst.assignee, TAC_serialize.TACRegister):
+                    regGraph[inst.assignee.name][1] = 0
+                elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
+                    regGraph[inst.assignee.reg.name][1] = 0
 
     return regGraph
 

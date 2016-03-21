@@ -1,4 +1,4 @@
-#TODO analyze how deadcode must change with method arg and class attribute annotations
+#TODO analyze how deadcode must change with TACMethodArg and TACClassAttr
 
 from TAC_serialize import *
 
@@ -12,7 +12,9 @@ def getRead(inst):
         res = [inst.assignor]
     elif isinstance(inst, TACCall):
         if inst.args:
-            res = inst.args
+            res = inst.args[:]  #make a list copy
+        if isinstance(inst.funcname, TACRegister):
+            res += [inst.funcname]
     elif isinstance(inst, TACReturn):
         res = [inst.retval]
     elif isinstance(inst, TACBT):
@@ -22,12 +24,18 @@ def getRead(inst):
     elif isinstance(inst, TACTypeEq):
         res = [inst.obj]
 
-    #TODO review
+    #unbox operands TODO review
+    resu = None
     if res is not None:
-        #filter out method args
-        res = [x for x in res if x[0] != '#']
+        resu = []
+        for r in res:
+            if isinstance(r, TACRegister):
+                resu.append(r.name)
+            elif isinstance(r, TACClassAttr):
+                resu.append(r.reg.name)
+            #ignore method arg
 
-    return res
+    return resu
 
 def getWritten(inst):
     res = None
@@ -48,13 +56,15 @@ def getWritten(inst):
     elif isinstance(inst, TACTypeEq):
         res = inst.assignee
 
-    #TODO review
+    #unbox operand TODO review
+    resu = None
     if res is not None:
-        #truncate class attr annotation
-        if res[0] != '#' and '@' in res:
-            res = res[:res.index('@')]
+        if isinstance(res, TACRegister):
+            resu = res.name
+        elif isinstance(res, TACClassAttr):
+            resu = res.reg.name
 
-    return res
+    return resu
 
 def localLiveCheck(block):
     liveIn = set(block.liveOut)
@@ -110,7 +120,7 @@ def localDeadRemove(block):
         if killed is not None and killed not in live:
             # If it's a call, replace the dead var with __dead__
             if isinstance(inst,TACCall):
-                block.instructions[len(block.instructions)-ind-1].assignee = "__dead__"
+                block.instructions[len(block.instructions)-ind-1].assignee.name = "__dead__"
 
             # Othewise remove the instruction
             else:
