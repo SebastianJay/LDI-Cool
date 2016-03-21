@@ -16,7 +16,7 @@ if __name__=="__main__":
     tacgen.attrConvert(ast)
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
-    
+
     # Do dead code elimination to simplify register allocation
     cfg = TAC_serialize._constructCFG(taclist)
     if debug:
@@ -44,5 +44,5 @@ if __name__=="__main__":
         print outbuf[outbuf.index('main:'):]
 
     #write result buffer to output file
-    #with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
-    #    outfile.write(outbuf)
+    with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
+        outfile.write(outbuf)

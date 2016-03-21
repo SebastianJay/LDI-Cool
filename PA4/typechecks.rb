@@ -106,6 +106,7 @@ def checkAttrImpl(maps)
     maps.pmap.keys.each do |c|
         cname = c.name.name
         symbs = {}
+
         # Bind attributes
         maps.cmap[cname].each do |cattr|
             symbs[cattr.name.name] = cattr.type.name
@@ -123,6 +124,7 @@ def checkAttrImpl(maps)
             end
         end
 
+        # Type check methods 
         maps.imap[cname].each do |imp, meth|
             # Skip superclass methods, avoid double checking
             if imp != cname
