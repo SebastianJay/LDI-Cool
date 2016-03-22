@@ -1,4 +1,6 @@
 	.section	.rodata
+.id_Object:
+	.quad	0
 .name_Object:
 	.string "Object"
 Object_vtable:
@@ -24,7 +26,7 @@ Object.new:
 	call	calloc
 	movq	$0, (%rax) # Object ID is 0
 	movq	$Object_vtable, 8(%rax)
-	movq	$0, 16(%rax)	# 0 fields
+	movq	$0, 16(%rax)
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -146,70 +148,6 @@ Object.copy:
 .LFE9:
 	.size	Object.copy, .-Object.copy
 	.section	.rodata
-.name_Int:		
-	.string "Int"
-Int_vtable:
-	.quad	.name_Int
-	.quad	Int.new
-	.quad	Object.abort
-	.quad	Object.copy
-	.quad	Object.type_name
-	.text
-	.globl	Int.new
-	.type	Int.new, @function
-Int.new:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movl	$32, %esi
-	movl	$1, %edi
-	call	calloc
-	movq	$1, (%rax)	# Int id is 2
-	movq	$Int_vtable, 8(%rax)
-	movq	$1, 16(%rax)	# 1 field
-	movq	$0, 24(%rax)
-	leave
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc	
-	.size	Int.new, .-Int.new
-	.section	.rodata
-.name_Bool:
-	.string "Bool"
-Bool_vtable:
-	.quad	.name_Bool
-	.quad	Bool.new
-	.quad	Object.abort
-	.quad	Object.copy
-	.quad	Object.type_name
-	.text	
-	.globl	Bool.new
-	.type	Bool.new, @function
-Bool.new:
-	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movl	$32, %esi
-	movl	$1, %edi
-	call	calloc
-	movq	$2, (%rax)	# Bool id is 2
-	movq	$Bool_vtable, 8(%rax)
-	movq	$1, 16(%rax)	# 1 field
-	movq	$0, 24(%rax)
-	leave
-	.cfi_def_cfa 7, 8
-	ret
-	.cfi_endproc
-	.size	Bool.new, .-Bool.new
-	.section	.rodata
 .name_String:
 	.string	"String"
 String_vtable:
@@ -238,9 +176,9 @@ String.new:
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
-	movq	$3, (%rax)	# String id is 3
+	movq	$2, (%rax)	# String id is 2
 	movq	$String_vtable, 8(%rax)
-	movq	$1, 16(%rax)	# 1 field
+	movq	$1, 16(%rax)
 	movq	$.LC4, 24(%rax)
 	leave
 	.cfi_def_cfa 7, 8
@@ -437,7 +375,7 @@ IO.new:
 	movl	$24, %esi
 	movl	$1, %edi
 	call	calloc
-	movq	$4, (%rax)	#IO id is 3
+	movq	$3, (%rax)	#IO id is 3
 	movq	$IO_vtable, 8(%rax)
 	movq	$0, 16(%rax)	#0 fields
 	leave
@@ -571,7 +509,7 @@ IO.out_string:
 	pushq	%rax
 	movq	24(%rsi), %rsi
 	movl	$.LC1, %edi
-	movl	$0, %eax
+	movl	$0, %eax		#not sure if necessary
 	call	printf
 	popq	%rax
 	leave
@@ -582,4 +520,48 @@ IO.out_string:
 	.type	main, @function
 main:
 	call Main.main
+	ret
+Main.new:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Main.main:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq 8(%rbp), %rbx
+	movq $2, %rax
+	movq $2, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq $3, %rax
+	movq $4, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	cmpq %rax, %rcx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je .Main.main_1
+	movq $12, %rax
+	pushq %rbx
+	pushq %rax
+	call %rcx
+	addq $16, %rsp
+	jmp .Main.main_2
+.Main.main_1:
+	movq $34, %rcx
+	pushq %rbx
+	pushq %rcx
+	call %rax
+	addq $16, %rsp
+.Main.main_2:
+	movq %rbp, %rsp
+	popq %rbp
 	ret
