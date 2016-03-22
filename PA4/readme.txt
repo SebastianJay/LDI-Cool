@@ -1,54 +1,13 @@
-For this assignment, we used Ruby. First, we translated our AST
-serialization/deserialization from previous assignments from
-Python. We also augmented the AST code to handle the internal classes
-and expressions as well as type annotations. We then used the AST to build the class,
-implementation, and parent maps. Using the collected map data, we
-began checking for errors. Errors that did not require expression type
-checking were checked first due to the requirements for PA4c,
-afterwards we performed expression type checking. Our implementation
-of the expression type checking added type annotations to the AST in
-place, and if no errors were detected, we printed the final maps and
-annotated AST. 
+For this assignment, we used Ruby. First, we translated our AST serialization/deserialization Python code from previous assignments to Ruby. We also augmented the AST code to handle the internal classes and expressions as well as type annotations. We then used the AST to build the class, implementation, and parent maps. Using the collected map data, we checked for errors. Due to the timeline of the assignments (i.e. PA4c before PA4), we first checked for errors that did not require expression type checking. Afterwards, we performed expression type checking on attribute initializers and method bodies. Our implementation of the expression type checking added type annotations to the AST in place, and if no errors were detected, we printed the final maps and annotated AST.
 
-Python and Ruby are reasonably similar in syntax so our translation
-was more or less one-to-one. The only major changes were an added type
-field to the expression class and a 'preload' phase for loading internal
-objects.
+Python and Ruby are similar in terms of syntax so our translation of AST serialization was more or less one-to-one. The only major changes were an added type field to the expression class and a 'preload' phase for adding internal classes and their method signatures to the AST. Given Prof. Weimer's warnings about the dangers of duck typing, Ruby made the assignment surprisingly straightforward -- the imperative nature worked well for type checking, which inherently stresses finding corner cases, and the dynamic typing was not a danger as long as we were disciplined with how we structured our class hierarchy.
 
-We bundled our type-maps into a single class with helper methods for
-subclass and least upper bound checking. Our loading method for the
-type-maps first built the parent map, by simply iterating over all the
-classes in the AST and adding a class => parent entry for each
-class. We also checked for inheritance related errors at the same
-time. We used a recursive helper method to build the class and
-implementation maps. For each class, the method built the entry for
-the class' parent and prepended it to the part of the entry specific
-to that class. The helper method also checked for feature redefinitions
-and errors related to overriding. Our helper method for the subclass
-relation handled the SELF_TYPE rules, then recursively walked up the
-inheritance tree until the we found the supposed parent or reached the
-top without finding the supposed parent. Our least upper bound method
-handled the SELF_TYPE rules, then enumerated all of the first
-argument's parents, and walked up the inheritance tree from the second
-argument until it found a class in the first argument's parents and
-returned that class as the result.
+We bundled our type maps into a single class (called TypeMaps) with helper methods for finding subclass relationships and least upper bounds. Our loading method for the type maps first built the parent map by simply iterating over all the classes in the AST and adding a child => parent entry for each class. We also checked for inheritance related errors (e.g. inheritance cycle) at the same time. We used a recursive helper method to build the class and implementation maps. For each class, the method built the entry for the class's parent and prepended it to the part of the entry specific to that class. The helper method also checked for errors that would cause the class or implementation maps to be malformed (e.g. attribute redefinitions, improper overriding of methods). Our helper method for the subclass relation (i.e. whether some type conforms to another type) handled the SELF_TYPE rules and then recursively walked up the inheritance tree until the it found the supposed parent or reached the top without finding the supposed parent. Our least upper bound method handled the SELF_TYPE rules and then enumerated all of one class's parents; it then walked up the inheritance tree of the other class until it found a match in the first class's parent enumeration and returned that class name as the result.
 
-We then performed some preliminary error checking to satisfy PA4c's
-requirements. These checks were fairly straight forward. [## Expand on
-this?]
+With the type maps complete, we performed preliminary error checking to satisfy PA4c's requirements. Note that a number of errors were found when creating the type maps in the first place (as mentioned above). The additional errors found in this stage included: no Main class with a 0-argument main method, malformed attribute declarations (e.g. unknown type name), and malformed method signatures (e.g. formal with type SELF_TYPE).
 
-Finally, we performed expression type checking. The body of the
-function is a large case statement, with branches for each type of
-expression. In each branch we implemented the rules from the Cool
-manual. We printed an error and exited whenever the conditions for a
-rule were not satisfied, and also implemented some checks for errors
-mentioned in the text surrounding the formal rules. The function
-called itself recursively whenever a rule requires a sub-expression to
-be checked.  
+Finally, we performed expression type checking for attribute initializers and method bodies. The "checker" function took in arguments corresponding to the type environment: a table for currently bound symbols, the method map (wrapped in our TypeMaps object for access to helper methods), and the name of the enclosing class. The body of this function was a large case statement, with branches for each type of expression (e.g. identifier, self_dispatch). In each branch we implemented the rules as specified in the Cool manual. We printed an error and exited whenever the conditions for a rule were not satisfied, and also implemented some checks for errors mentioned in the text surrounding the formal rules. The function called itself recursively whenever a rule required a sub-expression to be checked. Once the type of the main expression was determined, it was checked against the declared type of the feature (i.e. static type of an attribute or return type of a method) to make sure that it conformed.
 
-Our good test case attempts to test every expression type in Cool, and
-checks least upper bound and subclass implementation with the if and
-case expressions. Bad1 tests a static dispatch to a function defined
-by the caller expression type, but not the static type. Bad2 checks
-multiple uses of a type in a case expression. Bad3 checks a simple
-formal-actual argument type mismatch. 
+There are few noteworthy design decisions to discuss concerning expression type checking. The biggest "feature" in our implementation is a helper method for type checking dispatch expressions; this method consolidates code for checking the three AST dispatch nodes (self_dispatch, dynamic_dispatch, static_dispatch). Otherwise, the code more or less follows straight from "Type Checking Rules" in the CRM. The biggest challenge for us was tracking down all the auxiliary errors mentioned in other parts of the manual; our test suite captured the majority of this content, but there were still a few cases that eluded us on the first pass (e.g. being able to compare objects of any type as long as they are both not primitive types).
+
+Our good test case attempts to test every expression type in Cool, and checks least upper bound and subclass implementation with the if and case expressions. Bad1 tests a static dispatch to a function defined by the caller expression type, but not the static type. Bad2 checks multiple uses of a type in a case expression. Bad3 checks a simple formal-actual argument type mismatch.
