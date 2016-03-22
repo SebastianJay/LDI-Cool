@@ -62,7 +62,7 @@ class TACIndexer:
     @staticmethod
     def label():
         TACIndexer.lind += 1
-        return "." + TACIndexer.cname + '_' + TACIndexer.mname + '_' + str(TACIndexer.lind)
+        return "." + TACIndexer.cname + '.' + TACIndexer.mname + '_' + str(TACIndexer.lind)
 
     #increments a counter a returns a register label
     @staticmethod
@@ -294,7 +294,7 @@ def expConvert(node):
         regs = [expConvert(e) for e in node.args[2]]
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[1].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].type + '.' + node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -312,7 +312,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbd))
         regs = [expConvert(e) for e in node.args[3]]
         regs = [regc] + regs
-        calllb = node.args[1].name + '_' + node.args[2].name + '_1'
+        calllb = node.args[1].name + '.' + node.args[2].name
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -324,7 +324,7 @@ def expConvert(node):
         regs = [expConvert(e) for e in node.args[1]]
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, TACIndexer.cname + '.' + node.args[0].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -353,7 +353,8 @@ def expConvert(node):
 #special annotations are added to method args so offset is easy to find in ASM gen
 def methodConvert(node):
     #emit start label of func
-    TACIndexer.pushIns(TACLabel(TACIndexer.label()))
+    TACIndexer.pushIns(TACLabel(TACIndexer.cname + '.' + TACIndexer.mname))
+
     #add the implicit "self" parameter
     reg = TACIndexer.map('self', True)
     TACIndexer.pushIns(TACAssign(reg, TACMethodArg(TACIndexer.cname, TACIndexer.mname, 'self')))
@@ -362,6 +363,7 @@ def methodConvert(node):
         reg = TACIndexer.map(formal[0].name, True)
         TACIndexer.pushIns(TACAssign(reg, TACMethodArg(TACIndexer.cname, TACIndexer.mname, formal[0].name)))
     reg = expConvert(node.body)
+
     #remove formal -> register mappings
     TACIndexer.pop('self')
     for formal in node.formals:
@@ -404,7 +406,7 @@ def attrConvert(ast):
         attrlst = TACIndexer.cmap[mclass.name.name]
         TACIndexer.init(mclass.name.name, 'new')
         #emit label for start of constructor
-        TACIndexer.pushIns(TACLabel(TACIndexer.label()))
+        TACIndexer.pushIns(TACLabel(TACIndexer.cname + '.' + TACIndexer.mname))
         #allocate memory on heap for object
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
         #make first pass to default initialize fields

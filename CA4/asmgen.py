@@ -1,6 +1,8 @@
 from TAC_serialize import *
+from TAC_serialize import _constructCFG
 from registerAllocate import registerAllocate
 import sys
+from deadcode import globalDeadRemove
 
 #maps int result of graph coloring to x64 register name
 cRegMap = {
@@ -78,7 +80,7 @@ class ASMIndexer:
             labels = [ASMIndexer.strMap[cname]]
             # methods start at index 1 of table
             for imeth in imap[cname]:
-                labels.append(cname + '_' + imeth.name + '_1')
+                labels.append(cname + '.' + imeth.name)
             ASMIndexer.vtableMap[cname] = labels
 
     #returns a list of ASMInstruction corresponding to vtables in vtableMap
@@ -374,15 +376,12 @@ def funcConvert(cfg, regMap):
             return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 1))+'('+rbp+')'
 
     inslst = cfg.toList()
-    asmlst = [
-        ASMInfo('globl', 'main'),
-        ASMInfo('type', 'main', '@function'),
-        ASMLabel('main')
-    ]
+
+    preamble = []
 
     #function prologue
-    # TODO prepend this to start of every function (i.e. labels ending with "_1")
-    asmlst += [
+    # TODO prepend this to start of every function
+    preamble += [
         ASMPush(rbp),
         ASMAssign(rbp, rsp),
     ]
@@ -391,10 +390,11 @@ def funcConvert(cfg, regMap):
     # TODO review number of spaces allocated
     stackmem = 8*(max(regMap.values()) - len(cRegMap) + 1)
     if stackmem > 0:
-        asmlst+=[
+        preamble+=[
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
 
+    asmlst = []
     #make list of ASM instructions from TAC instructions
     for ins in inslst:
         if isinstance(ins, TACOp):
@@ -428,6 +428,10 @@ def funcConvert(cfg, regMap):
             pass    #TODO
         elif isinstance(ins, TACError):
             pass    #TODO
+        else:
+            asmlst.append("UNHANDLED: "+ str(ins))
+    
+    asmlst = asmlst[:1] + preamble + asmlst[1:]
 
     # Remove useless mov instructions
     rmlist = []
@@ -438,7 +442,10 @@ def funcConvert(cfg, regMap):
 
     explst = []
     for ins in asmlst:
-        explst += ins.expand()
+        if hasattr(ins, 'expand'):
+            explst += ins.expand()
+        else:
+            explst += [ins]
 
     return explst
 
@@ -448,10 +455,35 @@ def asmStr(asmlst):
         if not isinstance(ins, ASMLabel):
             outbuf += '\t'
         outbuf += str(ins) + '\n'
-    return readInternals('internals.s.txt') + outbuf
+    return outbuf
 
-def readInternals(path):
-    with open(path, 'rU') as inFile:
+def convert(taclist):
+    methlist = []
+    lastInd = 0
+    for i in range(len(taclist)):
+        # Split taclist on method labels
+        if isinstance(taclist[i], TACLabel) and taclist[i].name[0] != '.':
+            if i != 0:
+                methlist.append(taclist[lastInd:i])
+            lastInd = i
+    methlist.append(taclist[lastInd:])
+
+    asmlist = []
+    for meth in methlist:
+        cfg = _constructCFG(meth)
+        print cfg
+        print '-----'
+        globalDeadRemove(cfg)
+        print cfg
+        print '-----'
+        regmap = registerAllocate(cfg,13)
+        asmlist += funcConvert(cfg, regmap)
+        print asmStr(asmlist)
+
+    return asmlist
+
+def readInternals():
+    with open('internals.s.txt', 'rU') as inFile:
         return inFile.read()
 
 if __name__ == '__main__':
