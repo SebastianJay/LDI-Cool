@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from annast import readClType
+=======
+from annast import AST, readClType
+>>>>>>> 5cdfb0e2a4b3e24786c2d6f2dbdab8a2031f3fa9
 import tacgen
 import TAC_serialize
 import deadcode
@@ -9,10 +13,11 @@ import sys
 debug = True
 if __name__=="__main__":
 
+    #load the cl-type file
     cmap, imap, pmap, ast = readClType(sys.argv[1])
 
-    # Generate TAC
-    tacgen.TACIndexer.setTypeMaps(cmap,imap,pmap)
+    #generate TAC for the user-generated Cool
+    tacgen.TACIndexer.setTypeMaps(cmap, imap, pmap)
     tacgen.attrConvert(ast)
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
@@ -43,6 +48,7 @@ if __name__=="__main__":
     if debug:
         print cfg
         print "-----"
+
 
     #create list of ASM instructions
     asmlst = asmgen.convert(cfg)

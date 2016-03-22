@@ -25,6 +25,72 @@ retreg = 0
 
 registers = cRegMap.values() + [rsp, rbp]
 
+#static class that turns cmap, imap, and pmap into offset and label mappings
+class ASMIndexer:
+    clsTags = {}        #string class => int class tag
+    attrOffset = {}     #string class => (string attribute => int index of attr)
+    methOffset = {}     #string class => (string method => (string formal => int index of formal))
+    vtableMap = {}      #string class => list of string labels
+    strMap = {}         #string literal => string label where literal stored
+
+    #the map definitions are the unboxed definitions provided in annast.py
+    @staticmethod
+    def load(cmap, imap, pmap):
+        #create clsTags
+        tagind = 0
+        for cname in cmap:
+            ASMIndexer.clsTags[cname] = tagind
+            tagind += 1
+
+        #create attrOffset
+        for cname in cmap:
+            attrmap = {}
+            #attr index 0 = class tag
+            #attr index 1 = object size
+            #attr index 2 = vtable pointer
+            # other attributes start at index 3
+            for i, cattr in enumerate(cmap[cname]):
+                attrmap[cattr.name] = i+3
+            ASMIndexer.attrOffset[cname] = attrmap
+
+        #create methOffset
+        for cname in imap:
+            methmap = {}
+            for imeth in imap[cname]:
+                formmap = {}
+                #the implicit first formal is the "self" arg
+                formmap['self'] = 0
+                #the rest of the arguments start at index 1
+                for i, fname in enumerate(imeth.formals):
+                    formmap[fname] = i+1
+                methmap[imeth.name] = formmap
+            ASMIndexer.methOffset[cname] = methmap
+
+        #create strMap
+        for i, cname in enumerate(cmap):
+            ASMIndexer.strMap[cname] = '.string' + str(i)
+        #TODO add other strings, e.g. error
+        #TODO traverse TAC list to find literals
+
+        #create vtableMap
+        for i, cname in enumerate(imap):
+            #entry 0 of vtable is string of class name
+            labels = [ASMIndexer.strMap[cname]]
+            # methods start at index 1 of table
+            for imeth in imap[cname]:
+                labels.append(cname + '_' + imeth.name + '_1')
+            ASMIndexer.vtableMap[cname] = labels
+
+    #returns a list of ASMInstruction corresponding to vtables in vtableMap
+    @staticmethod
+    def genVtable():
+        pass
+
+    #returns a list of ASMInstruction corresponding to literals in strMap
+    @staticmethod
+    def genStr():
+        pass
+
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
 # some may require auxiliary instructions like shifting between registers/stack
@@ -290,16 +356,27 @@ def getConflicts(tacIns):
 #returns list of x64 instructions as ASM* instances
 def funcConvert(cfg, regMap):
 
-    #return either register name or place in memory (if index too high)
+    #if virtual register, return either register name or place in memory (if index too high)
+    #if class attr or method arg, return memory location with appropriate offset
     #TODO review indexing of temporaries relative to rbp
-    def realReg(vreg):
-        if regMap[vreg] not in cRegMap:
-            return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + '('+rbp+')'
-        return cRegMap[regMap[vreg]]
+    def realReg(operand):
+        if isinstance(operand, TACRegister):
+            vreg = operand.name
+            if regMap[vreg] not in cRegMap:
+                return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + '('+rbp+')'
+            return cRegMap[regMap[vreg]]
+        elif isinstance(operand, TACClassAttr):
+            vreg = operand.reg.name
+            #TODO handle class attr reg (i.e. "self" var) being in memory (i.e. need double memory lookup)
+            #  possible solution: in registerAllocate, force #self method arg to be in real register
+            return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])+'('+ cRegMap[regMap[vreg]] +')'
+        elif isinstance(operand, TACMethodArg):
+            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 1))+'('+rbp+')'
 
     inslst = cfg.toList()
 
     #function prologue
+    # TODO prepend this to start of every function (i.e. labels ending with "_1")
     asmlst += [
         ASMPush(rbp),
         ASMAssign(rbp, rsp),
@@ -324,7 +401,10 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACAllocate):
             asmlst.append(ASMAllocate(realReg(ins.assignee), ins.allop, ins.ptype))
         elif isinstance(ins, TACCall):
-            asmlst.append(ASMCall(realReg(ins.assignee), ins.funcname, ins.args))
+            funcname = ins.funcname
+            if isinstance(ins.funcname, TACRegister):
+                funcname = realReg(ins.funcname)    #TODO other chars to indicate function call?
+            asmlst.append(ASMCall(realReg(ins.assignee), funcname, [realReg(arg) for arg in ins.args]))
         elif isinstance(ins, TACLabel):
             asmlst.append(ASMLabel(ins.name))
         elif isinstance(ins, TACReturn):
@@ -335,6 +415,14 @@ def funcConvert(cfg, regMap):
             asmlst.append(ASMBT(realReg(ins.cond), ins.label))
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
+        elif isinstance(ins, TACVTable):
+            pass    #TODO
+        elif isinstance(ins, TACMalloc):
+            pass    #TODO
+        elif isinstance(ins, TACTypeEq):
+            pass    #TODO
+        elif isinstance(ins, TACError):
+            pass    #TODO
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
 

@@ -3,19 +3,31 @@ class Main inherits IO {
     getFoo() : Foo {
         foo
     };
+    setFoo(newfoo : Foo) : Object {
+        foo <- newfoo
+    };
 
     main() : Object {
-        {
-        foo.getBar().setJ(4);
-        let m : Main <- copy() in
-            out_int(m.getFoo().getBar().getJ());
+        let a : Main <- new Main, b : Foo <- new Foo, c : Bar <- new Bar, d : Main in {
+            c.setJ(10);
+            b.getBar().setJ(11);
+            a.getFoo().getBar().setJ(12);
+            a.setFoo(b);
+
+            d <- a.copy();
+
+            b.getBar().setJ(13);
+            out_int(d.getFoo().getBar().getJ());
+            out_int(a.getFoo().getBar().getJ());
         }
     };
 };
 
 class Foo {
-    i : Int <- 2;
     bar : Bar <- new Bar;
+    setBar(newbar : Bar) : Object {
+        bar <- newbar
+    };
 
     getBar() : Bar {
         bar

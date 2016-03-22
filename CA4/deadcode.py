@@ -1,3 +1,5 @@
+#TODO analyze how deadcode must change with TACMethodArg and TACClassAttr
+
 from TAC_serialize import *
 
 def getRead(inst):
@@ -10,12 +12,30 @@ def getRead(inst):
         res = [inst.assignor]
     elif isinstance(inst, TACCall):
         if inst.args:
-            res = inst.args
+            res = inst.args[:]  #make a list copy
+        if isinstance(inst.funcname, TACRegister):
+            res += [inst.funcname]
     elif isinstance(inst, TACReturn):
         res = [inst.retval]
     elif isinstance(inst, TACBT):
         res = [inst.cond]
-    return res
+    elif isinstance(inst, TACVTable):
+        res = [inst.obj]
+    elif isinstance(inst, TACTypeEq):
+        res = [inst.obj]
+
+    #unbox operands TODO review
+    resu = None
+    if res is not None:
+        resu = []
+        for r in res:
+            if isinstance(r, TACRegister):
+                resu.append(r.name)
+            elif isinstance(r, TACClassAttr):
+                resu.append(r.reg.name)
+            #ignore method arg
+
+    return resu
 
 def getWritten(inst):
     res = None
@@ -29,8 +49,22 @@ def getWritten(inst):
         res = inst.assignee
     elif isinstance(inst, TACCall):
         res = inst.assignee
-    return res
+    elif isinstance(inst, TACMalloc):
+        res = inst.assignee
+    elif isinstance(inst, TACVTable):
+        res = inst.assignee
+    elif isinstance(inst, TACTypeEq):
+        res = inst.assignee
 
+    #unbox operand TODO review
+    resu = None
+    if res is not None:
+        if isinstance(res, TACRegister):
+            resu = res.name
+        elif isinstance(res, TACClassAttr):
+            resu = res.reg.name
+
+    return resu
 
 def localLiveCheck(block):
     liveIn = set(block.liveOut)
@@ -45,8 +79,7 @@ def localLiveCheck(block):
         # Live when used
         used = getRead(inst)
         if used is not None:
-            # Currently at most two per instruction,
-            # but this makes changing instructions easier
+            #iterate over all live args
             for r in used:
                 liveIn.add(r)
 
@@ -75,8 +108,6 @@ def globalLiveCheck(graph):
                 if parent.updateLiveOut():
                     done = False
 
-
-
 def localDeadRemove(block):
     live = set(block.liveOut)
     deadLines = []
@@ -89,7 +120,7 @@ def localDeadRemove(block):
         if killed is not None and killed not in live:
             # If it's a call, replace the dead var with __dead__
             if isinstance(inst,TACCall):
-                block.instructions[len(block.instructions)-ind-1].assignee = "__dead__"
+                block.instructions[len(block.instructions)-ind-1].assignee.name = "__dead__"
 
             # Othewise remove the instruction
             else:
@@ -129,8 +160,6 @@ def globalDeadRemove(graph):
             # If something changed, we need to start over
             if not done:
                 break
-
-
 
 if __name__ == "__main__":
     debug = "-v" in sys.argv

@@ -77,7 +77,7 @@ class TACOp1(TACOp):
         self.opcode = opcode
         self.op1 = op1
     def __str__(self):
-        return self.assignee + ' <- ' + self.opcode + ' ' + self.op1
+        return str(self.assignee) + ' <- ' + str(self.opcode) + ' ' + str(self.op1)
 
 #TAC instructions which compute operations with two operands
 class TACOp2(TACOp):
@@ -87,7 +87,7 @@ class TACOp2(TACOp):
         self.op1 = op1
         self.op2 = op2
     def __str__(self):
-        return self.assignee + ' <- ' + self.opcode + ' ' + self.op1 + ' ' + self.op2
+        return str(self.assignee) + ' <- ' + str(self.opcode) + ' ' + str(self.op1) + ' ' + str(self.op2)
 
 #TAC instruction which assigns one variable into another
 class TACAssign(TACInstruction):
@@ -95,7 +95,7 @@ class TACAssign(TACInstruction):
         self.assignee = assignee
         self.assignor = assignor
     def __str__(self):
-        return self.assignee + ' <- ' + self.assignor
+        return str(self.assignee) + ' <- ' + str(self.assignor)
 
 #"abstract" class for TAC instructions which declare variables
 class TACDeclare(TACInstruction):
@@ -108,7 +108,7 @@ class TACAllocate(TACDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def __str__(self):
-        return self.assignee + ' <- ' + self.allop + ' ' + self.ptype
+        return str(self.assignee) + ' <- ' + str(self.allop) + ' ' + str(self.ptype)
 
 #for assigning constants to variables
 class TACConstant(TACDeclare):
@@ -117,8 +117,8 @@ class TACConstant(TACDeclare):
         self.ptype = ptype
         self.const = const
     def __str__(self):
-        return self.assignee + ' <- ' + self.ptype +("\n" if self.ptype=="string" else ' ') + self.const
-
+        return str(self.assignee) + ' <- ' + str(self.ptype) + \
+            ("\n" if self.ptype=="string" else ' ') + str(self.const)
 
 #"abstract" class for the control instructions
 class TACControl(TACInstruction):
@@ -134,29 +134,29 @@ class TACCall(TACControl):
         else:
             self.args = []
     def __str__(self):
-        argstr = ' '.join(self.args)
-        return self.assignee + ' <- call ' + self.funcname + ' ' + argstr
+        argstr = ' '.join([str(arg) for arg in self.args])
+        return str(self.assignee) + ' <- call ' + str(self.funcname) + ' ' + argstr
 
 #Jmp instruction
 class TACJmp(TACControl):
     def __init__(self, label):
         self.label = label
     def __str__(self):
-        return 'jmp ' + self.label
+        return 'jmp ' + str(self.label)
 
 #label instruction
 class TACLabel(TACControl):
     def __init__(self, name):
         self.name = name
     def __str__(self):
-        return 'label ' + self.name
+        return 'label ' + str(self.name)
 
 #Return instruction
 class TACReturn(TACControl):
     def __init__(self, retval):
         self.retval = retval
     def __str__(self):
-        return 'return ' + self.retval
+        return 'return ' + str(self.retval)
 
 #Bt instruction
 class TACBT(TACControl):
@@ -164,7 +164,7 @@ class TACBT(TACControl):
         self.cond = cond
         self.label = label
     def __str__(self):
-        return 'bt ' + self.cond + ' ' + self.label
+        return 'bt ' + str(self.cond) + ' ' + str(self.label)
 
 #abstract class for meta-instructions related to ASM gen
 class TACAux(TACInstruction):
@@ -177,7 +177,7 @@ class TACMalloc(TACAux):
         self.assignee = assignee
         self.cname = cname
     def __str__(self):
-        return self.assignee + ' <- ' + 'malloc ' + self.cname
+        return str(self.assignee) + ' <- ' + 'malloc ' + str(self.cname)
 
 #represents a lookup in a virtual method table for a function
 class TACVTable(TACAux):
@@ -186,7 +186,51 @@ class TACVTable(TACAux):
         self.obj = obj
         self.method = method
     def __str__(self):
-        return self.assignee + ' <- ' + 'vtable ' + self.obj + ' ' + self.method
+        return str(self.assignee) + ' <- ' + 'vtable ' + str(self.obj) + ' ' + str(self.method)
+
+#represents an unconditional runtime error - contains line number and error code
+class TACError(TACAux):
+    def __init__(self, lineno, reason):
+        self.lineno = lineno
+        self.reason = reason
+    def __str__(self):
+        return 'error ' + str(self.lineno) + ' ' + str(self.reason)
+
+#represents a check on the object's dynamic type - used for case statements
+class TACTypeEq(TACAux):
+    def __init__(self, assignee, obj, dtype):
+        self.assignee = assignee
+        self.obj = obj
+        self.dtype = dtype
+    def __str__(self):
+        return str(self.assignee) + ' <- typeeq ' + str(self.obj) + ' ' + str(self.dtype)
+
+#abstract class representing something TAC can compute on
+# register, attr (from memory), method arg
+class TACOperand:
+    pass
+
+class TACRegister(TACOperand):
+    def __init__(self, name):
+        self.name = name
+    def __str__(self):
+        return self.name
+
+class TACClassAttr(TACOperand):
+    def __init__(self, reg, cname, aname):
+        self.reg = reg
+        self.cname = cname
+        self.aname = aname
+    def __str__(self):
+        return str(self.reg)+'@'+self.cname+':'+self.aname
+
+class TACMethodArg(TACOperand):
+    def __init__(self, cname, mname, fname):
+        self.cname = cname
+        self.mname = mname
+        self.fname = fname
+    def __str__(self):
+        return '#'+self.fname+'@'+self.cname+':'+self.mname
 
 ### Functions for converting input stream to TACGraph
 def serializeTAC(streamptr):
