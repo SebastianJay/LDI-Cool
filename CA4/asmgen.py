@@ -374,6 +374,63 @@ class ASMBT(ASMControl):
     def __str__(self):
         return 'je ' + self.label
 
+#initialize instance of class
+class ASMMalloc(ASMInstruction):
+    def __init__(self, assignee, cname):
+        self.assignee = assignee
+        self.cname = cname
+    def expand(self):
+        #TODO do malloc
+        # then initialize class tag, vtable pointer, object size
+        # when optimizing constructors these ops may have to be separated out
+        pass
+    def __str__(self):
+        pass
+
+#lookup vtable for location of function
+class ASMVTable(ASMInstruction):
+    def __init__(self, assignee, obj, offset):
+        self.assignee = assignee
+        self.obj = obj
+        self.offset = offset
+    def expand(self):
+        #TODO if obj is in memory pull it into register
+        # then pull vtable pointer into register (constant offset of 8 if 2nd field)
+        # then pull function pointer into assignee (use self.offset)
+        pass
+    def __str__(self):
+        pass
+
+#branches if class tag matches - used for case statements
+class ASMBTypeEq(ASMInstruction):
+    def __init__(self, obj, clstag, label):
+        self.obj = obj
+        self.clstag = clstag
+        self.label = label
+    def expand(self):
+        #TODO if obj is in memory pull it into register
+        # if cmp does not work on memory pull class tag of obj into register (constant off set of 0 if 1st field)
+        # do cmp on obj class tag and self.clstag
+        # do conditional jump to self.label if cmp yields equal
+        pass
+    def __str__(self):
+        pass
+
+#unconditional error jump
+class ASMError(ASMControl):
+    def __init__(self, lineno, reason):
+        self.lineno = lineno
+        self.reason = reason
+    def expand(self):
+        #TODO have internal method that takes two args
+            #arg 0 - string format
+            #arg 1 - int line number
+        #that method should call printf(arg0, arg1) and then exit()
+        #this instruction is a wrapper over call to that method
+        pass
+    def __str__(self):
+        pass
+
 #catchall for instructions that have no strong association with category
 class ASMMisc(ASMInstruction):
     def __init__(self, cmd, args=[]):
@@ -460,13 +517,13 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
-            pass    #TODO
+            asmlst.append(ASMVTable(realReg(ins.assignee), realReg(ins.obj), ASMIndexer.vtableOffset[ins.cname][ins.mname]))
         elif isinstance(ins, TACMalloc):
-            pass    #TODO
-        elif isinstance(ins, TACTypeEq):
-            pass    #TODO
+            asmlst.append(ASMMalloc(realReg(ins.assignee), ins.cname))
+        elif isinstance(ins, TACBTypeEq):
+            asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
         elif isinstance(ins, TACError):
-            pass    #TODO
+            asmlst.append(ASMError(ins.lineno, ins.reason))
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
 

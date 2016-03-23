@@ -201,9 +201,7 @@ def expConvert(node):
                 if subclsname in usedtypes:
                     continue
                 usedtypes.add(subclsname)
-                rege = TACIndexer.reg()
-                TACIndexer.pushIns(TACTypeEq(rege, regc, subclsname))
-                TACIndexer.pushIns(TACBT(rege, blabels[ind]))
+                TACIndexer.pushIns(TACBTypeEq(regc, subclsname, blabels[ind]))
         #fail if no type found
         TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
         #loop over branches: emit label, generate code, result in join reg + jump to join label
@@ -425,8 +423,8 @@ def attrConvert(ast):
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')
 
-#import TAC_serialize
-#import deadcode
+import TAC_serialize
+import deadcode
 if __name__ == '__main__':
     cmap, imap, pmap, ast = readClType(sys.argv[1])
     TACIndexer.setTypeMaps(cmap, imap, pmap)
@@ -439,7 +437,7 @@ if __name__ == '__main__':
         outbuf += str(ins) + '\n'
     print outbuf
 
-    #cfg = TAC_serialize._constructCFG(TACIndexer.inslst)
-    #print "-----"
-    #deadcode.globalDeadRemove(cfg)
-    #print cfg
+    cfg = TAC_serialize._constructCFG(TACIndexer.inslst)
+    print "-----"
+    deadcode.globalDeadRemove(cfg)
+    print cfg

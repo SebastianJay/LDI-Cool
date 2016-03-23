@@ -198,13 +198,14 @@ class TACError(TACAux):
         return 'error ' + str(self.lineno) + ' ' + str(self.reason)
 
 #represents a check on the object's dynamic type - used for case statements
-class TACTypeEq(TACAux):
-    def __init__(self, assignee, obj, dtype):
-        self.assignee = assignee
+#if equal a branch is performed to specified label
+class TACBTypeEq(TACAux):
+    def __init__(self, obj, dtype, label):
         self.obj = obj
         self.dtype = dtype
+        self.label = label
     def __str__(self):
-        return str(self.assignee) + ' <- typeeq ' + str(self.obj) + ' ' + str(self.dtype)
+        return 'btypeeq ' + str(self.obj) + ' ' + str(self.dtype) + ' ' + str(self.label)
 
 #abstract class representing something TAC can compute on
 # register, attr (from memory), method arg

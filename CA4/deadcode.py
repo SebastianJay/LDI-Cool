@@ -21,7 +21,7 @@ def getRead(inst):
         res = [inst.cond]
     elif isinstance(inst, TACVTable):
         res = [inst.obj]
-    elif isinstance(inst, TACTypeEq):
+    elif isinstance(inst, TACBTypeEq):
         res = [inst.obj]
 
     #unbox operands TODO review
@@ -52,8 +52,6 @@ def getWritten(inst):
     elif isinstance(inst, TACMalloc):
         res = inst.assignee
     elif isinstance(inst, TACVTable):
-        res = inst.assignee
-    elif isinstance(inst, TACTypeEq):
         res = inst.assignee
 
     #unbox operand TODO review
