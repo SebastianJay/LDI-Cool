@@ -52,7 +52,7 @@ class ASMIndexer:
 
     #the map definitions are the unboxed definitions provided in annast.py
     @staticmethod
-    def load(cmap, imap, pmap):
+    def load(cmap, imap, pmap, inslist):
         #create clsTags
         tagind = 0
         for cname in cmap:
@@ -100,14 +100,17 @@ class ASMIndexer:
         #create type name strings
         strind = 0
         for cname in cmap:
+            if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             ASMIndexer.strMap[cname] = '.string' + str(strind)
             strind += 1
         #add runtime error strings
         for literal in ASMIndexer.errstrMap.values():
             ASMIndexer.strMap[literal] = '.string' + str(strind)
             strind += 1
+            
         #add literals found in TAC list
-        for ins in TACIndexer.inslst:
+        for ins in inslist:
             if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
                 ASMIndexer.strMap[ins.const] = '.string' + str(strind)
                 strind += 1
@@ -115,23 +118,47 @@ class ASMIndexer:
 
         #create vtableMap
         for i, cname in enumerate(imap):
+            if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             #entry 0 of vtable is string of class name
-            labels = [ASMIndexer.strMap[cname]]
+            # Entry 1 is new method
+            labels = [ASMIndexer.strMap[cname], cname + '.new']
             # methods start at index 1 of table
             for imeth in imap[cname]:
-                labels.append(cname + '.' + imeth.name)
+                labels.append(imeth.orig + '.' + imeth.name)
             ASMIndexer.vtableMap[cname] = labels
+
+    @staticmethod
+    def getvtableind(cname, methname):
+        ind = -1
+        for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
+            if meth.split('.')[1] == methname:
+                ind = i
+        return 8*ind
 
     #returns a list of ASMInstruction corresponding to vtables in vtableMap
     @staticmethod
     def genVtable():
-        pass
+        vlist = []
+        for c in ASMIndexer.vtableMap:
+
+            vlist.append(ASMLabel(c + '_vtable'))
+            for meth in ASMIndexer.vtableMap[c]:
+                vlist.append(ASMInfo('quad', meth))
+
+        return vlist
 
     #returns a list of ASMInstruction corresponding to literals in strMap
     @staticmethod
     def genStr():
-        pass
-
+        slist = []
+        for s in ASMIndexer.strMap:
+            slist += [
+                ASMLabel(ASMIndexer.strMap[s]),
+                ASMInfo('string', '"' + s + '"')
+            ]
+        return slist
+            
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
 # some may require auxiliary instructions like shifting between registers/stack
@@ -266,8 +293,10 @@ class ASMAllocate(ASMDeclare):
         self.assignee = assignee
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
+    def expand(self):
+        return [ASMAssign('%rax', self.assignee), self]
     def __str__(self):
-        return 'movq $0, ' + self.assignee
+        return 'call ' + ptype + '.new'
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -325,7 +354,10 @@ class ASMCall(ASMControl):
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
         return asm
     def __str__(self):
-        return 'call ' + self.funcname
+        if self.funcname in registers:
+            return 'call *' + self.funcname
+        else:
+            return 'call ' + self.funcname
 
 #Jmp instruction
 class ASMJmp(ASMControl):
@@ -374,48 +406,6 @@ class ASMBT(ASMControl):
     def __str__(self):
         return 'je ' + self.label
 
-#initialize instance of class
-class ASMMalloc(ASMInstruction):
-    def __init__(self, assignee, cname):
-        self.assignee = assignee
-        self.cname = cname
-    def expand(self):
-        #TODO do malloc
-        # then initialize class tag, vtable pointer, object size
-        # when optimizing constructors these ops may have to be separated out
-        pass
-    def __str__(self):
-        pass
-
-#lookup vtable for location of function
-class ASMVTable(ASMInstruction):
-    def __init__(self, assignee, obj, offset):
-        self.assignee = assignee
-        self.obj = obj
-        self.offset = offset
-    def expand(self):
-        #TODO if obj is in memory pull it into register
-        # then pull vtable pointer into register (constant offset of 8 if 2nd field)
-        # then pull function pointer into assignee (use self.offset)
-        pass
-    def __str__(self):
-        pass
-
-#branches if class tag matches - used for case statements
-class ASMBTypeEq(ASMInstruction):
-    def __init__(self, obj, clstag, label):
-        self.obj = obj
-        self.clstag = clstag
-        self.label = label
-    def expand(self):
-        #TODO if obj is in memory pull it into register
-        # if cmp does not work on memory pull class tag of obj into register (constant off set of 0 if 1st field)
-        # do cmp on obj class tag and self.clstag
-        # do conditional jump to self.label if cmp yields equal
-        pass
-    def __str__(self):
-        pass
-
 #unconditional error jump
 class ASMError(ASMControl):
     def __init__(self, lineno, reason):
@@ -445,10 +435,9 @@ class ASMMisc(ASMInstruction):
         return retval
 #end ASM class definitions
 
-#returns list of colors of registers that must be used for specified x86 commands
-#e.g. imulq needs %rax and %rdx as "result registers"
-def getConflicts(tacIns):
-    pass
+
+def offsetStr(off, reg):
+    return str(off) + '(' + reg + ')'
 
 #takes a control flow graph and mapping of virtual registers to colors
 #returns list of x64 instructions as ASM* instances
@@ -469,7 +458,7 @@ def funcConvert(cfg, regMap):
             #  possible solution: in registerAllocate, force #self method arg to be in real register
             return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])+'('+ cRegMap[regMap[vreg]] +')'
         elif isinstance(operand, TACMethodArg):
-            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 1))+'('+rbp+')'
+            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2))+'('+rbp+')'
 
     inslst = cfg.toList()
 
@@ -517,11 +506,31 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
-            asmlst.append(ASMVTable(realReg(ins.assignee), realReg(ins.obj), ASMIndexer.vtableOffset[ins.cname][ins.mname]))
+            asmlst += [
+                # vtable addr -> rdx
+                ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
+                # method addr -> assignee
+                ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), '%rdx'))
+            ]
         elif isinstance(ins, TACMalloc):
-            asmlst.append(ASMMalloc(realReg(ins.assignee), ins.cname))
-        elif isinstance(ins, TACBTypeEq):
-            asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
+            nattrs = len(ASMIndexer.attrOffset[ins.cname])
+            asmlst += [
+                ASMPush('%rsi'),
+                ASMPush('%rdi'),
+                # Allocate blocks of size 8 bytes
+                ASMAssign('%rsi', '$8'),
+                
+                # Allocate tag, vtable pointer, size, attributes
+                ASMAssign('%rdi', '$' + str(3+nattrs)),
+                ASMCall('%rax', 'calloc'),
+                ASMPop('%rdi'),
+                ASMPop('%rsi'),
+                ASMAssign('(%rax)', '$' + str(ASMIndexer.clsTags[ins.cname])),
+                ASMAssign('8(%rax)', '$' + ins.cname + "_vtable"),
+                ASMAssign('16(%rax)', '$' + str(nattrs))
+            ]
+        elif isinstance(ins, TACTypeEq):
+            pass    #TODO
         elif isinstance(ins, TACError):
             asmlst.append(ASMError(ins.lineno, ins.reason))
         else:
@@ -529,12 +538,7 @@ def funcConvert(cfg, regMap):
 
     asmlst = asmlst[:1] + preamble + asmlst[1:]
 
-    # Remove useless mov instructions
-    rmlist = []
-    for i, ins in enumerate(asmlst):
-        if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
-            rmlist.append(i)
-    asmlst = [ins for i,ins in enumerate(asmlst) if i not in rmlist]
+
 
     explst = []
     for ins in asmlst:
@@ -542,6 +546,13 @@ def funcConvert(cfg, regMap):
             explst += ins.expand()
         else:
             explst += [ins]
+
+    # Remove useless mov instructions
+    rmlist = []
+    for i, ins in enumerate(explst):
+        if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
+            rmlist.append(i)
+    explst = [ins for i,ins in enumerate(explst) if i not in rmlist]
 
     return explst
 
