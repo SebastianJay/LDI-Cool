@@ -18,7 +18,7 @@ if __name__=="__main__":
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
 
-    asmgen.ASMIndexer.load(cmap,imap,pmap)
+    asmgen.ASMIndexer.load(cmap,imap,pmap,taclist)
 
     # Generate vtables
     vtable = asmgen.ASMIndexer.genVtable()

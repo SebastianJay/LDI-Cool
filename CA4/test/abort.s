@@ -585,10 +585,20 @@ main:
 	pushq %rax
 	call Main.main
 	ret
+.string3:
+	.string "ERROR: %d: Exception: case on void"
+.string1:
+	.string "ERROR: %d: Exception: dispatch on void"
+.string4:
+	.string "ERROR: %d: Exception: stack overflow"
 .string5:
+	.string "ERROR: %d: Exception: case without matching branch"
+.string2:
+	.string "ERROR: %d: Exception: division by zero"
+.string0:
 	.string "Main"
 Main_vtable:
-	.quad .string5
+	.quad .string0
 	.quad Main.new
 	.quad Object.abort
 	.quad Object.copy

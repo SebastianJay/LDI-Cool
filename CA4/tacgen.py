@@ -120,7 +120,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACJmp(lbp))
         #generate the breakout label
         TACIndexer.pushIns(TACLabel(lbb))
-        #create a default as the return value
+        #create a default (void) as the return value
         reg = TACIndexer.reg()
         TACIndexer.pushIns(TACAllocate(reg, 'default', 'Object'))
         return reg
@@ -201,15 +201,14 @@ def expConvert(node):
                 if subclsname in usedtypes:
                     continue
                 usedtypes.add(subclsname)
-                rege = TACIndexer.reg()
-                TACIndexer.pushIns(TACTypeEq(rege, regc, subclsname))
-                TACIndexer.pushIns(TACBT(rege, blabels[ind]))
+                TACIndexer.pushIns(TACBTypeEq(regc, subclsname, blabels[ind]))
         #fail if no type found
         TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
         #loop over branches: emit label, generate code, result in join reg + jump to join label
         for i in range(len(node.args[1])):
             TACIndexer.pushIns(TACLabel(blabels[i]))
-            TACIndexer.bind(node.args[1][i].name.name, regc)
+            regci = TACIndexer.map(node.args[1][i].name.name, True)
+            TACIndexer.pushIns(TACAssign(regci, regc))
             regb = expConvert(node.args[1][i].body)
             TACIndexer.pop(node.args[1][i].name.name)
             TACIndexer.pushIns(TACAssign(regj, regb))
@@ -275,13 +274,14 @@ def expConvert(node):
         return resreg
 
     #all dispatch follows form:
+    #   generate all explicit parameters of function (regs)
     #   generate the caller of function (regc)
     #   check if caller is void, and if so, err and exit
-    #   generate all explicit parameters of function (regs)
     #   prepend exec as the self param to regs
     #   find function to call in vtable if necessary
     #   call function and assign result into new register
     elif node.expr == 'dynamic_dispatch':
+        regs = [expConvert(e) for e in node.args[2]]
         regc = expConvert(node.args[0])
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
@@ -291,16 +291,16 @@ def expConvert(node):
         TACIndexer.pushIns(TACBT(regvbar, lbd))
         TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
         TACIndexer.pushIns(TACLabel(lbd))
-        regs = [expConvert(e) for e in node.args[2]]
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].type + '.' + node.args[1].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].type, node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         return regr
 
     elif node.expr == 'static_dispatch':
+        regs = [expConvert(e) for e in node.args[3]]
         regc = expConvert(node.args[0])
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
@@ -310,7 +310,6 @@ def expConvert(node):
         TACIndexer.pushIns(TACBT(regvbar, lbd))
         TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
         TACIndexer.pushIns(TACLabel(lbd))
-        regs = [expConvert(e) for e in node.args[3]]
         regs = [regc] + regs
         calllb = node.args[1].name + '.' + node.args[2].name
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
@@ -320,11 +319,11 @@ def expConvert(node):
 
     #note: no dispatch on void check needed here since "self" is always valid
     elif node.expr == 'self_dispatch':
-        regc = TACIndexer.map('self')
         regs = [expConvert(e) for e in node.args[1]]
+        regc = TACIndexer.map('self')
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, TACIndexer.cname + '.' + node.args[0].name))
+        TACIndexer.pushIns(TACVTable(reglb, regc, TACIndexer.cname, node.args[0].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -332,7 +331,10 @@ def expConvert(node):
 
     elif node.expr == 'new':
         reg = TACIndexer.reg()
-        TACIndexer.pushIns(TACAllocate(reg, node.expr, node.args.name))
+        typename = node.args.name
+        if node.args.name == 'SELF_TYPE':
+            typename = TACIndexer.cname     #use current enclosing class
+        TACIndexer.pushIns(TACAllocate(reg, node.expr, typename))
         return reg
 
     elif node.expr == 'identifier':
@@ -421,9 +423,8 @@ def attrConvert(ast):
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')
 
-
-#import TAC_serialize
-#import deadcode
+import TAC_serialize
+import deadcode
 if __name__ == '__main__':
     cmap, imap, pmap, ast = readClType(sys.argv[1])
     TACIndexer.setTypeMaps(cmap, imap, pmap)
@@ -436,7 +437,7 @@ if __name__ == '__main__':
         outbuf += str(ins) + '\n'
     print outbuf
 
-    #cfg = TAC_serialize._constructCFG(TACIndexer.inslst)
-    #print "-----"
-    #deadcode.globalDeadRemove(cfg)
-    #print cfg
+    cfg = TAC_serialize._constructCFG(TACIndexer.inslst)
+    print "-----"
+    deadcode.globalDeadRemove(cfg)
+    print cfg

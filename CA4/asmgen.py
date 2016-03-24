@@ -29,27 +29,47 @@ registers = cRegMap.values() + [rsp, rbp]
 
 #static class that turns cmap, imap, and pmap into offset and label mappings
 class ASMIndexer:
+    #TODO add in internals information
     clsTags = {}        #string class => int class tag
+    objSize = {}        #string class => int size of object of class
+
     attrOffset = {}     #string class => (string attribute => int index of attr)
     methOffset = {}     #string class => (string method => (string formal => int index of formal))
+    vtableOffset = {}   #string class => (string method => int index of method in table)
+
     vtableMap = {}      #string class => list of string labels
     strMap = {}         #string literal => string label where literal stored
 
+    #string runtime error id => string literal
+    errstrMap = {
+        'casevoid' : 'ERROR: %d: Exception: case on void',
+        'casenomatch' : 'ERROR: %d: Exception: case without matching branch',
+        'dispatchvoid' : 'ERROR: %d: Exception: dispatch on void',
+        'stackoverflow' : 'ERROR: %d: Exception: stack overflow',
+        'dividezero' : 'ERROR: %d: Exception: division by zero',
+        #substring error handled internally
+    }
+
     #the map definitions are the unboxed definitions provided in annast.py
     @staticmethod
-    def load(cmap, imap, pmap):
+    def load(cmap, imap, pmap, inslist):
         #create clsTags
         tagind = 0
         for cname in cmap:
             ASMIndexer.clsTags[cname] = tagind
             tagind += 1
 
+        #create objSize
+        for cname in cmap:
+            #number of attributes + 3 extra for every class (class tag, vtable pointer, obj size)
+            ASMIndexer.objSize[cname] = len(cmap[cname]) + 3
+
         #create attrOffset
         for cname in cmap:
             attrmap = {}
             #attr index 0 = class tag
-            #attr index 1 = object size
-            #attr index 2 = vtable pointer
+            #attr index 1 = vtable pointer
+            #attr index 2 = object size
             # other attributes start at index 3
             for i, cattr in enumerate(cmap[cname]):
                 attrmap[cattr.name] = i+3
@@ -68,13 +88,33 @@ class ASMIndexer:
                 methmap[imeth.name] = formmap
             ASMIndexer.methOffset[cname] = methmap
 
+        #create vtableOffset
+        for cname in imap:
+            methmap = {}
+            for i, imeth in enumerate(imap[cname]):
+                #index 0 of vtable contains type name string
+                methmap[imeth.name] = i+1
+            ASMIndexer.vtableOffset[cname] = methmap
+
         #create strMap
-        for i, cname in enumerate(cmap):
+        #create type name strings
+        strind = 0
+        for cname in cmap:
             if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
                 continue
-            ASMIndexer.strMap[cname] = '.string' + str(i)
-        #TODO add other strings, e.g. error
-        #TODO traverse TAC list to find literals
+            ASMIndexer.strMap[cname] = '.string' + str(strind)
+            strind += 1
+        #add runtime error strings
+        for literal in ASMIndexer.errstrMap.values():
+            ASMIndexer.strMap[literal] = '.string' + str(strind)
+            strind += 1
+            
+        #add literals found in TAC list
+        for ins in inslist:
+            if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
+                ASMIndexer.strMap[ins.const] = '.string' + str(strind)
+                strind += 1
+        #TODO cull list after optimization to remove unused strings
 
         #create vtableMap
         for i, cname in enumerate(imap):
@@ -89,11 +129,10 @@ class ASMIndexer:
             ASMIndexer.vtableMap[cname] = labels
 
     @staticmethod
-    def getvtableind(methname):
-        smeth = methname.split('.')
+    def getvtableind(cname, methname):
         ind = -1
-        for i, meth in enumerate(ASMIndexer.vtableMap[smeth[0]]):
-            if meth.split('.')[1] == smeth[1]:
+        for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
+            if meth.split('.')[1] == methname:
                 ind = i
         return 8*ind
 
@@ -184,7 +223,7 @@ class ASMOp(ASMInstruction):
         asm.append(self)
 
         if self.opcode in ['+', '-', '*', '/', '~'] and self.assignee not in [rsp, rbp]:
-            #0- or 1-extend the upper half of the 64 bit register
+            #sign-extend the upper half of the 64 bit register
             asm.append(ASMOp(self.assignee, '<<', ['$32', self.assignee]))
             asm.append(ASMOp(self.assignee, '>>', ['$32', self.assignee]))
 
@@ -367,6 +406,21 @@ class ASMBT(ASMControl):
     def __str__(self):
         return 'je ' + self.label
 
+#unconditional error jump
+class ASMError(ASMControl):
+    def __init__(self, lineno, reason):
+        self.lineno = lineno
+        self.reason = reason
+    def expand(self):
+        #TODO have internal method that takes two args
+            #arg 0 - string format
+            #arg 1 - int line number
+        #that method should call printf(arg0, arg1) and then exit()
+        #this instruction is a wrapper over call to that method
+        pass
+    def __str__(self):
+        pass
+
 #catchall for instructions that have no strong association with category
 class ASMMisc(ASMInstruction):
     def __init__(self, cmd, args=[]):
@@ -456,7 +510,7 @@ def funcConvert(cfg, regMap):
                 # vtable addr -> rdx
                 ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
                 # method addr -> assignee
-                ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.method), '%rdx'))
+                ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), '%rdx'))
             ]
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])
@@ -478,10 +532,10 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACTypeEq):
             pass    #TODO
         elif isinstance(ins, TACError):
-            pass    #TODO
+            asmlst.append(ASMError(ins.lineno, ins.reason))
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
-    
+
     asmlst = asmlst[:1] + preamble + asmlst[1:]
 
 

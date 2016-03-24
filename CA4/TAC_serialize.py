@@ -171,7 +171,7 @@ class TACAux(TACInstruction):
     pass
 
 #create space on heap for a class
-#TODO worry about freeing memory?
+#overload to handle initializing the class tag, vtable, and obj size fields
 class TACMalloc(TACAux):
     def __init__(self, assignee, cname):
         self.assignee = assignee
@@ -181,12 +181,13 @@ class TACMalloc(TACAux):
 
 #represents a lookup in a virtual method table for a function
 class TACVTable(TACAux):
-    def __init__(self, assignee, obj, method):
+    def __init__(self, assignee, obj, cname, mname):
         self.assignee = assignee
         self.obj = obj
-        self.method = method
+        self.cname = cname
+        self.mname = mname
     def __str__(self):
-        return str(self.assignee) + ' <- ' + 'vtable ' + str(self.obj) + ' ' + str(self.method)
+        return str(self.assignee) + ' <- ' + 'vtable ' + str(self.obj) + ' ' + str(self.cname) + '.' + str(self.mname)
 
 #represents an unconditional runtime error - contains line number and error code
 class TACError(TACAux):
@@ -197,13 +198,14 @@ class TACError(TACAux):
         return 'error ' + str(self.lineno) + ' ' + str(self.reason)
 
 #represents a check on the object's dynamic type - used for case statements
-class TACTypeEq(TACAux):
-    def __init__(self, assignee, obj, dtype):
-        self.assignee = assignee
+#if equal a branch is performed to specified label
+class TACBTypeEq(TACAux):
+    def __init__(self, obj, dtype, label):
         self.obj = obj
         self.dtype = dtype
+        self.label = label
     def __str__(self):
-        return str(self.assignee) + ' <- typeeq ' + str(self.obj) + ' ' + str(self.dtype)
+        return 'btypeeq ' + str(self.obj) + ' ' + str(self.dtype) + ' ' + str(self.label)
 
 #abstract class representing something TAC can compute on
 # register, attr (from memory), method arg
