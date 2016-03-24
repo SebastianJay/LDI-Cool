@@ -10,7 +10,7 @@ class Main inherits IO {
     func() : Object {
         {
         out_int(0);
-        abort();
+        1.abort();
         }
     };
 };

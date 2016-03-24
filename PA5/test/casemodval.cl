@@ -3,8 +3,8 @@ class Main inherits IO {
         let x : Int <- 1 in
         {
         case x of
-            x : Int => x <- 2;
-            x : String => x <- "3";
+            y : Int => y <- 2;
+            y : String => y <- "3";
         esac;
         out_int(x);
         }

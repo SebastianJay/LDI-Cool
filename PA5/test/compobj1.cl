@@ -1,6 +1,6 @@
 class Main inherits IO {
     main() : Object {
-        let f : String <- "", g : String <- "A" in
+        let f : Main <- new Main, g : Main <- f.copy() in
         if f = g then
             if f < g then
                 if f <= g then
