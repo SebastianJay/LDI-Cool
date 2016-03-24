@@ -581,25 +581,54 @@ IO.out_string:
 	.globl	main
 	.type	main, @function
 main:
+	call Main.new
+	pushq %rax
 	call Main.main
 	ret
+.string5:
+	.string "Main"
+Main_vtable:
+	.quad .string5
+	.quad Main.new
+	.quad Object.abort
+	.quad Object.copy
+	.quad Object.type_name
+	.quad IO.in_int
+	.quad IO.in_string
+	.quad IO.out_int
+	.quad IO.out_string
+	.quad Main.main
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp
+	pushq %rsi
+	pushq %rdi
+	movq $8, %rsi
+	movq $3, %rdi
+	call calloc
+	popq %rdi
+	popq %rsi
+	movq $5, (%rax)
+	movq $Main_vtable, 8(%rax)
+	movq $0, 16(%rax)
 	movq %rbp, %rsp
 	popq %rbp
 	ret
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 8(%rbp), %rax
+	movq 16(%rbp), %rax
+	movq 8(%rax), %rdx
+	movq 16(%rdx), %rbx
 	pushq %rax
-	call %rbx
+	call *%rbx
 	addq $8, %rsp
 	movq $2, %rcx
+	movq 8(%rax), %rdx
+	movq 56(%rdx), %rbx
 	pushq %rax
 	pushq %rcx
-	call %rbx
+	call *%rbx
 	addq $16, %rsp
 	movq %rbp, %rsp
 	popq %rbp

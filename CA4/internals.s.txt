@@ -581,5 +581,7 @@ IO.out_string:
 	.globl	main
 	.type	main, @function
 main:
+	call Main.new
+	pushq %rax
 	call Main.main
 	ret

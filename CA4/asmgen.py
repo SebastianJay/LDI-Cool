@@ -70,29 +70,56 @@ class ASMIndexer:
 
         #create strMap
         for i, cname in enumerate(cmap):
+            if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             ASMIndexer.strMap[cname] = '.string' + str(i)
         #TODO add other strings, e.g. error
         #TODO traverse TAC list to find literals
 
         #create vtableMap
         for i, cname in enumerate(imap):
+            if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             #entry 0 of vtable is string of class name
-            labels = [ASMIndexer.strMap[cname]]
+            # Entry 1 is new method
+            labels = [ASMIndexer.strMap[cname], cname + '.new']
             # methods start at index 1 of table
             for imeth in imap[cname]:
-                labels.append(cname + '.' + imeth.name)
+                labels.append(imeth.orig + '.' + imeth.name)
             ASMIndexer.vtableMap[cname] = labels
+
+    @staticmethod
+    def getvtableind(methname):
+        smeth = methname.split('.')
+        ind = -1
+        for i, meth in enumerate(ASMIndexer.vtableMap[smeth[0]]):
+            if meth.split('.')[1] == smeth[1]:
+                ind = i
+        return 8*ind
 
     #returns a list of ASMInstruction corresponding to vtables in vtableMap
     @staticmethod
     def genVtable():
-        pass
+        vlist = []
+        for c in ASMIndexer.vtableMap:
+
+            vlist.append(ASMLabel(c + '_vtable'))
+            for meth in ASMIndexer.vtableMap[c]:
+                vlist.append(ASMInfo('quad', meth))
+
+        return vlist
 
     #returns a list of ASMInstruction corresponding to literals in strMap
     @staticmethod
     def genStr():
-        pass
-
+        slist = []
+        for s in ASMIndexer.strMap:
+            slist += [
+                ASMLabel(ASMIndexer.strMap[s]),
+                ASMInfo('string', '"' + s + '"')
+            ]
+        return slist
+            
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
 # some may require auxiliary instructions like shifting between registers/stack
@@ -227,8 +254,10 @@ class ASMAllocate(ASMDeclare):
         self.assignee = assignee
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
+    def expand(self):
+        return [ASMAssign('%rax', self.assignee), self]
     def __str__(self):
-        return 'movq $0, ' + self.assignee
+        return 'call ' + ptype + '.new'
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -286,7 +315,10 @@ class ASMCall(ASMControl):
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
         return asm
     def __str__(self):
-        return 'call ' + self.funcname
+        if self.funcname in registers:
+            return 'call *' + self.funcname
+        else:
+            return 'call ' + self.funcname
 
 #Jmp instruction
 class ASMJmp(ASMControl):
@@ -349,10 +381,9 @@ class ASMMisc(ASMInstruction):
         return retval
 #end ASM class definitions
 
-#returns list of colors of registers that must be used for specified x86 commands
-#e.g. imulq needs %rax and %rdx as "result registers"
-def getConflicts(tacIns):
-    pass
+
+def offsetStr(off, reg):
+    return str(off) + '(' + reg + ')'
 
 #takes a control flow graph and mapping of virtual registers to colors
 #returns list of x64 instructions as ASM* instances
@@ -373,7 +404,7 @@ def funcConvert(cfg, regMap):
             #  possible solution: in registerAllocate, force #self method arg to be in real register
             return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])+'('+ cRegMap[regMap[vreg]] +')'
         elif isinstance(operand, TACMethodArg):
-            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 1))+'('+rbp+')'
+            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2))+'('+rbp+')'
 
     inslst = cfg.toList()
 
@@ -421,9 +452,29 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
-            pass    #TODO
+            asmlst += [
+                # vtable addr -> rdx
+                ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
+                # method addr -> assignee
+                ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.method), '%rdx'))
+            ]
         elif isinstance(ins, TACMalloc):
-            pass    #TODO
+            nattrs = len(ASMIndexer.attrOffset[ins.cname])
+            asmlst += [
+                ASMPush('%rsi'),
+                ASMPush('%rdi'),
+                # Allocate blocks of size 8 bytes
+                ASMAssign('%rsi', '$8'),
+                
+                # Allocate tag, vtable pointer, size, attributes
+                ASMAssign('%rdi', '$' + str(3+nattrs)),
+                ASMCall('%rax', 'calloc'),
+                ASMPop('%rdi'),
+                ASMPop('%rsi'),
+                ASMAssign('(%rax)', '$' + str(ASMIndexer.clsTags[ins.cname])),
+                ASMAssign('8(%rax)', '$' + ins.cname + "_vtable"),
+                ASMAssign('16(%rax)', '$' + str(nattrs))
+            ]
         elif isinstance(ins, TACTypeEq):
             pass    #TODO
         elif isinstance(ins, TACError):
@@ -433,12 +484,7 @@ def funcConvert(cfg, regMap):
     
     asmlst = asmlst[:1] + preamble + asmlst[1:]
 
-    # Remove useless mov instructions
-    rmlist = []
-    for i, ins in enumerate(asmlst):
-        if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
-            rmlist.append(i)
-    asmlst = [ins for i,ins in enumerate(asmlst) if i not in rmlist]
+
 
     explst = []
     for ins in asmlst:
@@ -446,6 +492,13 @@ def funcConvert(cfg, regMap):
             explst += ins.expand()
         else:
             explst += [ins]
+
+    # Remove useless mov instructions
+    rmlist = []
+    for i, ins in enumerate(explst):
+        if isinstance(ins, ASMAssign) and ins.assignee == ins.assignor:
+            rmlist.append(i)
+    explst = [ins for i,ins in enumerate(explst) if i not in rmlist]
 
     return explst
 

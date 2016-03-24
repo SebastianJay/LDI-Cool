@@ -18,12 +18,23 @@ if __name__=="__main__":
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
 
-    #create list of ASM instructions
     asmgen.ASMIndexer.load(cmap,imap,pmap)
+
+    # Generate vtables
+    vtable = asmgen.ASMIndexer.genVtable()
+
+    # Generate String constants
+    strs = asmgen.ASMIndexer.genStr()
+
+    #create list of ASM instructions
     asmlst = asmgen.convert(taclist)
 
+
     #serialize list to string
-    outbuf = asmgen.readInternals() + asmgen.asmStr(asmlst)
+    outbuf = asmgen.readInternals() 
+    outbuf += asmgen.asmStr(strs)
+    outbuf += asmgen.asmStr(vtable)
+    outbuf += asmgen.asmStr(asmlst)
     if debug:
         print outbuf[outbuf.index('main:'):]
 
