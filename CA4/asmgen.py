@@ -54,8 +54,15 @@ class ASMIndexer:
     @staticmethod
     def load(cmap, imap, pmap, inslist):
         #create clsTags
-        tagind = 0
+        ASMIndexer.clsTags['Object'] = 0
+        ASMIndexer.clsTags['Int'] = 1
+        ASMIndexer.clsTags['Bool'] = 2
+        ASMIndexer.clsTags['String'] = 3
+        ASMIndexer.clsTags['IO'] = 4
+        tagind = 5
         for cname in cmap:
+            if cname in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             ASMIndexer.clsTags[cname] = tagind
             tagind += 1
 
@@ -131,6 +138,9 @@ class ASMIndexer:
     def getvtableind(cname, methname):
         ind = -1
         for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
+            # Skip name string and new
+            if i < 2:
+                continue
             if meth.split('.')[1] == methname:
                 ind = i
         return 8*ind
@@ -307,7 +317,10 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def expand(self):
-        return [ASMAssign('%rax', self.assignee), self]
+        if self.assignee != '%rax':
+            return [ASMPush('%rax'), ASMCall('%rax', self.ptype + '.new'), ASMAssign(self.assignee, '%rax'), ASMPop('%rax')]
+        else:
+            return [ASMCall('%rax', self.ptype + '.new')]
     def __str__(self):
         return 'call ' + self.ptype + '.new'
 
@@ -519,6 +532,10 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
+            print ins.cname, ins.mname
+            print ASMIndexer.vtableMap[ins.cname]
+            print ASMIndexer.getvtableind(ins.cname, ins.mname)
+            print '----'
             asmlst += [
                 # vtable addr -> rdx
                 ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
@@ -605,7 +622,6 @@ def convert(taclist):
         print '-----'
         regmap = registerAllocate(cfg,13)
         asmlist += funcConvert(cfg, regmap)
-        print asmStr(asmlist)
 
     return asmlist
 

@@ -690,8 +690,21 @@ Main.new:
 Bar.new:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 24(%rax), %rax
+	pushq %rsi
+	pushq %rdi
+	movq $8, %rsi
+	movq $4, %rdi
+	call calloc
+	popq %rdi
+	popq %rsi
+	movq $5, (%rax)
+	movq $Bar_vtable, 8(%rax)
+	movq $1, 16(%rax)
+	pushq %rax
 	call Int.new
+	movq %rax, %rbx
+	popq %rax
+	movq %rbx, 24(%rax)
 	movq %rbp, %rsp
 	popq %rbp
 	ret
@@ -704,12 +717,11 @@ Main.main:
 	pushq %rbx
 	call *%rax
 	addq $8, %rsp
-	movq %rax, %rcx
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rcx
+	movq 64(%rdx), %rcx
+	pushq %rax
 	pushq %rbx
-	call *%rax
+	call *%rcx
 	addq $16, %rsp
 	call Object.new
 	cmpq $0, %rax
@@ -730,11 +742,12 @@ Main.main:
 	pushq %rax
 	call *%rcx
 	addq $8, %rsp
+	movq %rax, %rcx
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
+	movq 64(%rdx), %rax
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rax
 	addq $16, %rsp
 	cmpq $0, %rbx
 	movq $0, %rax
@@ -777,12 +790,11 @@ Main.main:
 	pushq %rax
 	call *%rcx
 	addq $8, %rsp
-	movq %rax, %rcx
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rcx
+	movq 64(%rdx), %rcx
+	pushq %rax
 	pushq %rbx
-	call *%rax
+	call *%rcx
 	addq $16, %rsp
 	movq %rbp, %rsp
 	popq %rbp

@@ -420,7 +420,9 @@ def attrConvert(ast):
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
         #make first pass to default initialize fields
         for mattr in attrlst:
-            TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name), 'default', mattr.type))
+            reg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAllocate(reg, 'default', mattr.type))
+            TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
         #make second pass for those with initializer expressions
         for mattr in attrlst:
             if mattr.init is not None:
