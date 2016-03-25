@@ -603,3 +603,93 @@ main:
 	call Main.main
 	addq $8, %rsp
 	ret
+	.section .rodata
+.string3_l:
+	.string "ERROR: %d: Exception: case on void"
+.string3:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string3_l
+.string1_l:
+	.string "ERROR: %d: Exception: dispatch on void"
+.string1:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string1_l
+.string4_l:
+	.string "ERROR: %d: Exception: stack overflow"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string5_l:
+	.string "ERROR: %d: Exception: case without matching branch"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
+.string2_l:
+	.string "ERROR: %d: Exception: division by zero"
+.string2:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string2_l
+.string0_l:
+	.string "Main"
+.string0:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string0_l
+Main_vtable:
+	.quad .string0
+	.quad Main.new
+	.quad Object.abort
+	.quad Object.copy
+	.quad Object.type_name
+	.quad IO.in_int
+	.quad IO.in_string
+	.quad IO.out_int
+	.quad IO.out_string
+	.quad Main.main
+	.text 
+Main.new:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rsi
+	pushq %rdi
+	movq $8, %rsi
+	movq $3, %rdi
+	call calloc
+	popq %rdi
+	popq %rsi
+	movq $5, (%rax)
+	movq $Main_vtable, 8(%rax)
+	movq $0, 16(%rax)
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Main.main:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq 16(%rbp), %rbx
+	movq 8(%rbx), %rdx
+	movq 48(%rdx), %rax
+	pushq %rbx
+	call *%rax
+	addq $8, %rsp
+	movq %rax, %rcx
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rax
+	pushq %rcx
+	pushq %rbx
+	call *%rax
+	addq $16, %rsp
+	movq %rbp, %rsp
+	popq %rbp
+	ret

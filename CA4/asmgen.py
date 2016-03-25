@@ -351,8 +351,8 @@ class ASMCall(ASMControl):
         self.args = args
     def expand(self):
         asm = []
-        #push args onto stack
-        for arg in self.args:
+        #push args onto stack in reverse order
+        for arg in reversed(self.args):
             asm.append(ASMPush(arg))
         asm.append(self)
         #deallocate args
