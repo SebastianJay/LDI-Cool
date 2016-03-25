@@ -5,7 +5,7 @@ import TAC_serialize
 # with some precolored nodes on function returns
 # of form temp => [set of conflicts, color(default to -1)]
 def genRegGraph(cfg):
-    regGraph = {"__dead__":[set(),0]} # __dead__ for dead function calls
+    regGraph = {"t0":[set(),0]} # __dead__ for dead function calls
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
