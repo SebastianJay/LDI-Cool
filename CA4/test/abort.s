@@ -1,6 +1,11 @@
 	.section	.rodata
-.name_Object:
+.name_Object_l:
 	.string "Object"
+.name_Object:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Object_l
 Object_vtable:
 	.quad	.name_Object	# A pointer to class name string
 	.quad	Object.new
@@ -32,7 +37,12 @@ Object.new:
 .LFE6:
 	.size	Object.new, .-Object.new
 .LC3:
-	.string	"abort\n"
+	.string	"abort\\n"
+.abort_string:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.LC3
 	.text
 	.globl	Object.abort
 	.type	Object.abort, @function
@@ -44,11 +54,11 @@ Object.abort:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movq	%rdi, -8(%rbp)
-	movl	$.LC3, %edi
+	movq 	$.abort_string, %rax
+	pushq	%rax
+	movq	16(%rbp), %rax
+	pushq	%rax
 	call	IO.out_string
-	movl	$0, %edi
 	call	exit
 	.cfi_endproc
 .LFE7:
@@ -59,23 +69,11 @@ Object.type_name:
 .LFB8:
 	.cfi_startproc
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$32, %rsp
-	movq	%rdi, -24(%rbp)
-	movl	$0, %eax
-	call	String.new
-	movq	%rax, -8(%rbp)
-	movq	-24(%rbp), %rax
-	movq	8(%rax), %rax
-	movq	(%rax), %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, 24(%rax)
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax	# Get self
+	movq	8(%rax), %rax	# Get vtable
+	movq	(%rax), %rax	# String reference at index 0
 	leave
-	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE8:
@@ -146,8 +144,13 @@ Object.copy:
 .LFE9:
 	.size	Object.copy, .-Object.copy
 	.section	.rodata
-.name_Int:		
+.name_Int_l:		
 	.string "Int"
+.name_Int:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Int_l
 Int_vtable:
 	.quad	.name_Int
 	.quad	Int.new
@@ -168,7 +171,7 @@ Int.new:
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
-	movq	$1, (%rax)	# Int id is 2
+	movq	$1, (%rax)	# Int id is 1
 	movq	$Int_vtable, 8(%rax)
 	movq	$1, 16(%rax)	# 1 field
 	movq	$0, 24(%rax)
@@ -178,8 +181,13 @@ Int.new:
 	.cfi_endproc	
 	.size	Int.new, .-Int.new
 	.section	.rodata
-.name_Bool:
+.name_Bool_l:
 	.string "Bool"
+.name_Bool:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Bool_l
 Bool_vtable:
 	.quad	.name_Bool
 	.quad	Bool.new
@@ -210,8 +218,13 @@ Bool.new:
 	.cfi_endproc
 	.size	Bool.new, .-Bool.new
 	.section	.rodata
-.name_String:
+.name_String_l:
 	.string	"String"
+.name_String:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_String_l
 String_vtable:
 	.quad	.name_String
 	.quad	String.new
@@ -413,8 +426,13 @@ String.substr:
 .LFE13:
 	.size	String.substr, .-String.substr
 	.section	.rodata
-.name_IO:
+.name_IO_l:
 	.string	"IO"
+.name_IO:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_IO_l
 IO_vtable:
 	.quad	.name_IO
 	.quad	IO.new
@@ -568,12 +586,11 @@ IO.in_string:
 IO.out_string:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rax
-	movq	24(%rsi), %rsi
+	movq	24(%rbp), %rsi # Get first arg
+	movq	24(%rsi), %rsi # Get c-string attribute
 	movl	$.LC1, %edi
 	movl	$0, %eax
 	call	printf
-	popq	%rax
 	leave
 	ret
 .LFE5:
@@ -585,18 +602,49 @@ main:
 	pushq %rax
 	call Main.main
 	ret
-.string3:
+	.section .rodata
+.string3_l:
 	.string "ERROR: %d: Exception: case on void"
-.string1:
+.string3:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string3_l
+.string1_l:
 	.string "ERROR: %d: Exception: dispatch on void"
-.string4:
+.string1:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string1_l
+.string4_l:
 	.string "ERROR: %d: Exception: stack overflow"
-.string5:
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string5_l:
 	.string "ERROR: %d: Exception: case without matching branch"
-.string2:
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
+.string2_l:
 	.string "ERROR: %d: Exception: division by zero"
-.string0:
+.string2:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string2_l
+.string0_l:
 	.string "Main"
+.string0:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string0_l
 Main_vtable:
 	.quad .string0
 	.quad Main.new
@@ -608,6 +656,7 @@ Main_vtable:
 	.quad IO.out_int
 	.quad IO.out_string
 	.quad Main.main
+	.text 
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp

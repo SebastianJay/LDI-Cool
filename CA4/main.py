@@ -26,15 +26,16 @@ if __name__=="__main__":
     # Generate String constants
     strs = asmgen.ASMIndexer.genStr()
 
+    data = [asmgen.ASMInfo('section', '.rodata')] + strs + vtable
+
     #create list of ASM instructions
-    asmlst = asmgen.convert(taclist)
+    insts = [asmgen.ASMInfo('text')] + asmgen.convert(taclist)
 
 
     #serialize list to string
     outbuf = asmgen.readInternals() 
-    outbuf += asmgen.asmStr(strs)
-    outbuf += asmgen.asmStr(vtable)
-    outbuf += asmgen.asmStr(asmlst)
+    outbuf += asmgen.asmStr(data)
+    outbuf += asmgen.asmStr(insts)
     if debug:
         print outbuf[outbuf.index('main:'):]
 

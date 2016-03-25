@@ -154,8 +154,15 @@ class ASMIndexer:
         slist = []
         for s in ASMIndexer.strMap:
             slist += [
+                # String literal
+                ASMLabel(ASMIndexer.strMap[s]+"_l"),
+                ASMInfo('string', '"' + s + '"'),
+                # String object
                 ASMLabel(ASMIndexer.strMap[s]),
-                ASMInfo('string', '"' + s + '"')
+                ASMInfo('quad', '3'),
+                ASMInfo('quad', 'String_vtable'),
+                ASMInfo('quad', '1'),
+                ASMInfo('quad', ASMIndexer.strMap[s]+"_l")
             ]
         return slist
             
