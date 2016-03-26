@@ -99,13 +99,13 @@ long long in_int()
         }
         fgets(c, 4096, stdin);
     }
+    free(c);
     // Return 0 on bad input
     if (retcode == EOF || retcode == 0)
         return 0;
     // reject input outside range of 32 bit signed int
     if (i > 2147483647ll || i < -2147483648ll)
         return 0;
-    free(c);
     return i;
 }
 
