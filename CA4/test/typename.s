@@ -601,52 +601,66 @@ main:
 	call Main.new
 	pushq %rax
 	call Main.main
+	addq $8, %rsp
 	ret
 	.section .rodata
-.string3_l:
+.string4_l:
 	.string "ERROR: %d: Exception: case on void"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string0_l:
+	.string "Bar"
+.string0:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string0_l
+.string6_l:
+	.string "ERROR: %d: Exception: case without matching branch"
+.string6:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string6_l
+.string5_l:
+	.string "ERROR: %d: Exception: stack overflow"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
+.string3_l:
+	.string "ERROR: %d: Exception: division by zero"
 .string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string3_l
 .string1_l:
-	.string "ERROR: %d: Exception: dispatch on void"
+	.string "Main"
 .string1:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string1_l
-.string4_l:
-	.string "ERROR: %d: Exception: stack overflow"
-.string4:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string4_l
-.string5_l:
-	.string "ERROR: %d: Exception: case without matching branch"
-.string5:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string5_l
 .string2_l:
-	.string "ERROR: %d: Exception: division by zero"
+	.string "ERROR: %d: Exception: dispatch on void"
 .string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string2_l
-.string0_l:
-	.string "Main"
-.string0:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string0_l
-Main_vtable:
+Bar_vtable:
 	.quad .string0
+	.quad Bar.new
+	.quad Object.abort
+	.quad Object.copy
+	.quad Object.type_name
+Main_vtable:
+	.quad .string1
 	.quad Main.new
 	.quad Object.abort
 	.quad Object.copy
@@ -667,27 +681,120 @@ Main.new:
 	call calloc
 	popq %rdi
 	popq %rsi
-	movq $5, (%rax)
+	movq $6, (%rax)
 	movq $Main_vtable, 8(%rax)
 	movq $0, 16(%rax)
+	movq %rbp, %rsp
+	popq %rbp
+	ret
+Bar.new:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rsi
+	pushq %rdi
+	movq $8, %rsi
+	movq $4, %rdi
+	call calloc
+	popq %rdi
+	popq %rsi
+	movq $5, (%rax)
+	movq $Bar_vtable, 8(%rax)
+	movq $1, 16(%rax)
+	pushq %rax
+	call Int.new
+	movq %rax, %rbx
+	popq %rax
+	movq %rbx, 24(%rax)
 	movq %rbp, %rsp
 	popq %rbp
 	ret
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 16(%rbp), %rax
-	movq 8(%rax), %rdx
-	movq 16(%rdx), %rbx
-	pushq %rax
-	call *%rbx
+	movq 16(%rbp), %rbx
+	movq 8(%rbx), %rdx
+	movq 32(%rdx), %rax
+	pushq %rbx
+	call *%rax
 	addq $8, %rsp
-	movq $2, %rcx
-	movq 8(%rax), %rdx
-	movq 56(%rdx), %rbx
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rcx
 	pushq %rax
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	call Object.new
+	cmpq $0, %rax
+	movq $0, %rcx
+	movq $1, %rdx
+	cmoveq %rdx, %rcx
+	xorq $1, %rcx
+	cmpq $1, %rcx
+	je .Main.main_1
+	movq $5, %rsi
+	movq $.string2_l, %rdi
+	call printf
+	movq $1, %rdi
+	call exit
+.Main.main_1:
+	movq 8(%rax), %rdx
+	movq 32(%rdx), %rcx
+	pushq %rax
+	call *%rcx
+	addq $8, %rsp
+	movq %rax, %rcx
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rax
 	pushq %rcx
-	call *%rbx
+	pushq %rbx
+	call *%rax
+	addq $16, %rsp
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je .Main.main_2
+	movq $6, %rsi
+	movq $.string2_l, %rdi
+	call printf
+	movq $1, %rdi
+	call exit
+.Main.main_2:
+	pushq %rbx
+	call Object.type_name
+	addq $8, %rsp
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rax
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	call Bar.new
+	cmpq $0, %rax
+	movq $0, %rcx
+	movq $1, %rdx
+	cmoveq %rdx, %rcx
+	xorq $1, %rcx
+	cmpq $1, %rcx
+	je .Main.main_3
+	movq $7, %rsi
+	movq $.string2_l, %rdi
+	call printf
+	movq $1, %rdi
+	call exit
+.Main.main_3:
+	movq 8(%rax), %rdx
+	movq 32(%rdx), %rcx
+	pushq %rax
+	call *%rcx
+	addq $8, %rsp
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rax
+	pushq %rbx
+	call *%rcx
 	addq $16, %rsp
 	movq %rbp, %rsp
 	popq %rbp

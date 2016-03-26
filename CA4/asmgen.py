@@ -178,6 +178,9 @@ class ASMIndexer:
     def getvtableind(cname, methname):
         ind = -1
         for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
+            # Skip name string and new
+            if i < 2:
+                continue
             if meth.split('.')[1] == methname:
                 ind = i
         return 8*ind
@@ -187,6 +190,8 @@ class ASMIndexer:
     def genVtable():
         vlist = []
         for c in ASMIndexer.vtableMap:
+            if c in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
 
             vlist.append(ASMLabel(c + '_vtable'))
             for meth in ASMIndexer.vtableMap[c]:
@@ -200,9 +205,18 @@ class ASMIndexer:
     def genStr():
         slist = []
         for s in ASMIndexer.strMap:
+            if s in ['Object', 'Int', 'Bool', 'String', 'IO']:
+                continue
             slist += [
+                # String literal
+                ASMLabel(ASMIndexer.strMap[s]+"_l"),
+                ASMInfo('string', '"' + s + '"'),
+                # String object
                 ASMLabel(ASMIndexer.strMap[s]),
-                ASMInfo('string', '"' + s + '"')
+                ASMInfo('quad', '3'),
+                ASMInfo('quad', 'String_vtable'),
+                ASMInfo('quad', '1'),
+                ASMInfo('quad', ASMIndexer.strMap[s]+"_l")
             ]
         return slist
 
@@ -233,6 +247,9 @@ class ASMOp(ASMInstruction):
             asm.append(ASMAssign('%rdx',self.operands[0]))
             self.operands[0] = '%rdx'
 
+        if self.opcode == 'isvoid':
+            return ASMOp(self.assignee, '=', [self.operands[0],'$0']).expand()
+
         # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
             # Can't do cmove on a memory address, so have to push/pop some stuff
@@ -254,7 +271,7 @@ class ASMOp(ASMInstruction):
             asm.append(self)
 
             # Restore the temporary register and put the result in the right place
-            if self.operands[1] not in registers:
+            if self.operands[1] not in registers and self.operands[1] != '$0':
                 asm.append(ASMAssign(self.operands[1], self.assignee))
                 asm.append(ASMPop(self.assignee))
             return asm
@@ -341,9 +358,12 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def expand(self):
-        return [ASMAssign('%rax', self.assignee), self]
+        if self.assignee != '%rax':
+            return [ASMPush('%rax'), ASMCall('%rax', self.ptype + '.new'), ASMAssign(self.assignee, '%rax'), ASMPop('%rax')]
+        else:
+            return [ASMCall('%rax', self.ptype + '.new')]
     def __str__(self):
-        return 'call ' + ptype + '.new'
+        return 'call ' + self.ptype + '.new'
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -391,8 +411,8 @@ class ASMCall(ASMControl):
         self.args = args
     def expand(self):
         asm = []
-        #push args onto stack
-        for arg in self.args:
+        #push args onto stack in reverse order
+        for arg in reversed(self.args):
             asm.append(ASMPush(arg))
         asm.append(self)
         #deallocate args
@@ -566,6 +586,10 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
+            #print ins.cname, ins.mname
+            #print ASMIndexer.vtableMap[ins.cname]
+            #print ASMIndexer.getvtableind(ins.cname, ins.mname)
+            #print '----'
             asmlst += [
                 # vtable addr -> rdx
                 ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
@@ -574,6 +598,7 @@ def funcConvert(cfg, regMap):
             ]
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])
+            print str(ins)
             asmlst += [
                 ASMPush('%rsi'),
                 ASMPush('%rdi'),
@@ -593,7 +618,13 @@ def funcConvert(cfg, regMap):
             #asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
             pass    #TODO
         elif isinstance(ins, TACError):
-            asmlst.append(ASMError(ins.lineno, ins.reason))
+            asmlst += [
+                ASMAssign('%rsi', '$' + str(ins.lineno)),
+                ASMAssign('%rdi', '$'+ASMIndexer.strMap[ASMIndexer.errstrMap[ins.reason]]+'_l'),
+                ASMCall('%rax', 'printf'),
+                ASMAssign('%rdi', '$1'),
+                ASMCall('%rax', 'exit')
+            ]
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
 
@@ -646,7 +677,6 @@ def convert(taclist):
         print '-----'
         regmap = registerAllocate(cfg,13)
         asmlist += funcConvert(cfg, regmap)
-        print asmStr(asmlist)
 
     return asmlist
 

@@ -5,6 +5,9 @@
 #Unix temporary files
 *~
 
+#executables
+*.out
+*.exe
 
 #Python compiled files
 *.pyc

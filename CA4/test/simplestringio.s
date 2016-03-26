@@ -601,6 +601,7 @@ main:
 	call Main.new
 	pushq %rax
 	call Main.main
+	addq $8, %rsp
 	ret
 	.section .rodata
 .string3_l:
@@ -676,18 +677,18 @@ Main.new:
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 16(%rbp), %rax
-	movq 8(%rax), %rdx
-	movq 16(%rdx), %rbx
-	pushq %rax
-	call *%rbx
+	movq 16(%rbp), %rbx
+	movq 8(%rbx), %rdx
+	movq 48(%rdx), %rax
+	pushq %rbx
+	call *%rax
 	addq $8, %rsp
-	movq $2, %rcx
-	movq 8(%rax), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
+	movq %rax, %rcx
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rax
 	pushq %rcx
-	call *%rbx
+	pushq %rbx
+	call *%rax
 	addq $16, %rsp
 	movq %rbp, %rsp
 	popq %rbp

@@ -676,18 +676,17 @@ Main.new:
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 16(%rbp), %rax
-	movq 8(%rax), %rdx
-	movq 16(%rdx), %rbx
-	pushq %rax
-	call *%rbx
+	movq 16(%rbp), %rbx
+	movq 8(%rbx), %rdx
+	movq 40(%rdx), %rax
+	pushq %rbx
+	call *%rax
 	addq $8, %rsp
-	movq $2, %rcx
-	movq 8(%rax), %rdx
-	movq 56(%rdx), %rbx
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %rbx
 	pushq %rax
-	pushq %rcx
-	call *%rbx
+	call *%rcx
 	addq $16, %rsp
 	movq %rbp, %rsp
 	popq %rbp

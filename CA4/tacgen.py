@@ -311,7 +311,14 @@ def expConvert(node):
         TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
         TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
-        calllb = node.args[1].name + '.' + node.args[2].name
+        # Find base class for given method
+        basec = node.args[1].name
+        for meth in TACIndexer.imap[node.args[1].name]:
+            if meth.name == node.args[2].name:
+                basec = meth.orig
+                break
+
+        calllb = basec + '.' + node.args[2].name
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
@@ -413,7 +420,9 @@ def attrConvert(ast):
         TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
         #make first pass to default initialize fields
         for mattr in attrlst:
-            TACIndexer.pushIns(TACAllocate(TACIndexer.map(mattr.name), 'default', mattr.type))
+            reg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAllocate(reg, 'default', mattr.type))
+            TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
         #make second pass for those with initializer expressions
         for mattr in attrlst:
             if mattr.init is not None:
