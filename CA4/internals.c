@@ -91,7 +91,8 @@ long long in_int()
     char* c = (char*)calloc(4096, 1);
     fgets(c, 4096, stdin);
     // Return 0 on bad input
-    if (sscanf(c, "%lld", &i) == EOF)
+    int retcode = sscanf(c, "%lld", &i);
+    if (retcode == EOF || retcode == 0)
         return 0;
     if (i > 2147483647ll || i < -2147483648ll)
         return 0;
@@ -107,6 +108,7 @@ IO* IO_out_int(IO* self, Int* i)
 
 void out_int(long long i)
 {
+    //i should always be 32 bit int
     printf("%d", i);
 }
 
@@ -119,19 +121,39 @@ String* IO_in_string(IO* self)
 
 char* in_string()
 {
-    //TODO read in arbitrarily long string
-    char* buffer = (char*)calloc(4096, 1);
-    char* ret = fgets(buffer, 4096, stdin);
-    if (ret == NULL) {
-        return "";  //eof reached before any input read
+    long long numread = 0;
+    long long lenbuffer = 4096;
+    char* buffer = (char*)calloc(lenbuffer, sizeof(char));
+    while (1) {
+        //get a new character from stream
+        int c = fgetc(stdin);
+        if (c == EOF) {
+            //if reached end of file, return current buffer
+            if (numread == 0) {
+                return "";
+            } else {
+                return buffer;
+            }
+        } else if (c == '\0') {
+            //if read NUL, return empty string
+            return "";
+        } else if (c == '\n') {
+            //if read newline, stop reading and return buffer
+            buffer[numread] = '\0';
+            return buffer;
+        }
+        //otherwise append character
+        buffer[numread++] = (char)c;
+        //if buffer is filled, allocate larger size
+        if (numread == lenbuffer - 1) {
+            buffer[numread] = '\0';
+            lenbuffer += 4096;
+            char* newbuffer = (char*)calloc(lenbuffer, sizeof(char));
+            strcpy(newbuffer, buffer);
+            free(buffer);
+            buffer = newbuffer;
+        }
     }
-    //TODO handle reading NUL (which requires returning empty string)
-    //  using fgets is not much help, perhaps we should use fgetc
-    int len = strlen(buffer);
-    if (buffer[len-1] == '\n') {
-        buffer[len-1] = '\0';   //eliminate trailing newline
-    }
-    return buffer;
 }
 
 IO* IO_out_string(IO* self, String* s)
@@ -277,18 +299,27 @@ Bool* Bool_new()
 
 int main(int argc, char** argv)
 {
+    ///test in and out string and int
     //int i = in_int();
     //out_int(i);
     //char* c = in_string();
     //out_string(c);
 
+    ///test printf on long ints
+    long long ll = 2147483648ll;
+    printf("%d", ll);
+
+    ///test string read in and length
     IO* io = IO_new();
     String* s = IO_in_string(io);
-    Int* start = IO_in_int(io);
-    Int* len = IO_in_int(io);
-    String* substr = String_substr(s, start, len);
-    IO_out_string(io, substr);
+    IO_out_string(io, s);
+    IO_out_int(io, String_length(s));
 
-    //Object* o = Obj_new();
+    ///test substring
+    //Int* start = IO_in_int(io);
+    //Int* len = IO_in_int(io);
+    //String* substr = String_substr(s, start, len);
+    //IO_out_string(io, substr);
+
     return 0;
 }

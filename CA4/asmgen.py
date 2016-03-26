@@ -479,10 +479,17 @@ class ASMBTypeEq(ASMInstruction):
         self.clstag = clstag
         self.label = label
     def expand(self):
-        #TODO if obj is in memory pull it into register
+        asm = []
+        # if obj is in memory pull it into register
+        if self.obj not in registers:
+            asm.append(ASMAssign('%rdx', self.obj))
+            self.obj = '%rdx'
         # if cmp does not work on memory pull class tag of obj into register (constant off set of 0 if 1st field)
         # do cmp on obj class tag and self.clstag
+        #   TODO see if compare between memory and immediate value is valid
+        asm.append(ASMCmp('$'+str(self.clstag), '0('+self.obj+')'))
         # do conditional jump to self.label if cmp yields equal
+        asm.append(ASMMisc('je', [self.label]))
         pass
     def __str__(self):
         pass
@@ -565,6 +572,7 @@ def funcConvert(cfg, regMap):
         if isinstance(ins, TACOp):
             operands = [realReg(ins.op1), realReg(ins.op2)] \
                 if isinstance(ins, TACOp2) else [realReg(ins.op1)]
+            ##TODO move Compare into separate class? need to retain static type information
             asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode, operands))
         elif isinstance(ins, TACAssign):
             asmlst.append(ASMAssign(realReg(ins.assignee), realReg(ins.assignor)))
@@ -615,8 +623,7 @@ def funcConvert(cfg, regMap):
                 ASMAssign('16(%rax)', '$' + str(nattrs))
             ]
         elif isinstance(ins, TACBTypeEq):
-            #asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
-            pass    #TODO
+            asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
         elif isinstance(ins, TACError):
             asmlst += [
                 ASMAssign('%rsi', '$' + str(ins.lineno)),

@@ -260,7 +260,15 @@ def expConvert(node):
             TACIndexer.pushIns(TACOp2(op1, astTacMap[node.expr], op2, op1))
             resreg = op1
         else:
-            TACIndexer.pushIns(TACOp2(op2, astTacMap[node.expr], op1, op2))
+            #must be comparison operator, so use a subclass that captures the static type
+            ptype = ''
+            if node.args[0].type == 'Int' or node.args[0].type == 'Bool':
+                ptype = 'Int'   #ordinary binary compare
+            elif node.args[0].type == 'String':
+                ptype = 'String'    #lexographical compare
+            else:
+                ptype = 'Object'    #pointer compare
+            TACIndexer.pushIns(TACCompare(op2, astTacMap[node.expr], op1, op2, ptype))
             resreg = op2
 
         # Hacky solution for conflicts with consecutive divides,

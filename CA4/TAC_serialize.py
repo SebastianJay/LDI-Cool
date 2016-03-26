@@ -89,6 +89,17 @@ class TACOp2(TACOp):
     def __str__(self):
         return str(self.assignee) + ' <- ' + str(self.opcode) + ' ' + str(self.op1) + ' ' + str(self.op2)
 
+class TACCompare(TACOp2):
+    def __init__(self, assignee, opcode, op1, op2, ptype):
+        self.assignee = assignee
+        self.opcode = opcode
+        self.op1 = op1
+        self.op2 = op2
+        self.ptype = ptype
+    def __str__(self):
+        return str(self.assignee) + ' <- ' + str(self.opcode) + '(' + self.ptype + ') ' \
+            + str(self.op1) + ' ' + str(self.op2)
+
 #TAC instruction which assigns one variable into another
 class TACAssign(TACInstruction):
     def __init__(self, assignee, assignor):
