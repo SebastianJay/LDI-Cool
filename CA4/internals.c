@@ -87,13 +87,22 @@ Int* IO_in_int(IO* self)
 
 long long in_int()
 {
-    long long i;
+    long long i = 0;
     char* c = (char*)calloc(4096, 1);
     fgets(c, 4096, stdin);
-    // Return 0 on bad input
     int retcode = sscanf(c, "%lld", &i);
+    // consume rest of line
+    while (1) {
+        int len = strlen(c);
+        if (c[len-1] == '\n') {
+            break;
+        }
+        fgets(c, 4096, stdin);
+    }
+    // Return 0 on bad input
     if (retcode == EOF || retcode == 0)
         return 0;
+    // reject input outside range of 32 bit signed int
     if (i > 2147483647ll || i < -2147483648ll)
         return 0;
     free(c);
@@ -108,7 +117,7 @@ IO* IO_out_int(IO* self, Int* i)
 
 void out_int(long long i)
 {
-    //i should always be 32 bit int
+    //i should always be 32 bit signed int
     printf("%d", i);
 }
 
@@ -121,8 +130,8 @@ String* IO_in_string(IO* self)
 
 char* in_string()
 {
-    long long numread = 0;
-    long long lenbuffer = 4096;
+    int numread = 0;
+    int lenbuffer = 4096;
     char* buffer = (char*)calloc(lenbuffer, sizeof(char));
     while (1) {
         //get a new character from stream
@@ -144,7 +153,7 @@ char* in_string()
         }
         //otherwise append character
         buffer[numread++] = (char)c;
-        //if buffer is filled, allocate larger size
+        //if current buffer is filled, allocate larger buffer
         if (numread == lenbuffer - 1) {
             buffer[numread] = '\0';
             lenbuffer += 4096;
@@ -168,25 +177,22 @@ void out_string(const char* c)
     int len = strlen(c);
     char* cpy = (char*)calloc(len+1, sizeof(char));
     strcpy(cpy, c);
-    cpy[len] = '\0';
     int i;
     int num = 0;    //number of replacements made
-    for (i = 0; i < len-1; i++) {
-        char replace = '\0';    //placeholder
-        if (cpy[i] == '\\' && cpy[i+1] == 't') {
+    for (i = 1; i < len; i++) {
+        char replace = '\0';    //dummy char
+        if (cpy[i-1] == '\\' && cpy[i] == 't') {
             replace = '\t';
-        } else if (cpy[i] == '\\' && cpy[i+1] == 'n') {
+        } else if (cpy[i-1] == '\\' && cpy[i] == 'n') {
             replace = '\n';
-        } else if (cpy[i] == '\\') {
-            i++;    //skip over next letter (e.g. another '\\') as it has been escaped
         }
-        //if replacement is to be made, shift left remaining characters
         if (replace != '\0') {
             int j;
-            for (j = i+1; j < len-num; j++) {
+            //shift left remaining characters
+            for (j = i; j < len-num; j++) {
                 cpy[j] = cpy[j+1];
             }
-            cpy[i] = replace;   //make replacement
+            cpy[i-1] = replace;   //make replacement
             num++;
         }
     }
@@ -306,8 +312,8 @@ int main(int argc, char** argv)
     //out_string(c);
 
     ///test printf on long ints
-    long long ll = 2147483648ll;
-    printf("%d", ll);
+    //long long ll = 2147483648ll;
+    //printf("%d", ll);
 
     ///test string read in and length
     IO* io = IO_new();
