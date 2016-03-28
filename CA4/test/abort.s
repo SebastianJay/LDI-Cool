@@ -601,43 +601,44 @@ main:
 	call Main.new
 	pushq %rax
 	call Main.main
+	addq $8, %rsp
 	ret
 	.section .rodata
-.string3_l:
-	.string "ERROR: %d: Exception: case on void"
-.string3:
+empty_string_l:
+	.string ""
+empty_string:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string3_l
+	.quad empty_string_l
 .string1_l:
-	.string "ERROR: %d: Exception: dispatch on void"
+	.string "ERROR: %lld: Exception: dispatch on void"
 .string1:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string1_l
-.string4_l:
-	.string "ERROR: %d: Exception: stack overflow"
-.string4:
+percentd_string_l:
+	.string "%d"
+percentd_string:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string4_l
-.string5_l:
-	.string "ERROR: %d: Exception: case without matching branch"
-.string5:
+	.quad percentd_string_l
+percentlld_string_l:
+	.string "%lld"
+percentlld_string:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string5_l
-.string2_l:
-	.string "ERROR: %d: Exception: division by zero"
-.string2:
+	.quad percentlld_string_l
+substrerr_string_l:
+	.string "ERROR: %lld: Exception: String index out of bounds"
+substrerr_string:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string2_l
+	.quad substrerr_string_l
 .string0_l:
 	.string "Main"
 .string0:
@@ -645,6 +646,48 @@ main:
 	.quad String_vtable
 	.quad 1
 	.quad .string0_l
+.string3_l:
+	.string "ERROR: %lld: Exception: case on void"
+.string3:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string3_l
+percents_string_l:
+	.string "%s"
+percents_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad percents_string_l
+.string4_l:
+	.string "ERROR: %lld: Exception: stack overflow"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string5_l:
+	.string "ERROR: %lld: Exception: case without matching branch"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
+abort_string_l:
+	.string "abort\\n"
+abort_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad abort_string_l
+.string2_l:
+	.string "ERROR: %lld: Exception: division by zero"
+.string2:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string2_l
 Main_vtable:
 	.quad .string0
 	.quad Main.new
@@ -667,7 +710,7 @@ Main.new:
 	call calloc
 	popq %rdi
 	popq %rsi
-	movq $5, (%rax)
+	movq $10, (%rax)
 	movq $Main_vtable, 8(%rax)
 	movq $0, 16(%rax)
 	movq %rbp, %rsp
@@ -685,8 +728,8 @@ Main.main:
 	movq $2, %rcx
 	movq 8(%rax), %rdx
 	movq 56(%rdx), %rbx
-	pushq %rax
 	pushq %rcx
+	pushq %rax
 	call *%rbx
 	addq $16, %rsp
 	movq %rbp, %rsp

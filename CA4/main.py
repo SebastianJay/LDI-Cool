@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from annast import AST, readClType
 import tacgen
 import TAC_serialize
@@ -37,6 +38,10 @@ if __name__=="__main__":
     outbuf += asmgen.asmStr(data)
     outbuf += asmgen.asmStr(insts)
     
+    
+    if debug:
+        print outbuf[outbuf.index('main:'):]
+
     #write result buffer to output file
     with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
         outfile.write(outbuf)

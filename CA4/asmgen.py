@@ -67,7 +67,7 @@ class ASMIndexer:
         'IO' : 'name_IO',
         'String' : 'name_String',
         '' : 'empty_string',
-        'abort\n' : 'abort_string',
+        'abort\\\\n' : 'abort_string',
         'ERROR: %lld: Exception: String index out of bounds' : 'substrerr_string',
         '%d' : 'percentd_string',
         '%lld' : 'percentlld_string',
@@ -373,8 +373,7 @@ class ASMConstant(ASMDeclare):
         self.const = const
     def __str__(self):
         if self.ptype == 'string':
-            print 'Error: string not implemented'
-            return ''
+            return 'movq $' + ASMIndexer.strMap[self.const] + ', ' + self.assignee
         if self.ptype == 'int':
             return 'movq $' + str(self.const) + ', ' + self.assignee
         if self.ptype == 'bool':
@@ -456,8 +455,7 @@ class ASMReturn(ASMControl):
         asm = []
         if self.retval != cRegMap[retreg]:
             asm.append(ASMAssign(cRegMap[retreg], self.retval))
-        asm.append(ASMAssign(rsp, rbp))
-        asm.append(ASMPop(rbp))
+        asm.append(ASMMisc('leave', []))
         asm.append(self)
         return asm
     def __str__(self):
@@ -494,20 +492,7 @@ class ASMBTypeEq(ASMInstruction):
     def __str__(self):
         pass
 
-#unconditional error jump
-class ASMError(ASMControl):
-    def __init__(self, lineno, reason):
-        self.lineno = lineno
-        self.reason = reason
-    def expand(self):
-        #TODO have internal method that takes two args
-            #arg 0 - string format
-            #arg 1 - int line number
-        #that method should call printf(arg0, arg1) and then exit()
-        #this instruction is a wrapper over call to that method
-        pass
-    def __str__(self):
-        pass
+
 
 #catchall for instructions that have no strong association with category
 class ASMMisc(ASMInstruction):
@@ -548,9 +533,11 @@ def funcConvert(cfg, regMap):
         elif isinstance(operand, TACMethodArg):
             return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2))+'('+rbp+')'
 
+
     inslst = cfg.toList()
 
     preamble = []
+    epilogue = []
 
     #function prologue
     preamble += [
@@ -565,6 +552,13 @@ def funcConvert(cfg, regMap):
         preamble+=[
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
+        
+    # Save rbx-highest used register, everything is callee save
+    maxreg = min(max(regMap.values()), 12)
+    if maxreg > 0:
+        for i in range(1, maxreg+1):
+            preamble.append(ASMPush(cRegMap[i]))
+            epilogue = [ASMPop(cRegMap[i])] + epilogue
 
     asmlst = []
     #make list of ASM instructions from TAC instructions
@@ -635,8 +629,8 @@ def funcConvert(cfg, regMap):
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
 
-    #put preamble after start label
-    asmlst = asmlst[:1] + preamble + asmlst[1:]
+    #put preamble after start label, epilogue before return
+    asmlst = asmlst[:1] + preamble + asmlst[1:-1] + epilogue + asmlst[-1:]
 
     #expand out instructions to full ASM
     explst = []
