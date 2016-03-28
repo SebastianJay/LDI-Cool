@@ -965,7 +965,7 @@ main:
 	call	Main.new
 	pushq	%rax
 	call	Main.main
-	addq	8, %rsp
+	addq	$8, %rsp
 	ret
 .LFE81:
 	.size	main, .-main
