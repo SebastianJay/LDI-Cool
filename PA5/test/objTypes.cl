@@ -1,6 +1,6 @@
 class Main {
     main() : Object {
-	let x : Int<- 2, f : Foo <- new Foo in {
+    let x : Int <- 2, f : Foo <- new Foo in {
 		f.setX(3);
 		f.setX(f.getX());
 		func(f);

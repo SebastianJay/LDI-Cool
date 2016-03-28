@@ -9,5 +9,11 @@
 *.out
 *.exe
 
+#Ocaml stuffs
+*.cmi
+*.cmo
+*.cmx
+*.o
+
 #Python compiled files
 *.pyc
