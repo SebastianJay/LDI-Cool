@@ -118,7 +118,7 @@ IO* IO_out_int(IO* self, Int* i)
 void out_int(long long i)
 {
     //i should always be 32 bit signed int
-    printf("%d", i);
+    printf("%d", (int)i);
 }
 
 String* IO_in_string(IO* self)
@@ -206,7 +206,7 @@ void out_error(const char* format, long long lineno)
     exit(1);
 }
 
-Object* Obj_new() {
+Object* Object_new() {
     Object* o = (Object*)calloc(1,sizeof(Object));
     o->type = OBJECT_TAG;
     o->vtable = NULL;
@@ -214,20 +214,20 @@ Object* Obj_new() {
     return o;
 }
 
-Object* Obj_abort(Object * self) {
+Object* Object_abort(Object * self) {
     out_string("abort\n");
     exit(0);
     return self;
 }
 
-String* Obj_type_name(Object * self) {
+String* Object_type_name(Object * self) {
     String* s = String_new();
     s->c = self->vtable[0];
     return s;
 }
 
 // long long* to get around type checking
-long long* Obj_copy(Object * self) {
+long long* Object_copy(Object * self) {
     int i;
     long long* res = calloc(3 + self->objSize, 8);
     res[0] = self->type;

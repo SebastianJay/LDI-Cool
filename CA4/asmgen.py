@@ -190,9 +190,6 @@ class ASMIndexer:
     def genVtable():
         vlist = []
         for c in ASMIndexer.vtableMap:
-            if c in ['Object', 'Int', 'Bool', 'String', 'IO']:
-                continue
-
             vlist.append(ASMLabel(c + '_vtable'))
             for meth in ASMIndexer.vtableMap[c]:
                 vlist.append(ASMInfo('quad', meth))
@@ -205,8 +202,6 @@ class ASMIndexer:
     def genStr():
         slist = []
         for s in ASMIndexer.strMap:
-            if s in ['Object', 'Int', 'Bool', 'String', 'IO']:
-                continue
             slist += [
                 # String literal
                 ASMLabel(ASMIndexer.strMap[s]+"_l"),
