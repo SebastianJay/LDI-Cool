@@ -714,20 +714,13 @@ empty_string:
 	.quad String_vtable
 	.quad 1
 	.quad empty_string_l
-.string2_l:
+.string1_l:
 	.string "ERROR: %lld: Exception: dispatch on void"
-.string2:
+.string1:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string2_l
-.string0_l:
-	.string "Bar"
-.string0:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string0_l
+	.quad .string1_l
 percentd_string_l:
 	.string "%d"
 percentd_string:
@@ -749,20 +742,20 @@ substrerr_string:
 	.quad String_vtable
 	.quad 1
 	.quad substrerr_string_l
-.string1_l:
+.string0_l:
 	.string "Main"
-.string1:
+.string0:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string1_l
-.string4_l:
+	.quad .string0_l
+.string3_l:
 	.string "ERROR: %lld: Exception: case on void"
-.string4:
+.string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string4_l
+	.quad .string3_l
 percents_string_l:
 	.string "%s"
 percents_string:
@@ -770,20 +763,20 @@ percents_string:
 	.quad String_vtable
 	.quad 1
 	.quad percents_string_l
-.string5_l:
+.string4_l:
 	.string "ERROR: %lld: Exception: stack overflow"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string5_l:
+	.string "ERROR: %lld: Exception: case without matching branch"
 .string5:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string5_l
-.string6_l:
-	.string "ERROR: %lld: Exception: case without matching branch"
-.string6:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string6_l
 abort_string_l:
 	.string "abort\\n"
 abort_string:
@@ -791,21 +784,15 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string3_l:
+.string2_l:
 	.string "ERROR: %lld: Exception: division by zero"
-.string3:
+.string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string3_l
-Bar_vtable:
-	.quad .string0
-	.quad Bar.new
-	.quad Object.abort
-	.quad Object.copy
-	.quad Object.type_name
+	.quad .string2_l
 Main_vtable:
-	.quad .string1
+	.quad .string0
 	.quad Main.new
 	.quad Object.abort
 	.quad Object.copy
@@ -826,31 +813,9 @@ Main.new:
 	call calloc
 	popq %rdi
 	popq %rsi
-	movq $11, (%rax)
+	movq $10, (%rax)
 	movq $Main_vtable, 8(%rax)
 	movq $0, 16(%rax)
-	leave
-	ret
-Bar.new:
-	pushq %rbp
-	movq %rsp, %rbp
-	pushq %rbx
-	pushq %rsi
-	pushq %rdi
-	movq $8, %rsi
-	movq $4, %rdi
-	call calloc
-	popq %rdi
-	popq %rsi
-	movq $10, (%rax)
-	movq $Bar_vtable, 8(%rax)
-	movq $1, 16(%rax)
-	pushq %rax
-	call Int.new
-	movq %rax, %rbx
-	popq %rax
-	movq %rbx, 24(%rax)
-	popq %rbx
 	leave
 	ret
 Main.main:
@@ -858,91 +823,65 @@ Main.main:
 	movq %rsp, %rbp
 	pushq %rbx
 	pushq %rcx
+	pushq %rsi
+	pushq %rdi
 	movq 16(%rbp), %rbx
-	movq 8(%rbx), %rdx
-	movq 32(%rdx), %rax
-	pushq %rbx
-	call *%rax
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
-	pushq %rbx
-	call *%rcx
-	addq $16, %rsp
-	call Object.new
-	cmpq $0, %rax
-	movq $0, %rcx
+	movq $1, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2, %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $3, %rsi
+	movq %rax, %rcx
+	movq %rsi, %rax
+	subq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
+	movq $4, %rax
+	movq $22, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $13, %rsi
+	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_1
-	movq $5, %rsi
+	movq $4, %rsi
 	movq $.string2_l, %rdi
 	call printf
 	movq $1, %rdi
 	call exit
 .Main.main_1:
-	movq 8(%rax), %rdx
-	movq 32(%rdx), %rcx
-	pushq %rax
-	call *%rcx
-	addq $8, %rsp
-	movq %rax, %rcx
+	cltq
+	cqto
+	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rcx
-	pushq %rbx
-	call *%rax
-	addq $16, %rsp
-	cmpq $0, %rbx
-	movq $0, %rax
-	movq $1, %rdx
-	cmoveq %rdx, %rax
-	xorq $1, %rax
-	cmpq $1, %rax
-	je .Main.main_2
-	movq $6, %rsi
-	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
-.Main.main_2:
-	pushq %rbx
-	call Object.type_name
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
+	movq 56(%rdx), %rcx
 	pushq %rax
 	pushq %rbx
 	call *%rcx
 	addq $16, %rsp
-	call Bar.new
-	cmpq $0, %rax
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_3
-	movq $7, %rsi
-	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
-.Main.main_3:
-	movq 8(%rax), %rdx
-	movq 32(%rdx), %rcx
-	pushq %rax
-	call *%rcx
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
-	pushq %rbx
-	call *%rcx
-	addq $16, %rsp
+	popq %rdi
+	popq %rsi
 	popq %rcx
 	popq %rbx
 	leave

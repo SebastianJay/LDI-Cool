@@ -1,8 +1,11 @@
 	.section	.rodata
-.id_Object:
-	.quad	0
-.name_Object:
+.name_Object_l:
 	.string "Object"
+.name_Object:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Object_l
 Object_vtable:
 	.quad	.name_Object	# A pointer to class name string
 	.quad	Object.new
@@ -21,12 +24,16 @@ Object.new:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	subq	$16, %rsp
+	pushq	%rsi
+	pushq	%rdi
 	movl	$24, %esi
 	movl	$1, %edi
 	call	calloc
 	movq	$0, (%rax) # Object ID is 0
 	movq	$Object_vtable, 8(%rax)
-	movq	$0, 16(%rax)
+	movq	$0, 16(%rax)	# 0 fields
+	popq	%rdi
+	popq	%rsi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -34,7 +41,12 @@ Object.new:
 .LFE6:
 	.size	Object.new, .-Object.new
 .LC3:
-	.string	"abort\n"
+	.string	"abort\\n"
+.abort_string:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.LC3
 	.text
 	.globl	Object.abort
 	.type	Object.abort, @function
@@ -46,11 +58,11 @@ Object.abort:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movq	%rdi, -8(%rbp)
-	movl	$.LC3, %edi
+	movq 	$.abort_string, %rax
+	pushq	%rax
+	movq	16(%rbp), %rax
+	pushq	%rax
 	call	IO.out_string
-	movl	$0, %edi
 	call	exit
 	.cfi_endproc
 .LFE7:
@@ -61,23 +73,11 @@ Object.type_name:
 .LFB8:
 	.cfi_startproc
 	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
 	movq	%rsp, %rbp
-	.cfi_def_cfa_register 6
-	subq	$32, %rsp
-	movq	%rdi, -24(%rbp)
-	movl	$0, %eax
-	call	String.new
-	movq	%rax, -8(%rbp)
-	movq	-24(%rbp), %rax
-	movq	8(%rax), %rax
-	movq	(%rax), %rdx
-	movq	-8(%rbp), %rax
-	movq	%rdx, 24(%rax)
-	movq	-8(%rbp), %rax
+	movq	16(%rbp), %rax	# Get self
+	movq	8(%rax), %rax	# Get vtable
+	movq	(%rax), %rax	# String reference at index 0
 	leave
-	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE8:
@@ -93,10 +93,13 @@ Object.copy:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	subq	$32, %rsp
-	movq	%rdi, -24(%rbp)
-	movq	-24(%rbp), %rax
+	pushq	%rsi
+	pushq	%rdi
+	pushq	%rcx
+	movq	16(%rbp), %rax
+	movq	%rax, -24(%rbp)
 	movq	16(%rax), %rax
-	addq	$2, %rax
+	addq	$3, %rax
 	movl	$8, %esi
 	movq	%rax, %rdi
 	call	calloc
@@ -141,6 +144,9 @@ Object.copy:
 	cmpq	%rax, %rdx
 	jl	.L17
 	movq	-8(%rbp), %rax
+	popq	%rcx
+	popq	%rdi
+	popq	%rsi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -148,8 +154,95 @@ Object.copy:
 .LFE9:
 	.size	Object.copy, .-Object.copy
 	.section	.rodata
-.name_String:
+.name_Int_l:		
+	.string "Int"
+.name_Int:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Int_l
+Int_vtable:
+	.quad	.name_Int
+	.quad	Int.new
+	.quad	Object.abort
+	.quad	Object.copy
+	.quad	Object.type_name
+	.text
+	.globl	Int.new
+	.type	Int.new, @function
+Int.new:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	pushq	%rsi
+	pushq	%rdi
+	movl	$32, %esi
+	movl	$1, %edi
+	call	calloc
+	movq	$1, (%rax)	# Int id is 1
+	movq	$Int_vtable, 8(%rax)
+	movq	$1, 16(%rax)	# 1 field
+	movq	$0, 24(%rax)
+	popq	%rdi
+	popq	%rsi
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc	
+	.size	Int.new, .-Int.new
+	.section	.rodata
+.name_Bool_l:
+	.string "Bool"
+.name_Bool:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_Bool_l
+Bool_vtable:
+	.quad	.name_Bool
+	.quad	Bool.new
+	.quad	Object.abort
+	.quad	Object.copy
+	.quad	Object.type_name
+	.text	
+	.globl	Bool.new
+	.type	Bool.new, @function
+Bool.new:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	subq	$16, %rsp
+	pushq	%rsi
+	pushq	%rdi
+	movl	$32, %esi
+	movl	$1, %edi
+	call	calloc
+	movq	$2, (%rax)	# Bool id is 2
+	movq	$Bool_vtable, 8(%rax)
+	movq	$1, 16(%rax)	# 1 field
+	movq	$0, 24(%rax)
+	popq	%rdi
+	popq	%rsi
+	leave
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+	.size	Bool.new, .-Bool.new
+	.section	.rodata
+.name_String_l:
 	.string	"String"
+.name_String:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_String_l
 String_vtable:
 	.quad	.name_String
 	.quad	String.new
@@ -173,13 +266,17 @@ String.new:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	subq	$16, %rsp
+	pushq	%rsi
+	pushq	%rdi
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
-	movq	$2, (%rax)	# String id is 2
+	movq	$3, (%rax)	# String id is 3
 	movq	$String_vtable, 8(%rax)
-	movq	$1, 16(%rax)
+	movq	$1, 16(%rax)	# 1 field
 	movq	$.LC4, 24(%rax)
+	popq	%rdi
+	popq	%rsi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -196,12 +293,22 @@ String.length:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	subq	$16, %rsp
-	movq	%rdi, -8(%rbp)
-	movq	-8(%rbp), %rax
+	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movq	16(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rdi
 	call	strlen
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rdi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -220,9 +327,18 @@ String.concat:
 	.cfi_def_cfa_register 6
 	pushq	%rbx
 	subq	$56, %rsp
+	pushq	%rsi
+	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	.cfi_offset 3, -24
-	movq	%rdi, -56(%rbp)
-	movq	%rsi, -64(%rbp)
+	movq	16(%rbp), %rax
+	movq	%rax, -56(%rbp)
+	movq	24(%rbp), %rax
+	movq	%rax, -64(%rbp)
 	movq	-56(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rdi
@@ -260,6 +376,13 @@ String.concat:
 	movq	-32(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-24(%rbp), %rax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rdi
+	popq	%rsi
 	addq	$56, %rsp
 	popq	%rbx
 	popq	%rbp
@@ -270,8 +393,13 @@ String.concat:
 	.size	String.concat, .-String.concat
 	.section	.rodata
 	.align 8
-.LC5:
+.LC5_l:
 	.string	"ERROR: String index out of bounds"
+.LC5:
+	.quad	3
+	.quad 	String_vtable
+	.quad	1
+	.quad	.LC5_l
 	.text
 	.globl	String.substr
 	.type	String.substr, @function
@@ -284,9 +412,19 @@ String.substr:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	subq	$48, %rsp
-	movq	%rdi, -40(%rbp)
-	movl	%esi, -44(%rbp)
-	movl	%edx, -48(%rbp)
+	pushq	%rsi
+	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movq	16(%rbp), %rax
+	movq	%rax, -40(%rbp)
+	movq	24(%rbp), %rax
+	movl	%eax, -44(%rbp)
+	movq	32(%rbp), %rax
+	movl	%eax, -48(%rbp)
 	movq	-40(%rbp), %rax
 	movq	24(%rax), %rax
 	movq	%rax, %rdi
@@ -301,8 +439,11 @@ String.substr:
 	cmpl	-20(%rbp), %eax
 	jle	.L27
 .L26:
-	movl	$.LC5, %edi
+	pushq	$.LC5
 	call	IO.out_string
+	add 	8, %rsp
+	movq	1, %rdi
+	call 	exit
 .L27:
 	movl	$0, %eax
 	call	String.new
@@ -344,6 +485,13 @@ String.substr:
 	movq	-8(%rbp), %rdx
 	movq	%rdx, 24(%rax)
 	movq	-16(%rbp), %rax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rdi
+	popq	%rsi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -351,8 +499,13 @@ String.substr:
 .LFE13:
 	.size	String.substr, .-String.substr
 	.section	.rodata
-.name_IO:
+.name_IO_l:
 	.string	"IO"
+.name_IO:
+	.quad	3
+	.quad	String_vtable
+	.quad	1
+	.quad	.name_IO_l
 IO_vtable:
 	.quad	.name_IO
 	.quad	IO.new
@@ -372,12 +525,16 @@ IO.new:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	subq	$16, %rsp
+	pushq	%rsi
+	pushq	%rdi
 	movl	$24, %esi
 	movl	$1, %edi
 	call	calloc
-	movq	$3, (%rax)	#IO id is 3
+	movq	$4, (%rax)	#IO id is 3
 	movq	$IO_vtable, 8(%rax)
 	movq	$0, 16(%rax)	#0 fields
+	popq	%rdi
+	popq	%rsi
 	leave
 	.cfi_def_cfa 7, 8
 	ret
@@ -451,7 +608,6 @@ IO.out_int:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
-	pushq	%rax
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rcx
@@ -459,9 +615,9 @@ IO.out_int:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	movq	16(%rbp), %rsi
+	movq	24(%rbp), %rsi
 	movl	$.LC00, %edi
-	movl	$0, %eax		# Apparently sets the number of float args
+	movl	$0, %eax
 	call	printf
 	popq	%r11
 	popq	%r10
@@ -470,7 +626,6 @@ IO.out_int:
 	popq	%rcx
 	popq	%rsi
 	popq	%rdi
-	popq	%rax
 	leave
 	ret
 .LFE3:
@@ -481,6 +636,13 @@ IO.in_string:
 	pushq	%rbp
 	movq	%rsp, %rbp
 	subq	$16, %rsp
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movl	$1, %esi
 	movl	$4096, %edi
 	call	calloc
@@ -493,6 +655,13 @@ IO.in_string:
 	call	String.new
 	movq	-8(%rbp), %rdx
 	movq	%rdx, 24(%rax)
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	leave
 	ret
 .LFE4:
@@ -506,12 +675,25 @@ IO.in_string:
 IO.out_string:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rax
-	movq	24(%rsi), %rsi
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movq	24(%rbp), %rsi # Get first arg
+	movq	24(%rsi), %rsi # Get c-string attribute
 	movl	$.LC1, %edi
-	movl	$0, %eax		#not sure if necessary
+	movl	$0, %eax
 	call	printf
-	popq	%rax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	leave
 	ret
 .LFE5:
@@ -519,18 +701,130 @@ IO.out_string:
 	.globl	main
 	.type	main, @function
 main:
+	call Main.new
+	pushq %rax
 	call Main.main
+	addq $8, %rsp
 	ret
+	.section .rodata
+empty_string_l:
+	.string ""
+empty_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad empty_string_l
+.string1_l:
+	.string "ERROR: %lld: Exception: dispatch on void"
+.string1:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string1_l
+percentd_string_l:
+	.string "%d"
+percentd_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad percentd_string_l
+percentlld_string_l:
+	.string "%lld"
+percentlld_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad percentlld_string_l
+substrerr_string_l:
+	.string "ERROR: %lld: Exception: String index out of bounds"
+substrerr_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad substrerr_string_l
+.string0_l:
+	.string "Main"
+.string0:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string0_l
+.string3_l:
+	.string "ERROR: %lld: Exception: case on void"
+.string3:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string3_l
+percents_string_l:
+	.string "%s"
+percents_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad percents_string_l
+.string4_l:
+	.string "ERROR: %lld: Exception: stack overflow"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
+.string5_l:
+	.string "ERROR: %lld: Exception: case without matching branch"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
+abort_string_l:
+	.string "abort\\n"
+abort_string:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad abort_string_l
+.string2_l:
+	.string "ERROR: %lld: Exception: division by zero"
+.string2:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string2_l
+Main_vtable:
+	.quad .string0
+	.quad Main.new
+	.quad Object.abort
+	.quad Object.copy
+	.quad Object.type_name
+	.quad IO.in_int
+	.quad IO.in_string
+	.quad IO.out_int
+	.quad IO.out_string
+	.quad Main.main
+	.text 
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq %rbp, %rsp
-	popq %rbp
+	pushq %rsi
+	pushq %rdi
+	movq $8, %rsi
+	movq $3, %rdi
+	call calloc
+	popq %rdi
+	popq %rsi
+	movq $10, (%rax)
+	movq $Main_vtable, 8(%rax)
+	movq $0, 16(%rax)
+	leave
 	ret
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	movq 8(%rbp), %rbx
+	pushq %rbx
+	pushq %rcx
+	pushq %rsi
+	movq 16(%rbp), %rbx
 	movq $2, %rax
 	movq $2, %rcx
 	imulq %rcx
@@ -550,18 +844,24 @@ Main.main:
 	cmpq $1, %rax
 	je .Main.main_1
 	movq $12, %rax
-	pushq %rbx
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rcx
 	pushq %rax
-	call %rcx
+	pushq %rbx
+	call *%rcx
 	addq $16, %rsp
 	jmp .Main.main_2
 .Main.main_1:
 	movq $34, %rcx
-	pushq %rbx
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rax
 	pushq %rcx
-	call %rax
+	pushq %rbx
+	call *%rax
 	addq $16, %rsp
 .Main.main_2:
-	movq %rbp, %rsp
-	popq %rbp
+	popq %rsi
+	popq %rcx
+	popq %rbx
+	leave
 	ret
