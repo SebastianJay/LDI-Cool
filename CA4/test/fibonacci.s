@@ -1230,14 +1230,26 @@ Main_vtable:
 	.quad Main.main
 	.quad Main.fib
 	.text 
+	.globl Main.new
+	.type Main.new, @function
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rsi
 	pushq %rdi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	movq $8, %rsi
 	movq $3, %rdi
 	call calloc
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rdi
 	popq %rsi
 	movq $10, (%rax)
@@ -1245,6 +1257,9 @@ Main.new:
 	movq $0, 16(%rax)
 	leave
 	ret
+	.size Main.new, .-Main.new
+	.globl Main.main
+	.type Main.main, @function
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -1298,6 +1313,9 @@ Main.main:
 	popq %rbx
 	leave
 	ret
+	.size Main.main, .-Main.main
+	.globl Main.fib
+	.type Main.fib, @function
 Main.fib:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -1379,3 +1397,4 @@ Main.fib:
 	popq %rbx
 	leave
 	ret
+	.size Main.fib, .-Main.fib

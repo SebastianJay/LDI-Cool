@@ -636,7 +636,9 @@ def funcConvert(cfg, regMap):
             asmlst.append("UNHANDLED: "+ str(ins))
 
     #put preamble after start label, epilogue before return
-    asmlst = asmlst[:1] + preamble + asmlst[1:-1] + epilogue + asmlst[-1:]
+    asmlst = [ASMInfo('globl', asmlst[0].name), ASMInfo('type',asmlst[0].name,  '@function')] + \
+             asmlst[:1] + preamble + asmlst[1:-1] \
+             + epilogue + asmlst[-1:] + [ASMInfo('size', asmlst[0].name, '.-'+asmlst[0].name)]
 
     #expand out instructions to full ASM
     explst = []
