@@ -39,9 +39,9 @@ class CMap:
 
 #wrapper for info about one field of a class
 class CMapAttr:
-    def __init__(self, *args):
-        self.name = ''
-        self.type = ''
+    def __init__(self, name = '', type = ''):
+        self.name = name
+        self.type = type
         self.init = None
 
     def load(self, l):

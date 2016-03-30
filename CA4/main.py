@@ -1,5 +1,5 @@
 #!/usr/bin/python
-from annast import AST, readClType
+from annast import AST, readClType, CMapAttr
 import tacgen
 import TAC_serialize
 import deadcode
@@ -12,6 +12,9 @@ if __name__=="__main__":
 
     #load the cl-type file
     cmap, imap, pmap, ast = readClType(sys.argv[1])
+
+    cmap['Int'].append(CMapAttr('val', 'unboxInt'))
+    cmap['Bool'].append(CMapAttr('val', 'unboxBool'))
 
     #generate TAC for the user-generated Cool
     tacgen.TACIndexer.setTypeMaps(cmap, imap, pmap)
@@ -39,8 +42,8 @@ if __name__=="__main__":
     outbuf += asmgen.asmStr(insts)
     
     
-    if debug:
-        print outbuf[outbuf.index('main:'):]
+    # if debug:
+    #     print outbuf[outbuf.index('main:'):] 
 
     #write result buffer to output file
     with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:

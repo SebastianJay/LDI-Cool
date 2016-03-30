@@ -224,11 +224,13 @@ class TACOperand:
     pass
 
 class TACRegister(TACOperand):
-    def __init__(self, name):
+    def __init__(self, name, boxed = True):
         self.name = name
+        self.boxed = boxed
     def __str__(self):
-        return self.name
+        return self.name + ('' if self.boxed else '[unboxed]')
 
+        
 class TACClassAttr(TACOperand):
     def __init__(self, reg, cname, aname):
         self.reg = reg

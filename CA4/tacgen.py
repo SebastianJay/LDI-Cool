@@ -109,9 +109,13 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbp))
         #recurse on predicate expression
         regp = expConvert(node.args[0])
+        if regp.boxed:
+            TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
+        regp.boxed = False
         #emit label for loop breakout -- if predicate is false, we jump there
         lbb = TACIndexer.label()
         regpbar = TACIndexer.reg()
+        regpbar.boxed = False
         TACIndexer.pushIns(TACOp1(regpbar, 'not', regp))
         TACIndexer.pushIns(TACBT(regpbar, lbb))
         #recurse on body expression
@@ -128,7 +132,11 @@ def expConvert(node):
     elif node.expr == 'if':
         #recurse on predicate expression
         regp = expConvert(node.args[0])
+        if regp.boxed:
+            TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
+        regp.boxed = False
         regpbar = TACIndexer.reg()
+        regpbar.boxed = False
         TACIndexer.pushIns(TACAssign(regpbar, regp))
         TACIndexer.pushIns(TACOp1(regpbar, 'not', regpbar))
         #emit label for else and branch there if predicate is false
@@ -137,7 +145,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACBT(regpbar, lbe))
         #recurse on then body, emit join label and jump there at end
         #also, place then result into join register
-        regt = expConvert(node.args[1])
+        regt = box(expConvert(node.args[1]), node.args[1].type) # TODO: leave unboxed if both unboxed
         regj = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regj, regt))
         lbj = TACIndexer.label()
@@ -145,7 +153,7 @@ def expConvert(node):
         #insert label for else
         TACIndexer.pushIns(TACLabel(lbe))
         #recurse on else body
-        rege = expConvert(node.args[2])
+        rege = box(expConvert(node.args[2]), node.args[2].type)
         #place result into join register
         TACIndexer.pushIns(TACAssign(regj, rege))
         #insert join label
@@ -157,7 +165,7 @@ def expConvert(node):
         for binding in node.args[0]:
             if binding.init is not None:
                 # if there is an init, generate the init code
-                regi = expConvert(binding.init)
+                regi = box(expConvert(binding.init), binding.init.type)
                 reg = TACIndexer.map(binding.name.name,True)    #create reg here so previous binding holds in init expr
                 TACIndexer.pushIns(TACAssign(reg,regi))
             else:
@@ -173,7 +181,7 @@ def expConvert(node):
 
     elif node.expr == 'case':
         #generate code for case expression
-        regc = expConvert(node.args[0])
+        regc = box(expConvert(node.args[0]), node.args[0].type)
         #fail if case "caller" is void
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
@@ -223,7 +231,8 @@ def expConvert(node):
         return reg  #last expression evaluated is the return val
 
     elif node.expr == 'assign':
-        regr = expConvert(node.args[1])
+        regr = box(expConvert(node.args[1]), node.args[1].type)
+
         reg = TACIndexer.map(node.args[0].name)
         TACIndexer.pushIns(TACAssign(reg, regr))
         return reg
@@ -231,17 +240,45 @@ def expConvert(node):
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
         op1 = TACIndexer.reg()
-        TACIndexer.pushIns(TACAssign(op1, regr))
+        op1.boxed = False
+        if regr.boxed:
+            TACIndexer.pushIns(TACAssign(op1, TACClassAttr(regr, 'Int', 'val')))
+        else:
+            TACIndexer.pushIns(TACAssign(op1, regr))
+
         TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], op1))
         return op1
 
     elif node.expr in ASTExpression.exp2:
         regr0 = expConvert(node.args[0])
         regr1 = expConvert(node.args[1])
+
+        if isinstance(regr0, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regr0))
+            regr0 = attreg
+        if isinstance(regr1, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regr1))
+            regr1 = attreg
+        
+
         op1 = TACIndexer.reg()
         op2 = TACIndexer.reg()
-        TACIndexer.pushIns(TACAssign(op1, regr0))
-        TACIndexer.pushIns(TACAssign(op2, regr1))
+
+        if regr0.boxed:
+            TACIndexer.pushIns(TACAssign(op1, TACClassAttr(regr0, 'Int', 'val')))
+        else:
+            TACIndexer.pushIns(TACAssign(op1, regr0))
+
+        if regr1.boxed:
+            TACIndexer.pushIns(TACAssign(op2, TACClassAttr(regr1, 'Int', 'val')))
+        else:
+            TACIndexer.pushIns(TACAssign(op2, regr1))
+            
+        op1.boxed = False
+        op2.boxed = False
+
         resreg = op1
         #check if divisor is zero, and if so, err and exit
         if node.expr == 'divide':
@@ -276,6 +313,7 @@ def expConvert(node):
         # a chance to get out of rax
         if node.expr in ['times', 'divide']:
             spillreg = TACIndexer.reg()
+            spillreg.boxed = False
             TACIndexer.pushIns(TACAssign(spillreg, resreg))
             resreg = spillreg
 
@@ -289,8 +327,8 @@ def expConvert(node):
     #   find function to call in vtable if necessary
     #   call function and assign result into new register
     elif node.expr == 'dynamic_dispatch':
-        regs = [expConvert(e) for e in node.args[2]]
-        regc = expConvert(node.args[0])
+        regs = [box(expConvert(e), e.type) for e in node.args[2]]
+        regc = box(expConvert(node.args[0]), node.args[0].type)
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
         lbd = TACIndexer.label()
@@ -308,8 +346,8 @@ def expConvert(node):
         return regr
 
     elif node.expr == 'static_dispatch':
-        regs = [expConvert(e) for e in node.args[3]]
-        regc = expConvert(node.args[0])
+        regs = [box(expConvert(e), e.type) for e in node.args[3]]
+        regc = box(expConvert(node.args[0]), node.args[0].type)
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
         lbd = TACIndexer.label()
@@ -334,7 +372,7 @@ def expConvert(node):
 
     #note: no dispatch on void check needed here since "self" is always valid
     elif node.expr == 'self_dispatch':
-        regs = [expConvert(e) for e in node.args[1]]
+        regs = [box(expConvert(e), e.type) for e in node.args[1]]
         regc = TACIndexer.map('self')
         regs = [regc] + regs
         reglb = TACIndexer.reg()
@@ -348,7 +386,7 @@ def expConvert(node):
         reg = TACIndexer.reg()
         typename = node.args.name
         if node.args.name == 'SELF_TYPE':
-            typename = TACIndexer.cname     #use current enclosing class
+            typename = TACIndexer.cname     #TODO: Should be vtable lookup on self
         TACIndexer.pushIns(TACAllocate(reg, node.expr, typename))
         return reg
 
@@ -359,6 +397,7 @@ def expConvert(node):
     elif node.expr == 'integer' or node.expr == 'string'    \
     or node.expr == 'true' or node.expr == 'false':
         reg = TACIndexer.reg()
+        reg.boxed =not (node.expr == 'integer' or node.expr == 'true' or node.expr == 'false')
         constval = node.expr if node.expr in ['true','false'] else str(node.args)
         TACIndexer.pushIns(TACConstant(reg, astTacMap[node.expr], constval))
         return reg
@@ -385,7 +424,17 @@ def methodConvert(node):
     TACIndexer.pop('self')
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
+
+    reg = box(reg, node.body.type)
     TACIndexer.pushIns(TACReturn(reg))
+
+def box(reg, type):
+    if isinstance(reg, TACRegister) and not reg.boxed:
+        breg = TACIndexer.reg()
+        TACIndexer.pushIns(TACAllocate(breg, 'new', type))
+        TACIndexer.pushIns(TACAssign(TACClassAttr(breg, type, 'val'), reg))
+        reg = breg
+    return reg
 
 #for CA2, looks for the first method of first class and generates its TAC code
 def mainConvert(ast):

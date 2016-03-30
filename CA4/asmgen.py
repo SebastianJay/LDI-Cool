@@ -482,10 +482,10 @@ class ASMBTypeEq(ASMInstruction):
         #   TODO see if compare between memory and immediate value is valid
         asm.append(ASMCmp('$'+str(self.clstag), '0('+self.obj+')'))
         # do conditional jump to self.label if cmp yields equal
-        asm.append(ASMMisc('je', [self.label]))
-        pass
+        asm.append(ASMMisc('je ', [self.label]))
+        return asm
     def __str__(self):
-        pass
+        return ''
 
 
 
@@ -524,7 +524,8 @@ def funcConvert(cfg, regMap):
             vreg = operand.reg.name
             #TODO handle class attr reg (i.e. "self" var) being in memory (i.e. need double memory lookup)
             #  possible solution: in registerAllocate, force #self method arg to be in real register
-            return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])+'('+ cRegMap[regMap[vreg]] +')'
+            return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])\
+                +'('+ cRegMap[regMap[vreg]] +')'
         elif isinstance(operand, TACMethodArg):
             return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2))+'('+rbp+')'
 
@@ -595,16 +596,26 @@ def funcConvert(cfg, regMap):
             ]
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])
-            print str(ins)
             asmlst += [
+                # Have to push all c caller save registers for calloc
                 ASMPush('%rsi'),
                 ASMPush('%rdi'),
+                ASMPush('%rcx'),
+                ASMPush('%r8'),
+                ASMPush('%r9'),
+                ASMPush('%r10'),
+                ASMPush('%r11'),
                 # Allocate blocks of size 8 bytes
                 ASMAssign('%rsi', '$8'),
 
                 # Allocate tag, vtable pointer, size, attributes
                 ASMAssign('%rdi', '$' + str(3+nattrs)),
                 ASMCall('%rax', 'calloc'),
+                ASMPop('%r11'),
+                ASMPop('%r10'),
+                ASMPop('%r9'),
+                ASMPop('%r8'),
+                ASMPop('%rcx'),
                 ASMPop('%rdi'),
                 ASMPop('%rsi'),
                 ASMAssign('(%rax)', '$' + str(ASMIndexer.clsTags[ins.cname])),
@@ -660,8 +671,13 @@ def convert(taclist):
         if isinstance(taclist[i], TACLabel) and taclist[i].name[0] != '.':
             if i != 0:
                 methlist.append(taclist[lastInd:i])
-            lastInd = i
+                lastInd = i
     methlist.append(taclist[lastInd:])
+
+    for m in methlist:
+        for x in m:
+            print x
+        print '---'
 
     asmlist = []
     for meth in methlist:
