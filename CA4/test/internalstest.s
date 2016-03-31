@@ -1265,7 +1265,7 @@ Main_vtable:
 	.quad Main.main
 	.text 
 	.globl Main.new
-	.type @function
+	.type Main.new, @function
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -1293,7 +1293,7 @@ Main.new:
 	ret
 	.size Main.new, .-Main.new
 	.globl Main.main
-	.type @function
+	.type Main.main, @function
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp

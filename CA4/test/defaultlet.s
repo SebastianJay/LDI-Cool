@@ -1264,48 +1264,17 @@ Main.main:
 	movq %rsp, %rbp
 	pushq %rbx
 	pushq %rcx
-	pushq %rsi
 	movq 16(%rbp), %rbx
-	movq $2, %rax
-	movq $2, %rcx
-	imulq %rcx
-	shlq $32, %rax
-	sarq $32, %rax
+	pushq %rax
+	call Int.new
 	movq %rax, %rcx
-	movq $3, %rax
-	movq $4, %rsi
-	imulq %rsi
-	shlq $32, %rax
-	sarq $32, %rax
-	cmpq %rax, %rcx
-	movq $0, %rax
-	movq $1, %rdx
-	cmoveq %rdx, %rax
-	xorq $1, %rax
-	cmpq $1, %rax
-	je .Main.main_1
-	movq $12, %rcx
-	call Int.new
-	movq %rcx, 24(%rax)
+	popq %rax
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rcx
-	pushq %rax
+	movq 56(%rdx), %rax
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rax
 	addq $16, %rsp
-	jmp .Main.main_2
-.Main.main_1:
-	movq $34, %rcx
-	call Int.new
-	movq %rcx, 24(%rax)
-	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rcx
-	pushq %rax
-	pushq %rbx
-	call *%rcx
-	addq $16, %rsp
-.Main.main_2:
-	popq %rsi
 	popq %rcx
 	popq %rbx
 	leave

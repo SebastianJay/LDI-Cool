@@ -12,12 +12,22 @@ IO.new:
 	.cfi_def_cfa_offset 16
 	pushq	%rsi
 	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movl	$24, %esi
 	movl	$1, %edi
 	call	calloc
 	movq	$3, (%rax)
 	movq	$IO_vtable, 8(%rax)
 	movq	$0, 16(%rax)
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
 	popq	%rdi
 	popq	%rsi
 	addq	$8, %rsp
@@ -514,12 +524,22 @@ Object.new:
 	.cfi_def_cfa_offset 16
 	pushq	%rdi
 	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movl	$24, %esi
 	movl	$1, %edi
 	call	calloc
 	movq	$0, (%rax)
 	movq	$Object_vtable, 8(%rax)
 	movq	$0, 16(%rax)
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
 	popq	%rsi
 	popq	%rdi
 	addq	$8, %rsp
@@ -559,6 +579,10 @@ Object.copy:
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
 	movq	16(%rbp), %rdi
@@ -586,6 +610,10 @@ Object.copy:
 	cmpq	16(%rbx), %rcx
 	jl	.L59
 .L58:
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
 	popq	%rcx
 	popq	%rsi
 	popq	%rdi
@@ -606,6 +634,11 @@ String.new:
 	.cfi_def_cfa_offset 16
 	pushq	%rsi
 	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
@@ -613,6 +646,11 @@ String.new:
 	movq	$String_vtable, 8(%rax)
 	movq	$1, 16(%rax)
 	movq	$.LC2, 24(%rax)
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
 	popq	%rdi
 	popq	%rsi
 	addq	$8, %rsp
@@ -682,8 +720,8 @@ String.concat:
 	.cfi_def_cfa_offset 32
 	.cfi_offset 6, -32
 	pushq	%rbx
-	pushq	%rsi
 	pushq	%rdi
+	pushq	%rsi
 	pushq	%rcx
 	pushq	%r8
 	pushq	%r9
@@ -760,8 +798,8 @@ String.substr:
 	.cfi_def_cfa_offset 40
 	.cfi_offset 6, -40
 	pushq	%rbx
-	pushq	%rsi
 	pushq	%rdi
+	pushq	%rsi
 	pushq	%rcx
 	pushq	%r8
 	pushq	%r9
@@ -845,10 +883,15 @@ String.substr:
 Int.new:
 .LFB79:
 	.cfi_startproc
-	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
 	pushq	%rdi
 	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	subq 	$8, %rsp
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
@@ -858,6 +901,11 @@ Int.new:
 	movq	$0, 24(%rax)
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 8
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
 	popq	%rsi
 	popq	%rdi
 	ret
@@ -922,8 +970,8 @@ String.length:
 	popq	%r9
 	popq	%r8
 	popq	%rcx
-	popq	%rsi
 	popq	%rdi
+	popq	%rsi
 	popq	%rbx
 	.cfi_def_cfa_offset 16
 	popq	%rbp
@@ -942,6 +990,11 @@ Bool.new:
 	.cfi_def_cfa_offset 16
 	pushq	%rsi
 	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
 	movl	$32, %esi
 	movl	$1, %edi
 	call	calloc
@@ -949,6 +1002,11 @@ Bool.new:
 	movq	$Bool_vtable, 8(%rax)
 	movq	$0, 16(%rax)
 	movq	$0, 24(%rax)
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
 	popq	%rdi
 	popq	%rsi
 	addq	$8, %rsp
@@ -1171,14 +1229,26 @@ Main_vtable:
 	.quad IO.out_string
 	.quad Main.main
 	.text 
+	.globl Main.new
+	.type Main.new, @function
 Main.new:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rsi
 	pushq %rdi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
 	movq $8, %rsi
 	movq $3, %rdi
 	call calloc
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
 	popq %rdi
 	popq %rsi
 	movq $10, (%rax)
@@ -1186,6 +1256,9 @@ Main.new:
 	movq $0, 16(%rax)
 	leave
 	ret
+	.size Main.new, .-Main.new
+	.globl Main.main
+	.type Main.main, @function
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
@@ -1259,3 +1332,4 @@ Main.main:
 	popq %rbx
 	leave
 	ret
+	.size Main.main, .-Main.main

@@ -676,19 +676,19 @@ def convert(taclist):
                 lastInd = i
     methlist.append(taclist[lastInd:])
 
-    for m in methlist:
-        for x in m:
-            print x
-        print '---'
+    # for m in methlist:
+    #     for x in m:
+    #         print x
+    #     print '---'
 
     asmlist = []
     for meth in methlist:
         cfg = _constructCFG(meth)
-        print cfg
-        print '-----'
+        # print cfg
+        # print '-----'
         globalDeadRemove(cfg)
-        print cfg
-        print '-----'
+        # print cfg
+        # print '-----'
         regmap = registerAllocate(cfg,13)
         asmlist += funcConvert(cfg, regmap)
 
