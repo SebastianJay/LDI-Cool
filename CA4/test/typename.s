@@ -1032,13 +1032,6 @@ empty_string:
 	.quad String_vtable
 	.quad 1
 	.quad empty_string_l
-.string2_l:
-	.string "ERROR: %lld: Exception: dispatch on void"
-.string2:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string2_l
 .string0_l:
 	.string "Bar"
 .string0:
@@ -1088,13 +1081,20 @@ substrerr_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string1_l
-.string4_l:
-	.string "ERROR: %lld: Exception: case on void"
-.string4:
+.string3_l:
+	.string "ERROR: %lld: Exception: division by zero\n"
+.string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string4_l
+	.quad .string3_l
+.string6_l:
+	.string "ERROR: %lld: Exception: case without matching branch\n"
+.string6:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string6_l
 percents_string_l:
 	.string "%s"
 percents_string:
@@ -1116,13 +1116,6 @@ name_Int:
 	.quad String_vtable
 	.quad 1
 	.quad name_Int_l
-.string5_l:
-	.string "ERROR: %lld: Exception: stack overflow"
-.string5:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string5_l
 name_Object_l:
 	.string "Object"
 name_Object:
@@ -1130,13 +1123,20 @@ name_Object:
 	.quad String_vtable
 	.quad 1
 	.quad name_Object_l
-.string6_l:
-	.string "ERROR: %lld: Exception: case without matching branch"
-.string6:
+.string4_l:
+	.string "ERROR: %lld: Exception: case on void\n"
+.string4:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string6_l
+	.quad .string4_l
+.string5_l:
+	.string "ERROR: %lld: Exception: stack overflow\n"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
 abort_string_l:
 	.string "abort\\n"
 abort_string:
@@ -1144,13 +1144,13 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string3_l:
-	.string "ERROR: %lld: Exception: division by zero"
-.string3:
+.string2_l:
+	.string "ERROR: %lld: Exception: dispatch on void\n"
+.string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string3_l
+	.quad .string2_l
 Bar_vtable:
 	.quad .string0
 	.quad Bar.new
@@ -1298,9 +1298,7 @@ Main.main:
 	je .Main.main_1
 	movq $5, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_1:
 	movq 8(%rax), %rdx
 	movq 32(%rdx), %rcx
@@ -1323,9 +1321,7 @@ Main.main:
 	je .Main.main_2
 	movq $6, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_2:
 	pushq %rbx
 	call Object.type_name
@@ -1346,9 +1342,7 @@ Main.main:
 	je .Main.main_3
 	movq $7, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_3:
 	movq 8(%rax), %rdx
 	movq 32(%rdx), %rcx

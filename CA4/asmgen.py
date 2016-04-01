@@ -76,11 +76,11 @@ class ASMIndexer:
 
     #string runtime error id => string literal
     errstrMap = {
-        'casevoid' : 'ERROR: %lld: Exception: case on void',
-        'casenomatch' : 'ERROR: %lld: Exception: case without matching branch',
-        'dispatchvoid' : 'ERROR: %lld: Exception: dispatch on void',
-        'stackoverflow' : 'ERROR: %lld: Exception: stack overflow',
-        'dividezero' : 'ERROR: %lld: Exception: division by zero',
+        'casevoid' : 'ERROR: %lld: Exception: case on void\\n',
+        'casenomatch' : 'ERROR: %lld: Exception: case without matching branch\\n',
+        'dispatchvoid' : 'ERROR: %lld: Exception: dispatch on void\\n',
+        'stackoverflow' : 'ERROR: %lld: Exception: stack overflow\\n',
+        'dividezero' : 'ERROR: %lld: Exception: division by zero\\n',
         #substring error handled internally
     }
 
@@ -360,12 +360,18 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def expand(self):
-        if self.assignee != '%rax':
-            return [ASMPush('%rax'), ASMCall('%rax', self.ptype + '.new'), ASMAssign(self.assignee, '%rax'), ASMPop('%rax')]
+        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool':
+            if self.assignee != '%rax':
+                return [ASMPush('%rax'), ASMCall('%rax', self.ptype + '.new'), ASMAssign(self.assignee, '%rax'), ASMPop('%rax')]
+            else:
+                return [ASMCall('%rax', self.ptype + '.new')]
         else:
-            return [ASMCall('%rax', self.ptype + '.new')]
+            return [self]
     def __str__(self):
-        return 'call ' + self.ptype + '.new'
+        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool':
+            return 'call ' + self.ptype + '.new'
+        else:
+            return 'movq $0, ' + self.assignee
 
 #for assigning constants to variables
 class ASMConstant(ASMDeclare):
@@ -635,9 +641,7 @@ def funcConvert(cfg, regMap):
             asmlst += [
                 ASMAssign('%rsi', '$' + str(ins.lineno)),
                 ASMAssign('%rdi', '$'+ASMIndexer.strMap[ASMIndexer.errstrMap[ins.reason]]+'_l'),
-                ASMCall('%rax', 'printf'),
-                ASMAssign('%rdi', '$1'),
-                ASMCall('%rax', 'exit')
+                ASMMisc('call out_error')
             ]
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
