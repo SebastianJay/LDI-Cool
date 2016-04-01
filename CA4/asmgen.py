@@ -120,6 +120,13 @@ class ASMIndexer:
                 continue
             ASMIndexer.strMap[literal] = '.string' + str(strind)
             strind += 1
+
+        # Have to escape backslashes and quotes for assembler
+        for ins in inslist:
+            if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
+                ins.const = ins.const.replace('\\', '\\\\')
+                ins.const = ins.const.replace('\"', '\\\"')
+
         #add literals found in TAC list
         for ins in inslist:
             if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:

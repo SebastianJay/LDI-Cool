@@ -786,6 +786,7 @@ String.substr:
 	.cfi_startproc
 	pushq	%rbp
 	movq 	%rsp, %rbp
+	pushq	%rsp
 	pushq	%r14
 	.cfi_def_cfa_offset 16
 	.cfi_offset 14, -16
@@ -859,18 +860,13 @@ String.substr:
 	popq	%rsi
 	popq	%rdi
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	leave
+	popq	%rsp
+	popq	%rbp
 	ret
 .L70:
-	.cfi_restore_state
 	xorl	%esi, %esi
 	movl	$.LC5, %edi
 	call	out_error
@@ -1027,39 +1023,7 @@ main:
 	ret
 .LFE81:
 	.size	main, .-main
-	.globl	BOOL_TAG
-	.section	.rodata
-	.align 4
-	.type	BOOL_TAG, @object
-	.size	BOOL_TAG, 4
-BOOL_TAG:
-	.long	4
-	.globl	IO_TAG
-	.align 4
-	.type	IO_TAG, @object
-	.size	IO_TAG, 4
-IO_TAG:
-	.long	3
-	.globl	STRING_TAG
-	.align 4
-	.type	STRING_TAG, @object
-	.size	STRING_TAG, 4
-STRING_TAG:
-	.long	2
-	.globl	INT_TAG
-	.align 4
-	.type	INT_TAG, @object
-	.size	INT_TAG, 4
-INT_TAG:
-	.long	1
-	.globl	OBJECT_TAG
-	.align 4
-	.type	OBJECT_TAG, @object
-	.size	OBJECT_TAG, 4
-OBJECT_TAG:
-	.zero	4
-	.ident	"GCC: (Ubuntu 4.8.4-2ubuntu1~14.04.1) 4.8.4"
-	.section	.note.GNU-stack,"",@progbits
+### END Internals
 	.section .rodata
 empty_string_l:
 	.string ""
@@ -1075,6 +1039,13 @@ empty_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string1_l
+.string9_l:
+	.string "\\\\\\\""
+.string9:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string9_l
 percentd_string_l:
 	.string "%d"
 percentd_string:
@@ -1082,13 +1053,6 @@ percentd_string:
 	.quad String_vtable
 	.quad 1
 	.quad percentd_string_l
-.string8_l:
-	.string "\\"
-.string8:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string8_l
 percentlld_string_l:
 	.string "%lld"
 percentlld_string:
@@ -1145,6 +1109,13 @@ percents_string:
 	.quad String_vtable
 	.quad 1
 	.quad percents_string_l
+.string10_l:
+	.string "\\\\n"
+.string10:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string10_l
 name_String_l:
 	.string "String"
 name_String:
@@ -1187,20 +1158,20 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string10_l:
-	.string "\\n"
-.string10:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string10_l
 .string7_l:
-	.string "\n"
+	.string "\\n"
 .string7:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string7_l
+.string8_l:
+	.string "\\\\"
+.string8:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string8_l
 .string2_l:
 	.string "ERROR: %lld: Exception: division by zero"
 .string2:
@@ -1208,13 +1179,6 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string2_l
-.string9_l:
-	.string "\\\""
-.string9:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string9_l
 String_vtable:
 	.quad name_String
 	.quad String.new
