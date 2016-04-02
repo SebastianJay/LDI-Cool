@@ -450,7 +450,7 @@ class ASMReturn(ASMControl):
         asm = []
         if self.retval != cRegMap[retreg]:
             asm.append(ASMAssign(cRegMap[retreg], self.retval))
-        asm.append(ASMMisc('leave', []))
+        asm.append(ASMMisc('leave'))
         asm.append(self)
         return asm
     def __str__(self):
@@ -482,7 +482,7 @@ class ASMBTypeEq(ASMInstruction):
         #   TODO see if compare between memory and immediate value is valid
         asm.append(ASMCmp('$'+str(self.clstag), '0('+self.obj+')'))
         # do conditional jump to self.label if cmp yields equal
-        asm.append(ASMMisc('je ', [self.label]))
+        asm.append(ASMMisc('je', [self.label]))
         return asm
     def __str__(self):
         return ''
@@ -496,10 +496,9 @@ class ASMMisc(ASMInstruction):
         self.args = args
     def __str__(self):
         retval = self.cmd
-        for i, arg in enumerate(self.args):
-            retval += arg
-            if i < len(self.args) - 1:
-                retval += ', '
+        argstr = ', '.join(self.args)
+        if argstr:
+            retval += ' ' + argstr
         return retval
 #end ASM class definitions
 
@@ -548,7 +547,7 @@ def funcConvert(cfg, regMap):
         preamble+=[
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
-        
+
     # Save rbx-highest used register, everything is callee save
     maxreg = min(max(regMap.values()), 12)
     if maxreg > 0:
