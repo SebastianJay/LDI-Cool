@@ -786,6 +786,7 @@ String.substr:
 	.cfi_startproc
 	pushq	%rbp
 	movq 	%rsp, %rbp
+	pushq	%rsp
 	pushq	%r14
 	.cfi_def_cfa_offset 16
 	.cfi_offset 14, -16
@@ -859,18 +860,13 @@ String.substr:
 	popq	%rsi
 	popq	%rdi
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	leave
+	popq	%rsp
+	popq	%rbp
 	ret
 .L70:
-	.cfi_restore_state
 	xorl	%esi, %esi
 	movl	$.LC5, %edi
 	call	out_error
@@ -1027,39 +1023,7 @@ main:
 	ret
 .LFE81:
 	.size	main, .-main
-	.globl	BOOL_TAG
-	.section	.rodata
-	.align 4
-	.type	BOOL_TAG, @object
-	.size	BOOL_TAG, 4
-BOOL_TAG:
-	.long	4
-	.globl	IO_TAG
-	.align 4
-	.type	IO_TAG, @object
-	.size	IO_TAG, 4
-IO_TAG:
-	.long	3
-	.globl	STRING_TAG
-	.align 4
-	.type	STRING_TAG, @object
-	.size	STRING_TAG, 4
-STRING_TAG:
-	.long	2
-	.globl	INT_TAG
-	.align 4
-	.type	INT_TAG, @object
-	.size	INT_TAG, 4
-INT_TAG:
-	.long	1
-	.globl	OBJECT_TAG
-	.align 4
-	.type	OBJECT_TAG, @object
-	.size	OBJECT_TAG, 4
-OBJECT_TAG:
-	.zero	4
-	.ident	"GCC: (Ubuntu 4.8.4-2ubuntu1~14.04.1) 4.8.4"
-	.section	.note.GNU-stack,"",@progbits
+### END Internals
 	.section .rodata
 empty_string_l:
 	.string ""
@@ -1068,13 +1032,13 @@ empty_string:
 	.quad String_vtable
 	.quad 1
 	.quad empty_string_l
-.string1_l:
-	.string "ERROR: %lld: Exception: dispatch on void"
-.string1:
+.string9_l:
+	.string "\\\\\\\""
+.string9:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string1_l
+	.quad .string9_l
 percentd_string_l:
 	.string "%d"
 percentd_string:
@@ -1082,13 +1046,6 @@ percentd_string:
 	.quad String_vtable
 	.quad 1
 	.quad percentd_string_l
-.string8_l:
-	.string "\\"
-.string8:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string8_l
 percentlld_string_l:
 	.string "%lld"
 percentlld_string:
@@ -1124,20 +1081,20 @@ substrerr_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string0_l
-.string6_l:
-	.string "Hello, world"
-.string6:
+.string2_l:
+	.string "ERROR: %lld: Exception: division by zero\n"
+.string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string6_l
-.string3_l:
-	.string "ERROR: %lld: Exception: case on void"
-.string3:
+	.quad .string2_l
+.string5_l:
+	.string "ERROR: %lld: Exception: case without matching branch\n"
+.string5:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string3_l
+	.quad .string5_l
 percents_string_l:
 	.string "%s"
 percents_string:
@@ -1145,6 +1102,13 @@ percents_string:
 	.quad String_vtable
 	.quad 1
 	.quad percents_string_l
+.string10_l:
+	.string "\\\\n"
+.string10:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string10_l
 name_String_l:
 	.string "String"
 name_String:
@@ -1159,13 +1123,13 @@ name_Int:
 	.quad String_vtable
 	.quad 1
 	.quad name_Int_l
-.string4_l:
-	.string "ERROR: %lld: Exception: stack overflow"
-.string4:
+.string6_l:
+	.string "Hello, world"
+.string6:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string4_l
+	.quad .string6_l
 name_Object_l:
 	.string "Object"
 name_Object:
@@ -1173,13 +1137,20 @@ name_Object:
 	.quad String_vtable
 	.quad 1
 	.quad name_Object_l
-.string5_l:
-	.string "ERROR: %lld: Exception: case without matching branch"
-.string5:
+.string3_l:
+	.string "ERROR: %lld: Exception: case on void\n"
+.string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string5_l
+	.quad .string3_l
+.string4_l:
+	.string "ERROR: %lld: Exception: stack overflow\n"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
 abort_string_l:
 	.string "abort\\n"
 abort_string:
@@ -1187,34 +1158,27 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string10_l:
-	.string "\\n"
-.string10:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string10_l
 .string7_l:
-	.string "\n"
+	.string "\\n"
 .string7:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string7_l
-.string2_l:
-	.string "ERROR: %lld: Exception: division by zero"
-.string2:
+.string8_l:
+	.string "\\\\"
+.string8:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string2_l
-.string9_l:
-	.string "\\\""
-.string9:
+	.quad .string8_l
+.string1_l:
+	.string "ERROR: %lld: Exception: dispatch on void\n"
+.string1:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string9_l
+	.quad .string1_l
 String_vtable:
 	.quad name_String
 	.quad String.new
@@ -1312,9 +1276,7 @@ Main.main:
 	je .Main.main_1
 	movq $4, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_1:
 	movq 8(%rax), %rdx
 	movq 24(%rdx), %rcx
@@ -1330,9 +1292,7 @@ Main.main:
 	je .Main.main_2
 	movq $4, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_2:
 	movq 8(%rax), %rdx
 	movq 32(%rdx), %rcx
@@ -1356,9 +1316,7 @@ Main.main:
 	je .Main.main_3
 	movq $6, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_3:
 	movq 8(%rcx), %rdx
 	movq 48(%rdx), %rax
@@ -1380,9 +1338,7 @@ Main.main:
 	je .Main.main_4
 	movq $7, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_4:
 	movq 8(%rcx), %rdx
 	movq 32(%rdx), %rax
@@ -1419,9 +1375,7 @@ Main.main:
 	je .Main.main_5
 	movq $9, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_5:
 	movq 8(%rcx), %rdx
 	movq 56(%rdx), %rdi
@@ -1445,9 +1399,7 @@ Main.main:
 	je .Main.main_6
 	movq $10, %rsi
 	movq $.string1_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_6:
 	movq 8(%rcx), %rdx
 	movq 24(%rdx), %rax

@@ -786,6 +786,7 @@ String.substr:
 	.cfi_startproc
 	pushq	%rbp
 	movq 	%rsp, %rbp
+	pushq	%rsp
 	pushq	%r14
 	.cfi_def_cfa_offset 16
 	.cfi_offset 14, -16
@@ -859,18 +860,13 @@ String.substr:
 	popq	%rsi
 	popq	%rdi
 	popq	%rbx
-	.cfi_remember_state
-	.cfi_def_cfa_offset 32
 	popq	%r12
-	.cfi_def_cfa_offset 24
 	popq	%r13
-	.cfi_def_cfa_offset 16
 	popq	%r14
-	.cfi_def_cfa_offset 8
-	leave
+	popq	%rsp
+	popq	%rbp
 	ret
 .L70:
-	.cfi_restore_state
 	xorl	%esi, %esi
 	movl	$.LC5, %edi
 	call	out_error
@@ -1027,39 +1023,7 @@ main:
 	ret
 .LFE81:
 	.size	main, .-main
-	.globl	BOOL_TAG
-	.section	.rodata
-	.align 4
-	.type	BOOL_TAG, @object
-	.size	BOOL_TAG, 4
-BOOL_TAG:
-	.long	4
-	.globl	IO_TAG
-	.align 4
-	.type	IO_TAG, @object
-	.size	IO_TAG, 4
-IO_TAG:
-	.long	3
-	.globl	STRING_TAG
-	.align 4
-	.type	STRING_TAG, @object
-	.size	STRING_TAG, 4
-STRING_TAG:
-	.long	2
-	.globl	INT_TAG
-	.align 4
-	.type	INT_TAG, @object
-	.size	INT_TAG, 4
-INT_TAG:
-	.long	1
-	.globl	OBJECT_TAG
-	.align 4
-	.type	OBJECT_TAG, @object
-	.size	OBJECT_TAG, 4
-OBJECT_TAG:
-	.zero	4
-	.ident	"GCC: (Ubuntu 4.8.4-2ubuntu1~14.04.1) 4.8.4"
-	.section	.note.GNU-stack,"",@progbits
+### END Internals
 	.section .rodata
 empty_string_l:
 	.string ""
@@ -1068,13 +1032,6 @@ empty_string:
 	.quad String_vtable
 	.quad 1
 	.quad empty_string_l
-.string1_l:
-	.string "ERROR: %lld: Exception: dispatch on void"
-.string1:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string1_l
 percentd_string_l:
 	.string "%d"
 percentd_string:
@@ -1117,13 +1074,20 @@ substrerr_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string0_l
-.string3_l:
-	.string "ERROR: %lld: Exception: case on void"
-.string3:
+.string2_l:
+	.string "ERROR: %lld: Exception: division by zero\n"
+.string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string3_l
+	.quad .string2_l
+.string5_l:
+	.string "ERROR: %lld: Exception: case without matching branch\n"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
 percents_string_l:
 	.string "%s"
 percents_string:
@@ -1145,13 +1109,6 @@ name_Int:
 	.quad String_vtable
 	.quad 1
 	.quad name_Int_l
-.string4_l:
-	.string "ERROR: %lld: Exception: stack overflow"
-.string4:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string4_l
 name_Object_l:
 	.string "Object"
 name_Object:
@@ -1159,13 +1116,20 @@ name_Object:
 	.quad String_vtable
 	.quad 1
 	.quad name_Object_l
-.string5_l:
-	.string "ERROR: %lld: Exception: case without matching branch"
-.string5:
+.string3_l:
+	.string "ERROR: %lld: Exception: case on void\n"
+.string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string5_l
+	.quad .string3_l
+.string4_l:
+	.string "ERROR: %lld: Exception: stack overflow\n"
+.string4:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string4_l
 abort_string_l:
 	.string "abort\\n"
 abort_string:
@@ -1173,13 +1137,13 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string2_l:
-	.string "ERROR: %lld: Exception: division by zero"
-.string2:
+.string1_l:
+	.string "ERROR: %lld: Exception: dispatch on void\n"
+.string1:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string2_l
+	.quad .string1_l
 String_vtable:
 	.quad name_String
 	.quad String.new
@@ -1312,9 +1276,7 @@ Main.main:
 	je .Main.main_1
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_1:
 	cltq
 	cqto
@@ -1351,9 +1313,7 @@ Main.main:
 	je .Main.main_2
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_2:
 	cltq
 	cqto
@@ -1390,9 +1350,7 @@ Main.main:
 	je .Main.main_3
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_3:
 	cltq
 	cqto
@@ -1418,9 +1376,7 @@ Main.main:
 	je .Main.main_4
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_4:
 	cltq
 	cqto
@@ -1438,9 +1394,7 @@ Main.main:
 	je .Main.main_5
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_5:
 	cltq
 	cqto
@@ -1468,9 +1422,7 @@ Main.main:
 	je .Main.main_6
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_6:
 	cltq
 	cqto
@@ -1491,9 +1443,7 @@ Main.main:
 	je .Main.main_7
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_7:
 	cltq
 	cqto
@@ -1526,9 +1476,7 @@ Main.main:
 	je .Main.main_8
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_8:
 	cltq
 	cqto
@@ -1546,9 +1494,7 @@ Main.main:
 	je .Main.main_9
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_9:
 	cltq
 	cqto
@@ -1591,9 +1537,7 @@ Main.main:
 	je .Main.main_10
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_10:
 	cltq
 	cqto
@@ -1614,9 +1558,7 @@ Main.main:
 	je .Main.main_11
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_11:
 	cltq
 	cqto
@@ -1634,9 +1576,7 @@ Main.main:
 	je .Main.main_12
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_12:
 	cltq
 	cqto
@@ -1662,9 +1602,7 @@ Main.main:
 	je .Main.main_13
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_13:
 	cltq
 	cqto
@@ -1720,9 +1658,7 @@ Main.main:
 	je .Main.main_14
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_14:
 	cltq
 	cqto
@@ -1744,9 +1680,7 @@ Main.main:
 	je .Main.main_15
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_15:
 	cltq
 	cqto
@@ -1778,9 +1712,7 @@ Main.main:
 	je .Main.main_16
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_16:
 	cltq
 	cqto
@@ -1798,9 +1730,7 @@ Main.main:
 	je .Main.main_17
 	movq $3, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_17:
 	cltq
 	cqto
@@ -1853,9 +1783,7 @@ Main.main:
 	je .Main.main_18
 	movq $5, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_18:
 	cltq
 	cqto
@@ -1897,9 +1825,7 @@ Main.main:
 	je .Main.main_19
 	movq $7, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_19:
 	cltq
 	cqto
@@ -1917,9 +1843,7 @@ Main.main:
 	je .Main.main_20
 	movq $7, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_20:
 	cltq
 	cqto
@@ -1941,9 +1865,7 @@ Main.main:
 	je .Main.main_21
 	movq $7, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_21:
 	cltq
 	cqto
@@ -2025,9 +1947,7 @@ Main.main:
 	je .Main.main_22
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_22:
 	cltq
 	cqto
@@ -2048,9 +1968,7 @@ Main.main:
 	je .Main.main_23
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_23:
 	cltq
 	cqto
@@ -2072,9 +1990,7 @@ Main.main:
 	je .Main.main_24
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_24:
 	cltq
 	cqto
@@ -2095,9 +2011,7 @@ Main.main:
 	je .Main.main_25
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_25:
 	cltq
 	cqto
@@ -2123,9 +2037,7 @@ Main.main:
 	je .Main.main_26
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_26:
 	cltq
 	cqto
@@ -2149,9 +2061,7 @@ Main.main:
 	je .Main.main_27
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_27:
 	cltq
 	cqto
@@ -2178,9 +2088,7 @@ Main.main:
 	je .Main.main_28
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_28:
 	cltq
 	cqto
@@ -2198,9 +2106,7 @@ Main.main:
 	je .Main.main_29
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_29:
 	cltq
 	cqto
@@ -2240,9 +2146,7 @@ Main.main:
 	je .Main.main_30
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_30:
 	cltq
 	cqto
@@ -2271,9 +2175,7 @@ Main.main:
 	je .Main.main_31
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_31:
 	cltq
 	cqto
@@ -2291,9 +2193,7 @@ Main.main:
 	je .Main.main_32
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_32:
 	cltq
 	cqto
@@ -2311,9 +2211,7 @@ Main.main:
 	je .Main.main_33
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_33:
 	cltq
 	cqto
@@ -2357,9 +2255,7 @@ Main.main:
 	je .Main.main_34
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_34:
 	cltq
 	cqto
@@ -2393,9 +2289,7 @@ Main.main:
 	je .Main.main_35
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_35:
 	cltq
 	cqto
@@ -2413,9 +2307,7 @@ Main.main:
 	je .Main.main_36
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_36:
 	cltq
 	cqto
@@ -2437,9 +2329,7 @@ Main.main:
 	je .Main.main_37
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_37:
 	cltq
 	cqto
@@ -2492,9 +2382,7 @@ Main.main:
 	je .Main.main_38
 	movq $8, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_38:
 	cltq
 	cqto
@@ -2581,9 +2469,7 @@ Main.main:
 	je .Main.main_39
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_39:
 	cltq
 	cqto
@@ -2609,9 +2495,7 @@ Main.main:
 	je .Main.main_40
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_40:
 	cltq
 	cqto
@@ -2629,9 +2513,7 @@ Main.main:
 	je .Main.main_41
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_41:
 	cltq
 	cqto
@@ -2684,9 +2566,7 @@ Main.main:
 	je .Main.main_42
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_42:
 	cltq
 	cqto
@@ -2720,9 +2600,7 @@ Main.main:
 	je .Main.main_43
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_43:
 	cltq
 	cqto
@@ -2746,9 +2624,7 @@ Main.main:
 	je .Main.main_44
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_44:
 	cltq
 	cqto
@@ -2776,9 +2652,7 @@ Main.main:
 	je .Main.main_45
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_45:
 	cltq
 	cqto
@@ -2796,9 +2670,7 @@ Main.main:
 	je .Main.main_46
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_46:
 	cltq
 	cqto
@@ -2840,9 +2712,7 @@ Main.main:
 	je .Main.main_47
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_47:
 	cltq
 	cqto
@@ -2883,9 +2753,7 @@ Main.main:
 	je .Main.main_48
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_48:
 	cltq
 	cqto
@@ -2903,9 +2771,7 @@ Main.main:
 	je .Main.main_49
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_49:
 	cltq
 	cqto
@@ -2926,9 +2792,7 @@ Main.main:
 	je .Main.main_50
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_50:
 	cltq
 	cqto
@@ -2952,9 +2816,7 @@ Main.main:
 	je .Main.main_51
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_51:
 	cltq
 	cqto
@@ -2984,9 +2846,7 @@ Main.main:
 	je .Main.main_52
 	movq $9, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_52:
 	cltq
 	cqto
@@ -3021,9 +2881,7 @@ Main.main:
 	je .Main.main_53
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_53:
 	cltq
 	cqto
@@ -3067,9 +2925,7 @@ Main.main:
 	je .Main.main_54
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_54:
 	cltq
 	cqto
@@ -3123,9 +2979,7 @@ Main.main:
 	je .Main.main_55
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_55:
 	cltq
 	cqto
@@ -3143,9 +2997,7 @@ Main.main:
 	je .Main.main_56
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_56:
 	cltq
 	cqto
@@ -3174,9 +3026,7 @@ Main.main:
 	je .Main.main_57
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_57:
 	cltq
 	cqto
@@ -3204,9 +3054,7 @@ Main.main:
 	je .Main.main_58
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_58:
 	cltq
 	cqto
@@ -3223,9 +3071,7 @@ Main.main:
 	je .Main.main_59
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_59:
 	cltq
 	cqto
@@ -3250,9 +3096,7 @@ Main.main:
 	je .Main.main_60
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_60:
 	cltq
 	cqto
@@ -3270,9 +3114,7 @@ Main.main:
 	je .Main.main_61
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_61:
 	cltq
 	cqto
@@ -3315,9 +3157,7 @@ Main.main:
 	je .Main.main_62
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_62:
 	cltq
 	cqto
@@ -3340,9 +3180,7 @@ Main.main:
 	je .Main.main_63
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_63:
 	cltq
 	cqto
@@ -3369,9 +3207,7 @@ Main.main:
 	je .Main.main_64
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_64:
 	cltq
 	cqto
@@ -3397,9 +3233,7 @@ Main.main:
 	je .Main.main_65
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_65:
 	cltq
 	cqto
@@ -3432,9 +3266,7 @@ Main.main:
 	je .Main.main_66
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_66:
 	cltq
 	cqto
@@ -3453,9 +3285,7 @@ Main.main:
 	je .Main.main_67
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_67:
 	cltq
 	cqto
@@ -3494,9 +3324,7 @@ Main.main:
 	je .Main.main_68
 	movq $10, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_68:
 	cltq
 	cqto
@@ -3544,9 +3372,7 @@ Main.main:
 	je .Main.main_69
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_69:
 	cltq
 	cqto
@@ -3575,9 +3401,7 @@ Main.main:
 	je .Main.main_70
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_70:
 	cltq
 	cqto
@@ -3599,9 +3423,7 @@ Main.main:
 	je .Main.main_71
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_71:
 	cltq
 	cqto
@@ -3628,9 +3450,7 @@ Main.main:
 	je .Main.main_72
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_72:
 	cltq
 	cqto
@@ -3683,9 +3503,7 @@ Main.main:
 	je .Main.main_73
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_73:
 	cltq
 	cqto
@@ -3723,9 +3541,7 @@ Main.main:
 	je .Main.main_74
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_74:
 	cltq
 	cqto
@@ -3762,9 +3578,7 @@ Main.main:
 	je .Main.main_75
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_75:
 	cltq
 	cqto
@@ -3799,9 +3613,7 @@ Main.main:
 	je .Main.main_76
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_76:
 	cltq
 	cqto
@@ -3838,9 +3650,7 @@ Main.main:
 	je .Main.main_77
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_77:
 	cltq
 	cqto
@@ -3860,9 +3670,7 @@ Main.main:
 	je .Main.main_78
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_78:
 	cltq
 	cqto
@@ -3887,9 +3695,7 @@ Main.main:
 	je .Main.main_79
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_79:
 	cltq
 	cqto
@@ -3918,9 +3724,7 @@ Main.main:
 	je .Main.main_80
 	movq $11, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_80:
 	cltq
 	cqto
@@ -3980,9 +3784,7 @@ Main.main:
 	je .Main.main_81
 	movq $14, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_81:
 	cltq
 	cqto
@@ -4015,9 +3817,7 @@ Main.main:
 	je .Main.main_82
 	movq $15, %rsi
 	movq $.string2_l, %rdi
-	call printf
-	movq $1, %rdi
-	call exit
+	call out_error
 .Main.main_82:
 	cltq
 	cqto

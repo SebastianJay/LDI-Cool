@@ -1187,10 +1187,6 @@ Main_vtable:
 	.quad Object.abort
 	.quad Object.copy
 	.quad Object.type_name
-	.quad IO.in_int
-	.quad IO.in_string
-	.quad IO.out_int
-	.quad IO.out_string
 	.quad Main.main
 	.text 
 	.globl Main.new
@@ -1227,47 +1223,23 @@ Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
-	pushq %rcx
-	pushq %rsi
-	movq 16(%rbp), %rbx
-	movq 8(%rbx), %rdx
-	movq 40(%rdx), %rax
-	pushq %rbx
-	call *%rax
-	addq $8, %rsp
-	movq $3, %rcx
-	movq 24(%rax), %rax
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $0, %rax
+	cmpq $0, %rax
+	movq $0, %rbx
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rbx
+	xorq $1, %rbx
+	cmpq $1, %rbx
 	je .Main.main_1
-	movq $5, %rsi
-	movq $.string2_l, %rdi
+	movq $4, %rsi
+	movq $.string1_l, %rdi
 	call out_error
 .Main.main_1:
-	cltq
-	cqto
-	idivq %rcx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, %rcx
-	call Int.new
-	movq %rcx, 24(%rax)
-	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rcx
+	movq 8(%rax), %rdx
+	movq 40(%rdx), %rbx
 	pushq %rax
-	pushq %rbx
-	call *%rcx
-	addq $16, %rsp
-	movq $22, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	popq %rsi
-	popq %rcx
+	call *%rbx
+	addq $8, %rsp
 	popq %rbx
 	leave
 	ret
