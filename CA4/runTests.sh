@@ -23,27 +23,37 @@ for x in $files; do
     cool --type $x
     
     # Compile and assemble the source
-    err=`python main.py $x-type`
+    python main.py $x-type 2> comperr.tmp
     
-    if [[ $err ]]; then
-	echo 'FAIL, error'
-	echo "$err"
+    if [[ `cat comperr.tmp` ]]; then
+	echo 'FAIL, compiler error'
+	((failCount++))
+	continue
+    fi
+
+    rm comperr.tmp
+    
+    gcc "${x%.cl}.s" 2> comperr.tmp
+    if [[ `cat comperr.tmp` ]]; then
+	echo 'FAIL, assembling error'
 	((failCount++))
 	continue
     fi
     
-    err=`gcc "${x%.cl}.s"`
-    if [[ $err ]]; then
-	echo 'FAIL, compilation error'
-	((failCount++))
-	continue
-    fi
+    rm comperr.tmp
   
     # Run reference compiler and our code, store output for error compare
     comp=`cool $x < in.txt > out2.txt`
     test=`./a.out < in.txt > out1.txt`
+
+    if [[ `cat out1.txt` == *"ERROR:"* ]] && [[ `cat out2.txt` == *"ERROR:"* ]]; then
+	echo "pass, error"
+	rm out2.txt
+	rm out1.txt
+	continue
+    fi
     
-    d=`diff out1.txt out2.txt`
+    d=`diff out2.txt out1.txt`
 
     rm a.out
 
@@ -51,11 +61,11 @@ for x in $files; do
 	echo "pass"
     else
 	echo "FAIL, non-matching output"
-	echo "Reference:"
-	cat out2.txt
+	echo "Output:"
+	echo `cat out1.txt | head -c 1000`
 	echo
-	echo "Ours:"
-	cat out1.txt
+	echo "Expected:"
+	echo `cat out2.txt | head -c 1000`
 	echo
 	((failCount++))
     fi
