@@ -1232,9 +1232,9 @@ Main.main:
 	pushq %rdi
 	movq 16(%rbp), %rbx
 	movq 8(%rbx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rcx
 	pushq %rbx
-	call *%rax
+	call *%rcx
 	addq $8, %rsp
 	movq %rax, %rcx
 	movq %rcx, %rax

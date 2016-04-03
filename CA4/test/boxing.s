@@ -1227,25 +1227,30 @@ Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
-	movq $1, %rbx
+	pushq %rcx
+	movq $1, %rax
+	pushq %rax
 	call Int.new
-	movq %rbx, 24(%rax)
-	cmpq $0, %rax
-	movq $0, %rbx
+	movq %rax, %rbx
+	popq %rax
+	movq %rax, 24(%rbx)
+	cmpq $0, %rbx
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rbx
-	xorq $1, %rbx
-	cmpq $1, %rbx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_1
 	movq $3, %rsi
 	movq $.string1_l, %rdi
 	call out_error
 .Main.main_1:
-	movq 8(%rax), %rdx
-	movq 16(%rdx), %rbx
-	pushq %rax
-	call *%rbx
+	movq 8(%rbx), %rdx
+	movq 16(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
 	addq $8, %rsp
+	popq %rcx
 	popq %rbx
 	leave
 	ret

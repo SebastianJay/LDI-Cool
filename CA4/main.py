@@ -7,7 +7,7 @@ from registerAllocate import registerAllocate
 import asmgen
 import sys
 
-debug = True
+debug = False
 if __name__=="__main__":
 
     #load the cl-type file
@@ -21,6 +21,14 @@ if __name__=="__main__":
     tacgen.attrConvert(ast)
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
+
+    if debug:
+        for x in taclist:
+            print x
+        print '------'
+        cfg = TAC_serialize._constructCFG(taclist)
+        deadcode.globalDeadRemove(cfg)
+        print cfg
 
     asmgen.ASMIndexer.load(cmap,imap,pmap,taclist)
 

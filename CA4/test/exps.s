@@ -1742,20 +1742,19 @@ Main.main:
 	addq %rbx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $34526, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
-	call Int.new
+	movq $34526, %rcx
 	movq %rax, %rbx
-	popq %rax
-	movq %rax, 24(%rbx)
+	movq %rcx, %rax
+	subq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	call Int.new
+	movq %rbx, 24(%rax)
 	movq 8(-16(%rbp)), %rdx
-	movq 56(%rdx), %rax
-	pushq %rbx
+	movq 56(%rdx), %rbx
+	pushq %rax
 	pushq -16(%rbp)
-	call *%rax
+	call *%rbx
 	addq $16, %rsp
 	movq $2730, %rbx
 	call Int.new
@@ -1875,20 +1874,19 @@ Main.main:
 	subq %rbx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $62331, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
-	call Int.new
+	movq $62331, %rcx
 	movq %rax, %rbx
-	popq %rax
-	movq %rax, 24(%rbx)
+	movq %rcx, %rax
+	subq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	call Int.new
+	movq %rbx, 24(%rax)
 	movq 8(-16(%rbp)), %rdx
-	movq 56(%rdx), %rax
-	pushq %rbx
+	movq 56(%rdx), %rbx
+	pushq %rax
 	pushq -16(%rbp)
-	call *%rax
+	call *%rbx
 	addq $16, %rsp
 	movq $9856, %rbx
 	movq $8640, %rax
@@ -2853,21 +2851,17 @@ Main.main:
 	idivq %rbx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	movq -24(%rbp), %rax
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
+	movq -24(%rbp), %rbx
+	subq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
 	call Int.new
-	movq %rax, %rbx
-	popq %rax
-	movq %rax, 24(%rbx)
+	movq %rbx, 24(%rax)
 	movq 8(-16(%rbp)), %rdx
-	movq 56(%rdx), %rax
-	pushq %rbx
+	movq 56(%rdx), %rbx
+	pushq %rax
 	pushq -16(%rbp)
-	call *%rax
+	call *%rbx
 	addq $16, %rsp
 	movq $28968, %rax
 	movq $32079, %rbx
@@ -3731,19 +3725,19 @@ Main.main:
 	idivq %rcx
 	shlq $32, %rbx
 	sarq $32, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
-	call Int.new
+	movq %rbx, %rcx
 	movq %rax, %rbx
-	popq %rax
-	movq %rax, 24(%rbx)
+	movq %rcx, %rax
+	subq %rax, %rbx
+	shlq $32, %rbx
+	sarq $32, %rbx
+	call Int.new
+	movq %rbx, 24(%rax)
 	movq 8(-16(%rbp)), %rdx
-	movq 56(%rdx), %rax
-	pushq %rbx
+	movq 56(%rdx), %rbx
+	pushq %rax
 	pushq -16(%rbp)
-	call *%rax
+	call *%rbx
 	addq $16, %rsp
 	movq $31515, %rax
 	movq %rax, %rbx

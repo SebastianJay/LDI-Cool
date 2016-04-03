@@ -1228,18 +1228,21 @@ Main.main:
 	movq %rsp, %rbp
 	pushq %rbx
 	pushq %rcx
+	pushq %rsi
 	movq 16(%rbp), %rbx
 	movq 8(%rbx), %rdx
-	movq 40(%rdx), %rax
-	pushq %rbx
-	call *%rax
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rcx
-	pushq %rax
+	movq 40(%rdx), %rcx
 	pushq %rbx
 	call *%rcx
+	addq $8, %rsp
+	movq %rax, %rcx
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
+	popq %rsi
 	popq %rcx
 	popq %rbx
 	leave
