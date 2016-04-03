@@ -49,8 +49,6 @@ in_int:
 	pushq	%rbp
 	.cfi_def_cfa_offset 16
 	.cfi_offset 6, -16
-	movl	$1, %esi
-	movl	$4096, %edi
 	pushq	%rbx
 	pushq	%rsi
 	pushq	%rdi
@@ -59,6 +57,8 @@ in_int:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
+	movl	$1, %esi
+	movl	$4096, %edi
 	.cfi_def_cfa_offset 24
 	.cfi_offset 3, -24
 	subq	$24, %rsp
