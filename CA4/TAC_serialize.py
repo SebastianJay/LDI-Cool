@@ -230,7 +230,7 @@ class TACRegister(TACOperand):
     def __str__(self):
         return self.name + ('' if self.boxed else '[unboxed]')
 
-        
+
 class TACClassAttr(TACOperand):
     def __init__(self, reg, cname, aname):
         self.reg = reg
@@ -266,7 +266,8 @@ def _constructCFG(lstins):
             currbb.addInstruction(ins)
             lbbmap[ins.name] = currbb
         elif isinstance(ins, TACJmp) or isinstance(ins, TACBT) or \
-        isinstance(ins, TACReturn):
+        isinstance(ins, TACReturn) or isinstance(ins, TACBTypeEq) or \
+        isinstance(ins, TACError):
             currbb.addInstruction(ins)
             blocks.append(currbb)
             currbb = TACBasicBlock()

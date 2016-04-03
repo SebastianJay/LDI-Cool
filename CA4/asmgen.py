@@ -130,8 +130,6 @@ class ASMIndexer:
         #add literals found in TAC list
         for ins in inslist:
             if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
-                if ins.const in ASMIndexer.strMap:
-                    continue
                 ASMIndexer.strMap[ins.const] = '.string' + str(strind)
                 strind += 1
         #TODO cull list after optimization to remove unused strings

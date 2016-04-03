@@ -5,7 +5,7 @@ import TAC_serialize
 # with some precolored nodes on function returns
 # of form temp => [set of conflicts, color(default to -1)]
 def genRegGraph(cfg):
-    regGraph = {"t0":[set(),0]} # __dead__ for dead function calls
+    regGraph = {"t0":[set(),0]}
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
@@ -115,7 +115,7 @@ def registerAllocate(cfg, nregs):
                     regGraph[k][1] = spillMap[k]
                 else:
                     regGraph[k][1] = -1
-                
+
             # Spill a temp
             nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
             availableSpills = set(range(nregs+1,nregs+maxSpill+2))
