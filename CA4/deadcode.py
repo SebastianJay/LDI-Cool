@@ -24,9 +24,9 @@ def getRead(inst):
     elif isinstance(inst, TACBTypeEq):
         res = [inst.obj]
     # Read register to get attribute
-    elif hasattr(inst, 'assignee'):
+    if hasattr(inst, 'assignee'):
         if isinstance(inst.assignee, TACClassAttr):
-            res = [inst.assignee.reg.name]
+            res.append(inst.assignee.reg)
 
     #unbox operands TODO review
     resu = None
@@ -57,6 +57,7 @@ def getWritten(inst):
         res = inst.assignee
     elif isinstance(inst, TACVTable):
         res = inst.assignee
+
 
     #unbox operand TODO review
     resu = None
