@@ -588,11 +588,19 @@ def funcConvert(cfg, regMap):
                             ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])
                         ]
                 elif ins.ptype == 'Object':
-                    if ins.opcode == '<':
-                        asmlst.append(ASMAssign(realReg(ins.assignee), '$0'))
+                    if realReg(ins.assignee) != '%rax':
+                        asmlst += [
+                            ASMPush('%rax'),
+                            ASMCall('%rax', 'Object.cmp', [realReg(ins.op1), realReg(ins.op2)]),
+                            ASMAssign(realReg(ins.assignee), '%rax'),
+                            ASMPop('%rax'),
+                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])                            
+                        ]
                     else:
-                         asmlst.append(ASMOp(realReg(ins.assignee), '=', 
-                                        [realReg(ins.op1), realReg(ins.op2)]))
+                        asmlst += [
+                            ASMCall('%rax', 'Object.cmp', [realReg(ins.op1), realReg(ins.op2)]),
+                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])
+                        ]
                 else: # Int/Bool
                     asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode,
                                         [realReg(ins.op1), realReg(ins.op2)]))
