@@ -486,7 +486,8 @@ def attrConvert(ast):
         for mattr in attrlst:
             if mattr.init is not None:
                 reg = expConvert(mattr.init)
-                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
+                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name),
+                                             box(reg, mattr.init.type)))
         #return pointer to new object
         TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
         TACIndexer.pop('self')

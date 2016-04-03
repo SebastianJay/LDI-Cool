@@ -1305,6 +1305,7 @@ Foo.new:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
+	pushq %rcx
 	pushq %rsi
 	pushq %rdi
 	pushq %rcx
@@ -1331,7 +1332,13 @@ Foo.new:
 	popq %rax
 	movq %rbx, 24(%rax)
 	movq $0, %rbx
-	movq %rbx, 24(%rax)
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rbx, 24(%rcx)
+	movq %rcx, 24(%rax)
+	popq %rcx
 	popq %rbx
 	leave
 	ret
@@ -1342,6 +1349,7 @@ Bar.new:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
+	pushq %rcx
 	pushq %rsi
 	pushq %rdi
 	pushq %rcx
@@ -1368,7 +1376,13 @@ Bar.new:
 	popq %rax
 	movq %rbx, 24(%rax)
 	movq $0, %rbx
-	movq %rbx, 24(%rax)
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rbx, 24(%rcx)
+	movq %rcx, 24(%rax)
+	popq %rcx
 	popq %rbx
 	leave
 	ret
@@ -1597,13 +1611,13 @@ Main.main:
 	pushq %rcx
 	call *%rdi
 	addq $16, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 80(%rdx), %rdi
-	pushq %rsi
+	movq 80(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rdi
+	call *%rsi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1702,13 +1716,13 @@ Main.main:
 	pushq %rsi
 	call *%rdi
 	addq $8, %rsp
-	movq %rax, %r8
+	movq %rax, %rdi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rdi
-	pushq %r8
+	movq 56(%rdx), %r8
+	pushq %rdi
 	pushq %rbx
-	call *%rdi
+	call *%r8
 	addq $16, %rsp
 	movq $324, %rax
 	pushq %rax
@@ -1871,7 +1885,8 @@ Main.main:
 	pushq %rbx
 	call *%rsi
 	addq $16, %rsp
-	cmpq $0, %rcx
+	movq %rcx, %rax
+	cmpq $0, %rax
 	movq $0, %rax
 	movq $1, %rdx
 	cmoveq %rdx, %rax
@@ -1903,19 +1918,19 @@ Main.main:
 	call out_error
 .Main.main_22:
 	movq $.string8, %rax
-	movq %rax, %rcx
+	movq %rax, %rsi
 	jmp .Main.main_24
 .Main.main_23:
 	movq $.string9, %rax
-	movq %rax, %rcx
+	movq %rax, %rsi
 	jmp .Main.main_24
 .Main.main_24:
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rsi
-	pushq %rcx
+	movq 64(%rdx), %rcx
+	pushq %rsi
 	pushq %rbx
-	call *%rsi
+	call *%rcx
 	addq $16, %rsp
 	popq %r10
 	popq %r9
@@ -2022,10 +2037,9 @@ Foo.setX:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
-	movq 16(%rbp), %rbx
-	movq 24(%rbp), %rax
-	movq %rax, 24(%rbx)
-	movq %rbx, %rax
+	movq 16(%rbp), %rax
+	movq 24(%rbp), %rbx
+	movq %rbx, 24(%rax)
 	popq %rbx
 	leave
 	ret

@@ -1275,6 +1275,7 @@ Foo.new:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
+	pushq %rcx
 	pushq %rsi
 	pushq %rdi
 	pushq %rcx
@@ -1301,7 +1302,13 @@ Foo.new:
 	popq %rax
 	movq %rbx, 24(%rax)
 	movq $1, %rbx
-	movq %rbx, 24(%rax)
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rbx, 24(%rcx)
+	movq %rcx, 24(%rax)
+	popq %rcx
 	popq %rbx
 	leave
 	ret
@@ -1319,7 +1326,8 @@ Main.main:
 	movq 16(%rbp), %rbx
 	call Foo.new
 	movq %rax, %rcx
-	cmpq $0, %rcx
+	movq %rcx, %rax
+	cmpq $0, %rax
 	movq $0, %rax
 	movq $1, %rdx
 	cmoveq %rdx, %rax
@@ -1338,12 +1346,9 @@ Main.main:
 	movq $.string6_l, %rdi
 	call out_error
 .Main.main_2:
-	movq $2, %rax
-	pushq %rax
+	movq $2, %rsi
 	call Int.new
-	movq %rax, %rsi
-	popq %rax
-	movq %rax, 24(%rsi)
+	movq %rsi, 24(%rax)
 	jmp .Main.main_4
 .Main.main_3:
 	movq %rcx, %rsi

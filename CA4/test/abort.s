@@ -1225,6 +1225,7 @@ Main_vtable:
 	.quad IO.out_int
 	.quad IO.out_string
 	.quad Main.main
+	.quad Main.func
 	.text 
 	.globl Main.new
 	.type Main.new, @function
@@ -1263,12 +1264,32 @@ Main.main:
 	pushq %rcx
 	pushq %rsi
 	movq 16(%rbp), %rbx
+	movq $1, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 16(%rdx), %rcx
+	movq 56(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
-	addq $8, %rsp
+	call *%rsi
+	addq $16, %rsp
+	movq $0, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 80(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
 	movq $2, %rax
 	pushq %rax
 	call Int.new
@@ -1288,3 +1309,54 @@ Main.main:
 	leave
 	ret
 	.size Main.main, .-Main.main
+	.globl Main.func
+	.type Main.func, @function
+Main.func:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+	pushq %rsi
+	movq 16(%rbp), %rbx
+	movq $0, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $1, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rbx
+	popq %rax
+	movq %rax, 24(%rbx)
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je .Main.func_1
+	movq $13, %rsi
+	movq $.string1_l, %rdi
+	call out_error
+.Main.func_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 16(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rsi
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size Main.func, .-Main.func
