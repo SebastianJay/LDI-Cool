@@ -22,6 +22,14 @@ if __name__=="__main__":
     tacgen.implConvert(ast)
     taclist = tacgen.TACIndexer.inslst
 
+    if debug:
+        for x in taclist:
+            print x
+        print '------'
+        cfg = TAC_serialize._constructCFG(taclist)
+        deadcode.globalDeadRemove(cfg)
+        print cfg
+
     asmgen.ASMIndexer.load(cmap,imap,pmap,taclist)
 
     # Generate vtables
