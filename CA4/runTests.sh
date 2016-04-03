@@ -40,21 +40,28 @@ for x in $files; do
     fi
   
     # Run reference compiler and our code, store output for error compare
-    comp=`cool $x < in.txt`
-    test=`./a.out < in.txt`
+    comp=`cool $x < in.txt > out2.txt`
+    test=`./a.out < in.txt > out1.txt`
+    
+    d=`diff out1.txt out2.txt`
 
     rm a.out
-    
-    if [[ $comp == $test ]]; then
+
+    if [[ -z $d ]]; then
 	echo "pass"
     else
 	echo "FAIL, non-matching output"
 	echo "Reference:"
-	echo "$comp"
+	cat out1.txt
+	echo
 	echo "Ours:"
-	echo "$test"
+	cat out2.txt
+	echo
 	((failCount++))
     fi
+    
+    rm out1.txt
+    rm out2.txt
 	
     
 done
