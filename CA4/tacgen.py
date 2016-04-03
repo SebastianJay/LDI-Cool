@@ -425,7 +425,9 @@ def methodConvert(node):
         TACIndexer.pop(formal[0].name)
 
     reg = box(reg, node.body.type)
-    TACIndexer.pushIns(TACReturn(reg))
+    retreg = TACIndexer.returnReg
+    TACIndexer.pushIns(TACAssign(retreg, reg))
+    TACIndexer.pushIns(TACReturn(retreg))
 
 def box(reg, type):
     if isinstance(reg, TACRegister) and not reg.boxed:
