@@ -1226,114 +1226,408 @@ Main.new:
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
+	subq $88, %rsp
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
 	pushq %rdi
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
+	pushq %r12
+	pushq %r13
+	pushq %r14
+	pushq %r15
 	movq 16(%rbp), %rbx
-	movq %rbx, %rdx
-	movq 8(%rdx), %rdx
-	movq 40(%rdx), %rcx
-	pushq %rbx
-	call *%rcx
-	addq $8, %rsp
-	movq %rax, %rcx
-	movq %rcx, %rax
-.Main.main_1:
-	movq $5, %rdi
-	movq 24(%rax), %rsi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmovlq %rdx, %rdi
-	movq %rdi, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
-	je .Main.main_2
-	movq $1, %rsi
-	movq 24(%rax), %rax
-	addq %rsi, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
-	call Int.new
-	movq %rax, %rsi
-	popq %rax
-	movq %rax, 24(%rsi)
-	movq %rsi, %rax
-	movq %rbx, %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rax
-	pushq %rbx
-	call *%rsi
-	addq $16, %rsp
-	jmp .Main.main_1
-.Main.main_2:
-	movq %rcx, %rax
-.Main.main_3:
-	movq $5, %rdi
-	movq 24(%rax), %rsi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmovleq %rdx, %rdi
-	movq %rdi, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
-	je .Main.main_4
-	movq $1, %rsi
-	movq 24(%rax), %rax
-	addq %rsi, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	pushq %rax
-	call Int.new
-	movq %rax, %rsi
-	popq %rax
-	movq %rax, 24(%rsi)
-	movq %rsi, %rax
-	movq %rbx, %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rax
-	pushq %rbx
-	call *%rsi
-	addq $16, %rsp
-	jmp .Main.main_3
-.Main.main_4:
-	movq %rcx, %rax
-.Main.main_5:
-	movq $5, %rsi
-	movq 24(%rax), %rcx
-	cmpq %rsi, %rcx
-	movq $0, %rsi
-	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	movq %rsi, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_6
 	movq $1, %rcx
-	movq 24(%rax), %rax
-	addq %rcx, %rax
+	call Int.new
+	movq %rcx, 24(%rax)
+	movq %rax, %rcx
+	movq $2, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rsi
+	popq %rax
+	movq %rax, 24(%rsi)
+	movq $3, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rdi
+	popq %rax
+	movq %rax, 24(%rdi)
+	movq $4, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %r8
+	popq %rax
+	movq %rax, 24(%r8)
+	movq $5, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %r9
+	popq %rax
+	movq %rax, 24(%r9)
+	movq $6, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %r10
+	popq %rax
+	movq %rax, 24(%r10)
+	movq $7, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %r11
+	popq %rax
+	movq %rax, 24(%r11)
+	movq $8, %r12
+	call Int.new
+	movq %r12, 24(%rax)
+	movq %rax, %r12
+	movq $9, %r13
+	call Int.new
+	movq %r13, 24(%rax)
+	movq %rax, %r13
+	movq $10, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %r14
+	popq %rax
+	movq %rax, 24(%r14)
+	movq $11, %r15
+	call Int.new
+	movq %r15, 24(%rax)
+	movq %rax, %r15
+	movq $12, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, -8(%rbp)
+	popq %rax
+	movq -8(%rbp), %rdx
+	movq %rax, 24(%rdx)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	movq $13, -16(%rbp)
+	call Int.new
+	movq -16(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -16(%rbp)
+	movq $14, -24(%rbp)
+	call Int.new
+	movq -24(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -24(%rbp)
+	movq $15, -32(%rbp)
+	call Int.new
+	movq -32(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -32(%rbp)
+	movq $16, -40(%rbp)
+	call Int.new
+	movq -40(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -40(%rbp)
+	movq $17, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, -48(%rbp)
+	popq %rax
+	movq -48(%rbp), %rdx
+	movq %rax, 24(%rdx)
+	movq -48(%rbp), %rdx
+	movq %rdx, -48(%rbp)
+	movq $18, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, -56(%rbp)
+	popq %rax
+	movq -56(%rbp), %rdx
+	movq %rax, 24(%rdx)
+	movq -56(%rbp), %rdx
+	movq %rdx, -56(%rbp)
+	movq $19, -64(%rbp)
+	call Int.new
+	movq -64(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -64(%rbp)
+	movq $20, -72(%rbp)
+	call Int.new
+	movq -72(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -72(%rbp)
+	movq 24(%rcx), %rdx
+	movq %rdx, -80(%rbp)
+	movq 24(%rsi), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq 24(%rdi), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -80(%rbp)
+	movq 24(%r8), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq 24(%r9), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq 24(%r10), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq 24(%r11), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -80(%rbp)
+	movq 24(%r12), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq 24(%r13), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -80(%rbp)
+	movq 24(%r14), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq 24(%r15), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq -8(%rbp), %rdx
+	movq 24(%rdx), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq -16(%rbp), %rdx
+	movq 24(%rdx), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rdx
+	movq %rdx, -80(%rbp)
+	movq -24(%rbp), %rdx
+	movq 24(%rdx), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq -32(%rbp), %rdx
+	movq 24(%rdx), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -40(%rbp), %rdx
+	movq 24(%rdx), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -80(%rbp)
+	movq -48(%rbp), %rdx
+	movq 24(%rdx), %rax
+	addq %rax, -80(%rbp)
+	shlq $32, -80(%rbp)
+	sarq $32, -80(%rbp)
+	movq -80(%rbp), %rax
+	movq -64(%rbp), %rdx
+	movq 24(%rdx), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -72(%rbp), %rdx
+	movq 24(%rdx), %rdx
+	movq %rdx, -80(%rbp)
+	addq -80(%rbp), %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rcx
+	movq %rax, -80(%rbp)
 	popq %rax
-	movq %rax, 24(%rcx)
-	movq %rcx, %rax
+	movq -80(%rbp), %rdx
+	movq %rax, 24(%rdx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rdx
+	movq %rdx, -88(%rbp)
+	pushq -80(%rbp)
+	pushq %rbx
+	call *-88(%rbp)
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rdx
+	movq %rdx, -80(%rbp)
+	pushq %rcx
+	pushq %rbx
+	call *-80(%rbp)
+	addq $16, %rsp
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rcx
-	pushq %rax
+	pushq %rsi
 	pushq %rbx
 	call *%rcx
 	addq $16, %rsp
-	jmp .Main.main_5
-.Main.main_6:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %rdi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r8
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r9
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r10
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r11
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r12
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r13
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r14
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq %r15
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -8(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -16(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -24(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -32(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -40(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -48(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -56(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -64(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rcx
+	pushq -72(%rbp)
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	popq %r15
+	popq %r14
+	popq %r13
+	popq %r12
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
 	popq %rdi
 	popq %rsi
 	popq %rcx

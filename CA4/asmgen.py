@@ -426,7 +426,8 @@ class ASMCall(ASMControl):
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
         return asm
     def __str__(self):
-        if self.funcname in registers:
+        #if function is in register or memory, use *
+        if self.funcname in registers or ('(' in self.funcname and ')' in self.funcname):
             return 'call *' + self.funcname
         else:
             return 'call ' + self.funcname
@@ -526,17 +527,20 @@ def funcConvert(cfg, regMap):
         if isinstance(operand, TACRegister):
             vreg = operand.name
             if regMap[vreg] not in cRegMap:
-                return '-' + str(8*(regMap[vreg]-len(cRegMap)+1)) + '('+rbp+')'
+                return offsetStr(-8*(regMap[vreg]-len(cRegMap)+1), rbp)
             return cRegMap[regMap[vreg]]
         elif isinstance(operand, TACClassAttr):
             vreg = operand.reg.name
-            #TODO handle class attr reg (i.e. "self" var) being in memory (i.e. need double memory lookup)
-            #  possible solution: in registerAllocate, force #self method arg to be in real register
-            return str(8 * ASMIndexer.attrOffset[operand.cname][operand.aname])\
-                +'('+ cRegMap[regMap[vreg]] +')'
+            #NOTE to handle class attr reg (i.e. "self", or Int/Bool "val") being in memory (i.e. needing double memory lookup)
+            # this helper method directly modifies asmlst! Need to review correctness
+            if regMap[vreg] not in cRegMap:
+                asmlst.append(ASMAssign('%rdx', offsetStr(-8*(regMap[vreg]-len(cRegMap)+1), rbp)))
+                rreg = '%rdx'
+            else:
+                rreg = cRegMap[regMap[vreg]]
+            return offsetStr(8 * ASMIndexer.attrOffset[operand.cname][operand.aname], rreg)
         elif isinstance(operand, TACMethodArg):
-            return str(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2))+'('+rbp+')'
-
+            return offsetStr(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2), rbp)
 
     inslst = cfg.toList()
 
@@ -699,7 +703,10 @@ def convert(taclist):
         globalDeadRemove(cfg)
         # print cfg
         # print '-----'
-        regmap = registerAllocate(cfg,13)
+
+        #regmap = registerAllocate(cfg,13)
+        regmap = registerAllocate(cfg,0)        #stopgap until registerAllocate is fixed
+
         asmlist += funcConvert(cfg, regmap)
 
     return asmlist

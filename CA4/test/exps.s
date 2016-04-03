@@ -1233,7 +1233,7 @@ Main.new:
 Main.main:
 	pushq %rbp
 	movq %rsp, %rbp
-	subq $40, %rsp
+	subq $32, %rsp
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
@@ -1246,40 +1246,36 @@ Main.main:
 	pushq %r13
 	pushq %r14
 	pushq %r15
-	movq 16(%rbp), %rdx
-	movq %rdx, -16(%rbp)
-	movq $34533, %rbx
-	movq $48880, %rax
-	imulq %rax
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rax
-	movq $50538, %rcx
-	movq $12757, %rbx
-	imulq %rbx
+	movq 16(%rbp), %rbx
+	movq $34533, %rax
+	movq $48880, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq $50538, %rax
+	movq $12757, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %rcx
 	shlq $32, %rcx
 	sarq $32, %rcx
-	movq %rcx, %rbx
-	movq %rax, -24(%rbp)
-	movq %rbx, %rax
-	subq %rax, -24(%rbp)
-	shlq $32, -24(%rbp)
-	sarq $32, -24(%rbp)
 	movq $46509, %rax
-	movq %rax, -32(%rbp)
-	negq -32(%rbp)
-	shlq $32, -32(%rbp)
-	sarq $32, -32(%rbp)
-	movq $3306, -40(%rbp)
+	movq %rax, %rsi
+	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq $3306, %rdi
 	movq $61695, %rax
-	movq $50213, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $50213, %r8
+	movq $0, %r9
+	cmpq %r9, %r8
+	movq $0, %r9
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %r9
+	xorq $1, %r9
+	cmpq $1, %r9
 	je .Main.main_1
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1287,36 +1283,37 @@ Main.main:
 .Main.main_1:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %r8
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $8423, %rbx
-	movq $34498, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $56453, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $60575, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $53667, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq %rax, %r8
+	movq $8423, %rax
+	movq $34498, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $56453, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $60575, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $53667, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_2
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1324,36 +1321,36 @@ Main.main:
 .Main.main_2:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $60858, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $2438, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $60858, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2438, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_3
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1361,25 +1358,30 @@ Main.main:
 .Main.main_3:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $34422, %rbx
-	subq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $18841, %rbx
-	movq $54759, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $34422, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $18841, %rax
+	movq $54759, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_4
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1387,17 +1389,17 @@ Main.main:
 .Main.main_4:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $17815, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $17815, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_5
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1405,27 +1407,27 @@ Main.main:
 .Main.main_5:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $58210, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $28379, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $58210, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $28379, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_6
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1433,20 +1435,20 @@ Main.main:
 .Main.main_6:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $12660, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $12660, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_7
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1454,32 +1456,37 @@ Main.main:
 .Main.main_7:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $19369, %rbx
-	addq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $55318, %rbx
-	subq %rbx, %rax
+	movq $19369, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $48608, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $3828, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $55318, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $48608, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $3828, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_8
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1487,17 +1494,17 @@ Main.main:
 .Main.main_8:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $2739, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2739, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_9
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1505,42 +1512,48 @@ Main.main:
 .Main.main_9:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	addq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $8340, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	addq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $45807, %rbx
-	subq %rbx, %rax
+	movq $8340, %r8
+	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $29181, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	addq %rbx, %rax
+	movq $45807, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $51233, %rbx
-	movq $33158, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $29181, %r8
+	movq %r8, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $51233, %rax
+	movq $33158, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_10
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1548,20 +1561,20 @@ Main.main:
 .Main.main_10:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $47308, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $47308, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_11
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1569,17 +1582,17 @@ Main.main:
 .Main.main_11:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $229, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $229, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_12
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1587,25 +1600,25 @@ Main.main:
 .Main.main_12:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $25241, %rbx
-	movq $13257, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $840, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $25241, %rax
+	movq $13257, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $840, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_13
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1613,55 +1626,57 @@ Main.main:
 .Main.main_13:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $62420, %rcx
-	movq $31735, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	subq %rbx, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $62420, %rax
+	movq $31735, %r9
+	imulq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $17376, %rbx
-	movq %rbx, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $9569, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	subq %rbx, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $17376, %rax
+	negq %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $54460, %rbx
-	addq %rbx, %rax
+	movq $9569, %r9
+	imulq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $28260, %rbx
-	subq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $18310, %rbx
-	subq %rbx, %rax
+	movq $54460, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $14379, %rbx
-	movq $61731, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $28260, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $18310, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $14379, %rax
+	movq $61731, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_14
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1669,21 +1684,21 @@ Main.main:
 .Main.main_14:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $20908, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $59714, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $20908, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $59714, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_15
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1691,31 +1706,34 @@ Main.main:
 .Main.main_15:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $5456, %rbx
-	subq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $5456, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	negq %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq -40(%rbp), %rbx
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -32(%rbp), %rax
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	subq %rax, %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_16
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1723,17 +1741,17 @@ Main.main:
 .Main.main_16:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $46032, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $46032, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_17
 	movq $3, %rsi
 	movq $.string2_l, %rdi
@@ -1741,69 +1759,73 @@ Main.main:
 .Main.main_17:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	movq -24(%rbp), %rax
-	addq %rbx, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	movq $34526, %rcx
-	movq %rax, %rbx
-	movq %rcx, %rax
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
+	subq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
 	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
+	movq 56(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
-	movq $2730, %rbx
+	movq $.string6, %rsi
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq $2730, %rax
+	pushq %rax
 	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
+	movq $.string6, %rcx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $13765, %rbx
-	movq $5137, %rax
-	imulq %rax
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rax
-	movq $3850, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $13765, %rax
+	movq $5137, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $3850, %rcx
+	movq $0, %rsi
+	cmpq %rsi, %rcx
+	movq $0, %rsi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rsi
+	xorq $1, %rsi
+	cmpq $1, %rsi
 	je .Main.main_18
 	movq $7, %rsi
 	movq $.string2_l, %rdi
@@ -1811,59 +1833,64 @@ Main.main:
 .Main.main_18:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
 	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
+	movq 56(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
-	movq $21018, %rbx
+	movq $.string6, %rsi
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq $21018, %rax
+	pushq %rax
 	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
+	movq $.string6, %rcx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $16210, %rax
-	movq $23599, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $8997, %rbx
-	movq $30996, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $16210, %rcx
+	movq $23599, %rax
+	subq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
+	movq $8997, %rax
+	movq $30996, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_19
 	movq $11, %rsi
 	movq $.string2_l, %rdi
@@ -1871,17 +1898,17 @@ Main.main:
 .Main.main_19:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $27231, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $27231, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_20
 	movq $11, %rsi
 	movq $.string2_l, %rdi
@@ -1889,21 +1916,21 @@ Main.main:
 .Main.main_20:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $15755, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $23071, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $15755, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $23071, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_21
 	movq $11, %rsi
 	movq $.string2_l, %rdi
@@ -1911,89 +1938,93 @@ Main.main:
 .Main.main_21:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $62331, %rbx
-	subq %rbx, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	subq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $62331, %rcx
+	subq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rbx
+	movq %rax, %rcx
 	popq %rax
-	movq %rax, 24(%rbx)
-	movq -16(%rbp), %rdx
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rax
+	movq 56(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
+	movq $.string6, %rsi
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
+	movq 64(%rdx), %rcx
+	pushq %rsi
 	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
+	call *%rcx
 	addq $16, %rsp
 	movq $9856, %rax
-	movq $8640, %rbx
-	imulq %rbx
+	movq $8640, %rcx
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $11282, %rcx
-	movq $39523, %rbx
-	imulq %rbx
+	movq %rax, %rcx
+	movq $11282, %rax
+	movq $39523, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %rcx
 	shlq $32, %rcx
 	sarq $32, %rcx
-	movq %rcx, %rbx
-	movq %rax, -24(%rbp)
-	movq %rbx, %rax
-	addq %rax, -24(%rbp)
-	shlq $32, -24(%rbp)
-	sarq $32, -24(%rbp)
-	movq $57869, -32(%rbp)
+	movq $57869, %rsi
 	movq $49695, %rax
-	movq $13131, %rbx
-	addq %rbx, %rax
+	movq $13131, %rdi
+	addq %rdi, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $18119, %rbx
-	movq %rax, -40(%rbp)
-	movq %rbx, %rax
-	subq %rax, -40(%rbp)
-	shlq $32, -40(%rbp)
-	sarq $32, -40(%rbp)
+	movq $18119, %r8
+	movq %rax, %rdi
+	movq %r8, %rax
+	subq %rax, %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
 	movq $14461, %rax
-	movq $15505, %rbx
-	addq %rbx, %rax
+	movq $15505, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $33976, %rbx
-	addq %rbx, %rax
+	movq $33976, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $36010, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $16029, %rbx
-	movq $19302, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $36010, %r8
+	movq %r8, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $16029, %rax
+	movq $19302, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_22
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2001,20 +2032,20 @@ Main.main:
 .Main.main_22:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $39267, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $39267, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_23
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2022,21 +2053,21 @@ Main.main:
 .Main.main_23:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $3175, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $19020, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $3175, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $19020, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_24
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2044,20 +2075,20 @@ Main.main:
 .Main.main_24:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $16420, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $16420, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_25
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2065,27 +2096,25 @@ Main.main:
 .Main.main_25:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rcx
-	movq $53595, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $43617, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	movq $55348, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $53595, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $43617, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $55348, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_26
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2093,21 +2122,21 @@ Main.main:
 .Main.main_26:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $8271, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $63080, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $8271, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $63080, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_27
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2115,26 +2144,31 @@ Main.main:
 .Main.main_27:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $50998, %rbx
-	addq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $25947, %rbx
-	movq $22130, %rcx
-	movq $60913, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
+	movq $50998, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $25947, %r9
+	movq $22130, %rax
+	movq $60913, %r10
+	movq $0, %r11
+	cmpq %r11, %r10
+	movq $0, %r11
 	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
+	cmoveq %rdx, %r11
+	xorq $1, %r11
+	cmpq $1, %r11
 	je .Main.main_28
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2142,17 +2176,17 @@ Main.main:
 .Main.main_28:
 	cltq
 	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $6550, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
+	idivq %r10
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $6550, %r10
+	movq $0, %r11
+	cmpq %r11, %r10
+	movq $0, %r11
 	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
+	cmoveq %rdx, %r11
+	xorq $1, %r11
+	cmpq $1, %r11
 	je .Main.main_29
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2160,39 +2194,43 @@ Main.main:
 .Main.main_29:
 	cltq
 	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $29011, %rsi
-	subq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $43604, %rsi
-	addq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $46874, %rsi
-	addq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $29252, %rsi
-	negq %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	addq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $25351, %rsi
-	subq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r10
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $29011, %r10
+	subq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $43604, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $46874, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $29252, %r10
+	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $25351, %r11
+	movq %rax, %r10
+	movq %r11, %rax
+	subq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq %r9, %rax
+	movq %r10, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_30
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2200,30 +2238,28 @@ Main.main:
 .Main.main_30:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rcx
-	movq $36212, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	addq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $30605, %rbx
-	movq $35043, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $36212, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $30605, %rax
+	movq $35043, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_31
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2231,17 +2267,17 @@ Main.main:
 .Main.main_31:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $63562, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $63562, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_32
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2249,17 +2285,17 @@ Main.main:
 .Main.main_32:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $14901, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $14901, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_33
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2267,42 +2303,41 @@ Main.main:
 .Main.main_33:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $46154, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $53085, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $24923, %rcx
-	imulq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	addq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $20995, %rcx
-	movq $47127, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	addq %rbx, %rax
+	movq $46154, %r9
+	imulq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $53587, %rbx
-	movq $6934, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $53085, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $24923, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $20995, %rax
+	movq $47127, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $53587, %rax
+	movq $6934, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_34
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2310,34 +2345,33 @@ Main.main:
 .Main.main_34:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $23915, %rcx
-	movq $63399, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $52290, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	addq %rbx, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $23915, %rax
+	movq $63399, %r9
+	imulq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $52486, %rbx
-	movq $20968, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	movq $52290, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $52486, %rax
+	movq $20968, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_35
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2345,17 +2379,17 @@ Main.main:
 .Main.main_35:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $37473, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $37473, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_36
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2363,21 +2397,21 @@ Main.main:
 .Main.main_36:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $14802, %rbx
-	movq $39506, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $14802, %rax
+	movq $39506, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_37
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2385,52 +2419,61 @@ Main.main:
 .Main.main_37:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	subq %rbx, %rax
+	idivq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $33866, %rbx
-	subq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $16693, %rcx
-	movq $2211, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	addq %rbx, %rax
+	movq $33866, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $16693, %rax
+	movq $2211, %r9
+	imulq %r9
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $30018, %rbx
-	subq %rbx, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	addq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $20384, %rbx
-	imulq %rbx
+	movq $30018, %r8
+	subq %r8, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	movq -40(%rbp), %rax
-	addq %rbx, %rax
+	movq $20384, %r8
+	imulq %r8
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $25036, %rcx
-	movq %rax, %rbx
-	movq %rcx, %rax
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq -32(%rbp), %rax
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq %rax, %r8
+	movq %rdi, %rax
+	movq %r8, %rdi
+	addq %rdi, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $25036, %r8
+	movq %rax, %rdi
+	movq %r8, %rax
+	subq %rax, %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_38
 	movq $13, %rsi
 	movq $.string2_l, %rdi
@@ -2438,95 +2481,98 @@ Main.main:
 .Main.main_38:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	movq -24(%rbp), %rax
-	addq %rbx, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	movq $38737, %rcx
-	movq %rax, %rbx
-	movq %rcx, %rax
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
+	subq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	pushq %rax
 	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
+	movq $.string6, %rcx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
 	movq $19322, %rax
-	movq $38661, %rbx
-	imulq %rbx
+	movq $38661, %rcx
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $21514, %rbx
-	imulq %rbx
+	movq $21514, %rcx
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, -24(%rbp)
-	movq $604, -32(%rbp)
-	movq $21813, %rax
-	movq $25099, %rbx
-	movq $52033, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $34320, %rcx
-	movq $25316, %rdi
-	movq $8214, %rsi
-	imulq %rsi
-	shlq $32, %rdi
-	sarq $32, %rdi
-	movq %rdi, %rsi
-	movq $22802, %rdi
-	addq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $5660, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $10478, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $10464, %rdi
-	movq $32716, %r8
-	movq $49288, %r9
-	movq $5606, %r10
+	movq %rax, %rcx
+	movq $604, %rsi
+	movq $21813, %rdi
+	movq $25099, %r8
+	movq $52033, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $34320, %r9
+	movq $25316, %rax
+	movq $8214, %r10
 	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $2985, %r10
-	negq %r10
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $22802, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $5660, %r10
+	subq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $10478, %r11
+	movq %rax, %r10
+	movq %r11, %rax
+	subq %rax, %r10
 	shlq $32, %r10
 	sarq $32, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $59495, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
+	movq $10464, %r11
+	movq $32716, %r12
+	movq $49288, %rax
+	movq $5606, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2985, %r13
+	negq %r13
+	shlq $32, %r13
+	sarq $32, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $59495, %r13
+	movq $0, %r14
+	cmpq %r14, %r13
+	movq $0, %r14
 	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
+	cmoveq %rdx, %r14
+	xorq $1, %r14
+	cmpq $1, %r14
 	je .Main.main_39
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2534,25 +2580,30 @@ Main.main:
 .Main.main_39:
 	cltq
 	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $60127, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $63664, %r9
-	movq $60238, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
+	idivq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r13
+	movq %r12, %rax
+	movq %r13, %r12
+	addq %r12, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $60127, %r13
+	movq %rax, %r12
+	movq %r13, %rax
+	addq %rax, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq $63664, %rax
+	movq $60238, %r13
+	movq $0, %r14
+	cmpq %r14, %r13
+	movq $0, %r14
 	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
+	cmoveq %rdx, %r14
+	xorq $1, %r14
+	cmpq $1, %r14
 	je .Main.main_40
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2560,17 +2611,17 @@ Main.main:
 .Main.main_40:
 	cltq
 	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $28227, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
+	idivq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $28227, %r13
+	movq $0, %r14
+	cmpq %r14, %r13
+	movq $0, %r14
 	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
+	cmoveq %rdx, %r14
+	xorq $1, %r14
+	cmpq $1, %r14
 	je .Main.main_41
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2578,52 +2629,58 @@ Main.main:
 .Main.main_41:
 	cltq
 	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $7429, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $50691, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	subq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $5411, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $18444, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $48391, %r10
-	negq %r10
-	shlq $32, %r10
-	sarq $32, %r10
-	movq $58688, %r11
-	movq $0, %r12
-	cmpq %r12, %r11
-	movq $0, %r12
+	idivq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq $7429, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $50691, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r13
+	movq %r12, %rax
+	movq %r13, %r12
+	subq %r12, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $5411, %r13
+	movq %rax, %r12
+	movq %r13, %rax
+	addq %rax, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq $18444, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r13
+	negq %r13
+	shlq $32, %r13
+	sarq $32, %r13
+	movq $48391, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $58688, %r14
+	movq $0, %r15
+	cmpq %r15, %r14
+	movq $0, %r15
 	movq $1, %rdx
-	cmoveq %rdx, %r12
-	xorq $1, %r12
-	cmpq $1, %r12
+	cmoveq %rdx, %r15
+	xorq $1, %r15
+	cmpq $1, %r15
 	je .Main.main_42
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2631,31 +2688,34 @@ Main.main:
 .Main.main_42:
 	cltq
 	cqto
-	idivq %r11
-	shlq $32, %r10
-	sarq $32, %r10
-	negq %r10
-	shlq $32, %r10
-	sarq $32, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $8738, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $36519, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $27940, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
+	idivq %r14
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r14
+	negq %r14
+	shlq $32, %r14
+	sarq $32, %r14
+	movq %r13, %rax
+	movq %r14, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $8738, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $36519, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $27940, %r13
+	movq $0, %r14
+	cmpq %r14, %r13
+	movq $0, %r14
 	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
+	cmoveq %rdx, %r14
+	xorq $1, %r14
+	cmpq $1, %r14
 	je .Main.main_43
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2663,23 +2723,30 @@ Main.main:
 .Main.main_43:
 	cltq
 	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	subq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $50929, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
+	idivq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r13
+	movq %r12, %rax
+	movq %r13, %r12
+	subq %r12, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $50929, %r13
+	movq %rax, %r12
+	movq %r13, %rax
+	addq %rax, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq %r11, %rax
+	movq %r12, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
 	je .Main.main_44
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2687,25 +2754,25 @@ Main.main:
 .Main.main_44:
 	cltq
 	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	movq $47963, %r8
-	imulq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $15735, %rdi
-	movq $932, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $47963, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $15735, %rax
+	movq $932, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
 	je .Main.main_45
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2713,17 +2780,17 @@ Main.main:
 .Main.main_45:
 	cltq
 	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	movq $27409, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $27409, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
 	je .Main.main_46
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2731,41 +2798,50 @@ Main.main:
 .Main.main_46:
 	cltq
 	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	addq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $35237, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $53642, %r8
-	movq $21521, %rdi
-	imulq %rdi
-	shlq $32, %r8
-	sarq $32, %r8
-	movq %r8, %rdi
-	addq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $53181, %rdi
-	addq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $24320, %rdi
-	movq $3520, %r8
-	negq %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r11
+	movq %r10, %rax
+	movq %r11, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $35237, %r11
+	movq %rax, %r10
+	movq %r11, %rax
+	subq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $53642, %rax
+	movq $21521, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r11
+	movq %r10, %rax
+	movq %r11, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $53181, %r11
+	movq %rax, %r10
+	movq %r11, %rax
+	addq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $24320, %rax
+	movq $3520, %r11
+	negq %r11
+	shlq $32, %r11
+	sarq $32, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
 	je .Main.main_47
 	movq $15, %rsi
 	movq $.string2_l, %rdi
@@ -2773,571 +2849,37 @@ Main.main:
 .Main.main_47:
 	cltq
 	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	addq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $40488, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $58419, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	imulq %rbx
+	idivq %r11
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $17975, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_48
-	movq $15, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_48:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $43856, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_49
-	movq $15, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_49:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $52306, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_50
-	movq $15, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_50:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, %rbx
-	movq $55626, %rax
-	imulq %rax
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rax
-	movq $11513, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_51
-	movq $15, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_51:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, %rbx
-	movq -32(%rbp), %rax
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $41765, %rbx
-	subq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $39037, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_52
-	movq $15, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_52:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq -24(%rbp), %rbx
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $28968, %rax
-	movq $32079, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
-	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
-	je .Main.main_53
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_53:
-	cltq
-	cqto
-	idivq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, -24(%rbp)
-	movq $64947, %rax
-	movq %rax, -32(%rbp)
-	negq -32(%rbp)
-	shlq $32, -32(%rbp)
-	sarq $32, -32(%rbp)
-	movq $38220, %rax
-	movq $48887, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $7493, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $26972, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $62150, %rsi
-	negq %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $30797, %rdi
-	movq $3233, %r8
-	movq $26083, %r9
-	movq $56556, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
-	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
-	je .Main.main_54
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_54:
-	cltq
-	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $55273, %r10
-	movq $38801, %r11
-	movq %r11, %r12
-	negq %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $17979, %r11
-	imulq %r11
-	shlq $32, %r12
-	sarq $32, %r12
-	movq %r12, %r11
-	movq $14356, %r12
-	subq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $61208, %r12
-	negq %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	subq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $25185, %r12
-	addq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $47041, %r12
-	negq %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $65097, %r13
-	imulq %r13
-	shlq $32, %r12
-	sarq $32, %r12
-	addq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $5880, %r12
-	movq $12843, %r13
-	movq $0, %r14
-	cmpq %r14, %r13
-	movq $0, %r14
-	movq $1, %rdx
-	cmoveq %rdx, %r14
-	xorq $1, %r14
-	cmpq $1, %r14
-	je .Main.main_55
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_55:
-	cltq
-	cqto
-	idivq %r13
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $38600, %r13
-	movq $0, %r14
-	cmpq %r14, %r13
-	movq $0, %r14
-	movq $1, %rdx
-	cmoveq %rdx, %r14
-	xorq $1, %r14
-	cmpq $1, %r14
-	je .Main.main_56
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_56:
-	cltq
-	cqto
-	idivq %r13
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $25834, %r13
-	imulq %r13
-	shlq $32, %r12
-	sarq $32, %r12
-	subq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $47353, %r12
-	negq %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $2951, %r13
-	movq $0, %r14
-	cmpq %r14, %r13
-	movq $0, %r14
-	movq $1, %rdx
-	cmoveq %rdx, %r14
-	xorq $1, %r14
-	cmpq $1, %r14
-	je .Main.main_57
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_57:
-	cltq
-	cqto
-	idivq %r13
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $63252, %r13
-	subq %r13, %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $35037, %r13
-	movq $56918, %r14
-	movq $55662, %r15
-	movq $0, -8(%rbp)
-	pushq %rax
-	movq -8(%rbp), %rax
-	cmpq -8(%rbp), %r15
-	movq $0, %rax
-	movq $1, %rdx
-	cmoveq %rdx, %rax
-	movq %rax, -8(%rbp)
-	popq %rax
-	xorq $1, -8(%rbp)
-	cmpq $1, -8(%rbp)
-	je .Main.main_58
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_58:
-	cltq
-	cqto
-	idivq %r15
-	shlq $32, %r14
-	sarq $32, %r14
-	movq $0, %r15
-	cmpq %r15, %r14
-	movq $0, %r15
-	movq $1, %rdx
-	cmoveq %rdx, %r15
-	xorq $1, %r15
-	cmpq $1, %r15
-	je .Main.main_59
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_59:
-	cltq
-	cqto
-	idivq %r14
-	shlq $32, %r13
-	sarq $32, %r13
-	addq %r13, %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	movq $15079, %r13
-	negq %r13
-	shlq $32, %r13
-	sarq $32, %r13
-	movq $64582, %r14
-	movq $0, %r15
-	cmpq %r15, %r14
-	movq $0, %r15
-	movq $1, %rdx
-	cmoveq %rdx, %r15
-	xorq $1, %r15
-	cmpq $1, %r15
-	je .Main.main_60
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_60:
-	cltq
-	cqto
-	idivq %r14
-	shlq $32, %r13
-	sarq $32, %r13
-	movq $7741, %r14
-	movq $0, %r15
-	cmpq %r15, %r14
-	movq $0, %r15
-	movq $1, %rdx
-	cmoveq %rdx, %r15
-	xorq $1, %r15
-	cmpq $1, %r15
-	je .Main.main_61
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_61:
-	cltq
-	cqto
-	idivq %r14
-	shlq $32, %r13
-	sarq $32, %r13
-	addq %r13, %r12
-	shlq $32, %r12
-	sarq $32, %r12
-	addq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	movq $18422, %r12
-	subq %r12, %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	negq %r11
-	shlq $32, %r11
-	sarq $32, %r11
-	subq %r11, %r10
+	addq %rax, %r10
 	shlq $32, %r10
 	sarq $32, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	subq %r9, %r8
+	movq %r9, %rax
+	movq %r10, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r8
 	shlq $32, %r8
 	sarq $32, %r8
-	imulq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	movq $2469, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
-	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
-	je .Main.main_62
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_62:
-	cltq
-	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	negq %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_63
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_63:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $37073, %rcx
-	movq $6195, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $29789, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_64
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_64:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $20509, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $48672, %rcx
-	movq $3326, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_65
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_65:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $6765, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $15487, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $55049, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $57936, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_66
-	movq $17, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_66:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $1317, %rsi
-	movq $47218, %rdi
+	movq $40488, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $58419, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq %rdi, %rax
+	movq %r8, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $17975, %rdi
 	movq $0, %r8
 	cmpq %r8, %rdi
 	movq $0, %r8
@@ -3345,6 +2887,630 @@ Main.main:
 	cmoveq %rdx, %r8
 	xorq $1, %r8
 	cmpq $1, %r8
+	je .Main.main_48
+	movq $15, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_48:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $43856, %rdi
+	movq $0, %r8
+	cmpq %r8, %rdi
+	movq $0, %r8
+	movq $1, %rdx
+	cmoveq %rdx, %r8
+	xorq $1, %r8
+	cmpq $1, %r8
+	je .Main.main_49
+	movq $15, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_49:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $52306, %rdi
+	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	movq $0, %r8
+	cmpq %r8, %rdi
+	movq $0, %r8
+	movq $1, %rdx
+	cmoveq %rdx, %r8
+	xorq $1, %r8
+	cmpq $1, %r8
+	je .Main.main_50
+	movq $15, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_50:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $55626, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $11513, %rdi
+	movq $0, %r8
+	cmpq %r8, %rdi
+	movq $0, %r8
+	movq $1, %rdx
+	cmoveq %rdx, %r8
+	xorq $1, %r8
+	cmpq $1, %r8
+	je .Main.main_51
+	movq $15, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_51:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
+	subq %rsi, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $41765, %rsi
+	subq %rsi, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $39037, %rsi
+	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
+	movq $1, %rdx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
+	je .Main.main_52
+	movq $15, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_52:
+	cltq
+	cqto
+	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	subq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $.string6, %rcx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $28968, %rax
+	movq $32079, %rcx
+	movq $0, %rsi
+	cmpq %rsi, %rcx
+	movq $0, %rsi
+	movq $1, %rdx
+	cmoveq %rdx, %rsi
+	xorq $1, %rsi
+	cmpq $1, %rsi
+	je .Main.main_53
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_53:
+	cltq
+	cqto
+	idivq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rcx
+	movq $64947, %rax
+	movq %rax, %rsi
+	negq %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq $38220, %rdi
+	movq $48887, %rax
+	movq %rax, %r8
+	negq %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $7493, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $26972, %rax
+	movq %rax, %r9
+	negq %r9
+	shlq $32, %r9
+	sarq $32, %r9
+	movq $62150, %rax
+	movq %rax, %r10
+	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $30797, %r11
+	movq $3233, %r12
+	movq $26083, %rax
+	movq $56556, %r13
+	movq $0, %r14
+	cmpq %r14, %r13
+	movq $0, %r14
+	movq $1, %rdx
+	cmoveq %rdx, %r14
+	xorq $1, %r14
+	cmpq $1, %r14
+	je .Main.main_54
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_54:
+	cltq
+	cqto
+	idivq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r13
+	movq $55273, %r14
+	movq $38801, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $17979, %r15
+	imulq %r15
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $14356, %r15
+	subq %r15, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $61208, %r15
+	negq %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	subq %r15, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $25185, -8(%rbp)
+	movq %rax, %r15
+	movq -8(%rbp), %rax
+	addq %rax, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq $47041, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $65097, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	imulq -8(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq $5880, %rax
+	movq $12843, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	movq $0, -16(%rbp)
+	movq -8(%rbp), %rdx
+	pushq %rax
+	movq -16(%rbp), %rax
+	cmpq -16(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -16(%rbp)
+	popq %rax
+	xorq $1, -16(%rbp)
+	cmpq $1, -16(%rbp)
+	je .Main.main_55
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_55:
+	cltq
+	cqto
+	idivq -8(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $38600, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	movq $0, -16(%rbp)
+	movq -8(%rbp), %rdx
+	pushq %rax
+	movq -16(%rbp), %rax
+	cmpq -16(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -16(%rbp)
+	popq %rax
+	xorq $1, -16(%rbp)
+	cmpq $1, -16(%rbp)
+	je .Main.main_56
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_56:
+	cltq
+	cqto
+	idivq -8(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $25834, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	imulq -8(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq $47353, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2951, -8(%rbp)
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	movq $0, -16(%rbp)
+	movq -8(%rbp), %rdx
+	pushq %rax
+	movq -16(%rbp), %rax
+	cmpq -16(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -16(%rbp)
+	popq %rax
+	xorq $1, -16(%rbp)
+	cmpq $1, -16(%rbp)
+	je .Main.main_57
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_57:
+	cltq
+	cqto
+	idivq -8(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -8(%rbp)
+	movq $63252, %rax
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	subq %rax, -8(%rbp)
+	shlq $32, -8(%rbp)
+	sarq $32, -8(%rbp)
+	movq $35037, -16(%rbp)
+	movq $56918, %rax
+	movq $55662, -24(%rbp)
+	movq -24(%rbp), %rdx
+	movq %rdx, -24(%rbp)
+	movq $0, -32(%rbp)
+	movq -24(%rbp), %rdx
+	pushq %rax
+	movq -32(%rbp), %rax
+	cmpq -32(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -32(%rbp)
+	popq %rax
+	xorq $1, -32(%rbp)
+	cmpq $1, -32(%rbp)
+	je .Main.main_58
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_58:
+	cltq
+	cqto
+	idivq -24(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -24(%rbp)
+	movq -16(%rbp), %rax
+	movq -24(%rbp), %rdx
+	movq %rdx, -16(%rbp)
+	movq $0, -24(%rbp)
+	movq -16(%rbp), %rdx
+	pushq %rax
+	movq -24(%rbp), %rax
+	cmpq -24(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -24(%rbp)
+	popq %rax
+	xorq $1, -24(%rbp)
+	cmpq $1, -24(%rbp)
+	je .Main.main_59
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_59:
+	cltq
+	cqto
+	idivq -16(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -8(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	addq %rax, -8(%rbp)
+	shlq $32, -8(%rbp)
+	sarq $32, -8(%rbp)
+	movq $15079, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $64582, -16(%rbp)
+	movq -16(%rbp), %rdx
+	movq %rdx, -16(%rbp)
+	movq $0, -24(%rbp)
+	movq -16(%rbp), %rdx
+	pushq %rax
+	movq -24(%rbp), %rax
+	cmpq -24(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -24(%rbp)
+	popq %rax
+	xorq $1, -24(%rbp)
+	cmpq $1, -24(%rbp)
+	je .Main.main_60
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_60:
+	cltq
+	cqto
+	idivq -16(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $7741, -16(%rbp)
+	movq -16(%rbp), %rdx
+	movq %rdx, -16(%rbp)
+	movq $0, -24(%rbp)
+	movq -16(%rbp), %rdx
+	pushq %rax
+	movq -24(%rbp), %rax
+	cmpq -24(%rbp), %rdx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	movq %rax, -24(%rbp)
+	popq %rax
+	xorq $1, -24(%rbp)
+	cmpq $1, -24(%rbp)
+	je .Main.main_61
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_61:
+	cltq
+	cqto
+	idivq -16(%rbp)
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -16(%rbp)
+	movq -8(%rbp), %rax
+	movq -16(%rbp), %rdx
+	movq %rdx, -8(%rbp)
+	addq -8(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq $18422, %rax
+	subq %rax, %r15
+	shlq $32, %r15
+	sarq $32, %r15
+	movq %r15, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r14
+	shlq $32, %r14
+	sarq $32, %r14
+	movq %r13, %rax
+	movq %r14, %r13
+	imulq %r13
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r12
+	shlq $32, %r12
+	sarq $32, %r12
+	movq %r11, %rax
+	movq %r12, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2469, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
+	movq $1, %rdx
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
+	je .Main.main_62
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_62:
+	cltq
+	cqto
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	negq %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq %r9, %rax
+	movq %r10, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
+	je .Main.main_63
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_63:
+	cltq
+	cqto
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $37073, %rax
+	movq $6195, %r9
+	imulq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $29789, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
+	je .Main.main_64
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_64:
+	cltq
+	cqto
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $20509, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $48672, %rax
+	movq $3326, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
+	je .Main.main_65
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_65:
+	cltq
+	cqto
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $6765, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $15487, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $55049, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $57936, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
+	je .Main.main_66
+	movq $17, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_66:
+	cltq
+	cqto
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r9
+	movq $1317, %rax
+	movq $47218, %r10
+	movq $0, %r11
+	cmpq %r11, %r10
+	movq $0, %r11
+	movq $1, %rdx
+	cmoveq %rdx, %r11
+	xorq $1, %r11
+	cmpq $1, %r11
 	je .Main.main_67
 	movq $17, %rsi
 	movq $.string2_l, %rdi
@@ -3352,38 +3518,42 @@ Main.main:
 .Main.main_67:
 	cltq
 	cqto
-	idivq %rdi
+	idivq %r10
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r10
+	movq %r9, %rax
+	movq %r10, %r9
+	addq %r9, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq %rdi, %rax
+	movq %r8, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $27399, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
-	addq %rsi, %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	imulq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $27399, %rbx
-	imulq %rbx
-	shlq $32, %rax
-	sarq $32, %rax
-	movq -32(%rbp), %rbx
-	addq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rax
+	movq %rsi, %rax
 	negq %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $30631, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $30631, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
 	je .Main.main_68
 	movq $17, %rsi
 	movq $.string2_l, %rdi
@@ -3391,37 +3561,38 @@ Main.main:
 .Main.main_68:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $13076, %rbx
-	imulq %rbx
+	movq $13076, %rsi
+	imulq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	movq -24(%rbp), %rax
-	subq %rbx, %rax
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	subq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rbx
+	movq %rax, %rcx
 	popq %rax
-	movq %rax, 24(%rbx)
-	movq -16(%rbp), %rdx
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rax
+	movq 56(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
+	movq $.string6, %rcx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
 	movq $48557, %rax
 	negq %rax
@@ -3433,14 +3604,14 @@ Main.main:
 	negq %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $38915, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $38915, %rcx
+	movq $0, %rsi
+	cmpq %rsi, %rcx
+	movq $0, %rsi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rsi
+	xorq $1, %rsi
+	cmpq $1, %rsi
 	je .Main.main_69
 	movq $19, %rsi
 	movq $.string2_l, %rdi
@@ -3448,122 +3619,21 @@ Main.main:
 .Main.main_69:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $6821, %rbx
-	movq $45379, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $48457, %rcx
-	movq $18781, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $47988, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_70
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_70:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $41455, %rcx
-	movq $64464, %rsi
-	movq $0, %rdi
-	cmpq %rdi, %rsi
-	movq $0, %rdi
-	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
-	je .Main.main_71
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_71:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $49119, %rsi
-	movq $40570, %rdi
-	subq %rdi, %rsi
+	movq %rax, %rcx
+	movq $6821, %rsi
+	movq $45379, %rax
+	subq %rax, %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
-	movq $28147, %rdi
-	negq %rdi
-	shlq $32, %rdi
-	sarq $32, %rdi
-	movq $15714, %r8
-	movq $0, %r9
-	cmpq %r9, %r8
-	movq $0, %r9
-	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
-	je .Main.main_72
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_72:
-	cltq
-	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	movq $10809, %rdi
-	subq %rdi, %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $48118, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $20470, %rsi
-	negq %rsi
-	shlq $32, %rsi
-	sarq $32, %rsi
-	imulq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $50347, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $1202, %rsi
-	movq $51824, %rdi
-	negq %rdi
-	shlq $32, %rdi
-	sarq $32, %rdi
+	movq $48457, %rax
+	movq $18781, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $47988, %rdi
 	movq $0, %r8
 	cmpq %r8, %rdi
 	movq $0, %r8
@@ -3571,143 +3641,108 @@ Main.main:
 	cmoveq %rdx, %r8
 	xorq $1, %r8
 	cmpq $1, %r8
-	je .Main.main_73
+	je .Main.main_70
 	movq $19, %rsi
 	movq $.string2_l, %rdi
 	call out_error
-.Main.main_73:
+.Main.main_70:
 	cltq
 	cqto
 	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
-	movq $33161, %rdi
-	subq %rdi, %rsi
+	movq $41455, %rax
+	movq $64464, %rdi
+	movq $0, %r8
+	cmpq %r8, %rdi
+	movq $0, %r8
+	movq $1, %rdx
+	cmoveq %rdx, %r8
+	xorq $1, %r8
+	cmpq $1, %r8
+	je .Main.main_71
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_71:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rdi
+	movq $49119, %r8
+	movq $40570, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $28147, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $15714, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
+	je .Main.main_72
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_72:
+	cltq
+	cqto
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r9
+	movq %r8, %rax
+	movq %r9, %r8
+	subq %r8, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $10809, %r9
+	movq %rax, %r8
+	movq %r9, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq %rdi, %rax
+	movq %r8, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
-	movq $18429, %rdi
-	movq $52820, %r8
-	movq $38686, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $8022, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $33788, %r10
-	negq %r10
-	shlq $32, %r10
-	sarq $32, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
-	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
-	je .Main.main_74
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_74:
-	cltq
-	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $17594, %r9
-	subq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $15798, %r9
-	subq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $62723, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $63899, %r9
-	movq $18189, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
-	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
-	je .Main.main_75
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_75:
-	cltq
-	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $60159, %r9
-	negq %r9
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $1357, %r11
-	movq $9886, %r10
-	imulq %r10
-	shlq $32, %r11
-	sarq $32, %r11
-	movq %r11, %r10
-	movq $27696, %r11
-	imulq %r11
-	shlq $32, %r10
-	sarq $32, %r10
-	movq $0, %r11
-	cmpq %r11, %r10
-	movq $0, %r11
-	movq $1, %rdx
-	cmoveq %rdx, %r11
-	xorq $1, %r11
-	cmpq $1, %r11
-	je .Main.main_76
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_76:
-	cltq
-	cqto
-	idivq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	subq %r9, %r8
-	shlq $32, %r8
-	sarq $32, %r8
-	movq $61569, %r10
-	movq $2562, %r9
-	imulq %r9
-	shlq $32, %r10
-	sarq $32, %r10
-	movq %r10, %r9
-	movq $38208, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	movq $19892, %r10
-	imulq %r10
-	shlq $32, %r9
-	sarq $32, %r9
-	addq %r9, %r8
+	movq $48118, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $20470, %rdi
+	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	imulq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %rsi
+	shlq $32, %rsi
+	sarq $32, %rsi
+	movq $50347, %rax
+	movq %rax, %rdi
+	negq %rdi
+	shlq $32, %rdi
+	sarq $32, %rdi
+	movq $1202, %rax
+	movq $51824, %r8
+	negq %r8
 	shlq $32, %r8
 	sarq $32, %r8
 	movq $0, %r9
@@ -3717,6 +3752,163 @@ Main.main:
 	cmoveq %rdx, %r9
 	xorq $1, %r9
 	cmpq $1, %r9
+	je .Main.main_73
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_73:
+	cltq
+	cqto
+	idivq %r8
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r8
+	movq $33161, %rax
+	subq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq $18429, %r9
+	movq $52820, %r10
+	movq $38686, %rax
+	addq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $8022, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $33788, %r11
+	negq %r11
+	shlq $32, %r11
+	sarq $32, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
+	movq $1, %rdx
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
+	je .Main.main_74
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_74:
+	cltq
+	cqto
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r11
+	movq %r10, %rax
+	movq %r11, %r10
+	addq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $17594, %r10
+	subq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $15798, %r10
+	subq %r10, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $62723, %r10
+	movq %r10, %r11
+	negq %r11
+	shlq $32, %r11
+	sarq $32, %r11
+	movq %rax, %r10
+	movq %r11, %rax
+	addq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $63899, %rax
+	movq $18189, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
+	movq $1, %rdx
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
+	je .Main.main_75
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_75:
+	cltq
+	cqto
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $60159, %rax
+	movq %rax, %r11
+	negq %r11
+	shlq $32, %r11
+	sarq $32, %r11
+	movq $1357, %rax
+	movq $9886, %r12
+	imulq %r12
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $27696, %r12
+	imulq %r12
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %r12
+	movq %r11, %rax
+	movq %r12, %r11
+	movq $0, %r12
+	cmpq %r12, %r11
+	movq $0, %r12
+	movq $1, %rdx
+	cmoveq %rdx, %r12
+	xorq $1, %r12
+	cmpq $1, %r12
+	je .Main.main_76
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_76:
+	cltq
+	cqto
+	idivq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	subq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq $61569, %rax
+	movq $2562, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $38208, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $19892, %r11
+	imulq %r11
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r10
+	shlq $32, %r10
+	sarq $32, %r10
+	movq %r9, %rax
+	movq %r10, %r9
+	movq $0, %r10
+	cmpq %r10, %r9
+	movq $0, %r10
+	movq $1, %rdx
+	cmoveq %rdx, %r10
+	xorq $1, %r10
+	cmpq $1, %r10
 	je .Main.main_77
 	movq $19, %rsi
 	movq $.string2_l, %rdi
@@ -3724,10 +3916,69 @@ Main.main:
 .Main.main_77:
 	cltq
 	cqto
-	idivq %r8
-	shlq $32, %rdi
-	sarq $32, %rdi
-	addq %rdi, %rsi
+	idivq %r9
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %r8
+	shlq $32, %r8
+	sarq $32, %r8
+	movq %rdi, %rax
+	movq %r8, %rdi
+	movq $0, %r8
+	cmpq %r8, %rdi
+	movq $0, %r8
+	movq $1, %rdx
+	cmoveq %rdx, %r8
+	xorq $1, %r8
+	cmpq $1, %r8
+	je .Main.main_78
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_78:
+	cltq
+	cqto
+	idivq %rdi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, %rdi
+	movq %rsi, %rax
+	movq %rdi, %rsi
+	addq %rsi, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $14546, %rsi
+	subq %rsi, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $49411, %rsi
+	movq $0, %rdi
+	cmpq %rdi, %rsi
+	movq $0, %rdi
+	movq $1, %rdx
+	cmoveq %rdx, %rdi
+	xorq $1, %rdi
+	cmpq $1, %rdi
+	je .Main.main_79
+	movq $19, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_79:
+	cltq
+	cqto
+	idivq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	addq %rax, %rcx
+	shlq $32, %rcx
+	sarq $32, %rcx
+	movq $9508, %rax
+	movq $60323, %rsi
+	imulq %rsi
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $7258, %rsi
+	negq %rsi
 	shlq $32, %rsi
 	sarq $32, %rsi
 	movq $0, %rdi
@@ -3737,61 +3988,6 @@ Main.main:
 	cmoveq %rdx, %rdi
 	xorq $1, %rdi
 	cmpq $1, %rdi
-	je .Main.main_78
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_78:
-	cltq
-	cqto
-	idivq %rsi
-	shlq $32, %rcx
-	sarq $32, %rcx
-	addq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $14546, %rcx
-	subq %rcx, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq $49411, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
-	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
-	je .Main.main_79
-	movq $19, %rsi
-	movq $.string2_l, %rdi
-	call out_error
-.Main.main_79:
-	cltq
-	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	addq %rbx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq $9508, %rcx
-	movq $60323, %rbx
-	imulq %rbx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq %rcx, %rbx
-	movq $7258, %rcx
-	negq %rcx
-	shlq $32, %rcx
-	sarq $32, %rcx
-	movq $0, %rsi
-	cmpq %rsi, %rcx
-	movq $0, %rsi
-	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
 	je .Main.main_80
 	movq $19, %rsi
 	movq $.string2_l, %rdi
@@ -3799,85 +3995,93 @@ Main.main:
 .Main.main_80:
 	cltq
 	cqto
-	idivq %rcx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	movq %rbx, %rcx
-	movq %rax, %rbx
-	movq %rcx, %rax
-	subq %rax, %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
-	addq $16, %rsp
-	movq $31515, %rax
-	movq %rax, %rbx
-	negq %rbx
-	shlq $32, %rbx
-	sarq $32, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
-	addq $16, %rsp
-	movq $51549, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
-	addq $16, %rsp
-	movq $.string6, %rbx
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rax
-	pushq %rbx
-	pushq -16(%rbp)
-	call *%rax
-	addq $16, %rsp
-	movq $2147483647, %rax
-	movq $2, %rbx
-	imulq %rbx
+	idivq %rsi
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $2, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq %rax, %rsi
+	movq %rcx, %rax
+	movq %rsi, %rcx
+	subq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $.string6, %rsi
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq $31515, %rax
+	negq %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $.string6, %rsi
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq $51549, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	movq $.string6, %rsi
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
+	pushq %rbx
+	call *%rcx
+	addq $16, %rsp
+	movq $2147483647, %rax
+	movq $2, %rcx
+	imulq %rcx
+	shlq $32, %rax
+	sarq $32, %rax
+	movq $2, %rcx
+	movq $0, %rsi
+	cmpq %rsi, %rcx
+	movq $0, %rsi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rsi
+	xorq $1, %rsi
+	cmpq $1, %rsi
 	je .Main.main_81
 	movq $25, %rsi
 	movq $.string2_l, %rdi
@@ -3885,40 +4089,42 @@ Main.main:
 .Main.main_81:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
+	pushq %rax
 	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
-	movq $.string6, %rax
-	movq -16(%rbp), %rdx
+	movq $.string6, %rcx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
-	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
 	movq $1073741824, %rax
-	movq $4, %rbx
-	imulq %rbx
+	movq $4, %rcx
+	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq $2, %rbx
-	movq $0, %rcx
-	cmpq %rcx, %rbx
-	movq $0, %rcx
+	movq $2, %rcx
+	movq $0, %rsi
+	cmpq %rsi, %rcx
+	movq $0, %rsi
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rsi
+	xorq $1, %rsi
+	cmpq $1, %rsi
 	je .Main.main_82
 	movq $27, %rsi
 	movq $.string2_l, %rdi
@@ -3926,18 +4132,20 @@ Main.main:
 .Main.main_82:
 	cltq
 	cqto
-	idivq %rbx
+	idivq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rbx
-	call Int.new
-	movq %rbx, 24(%rax)
-	movq -16(%rbp), %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
 	pushq %rax
-	pushq -16(%rbp)
-	call *%rbx
+	call Int.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 56(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
 	popq %r15
 	popq %r14

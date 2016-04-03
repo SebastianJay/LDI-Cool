@@ -261,7 +261,6 @@ def expConvert(node):
             attreg = TACIndexer.reg()
             TACIndexer.pushIns(TACAssign(attreg, regr1))
             regr1 = attreg
-        
 
         op1 = TACIndexer.reg()
         op2 = TACIndexer.reg()
@@ -275,7 +274,7 @@ def expConvert(node):
             TACIndexer.pushIns(TACAssign(op2, TACClassAttr(regr1, 'Int', 'val')))
         else:
             TACIndexer.pushIns(TACAssign(op2, regr1))
-            
+
         op1.boxed = False
         op2.boxed = False
 
