@@ -1107,20 +1107,20 @@ substrerr_string:
 	.quad String_vtable
 	.quad 1
 	.quad .string0_l
-.string2_l:
+.string3_l:
 	.string "ERROR: %lld: Exception: division by zero\n"
-.string2:
+.string3:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string2_l
-.string5_l:
+	.quad .string3_l
+.string6_l:
 	.string "ERROR: %lld: Exception: case without matching branch\n"
-.string5:
+.string6:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string5_l
+	.quad .string6_l
 percents_string_l:
 	.string "%s"
 percents_string:
@@ -1128,6 +1128,13 @@ percents_string:
 	.quad String_vtable
 	.quad 1
 	.quad percents_string_l
+.string1_l:
+	.string "Foo"
+.string1:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string1_l
 name_String_l:
 	.string "String"
 name_String:
@@ -1149,20 +1156,20 @@ name_Object:
 	.quad String_vtable
 	.quad 1
 	.quad name_Object_l
-.string3_l:
-	.string "ERROR: %lld: Exception: case on void\n"
-.string3:
-	.quad 3
-	.quad String_vtable
-	.quad 1
-	.quad .string3_l
 .string4_l:
-	.string "ERROR: %lld: Exception: stack overflow\n"
+	.string "ERROR: %lld: Exception: case on void\n"
 .string4:
 	.quad 3
 	.quad String_vtable
 	.quad 1
 	.quad .string4_l
+.string5_l:
+	.string "ERROR: %lld: Exception: stack overflow\n"
+.string5:
+	.quad 3
+	.quad String_vtable
+	.quad 1
+	.quad .string5_l
 abort_string_l:
 	.string "abort\\n"
 abort_string:
@@ -1170,13 +1177,21 @@ abort_string:
 	.quad String_vtable
 	.quad 1
 	.quad abort_string_l
-.string1_l:
+.string2_l:
 	.string "ERROR: %lld: Exception: dispatch on void\n"
-.string1:
+.string2:
 	.quad 3
 	.quad String_vtable
 	.quad 1
-	.quad .string1_l
+	.quad .string2_l
+Foo_vtable:
+	.quad .string1
+	.quad Foo.new
+	.quad Object.abort
+	.quad Object.copy
+	.quad Object.type_name
+	.quad Foo.set
+	.quad Foo.get
 String_vtable:
 	.quad name_String
 	.quad String.new
@@ -1254,6 +1269,43 @@ Main.new:
 	leave
 	ret
 	.size Main.new, .-Main.new
+	.globl Foo.new
+	.type Foo.new, @function
+Foo.new:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rsi
+	pushq %rdi
+	pushq %rcx
+	pushq %r8
+	pushq %r9
+	pushq %r10
+	pushq %r11
+	movq $8, %rsi
+	movq $4, %rdi
+	call calloc
+	popq %r11
+	popq %r10
+	popq %r9
+	popq %r8
+	popq %rcx
+	popq %rdi
+	popq %rsi
+	movq $11, (%rax)
+	movq $Foo_vtable, 8(%rax)
+	movq $1, 16(%rax)
+	pushq %rax
+	call Int.new
+	movq %rax, %rbx
+	popq %rax
+	movq %rbx, 24(%rax)
+	movq $1, %rbx
+	movq %rbx, 24(%rax)
+	popq %rbx
+	leave
+	ret
+	.size Foo.new, .-Foo.new
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1262,43 +1314,83 @@ Main.main:
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
+	pushq %rdi
+	pushq %r8
 	movq 16(%rbp), %rbx
-	movq $0, %rcx
-	call Int.new
-	movq %rcx, 24(%rax)
-	cmpq $0, %rax
-	movq $0, %rcx
+	call Foo.new
+	movq %rax, %rcx
+	cmpq $0, %rcx
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_1
-	movq $3, %rsi
-	movq $.string3_l, %rdi
+	movq $5, %rsi
+	movq $.string4_l, %rdi
 	call out_error
 .Main.main_1:
-	cmpq $1, 0(%rax)
+	cmpq $1, 0(%rcx)
+	je .Main.main_2
+	cmpq $11, 0(%rcx)
 	je .Main.main_3
-	cmpq $0, 0(%rax)
-	je .Main.main_2
-	cmpq $3, 0(%rax)
-	je .Main.main_2
-	cmpq $10, 0(%rax)
-	je .Main.main_2
-	cmpq $2, 0(%rax)
-	je .Main.main_2
-	cmpq $4, 0(%rax)
-	je .Main.main_2
-	movq $3, %rsi
-	movq $.string5_l, %rdi
+	movq $5, %rsi
+	movq $.string6_l, %rdi
 	call out_error
 .Main.main_2:
 	movq $2, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rcx
+	movq %rax, %rsi
 	popq %rax
-	movq %rax, 24(%rcx)
+	movq %rax, 24(%rsi)
+	jmp .Main.main_4
+.Main.main_3:
+	movq %rcx, %rsi
+	movq $3, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, %rdi
+	popq %rax
+	movq %rax, 24(%rdi)
+	cmpq $0, %rsi
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je .Main.main_5
+	movq $7, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_5:
+	movq %rsi, %rdx
+	movq 8(%rdx), %rdx
+	movq 40(%rdx), %r8
+	pushq %rdi
+	pushq %rsi
+	call *%r8
+	addq $16, %rsp
+	jmp .Main.main_4
+.Main.main_4:
+	cmpq $0, %rcx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je .Main.main_6
+	movq $9, %rsi
+	movq $.string2_l, %rdi
+	call out_error
+.Main.main_6:
+	movq %rcx, %rdx
+	movq 8(%rdx), %rdx
+	movq 48(%rdx), %rsi
+	pushq %rcx
+	call *%rsi
+	addq $8, %rsp
+	movq %rax, %rcx
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
@@ -1306,21 +1398,35 @@ Main.main:
 	pushq %rbx
 	call *%rsi
 	addq $16, %rsp
-	jmp .Main.main_4
-.Main.main_3:
-	movq %rax, %rsi
-	movq %rbx, %rdx
-	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rcx
-	pushq %rsi
-	pushq %rbx
-	call *%rcx
-	addq $16, %rsp
-	jmp .Main.main_4
-.Main.main_4:
+	popq %r8
+	popq %rdi
 	popq %rsi
 	popq %rcx
 	popq %rbx
 	leave
 	ret
 	.size Main.main, .-Main.main
+	.globl Foo.set
+	.type Foo.set, @function
+Foo.set:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	movq 16(%rbp), %rbx
+	movq 24(%rbp), %rax
+	movq %rax, 24(%rbx)
+	movq 24(%rbx), %rax
+	popq %rbx
+	leave
+	ret
+	.size Foo.set, .-Foo.set
+	.globl Foo.get
+	.type Foo.get, @function
+Foo.get:
+	pushq %rbp
+	movq %rsp, %rbp
+	movq 16(%rbp), %rax
+	movq 24(%rax), %rax
+	leave
+	ret
+	.size Foo.get, .-Foo.get
