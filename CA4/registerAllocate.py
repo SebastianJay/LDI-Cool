@@ -35,6 +35,8 @@ def genRegGraph(cfg):
                 if t == '':
                     print inst
                 regGraph[t][0] |= {r for r in live if r != t}
+                if isinstance(inst, TAC_serialize.TACCall):
+                    regGraph[t][0].add('t0')
 
             # Allocate accumulator to return val of a function
             #TODO review TACClassAttr - probably change tacgen so that it never shows up here

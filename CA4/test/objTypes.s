@@ -1351,6 +1351,7 @@ Main.main:
 	pushq %rdi
 	pushq %r8
 	pushq %r9
+	pushq %r10
 	movq 16(%rbp), %rbx
 	movq $2, %rax
 	pushq %rax
@@ -1360,25 +1361,28 @@ Main.main:
 	movq %rax, 24(%rcx)
 	call Foo.new
 	movq %rax, %rcx
-	movq $3, %rsi
+	movq $3, %rax
+	pushq %rax
 	call Int.new
-	movq %rsi, 24(%rax)
+	movq %rax, %rsi
+	popq %rax
+	movq %rax, 24(%rsi)
 	cmpq $0, %rcx
-	movq $0, %rsi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_1
 	movq $4, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_1:
 	movq 8(%rcx), %rdx
-	movq 48(%rdx), %rsi
-	pushq %rax
+	movq 48(%rdx), %rdi
+	pushq %rsi
 	pushq %rcx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1392,15 +1396,16 @@ Main.main:
 	call out_error
 .Main.main_2:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rax
-	pushq %rbx
 	call *%rsi
+	addq $8, %rsp
+	movq %rax, %rsi
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rdi
+	pushq %rsi
+	pushq %rbx
+	call *%rdi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1414,26 +1419,27 @@ Main.main:
 	call out_error
 .Main.main_3:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
+	movq %rax, %rsi
 	cmpq $0, %rcx
-	movq $0, %rsi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_4
 	movq $6, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_4:
 	movq 8(%rcx), %rdx
-	movq 48(%rdx), %rsi
-	pushq %rax
+	movq 48(%rdx), %rdi
+	pushq %rsi
 	pushq %rcx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1447,22 +1453,22 @@ Main.main:
 	call out_error
 .Main.main_5:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rax
+	movq 80(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1476,75 +1482,81 @@ Main.main:
 	call out_error
 .Main.main_6:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
-	movq $12, %rsi
+	movq $12, %rax
+	pushq %rax
 	call Int.new
-	movq %rsi, 24(%rax)
+	movq %rax, %rsi
+	popq %rax
+	movq %rax, 24(%rsi)
 	cmpq $0, %rcx
-	movq $0, %rsi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_7
 	movq $10, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_7:
 	movq 8(%rcx), %rdx
-	movq 48(%rdx), %rsi
-	pushq %rax
+	movq 48(%rdx), %rdi
+	pushq %rsi
 	pushq %rcx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
-	cmpq $0, %rax
-	movq $0, %rsi
+	movq %rax, %rsi
+	cmpq $0, %rsi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_8
 	movq $10, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_8:
-	movq 8(%rax), %rdx
-	movq 40(%rdx), %rsi
-	pushq %rax
-	call *%rsi
+	movq 8(%rsi), %rdx
+	movq 40(%rdx), %rdi
+	pushq %rsi
+	call *%rdi
 	addq $8, %rsp
+	movq %rax, %rsi
 	cmpq $0, %rcx
-	movq $0, %rsi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	xorq $1, %rsi
-	cmpq $1, %rsi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_9
 	movq $10, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_9:
 	movq 8(%rcx), %rdx
-	movq 48(%rdx), %rsi
-	pushq %rax
+	movq 48(%rdx), %rdi
+	pushq %rsi
 	pushq %rcx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
+	movq %rax, %rsi
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rsi
-	pushq %rax
+	movq 80(%rdx), %rdi
+	pushq %rsi
 	pushq %rbx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1558,38 +1570,41 @@ Main.main:
 	call out_error
 .Main.main_10:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	call Bar.new
 	movq %rax, %rsi
-	movq $2, %rdi
+	movq $2, %rax
+	pushq %rax
 	call Int.new
-	movq %rdi, 24(%rax)
+	movq %rax, %rdi
+	popq %rax
+	movq %rax, 24(%rdi)
 	cmpq $0, %rsi
-	movq $0, %rdi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_11
 	movq $13, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_11:
 	movq 8(%rsi), %rdx
-	movq 48(%rdx), %rdi
-	pushq %rax
+	movq 48(%rdx), %r8
+	pushq %rdi
 	pushq %rsi
-	call *%rdi
+	call *%r8
 	addq $16, %rsp
 	cmpq $0, %rsi
 	movq $0, %rax
@@ -1605,18 +1620,18 @@ Main.main:
 	pushq %rsi
 	call Foo.getX
 	addq $8, %rsp
-	movq %rax, %rdi
+	movq %rax, %r8
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rdi
+	movq 56(%rdx), %rdi
+	pushq %r8
 	pushq %rbx
-	call *%rax
+	call *%rdi
 	addq $16, %rsp
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rax
+	movq 80(%rdx), %rdi
 	pushq %rsi
 	pushq %rbx
-	call *%rax
+	call *%rdi
 	addq $16, %rsp
 	cmpq $0, %rsi
 	movq $0, %rax
@@ -1630,16 +1645,16 @@ Main.main:
 	call out_error
 .Main.main_13:
 	movq 8(%rsi), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rdi
 	pushq %rsi
-	call *%rax
+	call *%rdi
 	addq $8, %rsp
-	movq %rax, %rdi
+	movq %rax, %r8
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rdi
+	movq 56(%rdx), %rdi
+	pushq %r8
 	pushq %rbx
-	call *%rax
+	call *%rdi
 	addq $16, %rsp
 	movq $324, %rax
 	pushq %rax
@@ -1653,92 +1668,99 @@ Main.main:
 	movq %rax, %r8
 	popq %rax
 	movq %rax, 24(%r8)
-	movq $10, %r9
+	movq $10, %rax
+	pushq %rax
 	call Int.new
-	movq %r9, 24(%rax)
+	movq %rax, %r9
+	popq %rax
+	movq %rax, 24(%r9)
 	cmpq $0, %rcx
-	movq $0, %r9
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_14
 	movq $17, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_14:
 	movq 8(%rcx), %rdx
-	movq 48(%rdx), %r9
-	pushq %rax
+	movq 48(%rdx), %r10
+	pushq %r9
 	pushq %rcx
-	call *%r9
+	call *%r10
 	addq $16, %rsp
-	cmpq $0, %rax
-	movq $0, %r9
+	movq %rax, %r9
+	cmpq $0, %r9
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %r9
-	xorq $1, %r9
-	cmpq $1, %r9
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_15
 	movq $17, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_15:
-	movq 8(%rax), %rdx
-	movq 48(%rdx), %r9
+	movq 8(%r9), %rdx
+	movq 48(%rdx), %r10
 	pushq %r8
-	pushq %rax
-	call *%r9
+	pushq %r9
+	call *%r10
 	addq $16, %rsp
-	cmpq $0, %rax
-	movq $0, %r8
+	movq %rax, %r8
+	cmpq $0, %r8
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %r8
-	xorq $1, %r8
-	cmpq $1, %r8
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_16
 	movq $17, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_16:
-	movq 8(%rax), %rdx
-	movq 48(%rdx), %r8
+	movq 8(%r8), %rdx
+	movq 48(%rdx), %r9
 	pushq %rdi
-	pushq %rax
-	call *%r8
+	pushq %r8
+	call *%r9
 	addq $16, %rsp
-	cmpq $0, %rax
-	movq $0, %rdi
+	movq %rax, %rdi
+	cmpq $0, %rdi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_17
 	movq $17, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_17:
-	movq 8(%rax), %rdx
-	movq 40(%rdx), %rdi
-	pushq %rax
-	call *%rdi
+	movq 8(%rdi), %rdx
+	movq 40(%rdx), %r8
+	pushq %rdi
+	call *%r8
 	addq $8, %rsp
+	movq %rax, %rdi
 	cmpq $0, %rsi
-	movq $0, %rdi
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rdi
-	xorq $1, %rdi
-	cmpq $1, %rdi
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_18
 	movq $17, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.main_18:
 	movq 8(%rsi), %rdx
-	movq 48(%rdx), %rdi
-	pushq %rax
+	movq 48(%rdx), %r8
+	pushq %rdi
 	pushq %rsi
-	call *%rdi
+	call *%r8
 	addq $16, %rsp
 	cmpq $0, %rsi
 	movq $0, %rax
@@ -1752,16 +1774,16 @@ Main.main:
 	call out_error
 .Main.main_19:
 	movq 8(%rsi), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rdi
 	pushq %rsi
-	call *%rax
+	call *%rdi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1775,16 +1797,16 @@ Main.main:
 	call out_error
 .Main.main_20:
 	movq 8(%rcx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rcx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1818,17 +1840,20 @@ Main.main:
 	call out_error
 .Main.main_22:
 	movq $.string8, %rax
+	movq %rax, %rcx
 	jmp .Main.main_24
 .Main.main_23:
 	movq $.string9, %rax
+	movq %rax, %rcx
 	jmp .Main.main_24
 .Main.main_24:
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
+	movq 64(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rsi
 	addq $16, %rsp
+	popq %r10
 	popq %r9
 	popq %r8
 	popq %rdi
@@ -1859,9 +1884,9 @@ Main.func:
 	call out_error
 .Main.func_1:
 	movq 8(%rbx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rcx
 	pushq %rbx
-	call *%rax
+	call *%rcx
 	addq $8, %rsp
 	movq %rax, %rcx
 	cmpq $0, %rbx
@@ -1876,9 +1901,9 @@ Main.func:
 	call out_error
 .Main.func_2:
 	movq 8(%rbx), %rdx
-	movq 40(%rdx), %rax
+	movq 40(%rdx), %rsi
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $8, %rsp
 	movq %rax, %rsi
 	movq 24(%rcx), %rax
@@ -1886,25 +1911,27 @@ Main.func:
 	imulq %rcx
 	shlq $32, %rax
 	sarq $32, %rax
-	movq %rax, %rcx
+	pushq %rax
 	call Int.new
-	movq %rcx, 24(%rax)
+	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
 	cmpq $0, %rbx
-	movq $0, %rcx
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.func_3
 	movq $29, %rsi
 	movq $.string3_l, %rdi
 	call out_error
 .Main.func_3:
 	movq 8(%rbx), %rdx
-	movq 48(%rdx), %rcx
-	pushq %rax
+	movq 48(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rsi
 	addq $16, %rsp
 	popq %rsi
 	popq %rcx

@@ -1276,41 +1276,46 @@ Main.main:
 	movq %rsp, %rbp
 	pushq %rbx
 	pushq %rcx
+	pushq %rsi
 	movq 16(%rbp), %rbx
 	movq 8(%rbx), %rdx
-	movq 32(%rdx), %rax
-	pushq %rbx
-	call *%rax
-	addq $8, %rsp
-	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
+	movq 32(%rdx), %rcx
 	pushq %rbx
 	call *%rcx
+	addq $8, %rsp
+	movq %rax, %rcx
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
 	addq $16, %rsp
+	pushq %rax
 	call Object.new
-	cmpq $0, %rax
-	movq $0, %rcx
+	movq %rax, %rcx
+	popq %rax
+	cmpq $0, %rcx
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_1
 	movq $5, %rsi
 	movq $.string2_l, %rdi
 	call out_error
 .Main.main_1:
-	movq 8(%rax), %rdx
-	movq 32(%rdx), %rcx
-	pushq %rax
-	call *%rcx
-	addq $8, %rsp
-	movq %rax, %rcx
-	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rax
+	movq 8(%rcx), %rdx
+	movq 32(%rdx), %rsi
 	pushq %rcx
+	call *%rsi
+	addq $8, %rsp
+	movq %rax, %rsi
+	movq 8(%rbx), %rdx
+	movq 64(%rdx), %rcx
+	pushq %rsi
 	pushq %rbx
-	call *%rax
+	call *%rcx
 	addq $16, %rsp
 	cmpq $0, %rbx
 	movq $0, %rax
@@ -1326,35 +1331,41 @@ Main.main:
 	pushq %rbx
 	call Object.type_name
 	addq $8, %rsp
+	movq %rax, %rcx
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
+	movq 64(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rsi
 	addq $16, %rsp
+	pushq %rax
 	call Bar.new
-	cmpq $0, %rax
-	movq $0, %rcx
+	movq %rax, %rcx
+	popq %rax
+	cmpq $0, %rcx
+	movq $0, %rax
 	movq $1, %rdx
-	cmoveq %rdx, %rcx
-	xorq $1, %rcx
-	cmpq $1, %rcx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
 	je .Main.main_3
 	movq $7, %rsi
 	movq $.string2_l, %rdi
 	call out_error
 .Main.main_3:
-	movq 8(%rax), %rdx
-	movq 32(%rdx), %rcx
-	pushq %rax
-	call *%rcx
+	movq 8(%rcx), %rdx
+	movq 32(%rdx), %rsi
+	pushq %rcx
+	call *%rsi
 	addq $8, %rsp
+	movq %rax, %rcx
 	movq 8(%rbx), %rdx
-	movq 64(%rdx), %rcx
-	pushq %rax
+	movq 64(%rdx), %rsi
+	pushq %rcx
 	pushq %rbx
-	call *%rcx
+	call *%rsi
 	addq $16, %rsp
+	popq %rsi
 	popq %rcx
 	popq %rbx
 	leave

@@ -1283,10 +1283,10 @@ Main.main:
 	popq %rax
 	movq %rax, 24(%rcx)
 	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rax
+	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
-	call *%rax
+	call *%rsi
 	addq $16, %rsp
 	popq %rdi
 	popq %rsi

@@ -1230,6 +1230,7 @@ Main.main:
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
+	pushq %rdi
 	movq 16(%rbp), %rbx
 	movq $4, %rcx
 	call Int.new
@@ -1247,16 +1248,17 @@ Main.main:
 	cmpq $1, %rax
 	je .Main.main_2
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rax
+	movq 80(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
-	call *%rax
-	addq $16, %rsp
-	movq 8(%rbx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rax
-	pushq %rbx
 	call *%rsi
+	addq $16, %rsp
+	movq %rax, %rsi
+	movq 8(%rbx), %rdx
+	movq 56(%rdx), %rdi
+	pushq %rsi
+	pushq %rbx
+	call *%rdi
 	addq $16, %rsp
 	movq $1, %rsi
 	movq 24(%rcx), %rax
@@ -1272,6 +1274,7 @@ Main.main:
 	jmp .Main.main_1
 .Main.main_2:
 	movq $0, %rax
+	popq %rdi
 	popq %rsi
 	popq %rcx
 	popq %rbx
@@ -1319,10 +1322,10 @@ Main.fib:
 	popq %rax
 	movq %rax, 24(%rsi)
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rax
+	movq 80(%rdx), %rdi
 	pushq %rsi
 	pushq %rbx
-	call *%rax
+	call *%rdi
 	addq $16, %rsp
 	movq %rax, %rsi
 	movq $2, %rdi
@@ -1337,10 +1340,10 @@ Main.fib:
 	popq %rax
 	movq %rax, 24(%rcx)
 	movq 8(%rbx), %rdx
-	movq 80(%rdx), %rax
+	movq 80(%rdx), %rdi
 	pushq %rcx
 	pushq %rbx
-	call *%rax
+	call *%rdi
 	addq $16, %rsp
 	movq %rax, %rbx
 	movq 24(%rsi), %rax
