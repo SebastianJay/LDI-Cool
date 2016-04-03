@@ -238,6 +238,18 @@ def expConvert(node):
         TACIndexer.pushIns(TACAssign(reg, regr))
         return reg
 
+    elif node.expr == 'isvoid':
+        regr = expConvert(node.args)
+        op1 = TACIndexer.reg()
+        op1.boxed = False
+        if not regr.boxed or node.args.type == 'String' or node.args.type == 'Int' or node.args.type == 'Bool':
+            #isvoid is always false for primitives
+            TACIndexer.pushIns(TACConstant(op1, 'bool', 'false'))
+        else:
+            TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], regr))
+        return op1
+
+    #for negate and not only
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
         op1 = TACIndexer.reg()
