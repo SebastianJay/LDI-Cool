@@ -498,8 +498,6 @@ class ASMBTypeEq(ASMInstruction):
     def __str__(self):
         return ''
 
-
-
 #catchall for instructions that have no strong association with category
 class ASMMisc(ASMInstruction):
     def __init__(self, cmd, args=[]):
@@ -598,9 +596,13 @@ def funcConvert(cfg, regMap):
             #print ASMIndexer.vtableMap[ins.cname]
             #print ASMIndexer.getvtableind(ins.cname, ins.mname)
             #print '----'
+            insreg = ins.obj
+            if insreg not in registers:
+                asmlst += [ASMAssign('%rdx', realReg(ins.obj))]
+                insreg = '%rdx'
             asmlst += [
                 # vtable addr -> rdx
-                ASMAssign('%rdx', offsetStr(8, realReg(ins.obj))),
+                ASMAssign('%rdx', offsetStr(8, insreg)),
                 # method addr -> assignee
                 ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), '%rdx'))
             ]
