@@ -52,10 +52,10 @@ for x in $files; do
     else
 	echo "FAIL, non-matching output"
 	echo "Reference:"
-	cat out1.txt
+	cat out2.txt
 	echo
 	echo "Ours:"
-	cat out2.txt
+	cat out1.txt
 	echo
 	((failCount++))
     fi

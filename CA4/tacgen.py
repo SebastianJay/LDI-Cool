@@ -265,12 +265,12 @@ def expConvert(node):
         op1 = TACIndexer.reg()
         op2 = TACIndexer.reg()
 
-        if regr0.boxed:
+        if regr0.boxed and node.args[0].type in ['Bool', 'Int']:
             TACIndexer.pushIns(TACAssign(op1, TACClassAttr(regr0, 'Int', 'val')))
         else:
             TACIndexer.pushIns(TACAssign(op1, regr0))
 
-        if regr1.boxed:
+        if regr1.boxed and node.args[0].type in ['Bool', 'Int']:
             TACIndexer.pushIns(TACAssign(op2, TACClassAttr(regr1, 'Int', 'val')))
         else:
             TACIndexer.pushIns(TACAssign(op2, regr1))

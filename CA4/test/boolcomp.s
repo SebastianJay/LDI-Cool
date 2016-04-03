@@ -36,6 +36,28 @@ IO.new:
 	.cfi_endproc
 .LFE61:
 	.size	IO.new, .-IO.new
+	.p2align 4,,15
+	.globl	IO.in_int
+	.type	IO.in_int, @function
+IO.in_int:
+.LFB62:
+	.cfi_startproc
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	xorl	%eax, %eax
+	call	Int.new
+	movq	%rax, %rbx
+	xorl	%eax, %eax
+	call	in_int
+	movq	%rax, 24(%rbx)
+	movq	%rbx, %rax
+	popq	%rbx
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE62:
+	.size	IO.in_int, .-IO.in_int
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
 	.string	"%lld"
@@ -472,6 +494,28 @@ out_string:
 .LFE69:
 	.size	out_string, .-out_string
 	.p2align 4,,15
+	.globl	IO.in_string
+	.type	IO.in_string, @function
+IO.in_string:
+.LFB66:
+	.cfi_startproc
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	xorl	%eax, %eax
+	call	String.new
+	movq	%rax, %rbx
+	xorl	%eax, %eax
+	call	in_string
+	movq	%rax, 24(%rbx)
+	movq	%rbx, %rax
+	popq	%rbx
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE66:
+	.size	IO.in_string, .-IO.in_string
+	.p2align 4,,15
 	.globl	IO.out_string
 	.type	IO.out_string, @function
 IO.out_string:
@@ -625,6 +669,26 @@ Object.copy:
 .LFE74:
 	.size	Object.copy, .-Object.copy
 	.p2align 4,,15
+	.globl	Object.type_name
+	.type	Object.type_name, @function
+Object.type_name:
+.LFB73:
+	.cfi_startproc
+	pushq	%rbp
+	movq	%rsp, %rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	xorl	%eax, %eax
+	movq	16(%rbp), %rax	# Self arg
+	movq 	8(%rax), %rax	# vtable
+	movq	(%rax), %rax	# String object name
+	.cfi_def_cfa_offset 8
+	leave
+	ret
+	.cfi_endproc
+.LFE73:
+	.size	Object.type_name, .-Object.type_name
+	.p2align 4,,15
 	.globl	String.new
 	.type	String.new, @function
 String.new:
@@ -660,62 +724,49 @@ String.new:
 .LFE75:
 	.size	String.new, .-String.new
 	.p2align 4,,15
-	.globl	IO.in_string
-	.type	IO.in_string, @function
-IO.in_string:
-.LFB66:
-	.cfi_startproc
-	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	call	String.new
-	movq	%rax, %rbx
-	xorl	%eax, %eax
-	call	in_string
-	movq	%rax, 24(%rbx)
-	movq	%rbx, %rax
-	popq	%rbx
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE66:
-	.size	IO.in_string, .-IO.in_string
-	.p2align 4,,15
-	.globl	Object.type_name
-	.type	Object.type_name, @function
-Object.type_name:
-.LFB73:
-	.cfi_startproc
+	.globl	String.cmp
+	.type	String.cmp, @function
+String.cmp:
 	pushq	%rbp
 	movq	%rsp, %rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	movq	16(%rbp), %rax	# Self arg
-	movq 	8(%rax), %rax	# vtable
-	movq	(%rax), %rax	# String object name
-	.cfi_def_cfa_offset 8
+	pushq	%rdi
+	pushq	%rsi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movq	16(%rbp), %rdi
+	movq	24(%rbp), %rsi
+	movq	24(%rdi), %rdi
+	movq	24(%rsi), %rsi
+	call	strcmp
+	shlq $32, %rax # strcmp returns a 32bit int, sign extend
+	sarq $32, %rax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rsi
+	popq	%rdi
 	leave
 	ret
-	.cfi_endproc
-.LFE73:
-	.size	Object.type_name, .-Object.type_name
+	.size	String.cmp, .-String.cmp
 	.p2align 4,,15
 	.globl	String.concat
 	.type	String.concat, @function
 String.concat:
 .LFB77:
 	.cfi_startproc
-	movq	16(%rsp), %rdi
-	movq	24(%rsp), %rsi
+	pushq	%rbp
+	movq	%rsp, %rbp
 	pushq	%r13
 	.cfi_def_cfa_offset 16
 	.cfi_offset 13, -16
 	pushq	%r12
 	.cfi_def_cfa_offset 24
 	.cfi_offset 12, -24
-	movq	%rsi, %r12
 	pushq	%rbp
 	.cfi_def_cfa_offset 32
 	.cfi_offset 6, -32
@@ -727,6 +778,9 @@ String.concat:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
+	movq	16(%rbp), %rdi
+	movq	24(%rbp), %rsi
+	movq	%rsi, %r12
 	.cfi_def_cfa_offset 40
 	.cfi_offset 3, -40
 	subq	$8, %rsp
@@ -769,10 +823,57 @@ String.concat:
 	.cfi_def_cfa_offset 16
 	popq	%r13
 	.cfi_def_cfa_offset 8
+	popq	%rbp
 	ret
 	.cfi_endproc
 .LFE77:
 	.size	String.concat, .-String.concat
+	.p2align 4,,15
+	.globl	String.length
+	.type	String.length, @function
+String.length:
+.LFB76:
+	.cfi_startproc
+	pushq	%rbp
+	movq	%rsp, %rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	pushq	%rbx
+	pushq	%rsi
+	pushq	%rdi
+	pushq	%rcx
+	pushq	%r8
+	pushq	%r9
+	pushq	%r10
+	pushq	%r11
+	movq	16(%rbp), %rdi
+	xorl	%eax, %eax
+	movq	%rdi, %rbp
+	.cfi_def_cfa_offset 24
+	.cfi_offset 3, -24
+	.cfi_def_cfa_offset 32
+	call	Int.new
+	movq	24(%rbp), %rdi
+	movq	%rax, %rbx
+	call	strlen
+	movq	%rax, 24(%rbx)
+	.cfi_def_cfa_offset 24
+	movq	%rbx, %rax
+	popq	%r11
+	popq	%r10
+	popq	%r9
+	popq	%r8
+	popq	%rcx
+	popq	%rdi
+	popq	%rsi
+	popq	%rbx
+	.cfi_def_cfa_offset 16
+	popq	%rbp
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE76:
+	.size	String.length, .-String.length
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
 .LC5:
@@ -908,74 +1009,6 @@ Int.new:
 	.cfi_endproc
 .LFE79:
 	.size	Int.new, .-Int.new
-	.p2align 4,,15
-	.globl	IO.in_int
-	.type	IO.in_int, @function
-IO.in_int:
-.LFB62:
-	.cfi_startproc
-	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	call	Int.new
-	movq	%rax, %rbx
-	xorl	%eax, %eax
-	call	in_int
-	movq	%rax, 24(%rbx)
-	movq	%rbx, %rax
-	popq	%rbx
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE62:
-	.size	IO.in_int, .-IO.in_int
-	.p2align 4,,15
-	.globl	String.length
-	.type	String.length, @function
-String.length:
-.LFB76:
-	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	pushq	%rbx
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq	16(%rbp), %rdi
-	xorl	%eax, %eax
-	movq	%rdi, %rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
-	.cfi_def_cfa_offset 32
-	call	Int.new
-	movq	24(%rbp), %rdi
-	movq	%rax, %rbx
-	call	strlen
-	movq	%rax, 24(%rbx)
-	.cfi_def_cfa_offset 24
-	movq	%rbx, %rax
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-	popq	%rbx
-	.cfi_def_cfa_offset 16
-	popq	%rbp
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE76:
-	.size	String.length, .-String.length
 	.p2align 4,,15
 	.globl	Bool.new
 	.type	Bool.new, @function
@@ -1256,7 +1289,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1270,7 +1304,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1304,7 +1339,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1318,7 +1354,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1352,7 +1389,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1366,7 +1404,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1399,7 +1438,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1413,7 +1453,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1426,7 +1467,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1458,7 +1500,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1472,7 +1515,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1505,7 +1549,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1519,7 +1564,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1552,7 +1598,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1566,7 +1613,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1599,7 +1647,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1613,7 +1662,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1626,7 +1676,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1658,7 +1709,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1672,7 +1724,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1706,7 +1759,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1720,7 +1774,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1753,7 +1808,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1767,7 +1823,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1800,7 +1857,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx
@@ -1814,7 +1872,8 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
-	movq 8(%rbx), %rdx
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rsi
 	pushq %rcx
 	pushq %rbx

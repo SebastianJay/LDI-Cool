@@ -572,10 +572,35 @@ def funcConvert(cfg, regMap):
     #make list of ASM instructions from TAC instructions
     for ins in inslst:
         if isinstance(ins, TACOp):
-            operands = [realReg(ins.op1), realReg(ins.op2)] \
-                if isinstance(ins, TACOp2) else [realReg(ins.op1)]
-            ##TODO move Compare into separate class? need to retain static type information
-            asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode, operands))
+            if isinstance(ins, TACCompare):
+                if ins.ptype == 'String':
+                    if realReg(ins.assignee) != '%rax':
+                        asmlst += [
+                            ASMPush('%rax'),
+                            ASMCall('%rax', 'String.cmp', [realReg(ins.op1), realReg(ins.op2)]),
+                            ASMAssign(realReg(ins.assignee), '%rax'),
+                            ASMPop('%rax'),
+                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])                            
+                        ]
+                    else:
+                        asmlst += [
+                            ASMCall('%rax', 'String.cmp', [realReg(ins.op1), realReg(ins.op2)]),
+                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])
+                        ]
+                elif ins.ptype == 'Object':
+                    if ins.opcode == '<':
+                        asmlst.append(ASMAssign(realReg(ins.assignee), '$0'))
+                    else:
+                         asmlst.append(ASMOp(realReg(ins.assignee), '=', 
+                                        [realReg(ins.op1), realReg(ins.op2)]))
+                else: # Int/Bool
+                    asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode,
+                                        [realReg(ins.op1), realReg(ins.op2)]))
+                            
+            else:
+                operands = [realReg(ins.op1), realReg(ins.op2)] \
+                           if isinstance(ins, TACOp2) else [realReg(ins.op1)]
+                asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode, operands))
         elif isinstance(ins, TACAssign):
             asmlst.append(ASMAssign(realReg(ins.assignee), realReg(ins.assignor)))
         elif isinstance(ins, TACAllocate):
@@ -596,10 +621,6 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
-            #print ins.cname, ins.mname
-            #print ASMIndexer.vtableMap[ins.cname]
-            #print ASMIndexer.getvtableind(ins.cname, ins.mname)
-            #print '----'
             insreg = ins.obj
             if insreg not in registers:
                 asmlst += [ASMAssign('%rdx', realReg(ins.obj))]
