@@ -285,22 +285,26 @@ def _constructCFG(lstins):
             prevblock = blocks[cnt-1]
             #jmp and bt cases are taken care of further down
             if not isinstance(prevblock.last(), TACReturn)  \
+            and not isinstance(prevblock.last(), TACError)  \
             and not isinstance(prevblock.last(), TACJmp)    \
-            and not isinstance(prevblock.last(), TACBT):
+            and not isinstance(prevblock.last(), TACBT)     \
+            and not isinstance(prevblock.last(), TACBTypeEq):
                 block.addParent(prevblock)
                 prevblock.addChild(block)
         #connect jmp
         if isinstance(block.last(), TACJmp):
             block.addChild(lbbmap[block.last().label])
             lbbmap[block.last().label].addParent(block)
-        #connect bt to possible jmp and next block
-        if isinstance(block.last(), TACBT):
+        #connect branches to possible jmp and next sequential block
+        if isinstance(block.last(), TACBT) \
+        or isinstance(block.last(), TACBTypeEq):
             block.addChild(lbbmap[block.last().label])
             lbbmap[block.last().label].addParent(block)
             if cnt + 1 < len(blocks):
                 nextblock = blocks[cnt + 1]
                 block.addChild(nextblock)
                 nextblock.addParent(block)
+
         cnt += 1
 
     graph = TACGraph()

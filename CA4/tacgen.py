@@ -508,3 +508,5 @@ if __name__ == '__main__':
     print "-----"
     deadcode.globalDeadRemove(cfg)
     print cfg
+    print "-----"
+    print cfg.verbosestr()
