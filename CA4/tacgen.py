@@ -339,7 +339,8 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, node.args[0].type, node.args[1].name))
+        cname = node.args[0].type if node.args[0].type != "SELF_TYPE" else TACIndexer.cname
+        TACIndexer.pushIns(TACVTable(reglb, regc, cname, node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
