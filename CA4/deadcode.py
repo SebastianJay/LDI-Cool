@@ -57,7 +57,8 @@ def getWritten(inst):
         res = inst.assignee
     elif isinstance(inst, TACVTable):
         res = inst.assignee
-
+    elif hasattr(inst, 'assignee'):
+        res = inst.assignee
 
     #unbox operand TODO review
     resu = None

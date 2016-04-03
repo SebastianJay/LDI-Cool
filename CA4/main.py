@@ -7,7 +7,7 @@ from registerAllocate import registerAllocate
 import asmgen
 import sys
 
-debug = False
+debug = True
 if __name__=="__main__":
 
     #load the cl-type file

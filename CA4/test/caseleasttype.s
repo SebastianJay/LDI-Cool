@@ -1265,7 +1265,8 @@ Main.main:
 	movq $0, %rbx
 	call Int.new
 	movq %rbx, 24(%rax)
-	cmpq $0, %rax
+	movq %rax, %rbx
+	cmpq $0, %rbx
 	movq $0, %rbx
 	movq $1, %rdx
 	cmoveq %rdx, %rbx

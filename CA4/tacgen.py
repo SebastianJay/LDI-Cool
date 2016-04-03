@@ -186,9 +186,10 @@ def expConvert(node):
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
         lbc = TACIndexer.label()
-        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
-        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
-        TACIndexer.pushIns(TACBT(regvbar, lbc))
+        TACIndexer.pushIns(TACAssign(regv, regc))
+        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regv))
+        TACIndexer.pushIns(TACOp1(regv, 'not', regv))
+        TACIndexer.pushIns(TACBT(regv, lbc))
         TACIndexer.pushIns(TACError(node.line, 'casevoid'))
         TACIndexer.pushIns(TACLabel(lbc))
         #generate labels for branches, and record branch types
