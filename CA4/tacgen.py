@@ -514,7 +514,9 @@ def attrConvert(ast):
         #emit label for start of constructor
         TACIndexer.pushIns(TACLabel(TACIndexer.cname + '.' + TACIndexer.mname))
         #allocate memory on heap for object
-        TACIndexer.pushIns(TACMalloc(TACIndexer.map('self', True), mclass.name.name))
+        regm = TACIndexer.reg()
+        TACIndexer.pushIns(TACMalloc(regm, mclass.name.name))
+        TACIndexer.pushIns(TACAssign(TACIndexer.map('self', True), regm))
         #make first pass to default initialize fields
         for mattr in attrlst:
             reg = TACIndexer.reg()
@@ -527,7 +529,9 @@ def attrConvert(ast):
                 TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name),
                                              box(reg, mattr.init.type)))
         #return pointer to new object
-        TACIndexer.pushIns(TACReturn(TACIndexer.map('self')))
+        regr = TACIndexer.reg()
+        TACIndexer.pushIns(TACAssign(regr, TACIndexer.map('self')))
+        TACIndexer.pushIns(TACReturn(regr))
         TACIndexer.pop('self')
 
 import TAC_serialize

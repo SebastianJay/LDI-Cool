@@ -1,15 +1,17 @@
 import deadcode
 import TAC_serialize
 
+
 # Takes a control flow graph, returns a register conflict graph
 # with some precolored nodes on function returns
 # of form temp => [set of conflicts, color(default to -1)]
 def genRegGraph(cfg):
     regGraph = {"t0":[set(),0]}
+    preColor = {"t0":0}
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
-
+        debugOut = []
         # Update graph connections
         for t in live:
             if t not in regGraph:
@@ -21,6 +23,8 @@ def genRegGraph(cfg):
             killed = deadcode.getWritten(inst)
             if killed is not None and killed in live:
                 live.remove(killed)
+                if killed not in regGraph:
+                    regGraph[killed] = [set(), -1]
 
             # Live when used
             used = deadcode.getRead(inst)
@@ -32,34 +36,44 @@ def genRegGraph(cfg):
             for t in live:
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
-                if t == '':
-                    print inst
                 regGraph[t][0] |= {r for r in live if r != t}
-                if isinstance(inst, TAC_serialize.TACCall):
-                    regGraph[t][0].add('t0')
+                if killed is not None and t != killed:
+                    regGraph[t][0].add(killed)
+                    regGraph[killed][0].add(t)
 
             # Allocate accumulator to return val of a function
             #TODO review TACClassAttr - probably change tacgen so that it never shows up here
             if isinstance(inst,TAC_serialize.TACCall):
                 if isinstance(inst.assignee, TAC_serialize.TACRegister):
                     regGraph[inst.assignee.name][1] = 0
+                    preColor[inst.assignee.name] = 0
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     regGraph[inst.assignee.reg.name][1] = 0
-
+                    preColor[inst.assignee.reg.name] = 0
             elif isinstance(inst,TAC_serialize.TACReturn):
                 if isinstance(inst.retval, TAC_serialize.TACRegister):
                     regGraph[inst.retval.name][1] = 0
+                    preColor[inst.retval.name] = 0
                 elif isinstance(inst.retval, TAC_serialize.TACClassAttr):
                     regGraph[inst.retval.reg.name][1] = 0
+                    preColor[inst.retval.reg.name] = 0
 
             # Have to force multiplication and division result to rax
             elif isinstance(inst,TAC_serialize.TACOp2) and inst.opcode in ['*','/']:
                 if isinstance(inst.assignee, TAC_serialize.TACRegister):
                     regGraph[inst.assignee.name][1] = 0
+                    preColor[inst.assignee.name] = 0
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     regGraph[inst.assignee.reg.name][1] = 0
-
-    return regGraph
+                    preColor[inst.assignee.reg.name] = 0
+            elif isinstance(inst,TAC_serialize.TACMalloc):
+                if isinstance(inst.assignee, TAC_serialize.TACRegister):
+                    regGraph[inst.assignee.name][1] = 0
+                    preColor[inst.assignee.name] = 0
+                elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
+                    regGraph[inst.assignee.reg.name][1] = 0
+                    preColor[inst.assignee.reg.name] = 0
+    return regGraph, preColor
 
 def degree(regGraph):
     degrees = {}
@@ -71,7 +85,7 @@ def degree(regGraph):
 # temporary value, any register index higher than the allowed should go to memory
 # if nregs=0, then perform "dumb spilling", i.e. don't mitigate use of temporaries
 def registerAllocate(cfg, nregs):
-    regGraph = genRegGraph(cfg)
+    regGraph, preColor = genRegGraph(cfg)
     deg = degree(regGraph)
 
     # Heuristic based coloring, colors nodes in decreasing degree order with no conflicts
@@ -113,13 +127,15 @@ def registerAllocate(cfg, nregs):
         while not colorGraph(regGraph):
             # Reinitialize graph coloring
             for k in regGraph:
-                if k in spillMap:
+                if k in preColor:
+                    regGraph[k][1] = preColor[k]
+                elif k in spillMap:
                     regGraph[k][1] = spillMap[k]
                 else:
                     regGraph[k][1] = -1
 
             # Spill a temp
-            nspill = max([x for x in regGraph if x not in spillMap], key = lambda x: deg[x])
+            nspill = max([x for x in regGraph if  regGraph[x][1] == -1], key = lambda x: deg[x])
             availableSpills = set(range(nregs+1,nregs+maxSpill+2))
 
             for adj in regGraph[nspill][0]:

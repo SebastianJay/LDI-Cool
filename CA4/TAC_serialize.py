@@ -228,7 +228,7 @@ class TACRegister(TACOperand):
         self.name = name
         self.boxed = boxed
     def __str__(self):
-        return self.name + ('' if self.boxed else '[unboxed]')
+        return self.name + ('' if self.boxed else '[x]')
 
 
 class TACClassAttr(TACOperand):

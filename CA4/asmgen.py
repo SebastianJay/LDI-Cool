@@ -734,7 +734,7 @@ def convert(taclist):
         # print '-----'
 
         #regmap = registerAllocate(cfg,13)
-        regmap = registerAllocate(cfg,0)        #stopgap until registerAllocate is fixed
+        regmap = registerAllocate(cfg,13)        #stopgap until registerAllocate is fixed
 
         asmlist += funcConvert(cfg, regmap)
 
