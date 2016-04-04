@@ -1044,18 +1044,6 @@ Bool.new:
 	.cfi_endproc
 .LFE80:
 	.size	Bool.new, .-Bool.new
-	.section	.text.startup,"ax",@progbits
-	.p2align 4,,15
-	.globl	main
-	.type	main, @function
-main:
-	call	Main.new
-	pushq	%rax
-	call	Main.main
-	addq	$8, %rsp
-	ret
-.LFE81:
-	.size	main, .-main
 ### END Internals
 	.section .rodata
 empty_string_l:
@@ -1254,6 +1242,40 @@ Main.new:
 	leave
 	ret
 	.size Main.new, .-Main.new
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+.main:
+	pushq %rax
+	call Main.new
+	movq %rax, %rbx
+	popq %rax
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je ..main_1
+	movq $0, %rsi
+	movq $.string1_l, %rdi
+	call out_error
+..main_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 72(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size main, .-main
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1262,18 +1284,31 @@ Main.main:
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
-	movq 16(%rbp), %rcx
+	pushq %rdi
+	movq 16(%rbp), %rbx
 	pushq %rax
 	call Int.new
 	movq %rax, %rsi
 	popq %rax
-	movq %rcx, %rdx
+	pushq %rax
+	call String.new
+	movq %rax, %rcx
+	popq %rax
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rbx
+	movq 56(%rdx), %rdi
 	pushq %rsi
-	pushq %rcx
-	call *%rbx
+	pushq %rbx
+	call *%rdi
 	addq $16, %rsp
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 64(%rdx), %rsi
+	pushq %rcx
+	pushq %rbx
+	call *%rsi
+	addq $16, %rsp
+	popq %rdi
 	popq %rsi
 	popq %rcx
 	popq %rbx

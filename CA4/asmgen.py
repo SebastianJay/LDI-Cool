@@ -358,7 +358,7 @@ class ASMAllocate(ASMDeclare):
         self.allop = allop  #should be 'default' or 'new'
         self.ptype = ptype
     def expand(self):
-        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool':
+        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool' or self.ptype == 'String':
             if self.assignee != '%rax':
                 return [ASMPush('%rax'), ASMCall('%rax', self.ptype + '.new'), ASMAssign(self.assignee, '%rax'), ASMPop('%rax')]
             else:
@@ -366,7 +366,7 @@ class ASMAllocate(ASMDeclare):
         else:
             return [self]
     def __str__(self):
-        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool':
+        if self.allop == 'new' or self.ptype == 'Int' or self.ptype == 'Bool' or self.ptype == 'String':
             return 'call ' + self.ptype + '.new'
         else:
             return 'movq $0, ' + self.assignee
@@ -580,7 +580,7 @@ def funcConvert(cfg, regMap):
                             ASMCall('%rax', 'String.cmp', [realReg(ins.op1), realReg(ins.op2)]),
                             ASMAssign(realReg(ins.assignee), '%rax'),
                             ASMPop('%rax'),
-                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])                            
+                            ASMOp(realReg(ins.assignee), ins.opcode, [realReg(ins.assignee), '$0'])
                         ]
                     else:
                         asmlst += [
@@ -591,12 +591,12 @@ def funcConvert(cfg, regMap):
                     if ins.opcode == '<':
                         asmlst.append(ASMAssign(realReg(ins.assignee), '$0'))
                     else:
-                         asmlst.append(ASMOp(realReg(ins.assignee), '=', 
+                         asmlst.append(ASMOp(realReg(ins.assignee), '=',
                                         [realReg(ins.op1), realReg(ins.op2)]))
                 else: # Int/Bool
                     asmlst.append(ASMOp(realReg(ins.assignee), ins.opcode,
                                         [realReg(ins.op1), realReg(ins.op2)]))
-                            
+
             else:
                 operands = [realReg(ins.op1), realReg(ins.op2)] \
                            if isinstance(ins, TACOp2) else [realReg(ins.op1)]

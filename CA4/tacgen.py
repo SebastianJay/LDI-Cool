@@ -236,7 +236,7 @@ def expConvert(node):
 
         reg = TACIndexer.map(node.args[0].name)
         TACIndexer.pushIns(TACAssign(reg, regr))
-        return reg
+        return regr
 
     elif node.expr == 'isvoid':
         regr = expConvert(node.args)
@@ -470,8 +470,8 @@ def mainConvert(ast):
 #for CA4, go through all methods of user-defined classes and generate TAC for bodies
 def implConvert(ast):
     # Prepend entry point function
-    meth=ASTMethod('main', [], 'Object', 
-                   ASTExpression(0, 'Object', 'dynamic_dispatch', 
+    meth=ASTMethod('main', [], 'Object',
+                   ASTExpression(0, 'Object', 'dynamic_dispatch',
                                  [ASTExpression(0, 'Main', 'new', ASTIdentifier(0, 'Main')),
                                   ASTIdentifier(0, 'main'),
                                   []])
