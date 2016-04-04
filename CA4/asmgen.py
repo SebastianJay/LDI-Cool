@@ -489,9 +489,7 @@ class ASMBTypeEq(ASMInstruction):
         if self.obj not in registers:
             asm.append(ASMAssign('%rdx', self.obj))
             self.obj = '%rdx'
-        # if cmp does not work on memory pull class tag of obj into register (constant off set of 0 if 1st field)
         # do cmp on obj class tag and self.clstag
-        #   TODO see if compare between memory and immediate value is valid
         asm.append(ASMCmp('$'+str(self.clstag), '0('+self.obj+')'))
         # do conditional jump to self.label if cmp yields equal
         asm.append(ASMMisc('je', [self.label]))

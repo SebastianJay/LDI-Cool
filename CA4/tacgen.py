@@ -260,7 +260,7 @@ def expConvert(node):
     #for negate and not only
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
-        
+
         if isinstance(regr, TACClassAttr):
             attreg = TACIndexer.reg()
             TACIndexer.pushIns(TACAssign(attreg, regr))
@@ -309,11 +309,15 @@ def expConvert(node):
         #check if divisor is zero, and if so, err and exit
         if node.expr == 'divide':
             regz = TACIndexer.reg()
+            regz.boxed = False
             rege = TACIndexer.reg()
+            rege.boxed = False
             regebar = TACIndexer.reg()
+            regebar.boxed = False
             lba = TACIndexer.label()
             TACIndexer.pushIns(TACConstant(regz, 'int', '0'))
-            TACIndexer.pushIns(TACOp2(rege, '=', op2, regz))
+            TACIndexer.pushIns(TACCompare(regz, '=', op2, regz, 'Int'))
+            TACIndexer.pushIns(TACAssign(rege, regz))
             TACIndexer.pushIns(TACOp1(regebar, 'not', rege))
             TACIndexer.pushIns(TACBT(regebar, lba))
             TACIndexer.pushIns(TACError(node.line, 'dividezero'))
