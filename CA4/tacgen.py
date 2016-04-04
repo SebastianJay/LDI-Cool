@@ -252,6 +252,12 @@ def expConvert(node):
     #for negate and not only
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
+        
+        if isinstance(regr, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regr))
+            regr = attreg
+
         op1 = TACIndexer.reg()
         op1.boxed = False
         if regr.boxed:
