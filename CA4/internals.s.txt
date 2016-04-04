@@ -79,60 +79,82 @@ in_int:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	movl	$1, %esi
-	movl	$4096, %edi
 	.cfi_def_cfa_offset 24
 	.cfi_offset 3, -24
-	subq	$24, %rsp
-	.cfi_def_cfa_offset 48
+	movl	$4096, %edi
+	movl	$1, %esi
+	movl	$8192, %ebp
+	subq	$4136, %rsp
+	.cfi_def_cfa_offset 4176
+	leaq	16(%rsp), %r12
 	movq	$0, 8(%rsp)
-	call	calloc
-	movq	stdin(%rip), %rdx
-	movl	$4096, %esi
-	movq	%rax, %rdi
-	movq	%rax, %rbx
-	call	fgets
-	leaq	8(%rsp), %rdx
-	movl	$.LC0, %esi
-	movq	%rbx, %rdi
+	movq	%fs:40, %rax
+	movq	%rax, 4120(%rsp)
 	xorl	%eax, %eax
-	call	__isoc99_sscanf
-	movl	%eax, %ebp
-	jmp	.L7
+	call	calloc
+	movl	$512, %ecx
+	movq	%rax, %rbx
+	movq	%r12, %rdi
+	xorl	%eax, %eax
+	rep stosq
+	jmp	.L9
 	.p2align 4,,10
 	.p2align 3
-.L15:
+.L17:
+	movq	stdin(%rip), %rdi
+	call	feof
+	testl	%eax, %eax
+	jne	.L8
+	movq	%rbp, %rdi
+	movl	$1, %esi
+	addq	$4096, %rbp
+	call	calloc
+	movq	%rbx, %rsi
+	movq	%rax, %r13
+	movq	%rax, %rdi
+	call	strcpy
+	movq	%rbx, %rdi
+	movq	%r13, %rbx
+	call	free
+.L9:
 	movq	stdin(%rip), %rdx
 	movl	$4096, %esi
-	movq	%rbx, %rdi
+	movq	%r12, %rdi
 	call	fgets
-.L7:
-	movq	%rbx, %rcx
+	movq	%rbx, %rax
 .L4:
-	movl	(%rcx), %esi
-	addq	$4, %rcx
-	leal	-16843009(%rsi), %edx
-	notl	%esi
-	andl	%esi, %edx
+	movl	(%rax), %ecx
+	addq	$4, %rax
+	leal	-16843009(%rcx), %edx
+	notl	%ecx
+	andl	%ecx, %edx
 	andl	$-2139062144, %edx
 	je	.L4
-	movl	%edx, %eax
-	shrl	$16, %eax
+	movl	%edx, %ecx
+	leaq	2(%rax), %rdi
+	movq	%r12, %rsi
+	shrl	$16, %ecx
 	testl	$32896, %edx
-	cmove	%eax, %edx
-	leaq	2(%rcx), %rax
-	cmove	%rax, %rcx
+	cmove	%ecx, %edx
+	cmovne	%rax, %rdi
 	addb	%dl, %dl
-	sbbq	$3, %rcx
-	subq	%rbx, %rcx
-	movslq	%ecx, %rcx
-	cmpb	$10, -1(%rbx,%rcx)
-	jne	.L15
+	sbbq	$3, %rdi
+	call	stpcpy
+	subq	%rbx, %rax
+	testl	%eax, %eax
+	je	.L10
+	cltq
+	cmpb	$10, -1(%rbx,%rax)
+	jne	.L17
+.L8:
+	leaq	8(%rsp), %rdx
+	xorl	%eax, %eax
+	movl	$.LC0, %esi
 	movq	%rbx, %rdi
-	addl	$1, %ebp
-	call	free
-	cmpl	$1, %ebp
-	jbe	.L9
+	call	__isoc99_sscanf
+	addl	$1, %eax
+	cmpl	$1, %eax
+	jbe	.L10
 	movq	8(%rsp), %rdx
 	movl	$2147483648, %esi
 	movl	$4294967295, %ecx
@@ -140,9 +162,12 @@ in_int:
 	addq	%rdx, %rsi
 	cmpq	%rcx, %rsi
 	cmovbe	%rdx, %rax
-	addq	$24, %rsp
+.L7:
+	movq	4120(%rsp), %rsi
+	xorq	%fs:40, %rsi
+	jne	.L18
+	addq	$4136, %rsp
 	.cfi_remember_state
-	.cfi_def_cfa_offset 24
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -157,23 +182,12 @@ in_int:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L9:
+.L10:
 	.cfi_restore_state
-	addq	$24, %rsp
-	.cfi_def_cfa_offset 24
 	xorl	%eax, %eax
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-	popq	%rbx
-	.cfi_def_cfa_offset 16
-	popq	%rbp
-	.cfi_def_cfa_offset 8
-	ret
+	jmp	.L7
+.L18:
+	call	__stack_chk_fail
 	.cfi_endproc
 .LFE63:
 	.size	in_int, .-in_int
@@ -384,7 +398,7 @@ out_string:
 	.cfi_offset 13, -16
 	pushq	%r12
 	pushq	%rbp
-	pushq	%rbx	
+	pushq	%rbx
 	pushq	%rdi
 	pushq	%rsi
 	pushq	%rcx
