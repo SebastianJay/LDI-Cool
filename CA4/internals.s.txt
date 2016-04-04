@@ -650,6 +650,7 @@ Object.cmp:
 	pushq	%rbx
 	pushq	%rax
 	call String.cmp
+        addq    $16, %rsp
 .Object.cmp_4:
 	popq	%rcx
 	popq	%rbx

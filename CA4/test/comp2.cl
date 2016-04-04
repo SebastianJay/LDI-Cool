@@ -2,6 +2,8 @@
 class Main inherits IO {
       x : Object <- "string";
       y : Object <- 5;
+      a : Object <- "z";
+      b : Object <- 7;
       main() : Object {{
       
          if x < y then
@@ -16,13 +18,34 @@ class Main inherits IO {
             out_string("false\n")
          fi;
 
-         x <- 1;
-
-         if x < y then
+         if x < a then
             out_string("true\n")
          else
             out_string("false\n")
          fi;
+
+	 if y < b then
+	 	out_string("true\n")
+	else
+		out_string("false\n")
+	fi;
+
+	let c : Object <- false, d : Object <- true in
+	{
+		if c < x then
+            out_string("true\n")
+         else
+            out_string("false\n")
+         fi;
+
+	if c < d then
+            out_string("true\n")
+         else
+            out_string("false\n")
+         fi;
+
+
+	};
          
       }};
 };
