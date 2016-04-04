@@ -621,6 +621,10 @@ Object.cmp:
 	pushq	%rcx
 	movq	16(%rbp), %rax
 	movq	24(%rbp), %rbx
+	andq	%rax, %rax
+	jz	.Object.cmp_1
+	andq	%rbx, %rbx
+	jz	.Object.cmp_1
 	movq	0(%rax), %rcx
 	movq	0(%rbx), %rdx
 	cmpq	%rcx, %rdx
