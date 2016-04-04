@@ -612,6 +612,51 @@ Object.abort:
 .LFE72:
 	.size	Object.abort, .-Object.abort
 	.p2align 4,,15
+	.globl	Object.cmp
+	.type	Object.cmp, @function
+Object.cmp:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	pushq	%rcx
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rbx
+	andq	%rax, %rax
+	jz	.Object.cmp_1
+	andq	%rbx, %rbx
+	jz	.Object.cmp_1
+	movq	0(%rax), %rcx
+	movq	0(%rbx), %rdx
+	cmpq	%rcx, %rdx
+	jne	.Object.cmp_1
+	cmpq	$1, %rcx
+	je	.Object.cmp_2
+	cmpq	$4, %rcx
+	je	.Object.cmp_2
+	cmpq	$2, %rcx
+	je	.Object.cmp_3
+.Object.cmp_1:
+	cmpq	%rax, %rbx
+	movq	$1, %rax
+	movq	$0, %rdx
+	cmoveq	%rdx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_2:
+	movq	24(%rax), %rax
+	movq	24(%rbx), %rbx
+	subq	%rbx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_3:
+	pushq	%rbx
+	pushq	%rax
+	call String.cmp
+.Object.cmp_4:
+	popq	%rcx
+	popq	%rbx
+	leave
+	ret
+	.size	Object.cmp, .-Object.cmp
+	.p2align 4,,15
 	.globl	Object.copy
 	.type	Object.copy, @function
 Object.copy:
@@ -1044,18 +1089,6 @@ Bool.new:
 	.cfi_endproc
 .LFE80:
 	.size	Bool.new, .-Bool.new
-	.section	.text.startup,"ax",@progbits
-	.p2align 4,,15
-	.globl	main
-	.type	main, @function
-main:
-	call	Main.new
-	pushq	%rax
-	call	Main.main
-	addq	$8, %rsp
-	ret
-.LFE81:
-	.size	main, .-main
 ### END Internals
 	.section .rodata
 empty_string_l:
@@ -1254,6 +1287,40 @@ Main.new:
 	leave
 	ret
 	.size Main.new, .-Main.new
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+.main:
+	pushq %rax
+	call Main.new
+	movq %rax, %rbx
+	popq %rax
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je ..main_1
+	movq $0, %rsi
+	movq $.string1_l, %rdi
+	call out_error
+..main_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 72(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size main, .-main
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1270,11 +1337,11 @@ Main.main:
 	pushq %rbx
 	call *%rcx
 	addq $8, %rsp
-	movq %rax, %rsi
-	movq %rsi, %rcx
+	movq %rax, %rcx
+	movq %rcx, %rsi
 .Main.main_1:
 	movq $5, %rdi
-	movq 24(%rcx), %rax
+	movq 24(%rsi), %rax
 	cmpq %rdi, %rax
 	movq $0, %rdi
 	movq $1, %rdx
@@ -1284,29 +1351,29 @@ Main.main:
 	cmpq $1, %rax
 	je .Main.main_2
 	movq $1, %rdi
-	movq 24(%rcx), %rax
-	movq %rdi, %rcx
-	addq %rcx, %rax
+	movq 24(%rsi), %rax
+	movq %rdi, %rsi
+	addq %rsi, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rcx
+	movq %rax, %rsi
 	popq %rax
-	movq %rax, 24(%rcx)
+	movq %rax, 24(%rsi)
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rdi
-	pushq %rcx
+	pushq %rsi
 	pushq %rbx
 	call *%rdi
 	addq $16, %rsp
 	jmp .Main.main_1
 .Main.main_2:
-	movq %rsi, %rcx
+	movq %rcx, %rsi
 .Main.main_3:
 	movq $5, %rdi
-	movq 24(%rcx), %rax
+	movq 24(%rsi), %rax
 	cmpq %rdi, %rax
 	movq $0, %rdi
 	movq $1, %rdx
@@ -1316,40 +1383,39 @@ Main.main:
 	cmpq $1, %rax
 	je .Main.main_4
 	movq $1, %rdi
-	movq 24(%rcx), %rax
-	movq %rdi, %rcx
-	addq %rcx, %rax
+	movq 24(%rsi), %rax
+	movq %rdi, %rsi
+	addq %rsi, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rcx
+	movq %rax, %rsi
 	popq %rax
-	movq %rax, 24(%rcx)
+	movq %rax, 24(%rsi)
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
 	movq 56(%rdx), %rdi
-	pushq %rcx
+	pushq %rsi
 	pushq %rbx
 	call *%rdi
 	addq $16, %rsp
 	jmp .Main.main_3
 .Main.main_4:
-	movq %rsi, %rcx
+	movq %rcx, %rsi
 .Main.main_5:
-	movq $5, %rsi
-	movq 24(%rcx), %rax
-	cmpq %rsi, %rax
-	movq $0, %rsi
+	movq $5, %rcx
+	movq 24(%rsi), %rax
+	cmpq %rcx, %rax
+	movq $0, %rcx
 	movq $1, %rdx
-	cmoveq %rdx, %rsi
-	movq %rsi, %rax
+	cmoveq %rdx, %rcx
+	movq %rcx, %rax
 	xorq $1, %rax
 	cmpq $1, %rax
 	je .Main.main_6
-	movq $1, %rsi
-	movq 24(%rcx), %rax
-	movq %rsi, %rcx
+	movq $1, %rcx
+	movq 24(%rsi), %rax
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1358,16 +1424,17 @@ Main.main:
 	movq %rax, %rcx
 	popq %rax
 	movq %rax, 24(%rcx)
+	movq %rcx, %rsi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rcx
+	movq 56(%rdx), %rcx
+	pushq %rsi
 	pushq %rbx
-	call *%rsi
+	call *%rcx
 	addq $16, %rsp
 	jmp .Main.main_5
 .Main.main_6:
-	movq %rcx, %rax
+	movq %rsi, %rax
 	popq %rdi
 	popq %rsi
 	popq %rcx

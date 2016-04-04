@@ -612,6 +612,51 @@ Object.abort:
 .LFE72:
 	.size	Object.abort, .-Object.abort
 	.p2align 4,,15
+	.globl	Object.cmp
+	.type	Object.cmp, @function
+Object.cmp:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	pushq	%rcx
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rbx
+	andq	%rax, %rax
+	jz	.Object.cmp_1
+	andq	%rbx, %rbx
+	jz	.Object.cmp_1
+	movq	0(%rax), %rcx
+	movq	0(%rbx), %rdx
+	cmpq	%rcx, %rdx
+	jne	.Object.cmp_1
+	cmpq	$1, %rcx
+	je	.Object.cmp_2
+	cmpq	$4, %rcx
+	je	.Object.cmp_2
+	cmpq	$2, %rcx
+	je	.Object.cmp_3
+.Object.cmp_1:
+	cmpq	%rax, %rbx
+	movq	$1, %rax
+	movq	$0, %rdx
+	cmoveq	%rdx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_2:
+	movq	24(%rax), %rax
+	movq	24(%rbx), %rbx
+	subq	%rbx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_3:
+	pushq	%rbx
+	pushq	%rax
+	call String.cmp
+.Object.cmp_4:
+	popq	%rcx
+	popq	%rbx
+	leave
+	ret
+	.size	Object.cmp, .-Object.cmp
+	.p2align 4,,15
 	.globl	Object.copy
 	.type	Object.copy, @function
 Object.copy:
@@ -1044,18 +1089,6 @@ Bool.new:
 	.cfi_endproc
 .LFE80:
 	.size	Bool.new, .-Bool.new
-	.section	.text.startup,"ax",@progbits
-	.p2align 4,,15
-	.globl	main
-	.type	main, @function
-main:
-	call	Main.new
-	pushq	%rax
-	call	Main.main
-	addq	$8, %rsp
-	ret
-.LFE81:
-	.size	main, .-main
 ### END Internals
 	.section .rodata
 empty_string_l:
@@ -1261,6 +1294,40 @@ Main.new:
 	leave
 	ret
 	.size Main.new, .-Main.new
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+.main:
+	pushq %rax
+	call Main.new
+	movq %rax, %rbx
+	popq %rax
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je ..main_1
+	movq $0, %rsi
+	movq $.string1_l, %rdi
+	call out_error
+..main_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 72(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size main, .-main
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1269,14 +1336,14 @@ Main.main:
 	pushq %rbx
 	pushq %rcx
 	pushq %rsi
-	movq 16(%rbp), %rcx
+	movq 16(%rbp), %rbx
 	movq $.string6, %rsi
-	movq %rcx, %rdx
+	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 64(%rdx), %rbx
+	movq 64(%rdx), %rcx
 	pushq %rsi
-	pushq %rcx
-	call *%rbx
+	pushq %rbx
+	call *%rcx
 	addq $16, %rsp
 	popq %rsi
 	popq %rcx

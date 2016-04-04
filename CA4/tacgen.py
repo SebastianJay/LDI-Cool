@@ -109,6 +109,10 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbp))
         #recurse on predicate expression
         regp = expConvert(node.args[0])
+        if isinstance(regp, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regp))
+            regp = attreg
         if regp.boxed:
             TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
         regp.boxed = False
@@ -132,6 +136,10 @@ def expConvert(node):
     elif node.expr == 'if':
         #recurse on predicate expression
         regp = expConvert(node.args[0])
+        if isinstance(regp, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regp))
+            regp = attreg
         if regp.boxed:
             TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
         regp.boxed = False
@@ -252,6 +260,12 @@ def expConvert(node):
     #for negate and not only
     elif node.expr in ASTExpression.exp1:
         regr = expConvert(node.args)
+        
+        if isinstance(regr, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regr))
+            regr = attreg
+
         op1 = TACIndexer.reg()
         op1.boxed = False
         if regr.boxed:

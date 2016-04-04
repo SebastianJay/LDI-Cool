@@ -612,6 +612,51 @@ Object.abort:
 .LFE72:
 	.size	Object.abort, .-Object.abort
 	.p2align 4,,15
+	.globl	Object.cmp
+	.type	Object.cmp, @function
+Object.cmp:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	pushq	%rcx
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rbx
+	andq	%rax, %rax
+	jz	.Object.cmp_1
+	andq	%rbx, %rbx
+	jz	.Object.cmp_1
+	movq	0(%rax), %rcx
+	movq	0(%rbx), %rdx
+	cmpq	%rcx, %rdx
+	jne	.Object.cmp_1
+	cmpq	$1, %rcx
+	je	.Object.cmp_2
+	cmpq	$4, %rcx
+	je	.Object.cmp_2
+	cmpq	$2, %rcx
+	je	.Object.cmp_3
+.Object.cmp_1:
+	cmpq	%rax, %rbx
+	movq	$1, %rax
+	movq	$0, %rdx
+	cmoveq	%rdx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_2:
+	movq	24(%rax), %rax
+	movq	24(%rbx), %rbx
+	subq	%rbx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_3:
+	pushq	%rbx
+	pushq	%rax
+	call String.cmp
+.Object.cmp_4:
+	popq	%rcx
+	popq	%rbx
+	leave
+	ret
+	.size	Object.cmp, .-Object.cmp
+	.p2align 4,,15
 	.globl	Object.copy
 	.type	Object.copy, @function
 Object.copy:
@@ -1044,18 +1089,6 @@ Bool.new:
 	.cfi_endproc
 .LFE80:
 	.size	Bool.new, .-Bool.new
-	.section	.text.startup,"ax",@progbits
-	.p2align 4,,15
-	.globl	main
-	.type	main, @function
-main:
-	call	Main.new
-	pushq	%rax
-	call	Main.main
-	addq	$8, %rsp
-	ret
-.LFE81:
-	.size	main, .-main
 ### END Internals
 	.section .rodata
 empty_string_l:
@@ -1387,6 +1420,40 @@ Bar.new:
 	leave
 	ret
 	.size Bar.new, .-Bar.new
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+.main:
+	pushq %rax
+	call Main.new
+	movq %rax, %rbx
+	popq %rax
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je ..main_1
+	movq $0, %rsi
+	movq $.string3_l, %rdi
+	call out_error
+..main_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 72(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size main, .-main
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1449,13 +1516,13 @@ Main.main:
 	pushq %rcx
 	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rsi
+	movq %rax, %rdi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rdi
-	pushq %rsi
+	movq 56(%rdx), %rsi
+	pushq %rdi
 	pushq %rbx
-	call *%rdi
+	call *%rsi
 	addq $16, %rsp
 	cmpq $0, %rcx
 	movq $0, %rax
@@ -1542,13 +1609,13 @@ Main.main:
 	pushq %rcx
 	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rdi
+	movq %rax, %rsi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rdi
+	movq 56(%rdx), %rdi
+	pushq %rsi
 	pushq %rbx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
 	movq $12, %rax
 	pushq %rax
@@ -1877,13 +1944,13 @@ Main.main:
 	pushq %rcx
 	call *%rsi
 	addq $8, %rsp
-	movq %rax, %rdi
+	movq %rax, %rsi
 	movq %rbx, %rdx
 	movq 8(%rdx), %rdx
-	movq 56(%rdx), %rsi
-	pushq %rdi
+	movq 56(%rdx), %rdi
+	pushq %rsi
 	pushq %rbx
-	call *%rsi
+	call *%rdi
 	addq $16, %rsp
 	movq %rcx, %rax
 	cmpq $0, %rax
@@ -2037,9 +2104,10 @@ Foo.setX:
 	pushq %rbp
 	movq %rsp, %rbp
 	pushq %rbx
-	movq 16(%rbp), %rax
-	movq 24(%rbp), %rbx
-	movq %rbx, 24(%rax)
+	movq 16(%rbp), %rbx
+	movq 24(%rbp), %rax
+	movq %rax, 24(%rbx)
+	movq %rbx, %rax
 	popq %rbx
 	leave
 	ret

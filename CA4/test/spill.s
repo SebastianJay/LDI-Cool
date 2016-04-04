@@ -612,6 +612,51 @@ Object.abort:
 .LFE72:
 	.size	Object.abort, .-Object.abort
 	.p2align 4,,15
+	.globl	Object.cmp
+	.type	Object.cmp, @function
+Object.cmp:
+	pushq	%rbp
+	movq	%rsp, %rbp
+	pushq	%rbx
+	pushq	%rcx
+	movq	16(%rbp), %rax
+	movq	24(%rbp), %rbx
+	andq	%rax, %rax
+	jz	.Object.cmp_1
+	andq	%rbx, %rbx
+	jz	.Object.cmp_1
+	movq	0(%rax), %rcx
+	movq	0(%rbx), %rdx
+	cmpq	%rcx, %rdx
+	jne	.Object.cmp_1
+	cmpq	$1, %rcx
+	je	.Object.cmp_2
+	cmpq	$4, %rcx
+	je	.Object.cmp_2
+	cmpq	$2, %rcx
+	je	.Object.cmp_3
+.Object.cmp_1:
+	cmpq	%rax, %rbx
+	movq	$1, %rax
+	movq	$0, %rdx
+	cmoveq	%rdx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_2:
+	movq	24(%rax), %rax
+	movq	24(%rbx), %rbx
+	subq	%rbx, %rax
+	jmp .Object.cmp_4
+.Object.cmp_3:
+	pushq	%rbx
+	pushq	%rax
+	call String.cmp
+.Object.cmp_4:
+	popq	%rcx
+	popq	%rbx
+	leave
+	ret
+	.size	Object.cmp, .-Object.cmp
+	.p2align 4,,15
 	.globl	Object.copy
 	.type	Object.copy, @function
 Object.copy:
@@ -1044,18 +1089,6 @@ Bool.new:
 	.cfi_endproc
 .LFE80:
 	.size	Bool.new, .-Bool.new
-	.section	.text.startup,"ax",@progbits
-	.p2align 4,,15
-	.globl	main
-	.type	main, @function
-main:
-	call	Main.new
-	pushq	%rax
-	call	Main.main
-	addq	$8, %rsp
-	ret
-.LFE81:
-	.size	main, .-main
 ### END Internals
 	.section .rodata
 empty_string_l:
@@ -1254,6 +1287,40 @@ Main.new:
 	leave
 	ret
 	.size Main.new, .-Main.new
+	.globl main
+	.type main, @function
+main:
+	pushq %rbp
+	movq %rsp, %rbp
+	pushq %rbx
+	pushq %rcx
+.main:
+	pushq %rax
+	call Main.new
+	movq %rax, %rbx
+	popq %rax
+	cmpq $0, %rbx
+	movq $0, %rax
+	movq $1, %rdx
+	cmoveq %rdx, %rax
+	xorq $1, %rax
+	cmpq $1, %rax
+	je ..main_1
+	movq $0, %rsi
+	movq $.string1_l, %rdi
+	call out_error
+..main_1:
+	movq %rbx, %rdx
+	movq 8(%rdx), %rdx
+	movq 72(%rdx), %rcx
+	pushq %rbx
+	call *%rcx
+	addq $8, %rsp
+	popq %rcx
+	popq %rbx
+	leave
+	ret
+	.size main, .-main
 	.globl Main.main
 	.type Main.main, @function
 Main.main:
@@ -1273,10 +1340,12 @@ Main.main:
 	pushq %r14
 	pushq %r15
 	movq 16(%rbp), %rbx
-	movq $1, %rcx
+	movq $1, %rax
+	pushq %rax
 	call Int.new
-	movq %rcx, 24(%rax)
 	movq %rax, %rcx
+	popq %rax
+	movq %rax, 24(%rcx)
 	movq $2, %rax
 	pushq %rax
 	call Int.new
@@ -1289,105 +1358,109 @@ Main.main:
 	movq %rax, %rdi
 	popq %rax
 	movq %rax, 24(%rdi)
-	movq %rdi, %r9
 	movq $4, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %rdi
+	movq %rax, %r8
 	popq %rax
-	movq %rax, 24(%rdi)
+	movq %rax, 24(%r8)
+	movq %r8, %r9
 	movq $5, %rax
 	pushq %rax
 	call Int.new
 	movq %rax, %r8
 	popq %rax
 	movq %rax, 24(%r8)
-	movq $6, %rax
+	movq %r8, %r10
+	movq $6, %r8
+	call Int.new
+	movq %r8, 24(%rax)
+	movq %rax, %r11
+	movq $7, %r8
+	call Int.new
+	movq %r8, 24(%rax)
+	movq %rax, %r8
+	movq $8, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %r10
+	movq %rax, %r12
 	popq %rax
-	movq %rax, 24(%r10)
-	movq %r10, %r11
-	movq $7, %rax
-	pushq %rax
+	movq %rax, 24(%r12)
+	movq %r12, -16(%rbp)
+	movq $9, %r12
 	call Int.new
-	movq %rax, %r10
-	popq %rax
-	movq %rax, 24(%r10)
-	movq %r10, %r12
-	movq $8, %r10
-	call Int.new
-	movq %r10, 24(%rax)
-	movq %rax, %r13
-	movq $9, %r10
-	call Int.new
-	movq %r10, 24(%rax)
-	movq %rax, %r10
+	movq %r12, 24(%rax)
+	movq %rax, -8(%rbp)
 	movq $10, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, %r14
+	movq %rax, %r12
 	popq %rax
-	movq %rax, 24(%r14)
-	movq %r14, -32(%rbp)
-	movq $11, %r14
+	movq %rax, 24(%r12)
+	movq %r12, %r15
+	movq $11, %r12
 	call Int.new
-	movq %r14, 24(%rax)
-	movq %rax, -24(%rbp)
-	movq $12, %rax
-	pushq %rax
+	movq %r12, 24(%rax)
+	movq %rax, %r12
+	movq $12, %r13
 	call Int.new
+	movq %r13, 24(%rax)
 	movq %rax, %r14
-	popq %rax
-	movq %rax, 24(%r14)
-	movq %r14, -16(%rbp)
-	movq $13, %r14
+	movq $13, %r13
 	call Int.new
-	movq %r14, 24(%rax)
-	movq %rax, %r14
-	movq $14, %r15
+	movq %r13, 24(%rax)
+	movq %rax, %r13
+	movq $14, -24(%rbp)
 	call Int.new
-	movq %r15, 24(%rax)
-	movq %rax, -8(%rbp)
-	movq $15, %r15
-	call Int.new
-	movq %r15, 24(%rax)
-	movq %rax, %r15
-	movq $16, -40(%rbp)
-	call Int.new
-	movq -40(%rbp), %rdx
+	movq -24(%rbp), %rdx
 	movq %rdx, 24(%rax)
-	movq %rax, -40(%rbp)
-	movq $17, %rax
+	movq %rax, -32(%rbp)
+	movq $15, %rax
 	pushq %rax
 	call Int.new
-	movq %rax, -48(%rbp)
+	movq %rax, -24(%rbp)
 	popq %rax
-	movq -48(%rbp), %rdx
+	movq -24(%rbp), %rdx
 	movq %rax, 24(%rdx)
-	movq -48(%rbp), %rdx
+	movq -24(%rbp), %rdx
+	movq %rdx, -40(%rbp)
+	movq $16, %rax
+	pushq %rax
+	call Int.new
+	movq %rax, -24(%rbp)
+	popq %rax
+	movq -24(%rbp), %rdx
+	movq %rax, 24(%rdx)
+	movq -24(%rbp), %rdx
 	movq %rdx, -48(%rbp)
-	movq $18, %rax
-	pushq %rax
+	movq $17, -24(%rbp)
 	call Int.new
-	movq %rax, -56(%rbp)
-	popq %rax
+	movq -24(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -24(%rbp)
+	movq $18, -56(%rbp)
+	call Int.new
 	movq -56(%rbp), %rdx
-	movq %rax, 24(%rdx)
+	movq %rdx, 24(%rax)
 	movq $19, -56(%rbp)
 	call Int.new
 	movq -56(%rbp), %rdx
 	movq %rdx, 24(%rax)
-	movq %rax, -56(%rbp)
-	movq $20, -64(%rbp)
-	call Int.new
-	movq -64(%rbp), %rdx
-	movq %rdx, 24(%rax)
 	movq %rax, -64(%rbp)
+	movq $20, -56(%rbp)
+	call Int.new
+	movq -56(%rbp), %rdx
+	movq %rdx, 24(%rax)
+	movq %rax, -56(%rbp)
 	movq 24(%rcx), %rdx
 	movq %rdx, -72(%rbp)
 	movq 24(%rsi), %rax
+	addq %rax, -72(%rbp)
+	shlq $32, -72(%rbp)
+	sarq $32, -72(%rbp)
+	movq -72(%rbp), %rdx
+	movq %rdx, -72(%rbp)
+	movq 24(%rdi), %rax
 	addq %rax, -72(%rbp)
 	shlq $32, -72(%rbp)
 	sarq $32, -72(%rbp)
@@ -1398,49 +1471,18 @@ Main.main:
 	shlq $32, %rax
 	sarq $32, %rax
 	movq %rax, -72(%rbp)
-	movq 24(%rdi), %rax
+	movq 24(%r10), %rax
 	addq %rax, -72(%rbp)
 	shlq $32, -72(%rbp)
 	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rdx
+	movq -72(%rbp), %rax
+	movq 24(%r11), %rdx
 	movq %rdx, -72(%rbp)
+	addq -72(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -72(%rbp)
 	movq 24(%r8), %rax
-	addq %rax, -72(%rbp)
-	shlq $32, -72(%rbp)
-	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rdx
-	movq %rdx, -72(%rbp)
-	movq 24(%r11), %rax
-	addq %rax, -72(%rbp)
-	shlq $32, -72(%rbp)
-	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rax
-	movq 24(%r12), %rdx
-	movq %rdx, -72(%rbp)
-	addq -72(%rbp), %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, -72(%rbp)
-	movq 24(%r13), %rax
-	addq %rax, -72(%rbp)
-	shlq $32, -72(%rbp)
-	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rax
-	movq 24(%r10), %rdx
-	movq %rdx, -72(%rbp)
-	addq -72(%rbp), %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq %rax, -72(%rbp)
-	movq -32(%rbp), %rdx
-	movq 24(%rdx), %rax
-	addq %rax, -72(%rbp)
-	shlq $32, -72(%rbp)
-	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rdx
-	movq %rdx, -72(%rbp)
-	movq -24(%rbp), %rdx
-	movq 24(%rdx), %rax
 	addq %rax, -72(%rbp)
 	shlq $32, -72(%rbp)
 	sarq $32, -72(%rbp)
@@ -1453,23 +1495,41 @@ Main.main:
 	sarq $32, -72(%rbp)
 	movq -72(%rbp), %rdx
 	movq %rdx, -72(%rbp)
-	movq 24(%r14), %rax
-	addq %rax, -72(%rbp)
-	shlq $32, -72(%rbp)
-	sarq $32, -72(%rbp)
-	movq -72(%rbp), %rdx
-	movq %rdx, -72(%rbp)
 	movq -8(%rbp), %rdx
 	movq 24(%rdx), %rax
 	addq %rax, -72(%rbp)
 	shlq $32, -72(%rbp)
 	sarq $32, -72(%rbp)
+	movq -72(%rbp), %rdx
+	movq %rdx, -72(%rbp)
+	movq 24(%r15), %rax
+	addq %rax, -72(%rbp)
+	shlq $32, -72(%rbp)
+	sarq $32, -72(%rbp)
+	movq -72(%rbp), %rdx
+	movq %rdx, -72(%rbp)
+	movq 24(%r12), %rax
+	addq %rax, -72(%rbp)
+	shlq $32, -72(%rbp)
+	sarq $32, -72(%rbp)
 	movq -72(%rbp), %rax
-	movq 24(%r15), %rdx
+	movq 24(%r14), %rdx
 	movq %rdx, -72(%rbp)
 	addq -72(%rbp), %rax
 	shlq $32, %rax
 	sarq $32, %rax
+	movq 24(%r13), %rdx
+	movq %rdx, -72(%rbp)
+	addq -72(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq %rax, -72(%rbp)
+	movq -32(%rbp), %rdx
+	movq 24(%rdx), %rax
+	addq %rax, -72(%rbp)
+	shlq $32, -72(%rbp)
+	sarq $32, -72(%rbp)
+	movq -72(%rbp), %rax
 	movq -40(%rbp), %rdx
 	movq 24(%rdx), %rdx
 	movq %rdx, -72(%rbp)
@@ -1483,13 +1543,19 @@ Main.main:
 	shlq $32, -72(%rbp)
 	sarq $32, -72(%rbp)
 	movq -72(%rbp), %rax
-	movq -56(%rbp), %rdx
+	movq -24(%rbp), %rdx
 	movq 24(%rdx), %rdx
 	movq %rdx, -72(%rbp)
 	addq -72(%rbp), %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	movq -64(%rbp), %rdx
+	movq 24(%rdx), %rdx
+	movq %rdx, -72(%rbp)
+	addq -72(%rbp), %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -56(%rbp), %rdx
 	movq 24(%rdx), %rdx
 	movq %rdx, -72(%rbp)
 	addq -72(%rbp), %rax
@@ -1514,27 +1580,11 @@ Main.main:
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq 24(%r9), %rcx
-	addq %rcx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
 	movq 24(%rdi), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq 24(%r8), %rcx
-	addq %rcx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq 24(%r11), %rcx
-	addq %rcx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq 24(%r12), %rcx
-	addq %rcx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq 24(%r13), %rcx
+	movq 24(%r9), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1542,22 +1592,16 @@ Main.main:
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq -32(%rbp), %rdx
-	movq 24(%rdx), %rcx
+	movq 24(%r11), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq -24(%rbp), %rdx
-	movq 24(%rdx), %rcx
+	movq 24(%r8), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	movq -16(%rbp), %rdx
 	movq 24(%rdx), %rcx
-	addq %rcx, %rax
-	shlq $32, %rax
-	sarq $32, %rax
-	movq 24(%r14), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1567,6 +1611,23 @@ Main.main:
 	shlq $32, %rax
 	sarq $32, %rax
 	movq 24(%r15), %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq 24(%r12), %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq 24(%r14), %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq 24(%r13), %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -32(%rbp), %rdx
+	movq 24(%rdx), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
@@ -1580,12 +1641,17 @@ Main.main:
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
-	movq -56(%rbp), %rdx
+	movq -24(%rbp), %rdx
 	movq 24(%rdx), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
 	sarq $32, %rax
 	movq -64(%rbp), %rdx
+	movq 24(%rdx), %rcx
+	addq %rcx, %rax
+	shlq $32, %rax
+	sarq $32, %rax
+	movq -56(%rbp), %rdx
 	movq 24(%rdx), %rcx
 	addq %rcx, %rax
 	shlq $32, %rax
