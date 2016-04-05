@@ -415,10 +415,14 @@ def expConvert(node):
 
     elif node.expr == 'new':
         reg = TACIndexer.reg()
-        typename = node.args.name
         if node.args.name == 'SELF_TYPE':
-            typename = TACIndexer.cname     #TODO: Should be vtable lookup on self
-        TACIndexer.pushIns(TACAllocate(reg, node.expr, typename))
+            #find constructor through vtable of self
+            reglb = TACIndexer.reg()
+            TACIndexer.pushIns(TACVTable(reglb, TACIndexer.map('self'), TACIndexer.cname, 'new'))
+            TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, []))
+            TACIndexer.pushIns(TACAssign(reg, TACIndexer.returnReg))
+        else:
+            TACIndexer.pushIns(TACAllocate(reg, 'new', node.args.name))
         return reg
 
     elif node.expr == 'identifier':

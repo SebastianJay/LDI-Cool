@@ -183,8 +183,8 @@ class ASMIndexer:
     def getvtableind(cname, methname):
         ind = -1
         for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
-            # Skip name string and new
-            if i < 2:
+            # Skip name string
+            if i < 1:
                 continue
             if meth.split('.')[1] == methname:
                 ind = i
