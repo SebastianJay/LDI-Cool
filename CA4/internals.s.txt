@@ -79,6 +79,8 @@ in_int:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
+	pushq	%r12
+	pushq	%r13
 	.cfi_def_cfa_offset 24
 	.cfi_offset 3, -24
 	movl	$4096, %edi
@@ -168,6 +170,8 @@ in_int:
 	jne	.L18
 	addq	$4136, %rsp
 	.cfi_remember_state
+	popq	%r13
+	popq	%r12
 	popq	%r11
 	popq	%r10
 	popq	%r9
