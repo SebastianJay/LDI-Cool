@@ -88,18 +88,29 @@ Int* IO_in_int(IO* self)
 long long in_int()
 {
     long long i = 0;
-    char* c = (char*)calloc(4096, 1);
-    fgets(c, 4096, stdin);
-    int retcode = sscanf(c, "%lld", &i);
-    // consume rest of line
+    int lenstr = 4096;
+    char* c = (char*)calloc(lenstr, 1);
+    char buffer[4096];
+    memset(buffer, 0, 4096);
+    //consume whole line until newline or eof
     while (1) {
+        fgets(buffer, 4096, stdin);
+        strcat(c, buffer);
         int len = strlen(c);
-        if (c[len-1] == '\n') {
+        if (len == 0) {
+            return 0;
+        }
+        if (c[len-1] == '\n' || feof(stdin)) {
             break;
         }
-        fgets(c, 4096, stdin);
+        lenstr += 4096;
+        char* newc = (char*)calloc(lenstr, 1);
+        strcpy(newc, c);
+        free(c);
+        c = newc;
     }
-    free(c);
+    //parse string to int
+    int retcode = sscanf(c, "%lld", &i);
     // Return 0 on bad input
     if (retcode == EOF || retcode == 0)
         return 0;
@@ -306,8 +317,26 @@ Bool* Bool_new()
 int main(int argc, char** argv)
 {
     ///test in and out string and int
-    //int i = in_int();
-    //out_int(i);
+    /*
+    char* i = in_string();
+    out_string(i);
+    i = in_string();
+    out_string(i);
+    i = in_string();
+    out_string(i);
+    printf("\n");
+    if (i == "") {
+        printf("empty string received");
+    }
+    */
+
+    long long j = in_int();
+    out_int(j);
+    j = in_int();
+    out_int(j);
+    j = in_int();
+    out_int(j);
+
     //char* c = in_string();
     //out_string(c);
 
@@ -316,10 +345,10 @@ int main(int argc, char** argv)
     //printf("%d", ll);
 
     ///test string read in and length
-    IO* io = IO_new();
-    String* s = IO_in_string(io);
-    IO_out_string(io, s);
-    IO_out_int(io, String_length(s));
+    //IO* io = IO_new();
+    //String* s = IO_in_string(io);
+    //IO_out_string(io, s);
+    //IO_out_int(io, String_length(s));
 
     ///test substring
     //Int* start = IO_in_int(io);
