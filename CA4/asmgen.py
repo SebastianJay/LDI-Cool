@@ -213,7 +213,7 @@ class ASMIndexer:
                 ASMInfo('string', '"' + s + '"'),
                 # String object
                 ASMLabel(ASMIndexer.strMap[s]),
-                ASMInfo('quad', '3'),
+                ASMInfo('quad', str(ASMIndexer.clsTags['String'])),
                 ASMInfo('quad', 'String_vtable'),
                 ASMInfo('quad', '1'),
                 ASMInfo('quad', ASMIndexer.strMap[s]+"_l")
