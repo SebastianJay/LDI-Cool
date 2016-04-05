@@ -1,11 +1,8 @@
 class Main inherits IO {
     main() : Object {
-	let f : Foo <- (new Bar) in {
-	case f.func() of
-	    a : Foo => out_string("F");
-	    b: Bar => out_string("B");
-		esac;
-	}
+	{
+            out_int((new Bar).func().func2());
+        }
     };
 };
 
@@ -14,11 +11,9 @@ class Foo {
     setX(i : Int) : SELF_TYPE {{x <- i; self;}};
     getX(): Int {x};
     func() : SELF_TYPE {
-	let f : SELF_TYPE<- (new SELF_TYPE) in {
-	    f<-setX(x);
-	    f;
-	}
+        (new SELF_TYPE ).setX(3)
+    
     };
 };
 
-class Bar inherits Foo {};
+class Bar inherits Foo {func2(): Int { x*x};};
