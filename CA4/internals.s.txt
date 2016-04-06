@@ -6,10 +6,6 @@
 IO.new:
 .LFB61:
 	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
 	pushq	%rsi
 	pushq	%rdi
 	pushq	%rcx
@@ -30,8 +26,6 @@ IO.new:
 	popq	%rcx
 	popq	%rdi
 	popq	%rsi
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
 .LFE61:
