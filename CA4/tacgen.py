@@ -192,7 +192,6 @@ def expConvert(node):
         regc = box(expConvert(node.args[0]), node.args[0].type)
         #fail if case "caller" is void
         regv = TACIndexer.reg()
-        regvbar = TACIndexer.reg()
         lbc = TACIndexer.label()
         TACIndexer.pushIns(TACAssign(regv, regc))
         TACIndexer.pushIns(TACOp1(regv, 'isvoid', regv))
@@ -226,7 +225,7 @@ def expConvert(node):
             TACIndexer.pushIns(TACLabel(blabels[i]))
             regci = TACIndexer.map(node.args[1][i].name.name, True)
             TACIndexer.pushIns(TACAssign(regci, regc))
-            regb = expConvert(node.args[1][i].body)
+            regb = box(expConvert(node.args[1][i].body), node.args[1][i].body.type)
             TACIndexer.pop(node.args[1][i].name.name)
             TACIndexer.pushIns(TACAssign(regj, regb))
             TACIndexer.pushIns(TACJmp(lbj))
@@ -248,6 +247,12 @@ def expConvert(node):
 
     elif node.expr == 'isvoid':
         regr = expConvert(node.args)
+
+        if isinstance(regr, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regr))
+            regr = attreg
+
         op1 = TACIndexer.reg()
         op1.boxed = False
         if not regr.boxed or node.args.type == 'String' or node.args.type == 'Int' or node.args.type == 'Bool':

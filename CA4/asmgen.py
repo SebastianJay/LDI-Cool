@@ -202,7 +202,6 @@ class ASMIndexer:
         return vlist
 
     #returns a list of ASMInstruction corresponding to literals in strMap
-    #TODO escape special chars? (\", \\)
     @staticmethod
     def genStr():
         slist = []
