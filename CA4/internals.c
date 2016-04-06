@@ -100,7 +100,15 @@ long long in_int()
         if (len == 0) {
             return 0;
         }
-        if (c[len-1] == '\n' || feof(stdin)) {
+        if (feof(stdin)) {
+            break;
+        }
+        //remove newline chars before processing
+        if (c[len-1] == '\n') {
+            c[len-1] = '\0';
+            if (len > 1 && c[len-2] == '\r') {
+                c[len-2] = '\0';
+            }
             break;
         }
         lenstr += 4096;
@@ -160,6 +168,10 @@ char* in_string()
         } else if (c == '\n') {
             //if read newline, stop reading and return buffer
             buffer[numread] = '\0';
+            //remove carriage return if it is present
+            if (numread > 0 && buffer[numread-1] == '\r') {
+                buffer[numread-1] = '\0';
+            }
             return buffer;
         }
         //otherwise append character

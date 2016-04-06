@@ -14,7 +14,10 @@ def getRead(inst):
         if inst.args:
             res = inst.args[:]  #make a list copy
         if isinstance(inst.funcname, TACRegister):
-            res += [inst.funcname]
+            if res is not None:
+                res += [inst.funcname]
+            else:
+                res = [inst.funcname]
     elif isinstance(inst, TACReturn):
         res = [inst.retval]
     elif isinstance(inst, TACBT):
