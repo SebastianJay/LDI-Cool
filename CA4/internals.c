@@ -163,7 +163,13 @@ char* in_string()
                 return buffer;
             }
         } else if (c == '\0') {
-            //if read NUL, return empty string
+            //if read NUL, consume rest of line but return empty string
+            while (1) {
+                c = fgetc(stdin);
+                if (c == EOF || c == '\n') {
+                    break;
+                }
+            }
             return "";
         } else if (c == '\n') {
             //if read newline, stop reading and return buffer
@@ -328,6 +334,16 @@ Bool* Bool_new()
 
 int main(int argc, char** argv)
 {
+    int i = 0;
+    IO* io = IO_new();
+    for (; i < 130; i++) {
+        printf("%d", i);
+        String* s = IO_in_string(io);
+        IO_out_string(io, s);
+        IO_out_int(io, String_length(s));
+        printf("\n");
+
+    }
     ///test in and out string and int
     /*
     char* i = in_string();
@@ -342,12 +358,14 @@ int main(int argc, char** argv)
     }
     */
 
+    /*
     long long j = in_int();
     out_int(j);
     j = in_int();
     out_int(j);
     j = in_int();
     out_int(j);
+    */
 
     //char* c = in_string();
     //out_string(c);

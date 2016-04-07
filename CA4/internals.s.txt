@@ -287,23 +287,23 @@ in_string:
 	jmp	.L26
 	.p2align 4,,10
 	.p2align 3
-.L31:
+.L53:
 	addq	$1, %rbx
 .L26:
 	movq	stdin(%rip), %rdi
 	call	fgetc
 	cmpl	$-1, %eax
-	je	.L36
+	je	.L40
 	testl	%eax, %eax
-	je	.LL32
+	je	.L31
 	cmpl	$10, %eax
 	.p2align 4,,3
-	je	.LL37
+	je	.L41
 	leal	-1(%r12), %edx
 	leal	1(%rbx), %ecx
 	movb	%al, 0(%rbp,%rbx)
 	cmpl	%ecx, %edx
-	jne	.L31
+	jne	.L53
 	movslq	%edx, %rdx
 	addl	$4096, %r12d
 	movl	$1, %esi
@@ -317,13 +317,19 @@ in_string:
 	movq	%rbp, %rdi
 	movq	%r13, %rbp
 	call	free
-	jmp	.L31
+	jmp	.L53
 	.p2align 4,,10
 	.p2align 3
-.L36:
+.L42:
+	cmpl	$-1, %eax
+	je	.L28
+.L31:
+	movq	stdin(%rip), %rdi
+	call	fgetc
+	cmpl	$10, %eax
+	jne	.L42
+.L28:
 	movl	$.LC2, %eax
-	testl	%ebx, %ebx
-	cmovne	%rbp, %rax
 .L29:
 	addq	$8, %rsp
 	.cfi_remember_state
@@ -347,12 +353,15 @@ in_string:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.LL32:
+.L40:
 	.cfi_restore_state
+	testl	%ebx, %ebx
+	je	.L28
+.L34:
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
-	movl	$.LC2, %eax
+	movq	%rbp, %rax
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -372,20 +381,17 @@ in_string:
 	ret
 	.p2align 4,,10
 	.p2align 3
-.LL37:
+.L41:
 	.cfi_restore_state
 	movslq	%ebx, %rax
 	testl	%ebx, %ebx
 	movb	$0, 0(%rbp,%rax)
-	je	.LL33
+	je	.L34
 	leaq	-1(%rbp,%rax), %rdx
 	movq	%rbp, %rax
 	cmpb	$13, (%rdx)
 	jne	.L29
 	movb	$0, (%rdx)
-	jmp	.L29
-.LL33:
-	movq	%rbp, %rax
 	jmp	.L29
 	.cfi_endproc
 .LFE67:
