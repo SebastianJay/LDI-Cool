@@ -16,7 +16,9 @@ def genRegGraph(cfg):
         for t in live:
             if t not in regGraph:
                 regGraph[t] = [set(),-1]
-            regGraph[t][0] |= {r for r in live if r != t}
+            for r in live:
+                if r != t:
+                    regGraph[t][0].add(r)
 
         for inst in reversed(block.instructions):
             # Killed when assigned
@@ -36,7 +38,9 @@ def genRegGraph(cfg):
             for t in live:
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
-                regGraph[t][0] |= {r for r in live if r != t}
+                for r in live:
+                    if r != t:
+                        regGraph[t][0].add(r)
                 if killed is not None and t != killed:
                     regGraph[t][0].add(killed)
                     regGraph[killed][0].add(t)
@@ -103,7 +107,7 @@ def registerAllocate(cfg, nregs):
             # Eliminate colors of adjacent nodes
             availableColors = set(range(maxColor+2)) # [0,..,maxColor+1]
             for adj in graph[node][0]:
-                availableColors -= {graph[adj][1]}
+                availableColors -= set([graph[adj][1]])
 
             # When all registers used and something has already been spilled,
             # the maxColor+1 is blocked and availableColors will be empty
@@ -139,7 +143,7 @@ def registerAllocate(cfg, nregs):
             availableSpills = set(range(nregs+1,nregs+maxSpill+2))
 
             for adj in regGraph[nspill][0]:
-                availableSpills -= {regGraph[adj][1]}
+                availableSpills -= set([regGraph[adj][1]])
 
             spillMap[nspill] = min(availableSpills)
 
