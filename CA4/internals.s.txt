@@ -983,49 +983,50 @@ String.substr:
 	movq	16(%rbp), %rdi
 	movq	24(%rbp), %rsi
 	movq	32(%rbp), %rdx
-	movq	%rdi, %rbp
 	movq	%rdx, %r12
-	.cfi_def_cfa_offset 48
-	.cfi_offset 3, -48
+	movq	%rsi, %rbp
+	movq	%rdi, %rbx
 	movq	24(%rdi), %rdi
-	movq	%rsi, %rbx
 	call	strlen
-	movq	24(%rbx), %rbx
-	cltq
 	movq	24(%r12), %r13
-	cmpq	%rax, %rbx
-	jge	.L70
-	leaq	(%rbx,%r13), %rdx
-	cmpq	%rdx, %rax
-	jl	.L70
-	testq	%rbx, %rbx
-	js	.L70
-	leaq	1(%r13), %r12
+	movq	24(%rbp), %r12
+	testq	%r12, %r12
+	js	.L83
+	movq	%r13, %rdx
+	shrq	$63, %rdx
+	testb	%dl, %dl
+	jne	.L83
+	leaq	(%r12,%r13), %rdx
+	cltq
+	cmpq	%rax, %rdx
+	jg	.L83
+	leaq	1(%r13), %rbp
 	xorl	%eax, %eax
 	call	String.new
 	movl	$1, %esi
-	movq	%r12, %rdi
+	movq	%rbp, %rdi
 	movq	%rax, %r14
 	call	calloc
 	xorl	%ecx, %ecx
 	testq	%r13, %r13
 	movl	$1, %edx
-	jle	.L73
+	je	.L86
 	.p2align 4,,10
 	.p2align 3
-.L75:
-	movq	%rbx, %rsi
-	addq	24(%rbp), %rsi
+.L88:
+	movq	%r12, %rsi
+	addq	24(%rbx), %rsi
 	movzbl	(%rsi,%rcx), %ecx
 	movb	%cl, -1(%rax,%rdx)
 	movq	%rdx, %rcx
 	addq	$1, %rdx
-	cmpq	%r12, %rdx
-	jne	.L75
-.L73:
+	cmpq	%rbp, %rdx
+	jne	.L88
+.L86:
 	movb	$0, (%rax,%r13)
 	movq	%rax, 24(%r14)
 	movq	%r14, %rax
+	.cfi_remember_state
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -1040,7 +1041,8 @@ String.substr:
 	popq	%rsp
 	popq	%rbp
 	ret
-.L70:
+.L83:
+	.cfi_restore_state
 	xorl	%esi, %esi
 	movl	$.LC5, %edi
 	call	out_error

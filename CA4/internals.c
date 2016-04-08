@@ -297,7 +297,7 @@ String* String_substr(String* self, Int* ibox, Int* lbox) {
     int len = strlen(self->c);
     long long i = ibox->value;
     long long l = lbox->value;
-    if (i >= len || i + l > len || i < 0) {
+    if (i < 0 || l < 0 || i + l > len) {
         out_error("ERROR: %lld: Exception: String index out of bounds", 0ll);
         //program halts
     }

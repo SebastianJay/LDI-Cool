@@ -8,6 +8,8 @@ class Main {
         io.out_int((new Int) + 1);
 
         io.out_string((new String).substr(0, 0).type_name());
+
+        --io.out_string("o".substr(2, 0));
     }
     };
 };
