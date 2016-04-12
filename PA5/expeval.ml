@@ -36,6 +36,14 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         | "String" -> StringObj("")
         | _ -> Void
     in
+    let get_typename_attrs obj =
+        match obj with
+        | RegObj(name, attrs) -> (name, attrs)
+        | IntObj(_) -> ("Int", [])
+        | BoolObj(_) -> ("Bool", [])
+        | StringObj(_) -> ("String", [])
+        | Void -> failwith "unexpected Void type in get_typename_attrs"
+    in
     let rec args_eval self store env margs =
         match margs with
         | [] -> ([], store)
@@ -54,13 +62,11 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             (value, st2)
         | Identifier(aId) ->
             let (_, id) = aId in
-            (match id with
-            | "self" ->
-                (self, store)
-            | _ ->
-                let loc = Hashtbl.find env id in
-                let value = Hashtbl.find store loc in
-                (value, store) )
+            let objval = (match id with
+            | "self" -> self
+            | _ -> Hashtbl.find store (Hashtbl.find env id))
+            in
+            (objval, store)
         | True ->
             (BoolObj(true), store)
         | False ->
@@ -72,9 +78,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         | New(aId) ->
             let (_, id) = aId in
             let dtype = (match id with
-            | "SELF_TYPE" -> (match self with
-                | RegObj(sotype, _) -> sotype
-                | _ -> failwith "new SELF_TYPE expression when self is primitive/void")
+            | "SELF_TYPE" -> let (sotype, _) = get_typename_attrs self in sotype
             | _ -> id)
             in
             (match dtype with
@@ -112,10 +116,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 (newself, st3))
         | SelfDispatch(methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
-            let (dtype, attrs) = (match self with
-                | RegObj(sotype, attrs) -> (sotype, attrs)
-                | _ -> failwith "dispatch inside primitive/void method implementation")
-            in
+            let (dtype, attrs) = get_typename_attrs self in
             let impllst = List.assoc dtype imap in
             let (_, mname) = methid in
             let (formallst, _, mbody) = List.assoc mname impllst in
@@ -126,34 +127,130 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
             let formallocs = List.combine formallst loclst in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            exp_eval self argstore newenv mbody;
+            exp_eval self argstore newenv mbody
         | DynamicDispatch(receiver, methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
-            let (dtype, attrs) = (match recval with
-                | RegObj(sotype, attrs) -> (sotype, attrs)
-                | IntObj(_) -> ("Int", [])
-                | BoolObj(_) -> ("Bool", [])
-                | StringObj(_) -> ("String", [])
-                | Void -> failwith "dispatch on void")  (* TODO exit with propr formatting *)
-            in
+            (match recval with
+            | Void -> failwith "dispatch on void" (* TODO exit with proper formatting *)
+            | _ -> ());
+            let (dtype, attrs) = get_typename_attrs recval in
             let impllst = List.assoc dtype imap in
             let (_, mname) = methid in
             let (formallst, _, mbody) = List.assoc mname impllst in
-            let loclst = store_newloc argstore (List.length formallst) in
+            let loclst = store_newloc recstore (List.length formallst) in
             let storeentries = List.combine loclst argvals in
             List.iter (fun (loc, obj) -> Hashtbl.add recstore loc obj) storeentries;
             let newenv = Hashtbl.create 255 in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
             let formallocs = List.combine formallst loclst in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            exp_eval recval recstore newenv mbody;
+            exp_eval recval recstore newenv mbody
+        | StaticDispatch(receiver, clsid, methid, margs) ->
+            let (argvals, argstore) = args_eval self store env margs in
+            let (recval, recstore) = exp_eval self argstore env receiver in
+            (match recval with
+            | Void -> failwith "dispatch on void" (* TODO exit with proper formatting *)
+            | _ -> ());
+            let (dtype, attrs) = get_typename_attrs recval in
+            let (_, cname) = clsid in
+            let impllst = List.assoc cname imap in
+            let (_, mname) = methid in
+            let (formallst, _, mbody) = List.assoc mname impllst in
+            let loclst = store_newloc recstore (List.length formallst) in
+            let storeentries = List.combine loclst argvals in
+            List.iter (fun (loc, obj) -> Hashtbl.add recstore loc obj) storeentries;
+            let newenv = Hashtbl.create 255 in
+            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
+            let formallocs = List.combine formallst loclst in
+            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
+            exp_eval recval recstore newenv mbody
+        | If(predexp, thenexp, elseexp) ->
+            let (predicate, predstore) = exp_eval self store env predexp in
+            (match predicate with
+            | BoolObj(boolval) ->
+                (match boolval with
+                | true -> exp_eval self predstore env thenexp
+                | false -> exp_eval self predstore env elseexp)
+            | _ -> failwith "non Bool predicate in if statement")
         | Block(explst) ->
             (match explst with
             | [] -> (Void, store)   (* should only occur in attribute initializers *)
             | hd :: [] -> exp_eval self store env hd
             | hd :: tl -> let (_, sti) = exp_eval self store env hd in
                 exp_eval self sti env (lineno, stype, Block(tl)))
+        | LetBinding(bindlst, letexp) ->
+            let letbind_eval self store env (nameid, lettypeid, init) =
+                let (_, name) = nameid in
+                let (_, lettype) = lettypeid in
+                let (initobj, initstore) = (match init with
+                | Init(initexp) -> exp_eval self store env initexp
+                | NoInit -> (default_obj lettype, store))
+                in
+                let loc = List.hd (store_newloc initstore 1) in
+                Hashtbl.add initstore loc initobj;
+                let newenv = Hashtbl.copy env in
+                Hashtbl.add newenv name loc;
+                (initstore, newenv)
+            in
+            (match bindlst with
+            | [] -> failwith "no bindings specified in let statement"
+            | hd :: [] ->
+                let (newstore, newenv) = letbind_eval self store env hd in
+                exp_eval self newstore newenv letexp
+            | hd :: tl ->
+                let (newstore, newenv) = letbind_eval self store env hd in
+                let otherbind = (lineno, stype, LetBinding(tl, letexp)) in
+                exp_eval self newstore newenv otherbind)
+        | Case(caseexp, branchlst) ->
+            let closest_ancestor dtype branchtypes =
+                let rec parent_chain dtype =
+                    match dtype with
+                    | "Object" -> ["Object"]
+                    | x -> x :: parent_chain (List.assoc x pmap)
+                in
+                let rec walk_chain pchain =
+                    match pchain with
+                    | [] -> failwith "case no matching branch" (* TODO proper formatting *)
+                    | hd :: tl ->
+                        match List.mem hd branchtypes with
+                        | true -> hd
+                        | false -> walk_chain tl
+                in
+                walk_chain (parent_chain dtype)
+            in
+            let (caseobj, casestore) = exp_eval self store env caseexp in
+            (match caseobj with
+            | Void -> failwith "case on void" (* TODO proper formatting *)
+            | _ -> ());
+            let (dtype, _) = get_typename_attrs caseobj in
+            let branchtypes = List.map (fun (_, (_, btype), _) -> btype) branchlst in
+            let ctype = closest_ancestor dtype branchtypes in
+            let ((_, casename), _, branchexp) = List.hd (List.filter
+                (fun (_, (_, btype), _) -> btype = ctype) branchlst) in
+            let loc = List.hd (store_newloc casestore 1) in
+            Hashtbl.add casestore loc caseobj;
+            let newenv = Hashtbl.copy env in
+            Hashtbl.add newenv casename loc;
+            exp_eval self casestore newenv branchexp
+        | While(predexp, bodyexp) ->
+            let (predicate, predstore) = exp_eval self store env predexp in
+            (match predicate with
+            | BoolObj(boolval) ->
+                (match boolval with
+                | true ->
+                    let (_, bodystore) = exp_eval self predstore env bodyexp in
+                    let (_, loopstore) = exp_eval self bodystore env expNode in
+                    (Void, loopstore)
+                | false -> (Void, predstore))
+            | _ -> failwith "non Bool predicate in while loop")
+        | IsVoid(voidexp) ->
+            let (voidobj, voidstore) = exp_eval self store env voidexp in
+            let retbool = (match voidobj with
+            | Void -> BoolObj(true)
+            | _ -> BoolObj(false))
+            in
+            (retbool, voidstore)
         | Internal(intname) ->
             let retval = (match intname with
                 | "IO.out_string" ->
