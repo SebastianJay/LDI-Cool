@@ -21,6 +21,10 @@ type opsemEnv = (string, int) Hashtbl.t;;
 type opsemStore = (int, coolObject) Hashtbl.t;;
 
 let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
+
+    (* NOTE we keep track of number of stack frames through a mutable var *)
+    let activation_count = ref 0 in
+
     let store_newloc tbl num =
         let rec create_loclst numleft ind =
             match numleft with
@@ -57,6 +61,15 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         let out_error formatstr =
             Printf.printf formatstr lineno;
             exit 1
+        in
+        let inc_stack_frame () =
+            activation_count := !activation_count + 1;
+            match !activation_count >= 1001 with
+            | true -> out_error "ERROR: %d: Exception: stack overflow\n"
+            | false -> ()
+        in
+        let dec_stack_frame () =
+            activation_count := !activation_count - 1;
         in
         match exp with
         | Assign(assignee, assignor) ->
@@ -117,7 +130,9 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 let selfenv = Hashtbl.create 255 in
                 List.iter (fun (name, loc) -> Hashtbl.add selfenv name loc) clsfields;
                 let initblock = (0, "Object", Block(build_init_exp attrlst)) in
+                inc_stack_frame ();
                 let (_, st3) = exp_eval newself store selfenv initblock in
+                dec_stack_frame ();
                 (newself, st3))
         | SelfDispatch(methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
@@ -132,7 +147,10 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
             let formallocs = List.combine formallst loclst in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            exp_eval self argstore newenv mbody
+            inc_stack_frame ();
+            let out_tuple = exp_eval self argstore newenv mbody in
+            dec_stack_frame ();
+            out_tuple
         | DynamicDispatch(receiver, methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
@@ -150,7 +168,10 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
             let formallocs = List.combine formallst loclst in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            exp_eval recval recstore newenv mbody
+            inc_stack_frame ();
+            let out_tuple = exp_eval recval recstore newenv mbody in
+            dec_stack_frame ();
+            out_tuple
         | StaticDispatch(receiver, clsid, methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
@@ -169,7 +190,10 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
             let formallocs = List.combine formallst loclst in
             List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            exp_eval recval recstore newenv mbody
+            inc_stack_frame ();
+            let out_tuple = exp_eval recval recstore newenv mbody in
+            dec_stack_frame ();
+            out_tuple
         | If(predexp, thenexp, elseexp) ->
             let (predicate, predstore) = exp_eval self store env predexp in
             (match predicate with
@@ -488,7 +512,9 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
     let store = Hashtbl.create 255 in
     let env = Hashtbl.create 255 in
     let newmainexp = (0, "Main", New(0, "Main")) in
+    activation_count := 0;
     let (newmain, newstore) = exp_eval Void store env newmainexp in
     let mainmethexp = (0, "Object", SelfDispatch((0, "main"), [])) in
+    activation_count := 0;
     exp_eval newmain newstore env mainmethexp
 ;;
