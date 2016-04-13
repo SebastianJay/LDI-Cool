@@ -54,6 +54,10 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             (arghd :: argtl, ste)
     and exp_eval (self : coolObject) (store : opsemStore) (env : opsemEnv) (expNode : astExpNode) =
         let (lineno, stype, exp) = expNode in
+        let out_error formatstr =
+            Printf.printf formatstr lineno;
+            exit 1
+        in
         match exp with
         | Assign(assignee, assignor) ->
             let (_, id) = assignee in
@@ -133,7 +137,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
             (match recval with
-            | Void -> failwith "dispatch on void" (* TODO exit with proper formatting *)
+            | Void -> out_error "ERROR: %d: Exception: dispatch on void\n"
             | _ -> ());
             let (dtype, attrs) = get_typename_attrs recval in
             let impllst = List.assoc dtype imap in
@@ -151,7 +155,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
             (match recval with
-            | Void -> failwith "dispatch on void" (* TODO exit with proper formatting *)
+            | Void -> out_error "ERROR: %d: Exception: dispatch on void\n"
             | _ -> ());
             let (dtype, attrs) = get_typename_attrs recval in
             let (_, cname) = clsid in
@@ -212,7 +216,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 in
                 let rec walk_chain pchain =
                     match pchain with
-                    | [] -> failwith "case no matching branch" (* TODO proper formatting *)
+                    | [] -> out_error "ERROR: %d: Exception: case without matching branch\n"
                     | hd :: tl ->
                         match List.mem hd branchtypes with
                         | true -> hd
@@ -222,7 +226,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             in
             let (caseobj, casestore) = exp_eval self store env caseexp in
             (match caseobj with
-            | Void -> failwith "case on void" (* TODO proper formatting *)
+            | Void -> out_error "ERROR: %d: Exception: case on void\n"
             | _ -> ());
             let (dtype, _) = get_typename_attrs caseobj in
             let branchtypes = List.map (fun (_, (_, btype), _) -> btype) branchlst in
@@ -296,7 +300,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             let retint = (match (op1, op2) with
             | (IntObj(intval1), IntObj(intval2)) ->
                 (match Int32.to_int intval2 with
-                | 0 -> failwith "division by zero" (* TODO proper formatting *)
+                | 0 -> out_error "ERROR: %d: Exception: division by zero\n"
                 | _ -> IntObj(Int32.div intval1 intval2))
             | _ -> failwith "non Int exp in divide")
             in
@@ -385,7 +389,8 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         | Internal(intname) ->
             let retval = (match intname with
                 | "Object.abort" ->
-                    failwith "abort\n"    (* TODO *)
+                    Printf.printf "abort\n";
+                    exit 0
                 | "Object.copy" ->        (* NOTE store changes here! but out of convenience we don't return it *)
                     (match self with
                     | RegObj(dtype, attrs) ->
@@ -429,7 +434,9 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                     | _ -> failwith "internal argument type check fail (String.substr)")
                     in
                     (match startind < 0 || sublen < 0 || startind + sublen > String.length str with
-                    | true -> failwith "substring out of bounds" (* TODO proper formatting *)
+                    | true ->
+                        Printf.printf "ERROR: 0: Exception: substring out of bounds\n";
+                        exit 1
                     | false -> ());
                     StringObj(String.sub str startind sublen)
                 | "IO.in_string" ->
