@@ -1,6 +1,7 @@
 open List
 open Hashtbl
 open String
+open Int32
 open Printf
 open Annast
 
@@ -8,7 +9,7 @@ open Annast
 (* other variants are special cases *)
 type coolObject =
     | RegObj of string * (string * int) list
-    | IntObj of int
+    | IntObj of Int32.t
     | BoolObj of bool
     | StringObj of string
     | Void
@@ -31,7 +32,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
     in
     let default_obj dtype =
         match dtype with
-        | "Int" -> IntObj(0)
+        | "Int" -> IntObj(Int32.zero)
         | "Bool" -> BoolObj(false)
         | "String" -> StringObj("")
         | _ -> Void
@@ -72,7 +73,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         | False ->
             (BoolObj(false), store)
         | Integer(intval) ->
-            (IntObj(intval), store)
+            (IntObj(Int32.of_int intval), store)
         | String(strval) ->
             (StringObj(strval), store)
         | New(aId) ->
@@ -82,7 +83,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             | _ -> id)
             in
             (match dtype with
-            | "Int" -> (IntObj(0), store)
+            | "Int" -> (IntObj(Int32.zero), store)
             | "Bool" -> (BoolObj(false), store)
             | "String" -> (StringObj(""), store)
             | _ ->
@@ -251,12 +252,142 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             | _ -> BoolObj(false))
             in
             (retbool, voidstore)
+        | Not(notexp) ->
+            let (notobj, notstore) = exp_eval self store env notexp in
+            let retbool = (match notobj with
+            | BoolObj(boolval) -> BoolObj(not boolval)
+            | _ -> failwith "non Bool exp in not")
+            in
+            (retbool, notstore)
+        | Negate(negexp) ->
+            let (negobj, negstore) = exp_eval self store env negexp in
+            let retint = (match negobj with
+            | IntObj(intval) -> IntObj(Int32.neg intval)
+            | _ -> failwith "non Int exp in negate")
+            in
+            (retint, negstore)
+        | Plus(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retint = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) -> IntObj(Int32.add intval1 intval2)
+            | _ -> failwith "non Int exp in plus")
+            in
+            (retint, st3)
+        | Minus(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retint = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) -> IntObj(Int32.sub intval1 intval2)
+            | _ -> failwith "non Int exp in minus")
+            in
+            (retint, st3)
+        | Times(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retint = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) -> IntObj(Int32.mul intval1 intval2)
+            | _ -> failwith "non Int exp in times")
+            in
+            (retint, st3)
+        | Divide(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retint = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) ->
+                (match Int32.to_int intval2 with
+                | 0 -> failwith "division by zero" (* TODO proper formatting *)
+                | _ -> IntObj(Int32.div intval1 intval2))
+            | _ -> failwith "non Int exp in divide")
+            in
+            (retint, st3)
+        | LT(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retbool = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) ->
+                BoolObj((Int32.compare intval1 intval2) < 0)
+            | (BoolObj(boolval1), BoolObj(boolval2)) ->
+                (match (boolval1, boolval2) with
+                | (true, true) -> BoolObj(false)
+                | (true, false) -> BoolObj(false)
+                | (false, true) -> BoolObj(true)
+                | (false, false) -> BoolObj(false))
+            | (StringObj(strval1), StringObj(strval2)) ->
+                BoolObj(strval1 < strval2)
+            | _ -> BoolObj(false))
+            in
+            (retbool, st3)
+        | LE(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retbool = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) ->
+                BoolObj((Int32.compare intval1 intval2) <= 0)
+            | (BoolObj(boolval1), BoolObj(boolval2)) ->
+                (match (boolval1, boolval2) with
+                | (true, true) -> BoolObj(true)
+                | (true, false) -> BoolObj(false)
+                | (false, true) -> BoolObj(true)
+                | (false, false) -> BoolObj(true))
+            | (StringObj(strval1), StringObj(strval2)) ->
+                BoolObj(strval1 <= strval2)
+            | (Void, Void) -> BoolObj(true)
+            | (Void, _) -> BoolObj(false)
+            | (_, Void) -> BoolObj(false)
+            | (obj1, obj2) ->   (* TODO figure out pointer comparison *)
+                let find_loc obj =
+                    match obj with
+                    | RegObj(_, _) ->
+                        let storelst = Hashtbl.fold (fun loc sobj acc -> (loc, sobj) :: acc) store [] in
+                        (match List.filter (fun (loc, sobj) -> sobj == obj) storelst with
+                        | [] -> (-1)
+                        | (loc, _) :: tl -> loc)
+                    | _ -> (-1)
+                in
+                let loc1 = find_loc obj1 in
+                let loc2 = find_loc obj2 in
+                BoolObj(loc1 <> (-1) && loc2 <> (-1) && loc1 = loc2))
+            in
+            (retbool, st3)
+        | EQ(exp1, exp2) ->
+            let (op1, st2) = exp_eval self store env exp1 in
+            let (op2, st3) = exp_eval self st2 env exp2 in
+            let retbool = (match (op1, op2) with
+            | (IntObj(intval1), IntObj(intval2)) ->
+                BoolObj((Int32.compare intval1 intval2) = 0)
+            | (BoolObj(boolval1), BoolObj(boolval2)) ->
+                (match (boolval1, boolval2) with
+                | (true, true) -> BoolObj(true)
+                | (true, false) -> BoolObj(false)
+                | (false, true) -> BoolObj(false)
+                | (false, false) -> BoolObj(true))
+            | (StringObj(strval1), StringObj(strval2)) ->
+                BoolObj(strval1 = strval2)
+            | (Void, Void) -> BoolObj(true)
+            | (Void, _) -> BoolObj(false)
+            | (_, Void) -> BoolObj(false)
+            | (obj1, obj2) ->   (* TODO figure out pointer comparison *)
+                let find_loc obj =
+                    match obj with
+                    | RegObj(_, _) ->
+                        let storelst = Hashtbl.fold (fun loc sobj acc -> (loc, sobj) :: acc) store [] in
+                        (match List.filter (fun (loc, sobj) -> sobj == obj) storelst with
+                        | [] -> (-1)
+                        | (loc, _) :: tl -> loc)
+                    | _ -> (-1)
+                in
+                let loc1 = find_loc obj1 in
+                let loc2 = find_loc obj2 in
+                BoolObj(loc1 <> (-1) && loc2 <> (-1) && loc1 = loc2))
+            in
+            (retbool, st3)
         | Internal(intname) ->
             let retval = (match intname with
                 | "IO.out_string" ->
                     let str = (match Hashtbl.find store (Hashtbl.find env "x") with
                     | StringObj(strval) -> strval
-                    | _ -> failwith "internal argument type check fail")
+                    | _ -> failwith "internal argument type check fail (IO.out_string)")
                     in
                     let rec transform_outstr instr =
                         match String.length instr with
@@ -271,11 +402,16 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                     in
                     Printf.printf "%s" (transform_outstr str);
                     self
+                | "IO.out_int" ->
+                    let intval = (match Hashtbl.find store (Hashtbl.find env "x") with
+                    | IntObj(ival) -> ival
+                    | _ -> failwith "internal argument type check fail (IO.out_int)")
+                    in
+                    Printf.printf "%d" (Int32.to_int intval);
+                    self
                 | _ -> failwith "unhandled internal expression")
             in
             (retval, store)
-        | _ ->
-            failwith "unhandled expression type"
     in
     let store = Hashtbl.create 255 in
     let env = Hashtbl.create 255 in
