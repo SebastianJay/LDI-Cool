@@ -384,6 +384,71 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             (retbool, st3)
         | Internal(intname) ->
             let retval = (match intname with
+                | "Object.abort" ->
+                    failwith "abort\n"    (* TODO *)
+                | "Object.copy" ->        (* NOTE store changes here! but out of convenience we don't return it *)
+                    (match self with
+                    | RegObj(dtype, attrs) ->
+                        let namelst = List.map (fun (name, _) -> name) attrs in
+                        let loclst = store_newloc store (List.length attrs) in
+                        let vallst = List.map (fun (_, loc) -> Hashtbl.find store loc) attrs in
+                        List.iter (fun (loc, obj) -> Hashtbl.add store loc obj) (List.combine loclst vallst);
+                        let copyattrs = List.combine namelst loclst in
+                        RegObj(dtype, copyattrs)
+                    | _ -> self)
+                | "Object.type_name" ->
+                    let (dtype, _) = get_typename_attrs self in
+                    StringObj(dtype)
+                | "String.concat" ->
+                    let str1 = (match self with
+                    | StringObj(strval) -> strval
+                    | _ -> failwith "internal argument type check fail (String.concat)")
+                    in
+                    let str2 = (match Hashtbl.find store (Hashtbl.find env "s") with
+                    | StringObj(strval) -> strval
+                    | _ -> failwith "internal argument type check fail (String.concat)")
+                    in
+                    StringObj(String.concat "" [str1; str2])
+                | "String.length" ->
+                    let str = (match self with
+                    | StringObj(strval) -> strval
+                    | _ -> failwith "internal argument type check fail (String.length)")
+                    in
+                    IntObj(Int32.of_int (String.length str))
+                | "String.substr" ->
+                    let str = (match self with
+                    | StringObj(strval) -> strval
+                    | _ -> failwith "internal argument type check fail (String.substr)")
+                    in
+                    let startind = (match Hashtbl.find store (Hashtbl.find env "i") with
+                    | IntObj(intval) -> Int32.to_int intval
+                    | _ -> failwith "internal argument type check fail (String.substr)")
+                    in
+                    let sublen = (match Hashtbl.find store (Hashtbl.find env "l") with
+                    | IntObj(intval) -> Int32.to_int intval
+                    | _ -> failwith "internal argument type check fail (String.substr)")
+                    in
+                    (match startind < 0 || sublen < 0 || startind + sublen > String.length str with
+                    | true -> failwith "substring out of bounds" (* TODO proper formatting *)
+                    | false -> ());
+                    StringObj(String.sub str startind sublen)
+                | "IO.in_string" ->
+                    (try
+                        let str = input_line stdin in
+                        (match String.contains str '\x00' with
+                        | true -> StringObj("")
+                        | false -> StringObj(str))
+                    with
+                    | End_of_file -> StringObj(""))
+                | "IO.in_int" ->
+                    (try
+                        let str = input_line stdin in
+                        let intval = int_of_string str in       (* TODO better parsing to avoid 0x prefix being hex, etc*)
+                        (match intval < (-2147483648) || intval > 2147483647 with
+                        | true -> IntObj(Int32.zero)
+                        | false -> IntObj(Int32.of_int intval))
+                    with
+                    | (End_of_file | Failure(_)) -> IntObj(Int32.zero))
                 | "IO.out_string" ->
                     let str = (match Hashtbl.find store (Hashtbl.find env "x") with
                     | StringObj(strval) -> strval
