@@ -66,8 +66,10 @@ type cmapClass = string * cmapAttr list;;
 (* class map = list of cmap classes *)
 type cmap = cmapClass list;;
 
-(* implementation map method = name, list of formal names, name of original class, method body *)
-type imapMethod = string * string list * string * astExpNode;;
+(* implementation map implementation = list of formal names, name of original class, method body*)
+type imapImpl = string list * string * astExpNode;;
+(* implementation map method = name and implementation *)
+type imapMethod = string * imapImpl;;
 (* implementation map class = name, list of methods *)
 type imapClass = string * imapMethod list;;
 (* implementation map = list of imap classes *)
@@ -290,7 +292,8 @@ let read_cltype filepath = begin
                         let formallist = read_implmap_methformals fin numformals in
                         let origclass = input_line fin in
                         let bodyexp = read_astexpnode fin in
-                        (methodname, formallist, origclass, bodyexp) :: read_implmap_method fin (numleft - 1)
+                        let impltuple = (formallist, origclass, bodyexp) in
+                        (methodname, impltuple) :: read_implmap_method fin (numleft - 1)
                 in
                 match numleft with
                 | 0 -> []
@@ -328,5 +331,3 @@ let read_cltype filepath = begin
             close_in_noerr fin;
             raise e
 end;;
-
-read_cltype Sys.argv.(1);;
