@@ -83,6 +83,9 @@ type pmap = pmapClass list;;
 (*
 takes in string filepath to cl-type file
 returns cmap * imap * pmap * ast tuple
+
+the code is a bit dense but formulaic
+a recursive inner function is defined whenever we need to read a list 
 *)
 let read_cltype filepath = begin
     let fin = open_in filepath in

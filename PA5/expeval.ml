@@ -7,7 +7,7 @@ open Scanf
 open Annast
 
 (* coolObject RegObj = dynamic type string, list of (name string, location int) fields *)
-(* other variants are special cases *)
+(* other variants are special cases - primitives and void *)
 type coolObject =
     | RegObj of string * (string * int) list
     | IntObj of Int32.t
@@ -21,48 +21,60 @@ type opsemEnv = (string, int) Hashtbl.t;;
 (* opsemStore = list of (location int, obj coolObject) mappings *)
 type opsemStore = (int, coolObject) Hashtbl.t;;
 
-let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
-
-    (* NOTE we keep track of number of stack frames through a mutable var *)
+(* evaluating a program calls (new Main).main() given a class map, implementation map, and parent map *)
+let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
+    (* we keep track of number of stack frames through a mutable var *)
     let activation_count = ref 0 in
 
-    let store_newloc tbl num =
-        let rec create_loclst numleft ind =
-            match numleft with
-            | 0 -> []
-            | _ -> ind :: create_loclst (numleft-1) (ind+1)
-        in
-        let len = Hashtbl.length tbl in
-        create_loclst num len
-    in
-    let default_obj dtype =
-        match dtype with
-        | "Int" -> IntObj(Int32.zero)
-        | "Bool" -> BoolObj(false)
-        | "String" -> StringObj("")
-        | _ -> Void
-    in
-    let get_typename_attrs obj =
-        match obj with
-        | RegObj(name, attrs) -> (name, attrs)
-        | IntObj(_) -> ("Int", [])
-        | BoolObj(_) -> ("Bool", [])
-        | StringObj(_) -> ("String", [])
-        | Void -> failwith "unexpected Void type in get_typename_attrs"
-    in
-    let rec args_eval self store env margs =
-        match margs with
-        | [] -> ([], store)
-        | hd :: tl ->
-            let (arghd, sti) = exp_eval self store env hd in
-            let (argtl, ste) = args_eval self sti env tl in
-            (arghd :: argtl, ste)
-    and exp_eval (self : coolObject) (store : opsemStore) (env : opsemEnv) (expNode : astExpNode) =
+    (* takes coolObject self, hashtbl store, hashtbl environment and astExpNode expresion to evaluate *)
+    (* returns (coolObject value, hashtbl new store) *)
+    (* NOTE returning a new store is not strictly necessary since Hashtbl modifies values in place
+        however we include it in the return expression so it more closely matches the op sem rules *)
+    let rec exp_eval (self : coolObject) (store : opsemStore) (env : opsemEnv) (expNode : astExpNode) =
+        (* decompose astExpNode into line number, static type, and actual expression *)
         let (lineno, stype, exp) = expNode in
+        (* return a list of num new store locations given current store *)
+        let store_newloc tbl num =
+            let rec create_loclst numleft ind =
+                match numleft with
+                | 0 -> []
+                | _ -> ind :: create_loclst (numleft-1) (ind+1)
+            in
+            let len = Hashtbl.length tbl in
+            create_loclst num len
+        in
+        (* return a default coolObject given its dynamic type *)
+        let default_obj dtype =
+            match dtype with
+            | "Int" -> IntObj(Int32.zero)
+            | "Bool" -> BoolObj(false)
+            | "String" -> StringObj("")
+            | _ -> Void
+        in
+        (* get string class name and list of attributes given a coolObject*)
+        let get_typename_attrs obj =
+            match obj with
+            | RegObj(name, attrs) -> (name, attrs)
+            | IntObj(_) -> ("Int", [])
+            | BoolObj(_) -> ("Bool", [])
+            | StringObj(_) -> ("String", [])
+            | Void -> failwith "unexpected Void type in get_typename_attrs"
+        in
+        (* evaluate arguments in dispatch expression *)
+        let rec args_eval self store env margs =
+            match margs with
+            | [] -> ([], store)
+            | hd :: tl ->
+                let (arghd, sti) = exp_eval self store env hd in
+                let (argtl, ste) = args_eval self sti env tl in
+                (arghd :: argtl, ste)
+        in
+        (* print an error message and exit the program *)
         let out_error formatstr =
             Printf.printf formatstr lineno;
             exit 1
         in
+        (* modify activation_count and check for stack overflow *)
         let inc_stack_frame () =
             activation_count := !activation_count + 1;
             match !activation_count >= 1001 with
@@ -72,6 +84,24 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
         let dec_stack_frame () =
             activation_count := !activation_count - 1;
         in
+        (* common code reused between self, dynamic, and static dispatch *)
+        let dispatch_helper recval cname mname argvals store =
+            let (_, attrs) = get_typename_attrs recval in
+            let impllst = List.assoc cname imap in
+            let (formallst, _, mbody) = List.assoc mname impllst in
+            let loclst = store_newloc store (List.length formallst) in
+            let storeentries = List.combine loclst argvals in
+            List.iter (fun (loc, obj) -> Hashtbl.add store loc obj) storeentries;
+            let newenv = Hashtbl.create 255 in
+            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
+            let formallocs = List.combine formallst loclst in
+            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
+            inc_stack_frame ();
+            let out_tuple = exp_eval recval store newenv mbody in
+            dec_stack_frame ();
+            out_tuple
+        in
+        (* actual expression evaluation starts here as a monolithic case block *)
         match exp with
         | Assign(assignee, assignor) ->
             let (_, id) = assignee in
@@ -101,18 +131,9 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             | _ -> id)
             in
             (match dtype with
-            | "Int" -> (IntObj(Int32.zero), store)
-            | "Bool" -> (BoolObj(false), store)
-            | "String" -> (StringObj(""), store)
+            | ("Int" | "Bool" | "String") -> (default_obj dtype, store)
             | _ ->
-                let extract_field_loc (attr, loc) =
-                    let (attrname, _, _) = attr in
-                    (attrname, loc)
-                in
-                let default_field (attr, loc) =
-                    let (_, atype, _) = attr in
-                    (loc, default_obj atype)
-                in
+                (* constructs list of astExpNode:Assign for attribute initializers *)
                 let rec build_init_exp attrlst =
                     match attrlst with
                     | [] -> []
@@ -124,9 +145,11 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 in
                 let attrlst = List.assoc dtype cmap in
                 let loclst = store_newloc store (List.length attrlst) in
-                let clsfields = List.map extract_field_loc (List.combine attrlst loclst) in
+                let clsfields = List.map (fun ((attrname, _, _), loc) -> (attrname, loc))
+                    (List.combine attrlst loclst) in
                 let newself = RegObj(dtype, clsfields) in
-                let storeentries = List.map default_field (List.combine attrlst loclst) in
+                let storeentries = List.map (fun ((_, atype, _), loc) -> (loc, default_obj atype))
+                    (List.combine attrlst loclst) in
                 List.iter (fun (loc, obj) -> Hashtbl.add store loc obj) storeentries;
                 let selfenv = Hashtbl.create 255 in
                 List.iter (fun (name, loc) -> Hashtbl.add selfenv name loc) clsfields;
@@ -137,64 +160,27 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 (newself, st3))
         | SelfDispatch(methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
-            let (dtype, attrs) = get_typename_attrs self in
-            let impllst = List.assoc dtype imap in
             let (_, mname) = methid in
-            let (formallst, _, mbody) = List.assoc mname impllst in
-            let loclst = store_newloc argstore (List.length formallst) in
-            let storeentries = List.combine loclst argvals in
-            List.iter (fun (loc, obj) -> Hashtbl.add argstore loc obj) storeentries;
-            let newenv = Hashtbl.create 255 in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
-            let formallocs = List.combine formallst loclst in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            inc_stack_frame ();
-            let out_tuple = exp_eval self argstore newenv mbody in
-            dec_stack_frame ();
-            out_tuple
+            let (cname, _) = get_typename_attrs self in
+            dispatch_helper self cname mname argvals argstore
         | DynamicDispatch(receiver, methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
             (match recval with
             | Void -> out_error "ERROR: %d: Exception: dispatch on void\n"
             | _ -> ());
-            let (dtype, attrs) = get_typename_attrs recval in
-            let impllst = List.assoc dtype imap in
+            let (cname, _) = get_typename_attrs recval in
             let (_, mname) = methid in
-            let (formallst, _, mbody) = List.assoc mname impllst in
-            let loclst = store_newloc recstore (List.length formallst) in
-            let storeentries = List.combine loclst argvals in
-            List.iter (fun (loc, obj) -> Hashtbl.add recstore loc obj) storeentries;
-            let newenv = Hashtbl.create 255 in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
-            let formallocs = List.combine formallst loclst in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            inc_stack_frame ();
-            let out_tuple = exp_eval recval recstore newenv mbody in
-            dec_stack_frame ();
-            out_tuple
+            dispatch_helper recval cname mname argvals recstore
         | StaticDispatch(receiver, clsid, methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (recval, recstore) = exp_eval self argstore env receiver in
             (match recval with
             | Void -> out_error "ERROR: %d: Exception: dispatch on void\n"
             | _ -> ());
-            let (dtype, attrs) = get_typename_attrs recval in
             let (_, cname) = clsid in
-            let impllst = List.assoc cname imap in
             let (_, mname) = methid in
-            let (formallst, _, mbody) = List.assoc mname impllst in
-            let loclst = store_newloc recstore (List.length formallst) in
-            let storeentries = List.combine loclst argvals in
-            List.iter (fun (loc, obj) -> Hashtbl.add recstore loc obj) storeentries;
-            let newenv = Hashtbl.create 255 in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) attrs;
-            let formallocs = List.combine formallst loclst in
-            List.iter (fun (name, loc) -> Hashtbl.add newenv name loc) formallocs;
-            inc_stack_frame ();
-            let out_tuple = exp_eval recval recstore newenv mbody in
-            dec_stack_frame ();
-            out_tuple
+            dispatch_helper recval cname mname argvals recstore
         | If(predexp, thenexp, elseexp) ->
             let (predicate, predstore) = exp_eval self store env predexp in
             (match predicate with
@@ -205,11 +191,12 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             | _ -> failwith "non Bool predicate in if statement")
         | Block(explst) ->
             (match explst with
-            | [] -> (Void, store)   (* should only occur in attribute initializers *)
+            | [] -> (Void, store)   (* should only occur from New when class has no attribute initializers *)
             | hd :: [] -> exp_eval self store env hd
             | hd :: tl -> let (_, sti) = exp_eval self store env hd in
                 exp_eval self sti env (lineno, stype, Block(tl)))
         | LetBinding(bindlst, letexp) ->
+            (* common code for binding a let var, used for an expression with any number of bindings *)
             let letbind_eval self store env (nameid, lettypeid, init) =
                 let (_, name) = nameid in
                 let (_, lettype) = lettypeid in
@@ -233,6 +220,8 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 let otherbind = (lineno, stype, LetBinding(tl, letexp)) in
                 exp_eval self newstore newenv otherbind)
         | Case(caseexp, branchlst) ->
+            (* takes string dynamic type and list of strings for case branch types *)
+            (* return a string corresponding to least type (or fails if no match found) *)
             let closest_ancestor dtype branchtypes =
                 let rec parent_chain dtype =
                     match dtype with
@@ -344,7 +333,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 | (false, false) -> BoolObj(false))
             | (StringObj(strval1), StringObj(strval2)) ->
                 BoolObj(strval1 < strval2)
-            | _ -> BoolObj(false))
+            | _ -> BoolObj(false))  (* Object comparison with LT is always false *)
             in
             (retbool, st3)
         | LE(exp1, exp2) ->
@@ -361,22 +350,11 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 | (false, false) -> BoolObj(true))
             | (StringObj(strval1), StringObj(strval2)) ->
                 BoolObj(strval1 <= strval2)
-            | (Void, Void) -> BoolObj(true)
+            | (Void, Void) -> BoolObj(true) (* Void equals Void and nothing else *)
             | (Void, _) -> BoolObj(false)
             | (_, Void) -> BoolObj(false)
-            | (obj1, obj2) ->   (* TODO figure out pointer comparison *)
-                let find_loc obj =
-                    match obj with
-                    | RegObj(_, _) ->
-                        let storelst = Hashtbl.fold (fun loc sobj acc -> (loc, sobj) :: acc) store [] in
-                        (match List.filter (fun (loc, sobj) -> sobj == obj) storelst with
-                        | [] -> (-1)
-                        | (loc, _) :: tl -> loc)
-                    | _ -> (-1)
-                in
-                let loc1 = find_loc obj1 in
-                let loc2 = find_loc obj2 in
-                BoolObj(loc1 <> (-1) && loc2 <> (-1) && loc1 = loc2))
+            | (obj1, obj2) ->
+                BoolObj(obj1 == obj2))      (* use physical equality to check pointer locations *)
             in
             (retbool, st3)
         | EQ(exp1, exp2) ->
@@ -396,19 +374,8 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
             | (Void, Void) -> BoolObj(true)
             | (Void, _) -> BoolObj(false)
             | (_, Void) -> BoolObj(false)
-            | (obj1, obj2) ->   (* TODO figure out pointer comparison *)
-                let find_loc obj =
-                    match obj with
-                    | RegObj(_, _) ->
-                        let storelst = Hashtbl.fold (fun loc sobj acc -> (loc, sobj) :: acc) store [] in
-                        (match List.filter (fun (loc, sobj) -> sobj == obj) storelst with
-                        | [] -> (-1)
-                        | (loc, _) :: tl -> loc)
-                    | _ -> (-1)
-                in
-                let loc1 = find_loc obj1 in
-                let loc2 = find_loc obj2 in
-                BoolObj(loc1 <> (-1) && loc2 <> (-1) && loc1 = loc2))
+            | (obj1, obj2) ->
+                BoolObj(obj1 == obj2))
             in
             (retbool, st3)
         | Internal(intname) ->
@@ -416,7 +383,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 | "Object.abort" ->
                     Printf.printf "abort\n";
                     exit 0
-                | "Object.copy" ->        (* NOTE store changes here! but out of convenience we don't return it *)
+                | "Object.copy" ->        (* NOTE store changes here! but out of convenience expression does not return it *)
                     (match self with
                     | RegObj(dtype, attrs) ->
                         let namelst = List.map (fun (name, _) -> name) attrs in
@@ -475,7 +442,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 | "IO.in_int" ->
                     (try
                         let str = input_line stdin in
-                        let intval = try Scanf.sscanf str " %d" (fun x -> x) with Scanf.Scan_failure(_) -> 0 in       (* TODO better parsing to avoid 0x prefix being hex, etc*)
+                        let intval = try Scanf.sscanf str " %d" (fun x -> x) with Scanf.Scan_failure(_) -> 0 in
                         (match intval < (-2147483648) || intval > 2147483647 with
                         | true -> IntObj(Int32.zero)
                         | false -> IntObj(Int32.of_int intval))
@@ -486,6 +453,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                     | StringObj(strval) -> strval
                     | _ -> failwith "internal argument type check fail (IO.out_string)")
                     in
+                    (* prepare raw cool string for output by converting '\','n to '\n' etc. *)
                     let rec transform_outstr instr =
                         match String.length instr with
                         | (0 | 1) -> instr
@@ -512,10 +480,12 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
     in
     let store = Hashtbl.create 255 in
     let env = Hashtbl.create 255 in
+    (* execute new Main *)
     let newmainexp = (0, "Main", New(0, "Main")) in
     activation_count := 0;
     let (newmain, newstore) = exp_eval Void store env newmainexp in
+    (* execute main() on the new Main object *)
     let mainmethexp = (0, "Object", SelfDispatch((0, "main"), [])) in
     activation_count := 0;
     exp_eval newmain newstore env mainmethexp
-;;
+end;;
