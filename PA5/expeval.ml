@@ -3,6 +3,7 @@ open Hashtbl
 open String
 open Int32
 open Printf
+open Scanf
 open Annast
 
 (* coolObject RegObj = dynamic type string, list of (name string, location int) fields *)
@@ -474,7 +475,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) (ast:ast) =
                 | "IO.in_int" ->
                     (try
                         let str = input_line stdin in
-                        let intval = int_of_string str in       (* TODO better parsing to avoid 0x prefix being hex, etc*)
+                        let intval = try Scanf.sscanf str " %d" (fun x -> x) with Scanf.Scan_failure(_) -> 0 in       (* TODO better parsing to avoid 0x prefix being hex, etc*)
                         (match intval < (-2147483648) || intval > 2147483647 with
                         | true -> IntObj(Int32.zero)
                         | false -> IntObj(Int32.of_int intval))
