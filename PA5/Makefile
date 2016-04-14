@@ -19,4 +19,4 @@ test: $(TYPES) default in.txt
 	$(foreach f,$(TYPES), echo $(f);./a.out $(f) > out.txt < in.txt; cool $(f) < in.txt | diff out.txt -; rm out.txt;)
 
 in.txt:
-	python util/ingen.py
+	python util/ingen.py > in.txt
