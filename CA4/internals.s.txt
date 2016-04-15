@@ -1054,6 +1054,7 @@ main:
         call malloc
         leaq heap_block_size(%rax), %rbx
         movq %rbx, heap_end
+        movq $0, %rbx
         movq %rax, heap_next
         call _main
         ret
