@@ -17,6 +17,24 @@ class Main inherits IO {
 		out_string("\\n");
                 out_string("\t");
                 1.abort();
+                
+                out_int(3.copy());
+                case 1.copy() of 
+                    x : Int => out_int(x);
+                    x : Object => out_string("fail");
+                esac;
+                case true.copy() of
+                    x : Bool => out_string("true");
+                    x : Object => out_string("fail");
+                esac;
+                case (new String).copy() of
+                    x : String => out_string("string");
+                    x : Object => out_string("fail");
+                esac;
+                case (new IO).copy() of
+                    x : IO => out_string("IO");
+                    x : Object => out_string("fail");
+                esac;
 	    }
      };
 };
