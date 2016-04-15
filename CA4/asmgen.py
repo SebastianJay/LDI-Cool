@@ -507,6 +507,11 @@ class ASMMisc(ASMInstruction):
         if argstr:
             retval += ' ' + argstr
         return retval
+class ASMComment(ASMInstruction):
+    def __init__(self, s):
+        self.content = s
+    def __str__(self):
+        return '# ' + self.content
 #end ASM class definitions
 
 
@@ -631,6 +636,8 @@ def funcConvert(cfg, regMap):
                 asmlst += [ASMAssign('%rdx', realReg(ins.obj))]
                 insreg = '%rdx'
             asmlst += [
+                # Comment with method name
+                ASMComment(ins.cname + '.' + ins.mname),
                 # vtable addr -> rdx
                 ASMAssign('%rdx', offsetStr(8, insreg)),
                 # method addr -> assignee

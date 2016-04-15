@@ -6,25 +6,12 @@
 IO.new:
 .LFB61:
 	.cfi_startproc
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$24, %edi
-	call	malloc
+        pushq   $24
+        call    getmem
+        addq    $8, %rsp
 	movq	$3, (%rax)
 	movq	$IO_vtable, 8(%rax)
 	movq	$0, 16(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
 	ret
 	.cfi_endproc
 .LFE61:
@@ -585,29 +572,12 @@ out_error:
 Object.new:
 .LFB71:
 	.cfi_startproc
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$24, %edi
-	call	malloc
+        pushq   $24
+        call    getmem
+        addq    $8, %rsp
 	movq	$0, (%rax)
 	movq	$Object_vtable, 8(%rax)
 	movq	$0, 16(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
 .LFE71:
@@ -685,21 +655,15 @@ Object.copy:
 	.cfi_startproc
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	movq	16(%rbp), %rdi
-	movq	16(%rdi), %rax
-	movq	%rdi, %rbx
-	leaq	24(,%rax,8), %rdi
-	call	malloc
+        pushq   %rbx
+        pushq   %rcx
+	movq	16(%rbp), %rdx
+	movq	16(%rdx), %rax
+	movq	%rdx, %rbx
+	leaq	24(,%rax,8), %rdx
+        pushq   %rdx
+	call	getmem
+        addq    $8, %rsp
 	movq	(%rbx), %rdx
 	movq	%rdx, (%rax)
 	movq	8(%rbx), %rdx
@@ -709,8 +673,6 @@ Object.copy:
 	cmpq	$0, 16(%rbx)
 	movl	$1, %edx
 	jle	.L58
-	.p2align 4,,10
-	.p2align 3
 .L59:
 	movq	16(%rbx,%rdx,8), %rcx
 	movq	%rcx, 16(%rax,%rdx,8)
@@ -719,15 +681,9 @@ Object.copy:
 	cmpq	16(%rbx), %rcx
 	jl	.L59
 .L58:
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbx
-	.cfi_def_cfa_offset 8
+        popq    %rcx
+        popq    %rbx
+        .cfi_def_cfa_offset 8
 	leave
 	ret
 	.cfi_endproc
@@ -759,29 +715,14 @@ Object.type_name:
 String.new:
 .LFB75:
 	.cfi_startproc
-	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$32, %edi
-	call	malloc
+        pushq   $32
+        call    getmem
+        addq    $8, %rsp
 	movq	$2, (%rax)
 	movq	$String_vtable, 8(%rax)
 	movq	$1, 16(%rax)
 	movq	$.LC2, 24(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-	addq	$8, %rsp
 	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
@@ -1105,7 +1046,7 @@ getmem:
         movq %rbx, heap_next
         popq %rbx
         ret
-        .size getmem,.-getmem
+        .size getmem, .-getmem
         .globl main
         .type main, @function
 main:
