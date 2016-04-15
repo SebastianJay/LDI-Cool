@@ -1,11 +1,7 @@
 class Main inherits IO {
     main() : Object {
-	let i : Int <- 4 in
-	    while i < 20 loop
-	    {
-		out_int(fib(i));
-		i <- i + 1;
-	    } pool
+	let i : Int <- 20 in
+            out_int(fib(i))
 	
       };
       

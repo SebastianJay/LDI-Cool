@@ -46,7 +46,7 @@ Int
 43
 Int
 integer
-500
+100000
 initializer
 m
 Object
@@ -581,7 +581,7 @@ Int
 43
 Int
 integer
-500
+100000
 attribute_init
 45
 m

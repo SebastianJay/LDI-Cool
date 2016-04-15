@@ -639,27 +639,7 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])
             asmlst += [
-                # Have to push all c caller save registers for calloc
-                ASMPush('%rsi'),
-                ASMPush('%rdi'),
-                ASMPush('%rcx'),
-                ASMPush('%r8'),
-                ASMPush('%r9'),
-                ASMPush('%r10'),
-                ASMPush('%r11'),
-                # Allocate blocks of size 8 bytes
-                ASMAssign('%rsi', '$8'),
-
-                # Allocate tag, vtable pointer, size, attributes
-                ASMAssign('%rdi', '$' + str(3+nattrs)),
-                ASMCall('%rax', 'calloc'),
-                ASMPop('%r11'),
-                ASMPop('%r10'),
-                ASMPop('%r9'),
-                ASMPop('%r8'),
-                ASMPop('%rcx'),
-                ASMPop('%rdi'),
-                ASMPop('%rsi'),
+                ASMCall('%rax', 'getmem', ['$' + str(8*(nattrs + 3))]),
                 ASMAssign('(%rax)', '$' + str(ASMIndexer.clsTags[ins.cname])),
                 ASMAssign('8(%rax)', '$' + ins.cname + "_vtable"),
                 ASMAssign('16(%rax)', '$' + str(nattrs))

@@ -1044,30 +1044,13 @@ String.substr:
 Int.new:
 .LFB79:
 	.cfi_startproc
-	.cfi_def_cfa_offset 16
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	subq 	$8, %rsp
-	movl	$32, %edi
-	call	malloc
-	movq	$1, (%rax)
-	movq	$Int_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	movq	$0, 24(%rax)
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
+        pushq $32
+        call getmem
+        addq $8, %rsp
+        movq $1, (%rax)
+        movq $Int_vtable, 8(%rax)
+        movq $1, 16(%rax)
+        movq $0, 24(%rax)
 	ret
 	.cfi_endproc
 .LFE79:
@@ -1078,8 +1061,26 @@ Int.new:
 Bool.new:
 .LFB80:
 	.cfi_startproc
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
+        pushq $32
+        call getmem
+        addq $8, %rsp
+        movq $4, (%rax)
+        movq $Bool_vtable, 8(%rax)
+        movq $1, 16(%rax)
+        movq $0, 24(%rax)
+	ret
+	.cfi_endproc
+.LFE80:
+	.size	Bool.new, .-Bool.new
+        .globl getmem
+        .type getmem, @function
+getmem:
+        pushq %rbx
+        movq heap_next, %rax
+        movq 16(%rsp), %rbx 
+        addq %rax, %rbx
+        cmpq %rbx, heap_end
+        jg .getmem_1
 	pushq	%rsi
 	pushq	%rdi
 	pushq	%rcx
@@ -1087,12 +1088,8 @@ Bool.new:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	movl	$32, %edi
-	call	malloc
-	movq	$4, (%rax)
-	movq	$Bool_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	movq	$0, 24(%rax)
+        movq $heap_block_size, %rdi
+        call malloc
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -1100,10 +1097,30 @@ Bool.new:
 	popq	%rcx
 	popq	%rdi
 	popq	%rsi
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE80:
-	.size	Bool.new, .-Bool.new
+        leaq heap_block_size(%rax), %rbx
+        movq %rbx, heap_end
+        movq 16(%rsp), %rbx
+        addq %rax, %rbx
+.getmem_1:
+        movq %rbx, heap_next
+        popq %rbx
+        ret
+        .size getmem,.-getmem
+        .globl main
+        .type main, @function
+main:
+        movq $heap_block_size, %rdi
+        call malloc
+        leaq heap_block_size(%rax), %rbx
+        movq %rbx, heap_end
+        movq %rax, heap_next
+        call _main
+        ret
+        .size main, .-main
+        .section .data
+heap_next:
+        .quad 0
+heap_end:
+        .quad 0
+.set heap_block_size, 4194304
 ### END Internals

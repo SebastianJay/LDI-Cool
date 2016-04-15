@@ -497,14 +497,14 @@ def mainConvert(ast):
 #for CA4, go through all methods of user-defined classes and generate TAC for bodies
 def implConvert(ast):
     # Prepend entry point function
-    meth=ASTMethod('main', [], 'Object',
+    meth=ASTMethod('_main', [], 'Object',
                    ASTExpression(0, 'Object', 'dynamic_dispatch',
                                  [ASTExpression(0, 'Main', 'new', ASTIdentifier(0, 'Main')),
                                   ASTIdentifier(0, 'main'),
                                   []])
                    )
-    TACIndexer.pushIns(TACLabel('main'))
-    TACIndexer.init('', 'main')
+    TACIndexer.pushIns(TACLabel('_main'))
+    TACIndexer.init('', '_main')
     methodConvert(meth)
 
     for mclass in ast.classes:

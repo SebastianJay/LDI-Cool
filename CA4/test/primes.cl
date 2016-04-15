@@ -40,7 +40,7 @@ class Main inherits IO {
 
   divisor : Int;	-- divisor is a number which may factor testee.
 
-  stop : Int <- 500;	-- stop is an arbitrary value limiting testee. 	
+  stop : Int <- 100000;	-- stop is an arbitrary value limiting testee. 	
 
   m : Object <-		-- m supplants the main method.
     while true loop 
