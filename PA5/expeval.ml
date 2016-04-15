@@ -10,7 +10,7 @@ open Annast
 (* other variants are special cases - primitives and void *)
 type coolObject =
     | RegObj of string * (string * int) list
-    | IntObj of Int32.t
+    | IntObj of Int32.t     (* 32 bit int used because Cool requires 32 bit arithmetic *)
     | BoolObj of bool
     | StringObj of string
     | Void
@@ -26,14 +26,15 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
     (* we keep track of number of stack frames through a mutable var *)
     let activation_count = ref 0 in
 
-    (* takes coolObject self, hashtbl store, hashtbl environment and astExpNode expresion to evaluate *)
+    (* takes coolObject self, hashtbl store, hashtbl environment and astExpNode expression to evaluate *)
     (* returns (coolObject value, hashtbl new store) *)
     (* NOTE returning a new store is not strictly necessary since Hashtbl modifies values in place
         however we include it in the return expression so it more closely matches the op sem rules *)
     let rec exp_eval (self : coolObject) (store : opsemStore) (env : opsemEnv) (expNode : astExpNode) =
         (* decompose astExpNode into line number, static type, and actual expression *)
         let (lineno, stype, exp) = expNode in
-        (* return a list of num new store locations given current store *)
+        (* return a list of num new store locations given current store
+            store does not get modified, rather it just gives new location ints for caller's use *)
         let store_newloc tbl num =
             let rec create_loclst numleft ind =
                 match numleft with
@@ -60,7 +61,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | StringObj(_) -> ("String", [])
             | Void -> failwith "unexpected Void type in get_typename_attrs"
         in
-        (* evaluate arguments in dispatch expression *)
+        (* helper to evaluate arguments in dispatch expression *)
         let rec args_eval self store env margs =
             match margs with
             | [] -> ([], store)
@@ -74,9 +75,10 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             Printf.printf formatstr lineno;
             exit 1
         in
-        (* modify activation_count and check for stack overflow *)
+        (* modify (inc/dec) activation_count and check for stack overflow *)
         let inc_stack_frame () =
             activation_count := !activation_count + 1;
+            (* 1001 is the magic number that matches reference interpreter behavior *)
             match !activation_count >= 1001 with
             | true -> out_error "ERROR: %d: Exception: stack overflow\n"
             | false -> ()
@@ -85,6 +87,8 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             activation_count := !activation_count - 1;
         in
         (* common code reused between self, dynamic, and static dispatch *)
+        (* given receiver object, class name to draw method from, method name,
+            argument objects, and store, we create the new store+environment and call method *)
         let dispatch_helper recval cname mname argvals store =
             let (_, attrs) = get_typename_attrs recval in
             let impllst = List.assoc cname imap in
@@ -102,13 +106,17 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             out_tuple
         in
         (* actual expression evaluation starts here as a monolithic case block *)
+        (* each line of code maps roughly to one line of operational semantics
+            -- refer to the CRM to figure out what is going on *)
         match exp with
+        (* Assign - generate assignor and modify store so assignee points to it *)
         | Assign(assignee, assignor) ->
             let (_, id) = assignee in
             let (value, st2) = exp_eval self store env assignor in
             let loc = Hashtbl.find env id in
             Hashtbl.replace st2 loc value;
             (value, st2)
+        (* Identifier - look up environment+store to get object, or just return self *)
         | Identifier(aId) ->
             let (_, id) = aId in
             let objval = (match id with
@@ -116,6 +124,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | _ -> Hashtbl.find store (Hashtbl.find env id))
             in
             (objval, store)
+        (* primitives - create new objects trivially *)
         | True ->
             (BoolObj(true), store)
         | False ->
@@ -124,8 +133,11 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             (IntObj(Int32.of_int intval), store)
         | String(strval) ->
             (StringObj(strval), store)
+        (* New - for primitives, create default object;
+            otherwise create default attributes and evaluate initializers *)
         | New(aId) ->
             let (_, id) = aId in
+            (* new SELF_TYPE uses the dynamic type of self *)
             let dtype = (match id with
             | "SELF_TYPE" -> let (sotype, _) = get_typename_attrs self in sotype
             | _ -> id)
@@ -158,6 +170,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                 let (_, st3) = exp_eval newself store selfenv initblock in
                 dec_stack_frame ();
                 (newself, st3))
+        (* dispatch - eval args, receiver object; common code exists in dispatch_helper *)
         | SelfDispatch(methid, margs) ->
             let (argvals, argstore) = args_eval self store env margs in
             let (_, mname) = methid in
@@ -181,6 +194,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             let (_, cname) = clsid in
             let (_, mname) = methid in
             dispatch_helper recval cname mname argvals recstore
+        (* If - eval predicate and choose the right branch *)
         | If(predexp, thenexp, elseexp) ->
             let (predicate, predstore) = exp_eval self store env predexp in
             (match predicate with
@@ -189,12 +203,14 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                 | true -> exp_eval self predstore env thenexp
                 | false -> exp_eval self predstore env elseexp)
             | _ -> failwith "non Bool predicate in if statement")
+        (* Block - call exp_eval recursively until all statements complete *)
         | Block(explst) ->
             (match explst with
             | [] -> (Void, store)   (* should only occur from New when class has no attribute initializers *)
             | hd :: [] -> exp_eval self store env hd
             | hd :: tl -> let (_, sti) = exp_eval self store env hd in
                 exp_eval self sti env (lineno, stype, Block(tl)))
+        (* Let - create new environment, modify store and eval body; if multiple bindings, use recursion *)
         | LetBinding(bindlst, letexp) ->
             (* common code for binding a let var, used for an expression with any number of bindings *)
             let letbind_eval self store env (nameid, lettypeid, init) =
@@ -219,6 +235,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                 let (newstore, newenv) = letbind_eval self store env hd in
                 let otherbind = (lineno, stype, LetBinding(tl, letexp)) in
                 exp_eval self newstore newenv otherbind)
+        (* Case - eval case obj and match its least type to evaluate the right branch *)
         | Case(caseexp, branchlst) ->
             (* takes string dynamic type and list of strings for case branch types *)
             (* return a string corresponding to least type (or fails if no match found) *)
@@ -252,6 +269,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             let newenv = Hashtbl.copy env in
             Hashtbl.add newenv casename loc;
             exp_eval self casestore newenv branchexp
+        (* While - eval predicate, and if true run through body and repeat loop over again *)
         | While(predexp, bodyexp) ->
             let (predicate, predstore) = exp_eval self store env predexp in
             (match predicate with
@@ -263,6 +281,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                     (Void, loopstore)
                 | false -> (Void, predstore))
             | _ -> failwith "non Bool predicate in while loop")
+        (* Isvoid - match with Void coolObject *)
         | IsVoid(voidexp) ->
             let (voidobj, voidstore) = exp_eval self store env voidexp in
             let retbool = (match voidobj with
@@ -270,6 +289,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | _ -> BoolObj(false))
             in
             (retbool, voidstore)
+        (* Not - true -> false and false -> true *)
         | Not(notexp) ->
             let (notobj, notstore) = exp_eval self store env notexp in
             let retbool = (match notobj with
@@ -277,6 +297,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | _ -> failwith "non Bool exp in not")
             in
             (retbool, notstore)
+        (* Negate, Plus, Minus, Times, Divide - trivial 32 bit arithmetic *)
         | Negate(negexp) ->
             let (negobj, negstore) = exp_eval self store env negexp in
             let retint = (match negobj with
@@ -319,6 +340,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | _ -> failwith "non Int exp in divide")
             in
             (retint, st3)
+        (* LT, LE, and EQ - primitives are simple, otherwise we need pointer (physical) comparison *)
         | LT(exp1, exp2) ->
             let (op1, st2) = exp_eval self store env exp1 in
             let (op2, st3) = exp_eval self st2 env exp2 in
@@ -326,11 +348,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | (IntObj(intval1), IntObj(intval2)) ->
                 BoolObj((Int32.compare intval1 intval2) < 0)
             | (BoolObj(boolval1), BoolObj(boolval2)) ->
-                (match (boolval1, boolval2) with
-                | (true, true) -> BoolObj(false)
-                | (true, false) -> BoolObj(false)
-                | (false, true) -> BoolObj(true)
-                | (false, false) -> BoolObj(false))
+                BoolObj(boolval1 < boolval2)    (* OCaml bool compare is same as that of Cool *)
             | (StringObj(strval1), StringObj(strval2)) ->
                 BoolObj(strval1 < strval2)
             | _ -> BoolObj(false))  (* Object comparison with LT is always false *)
@@ -343,18 +361,14 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | (IntObj(intval1), IntObj(intval2)) ->
                 BoolObj((Int32.compare intval1 intval2) <= 0)
             | (BoolObj(boolval1), BoolObj(boolval2)) ->
-                (match (boolval1, boolval2) with
-                | (true, true) -> BoolObj(true)
-                | (true, false) -> BoolObj(false)
-                | (false, true) -> BoolObj(true)
-                | (false, false) -> BoolObj(true))
+                BoolObj(boolval1 <= boolval2)
             | (StringObj(strval1), StringObj(strval2)) ->
                 BoolObj(strval1 <= strval2)
             | (Void, Void) -> BoolObj(true) (* Void equals Void and nothing else *)
             | (Void, _) -> BoolObj(false)
             | (_, Void) -> BoolObj(false)
             | (obj1, obj2) ->
-                BoolObj(obj1 == obj2))      (* use physical equality to check pointer locations *)
+                BoolObj(obj1 == obj2))      (* use physical equality (==) to check pointer locations *)
             in
             (retbool, st3)
         | EQ(exp1, exp2) ->
@@ -364,26 +378,26 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
             | (IntObj(intval1), IntObj(intval2)) ->
                 BoolObj((Int32.compare intval1 intval2) = 0)
             | (BoolObj(boolval1), BoolObj(boolval2)) ->
-                (match (boolval1, boolval2) with
-                | (true, true) -> BoolObj(true)
-                | (true, false) -> BoolObj(false)
-                | (false, true) -> BoolObj(false)
-                | (false, false) -> BoolObj(true))
+                BoolObj(boolval1 = boolval2)
             | (StringObj(strval1), StringObj(strval2)) ->
                 BoolObj(strval1 = strval2)
-            | (Void, Void) -> BoolObj(true)
+            | (Void, Void) -> BoolObj(true) (* EQ and LE are the same for object comparison *)
             | (Void, _) -> BoolObj(false)
             | (_, Void) -> BoolObj(false)
             | (obj1, obj2) ->
                 BoolObj(obj1 == obj2))
             in
             (retbool, st3)
+        (* Internal - string, IO, and basic object methods *)
         | Internal(intname) ->
             let retval = (match intname with
+                (* abort() - prints "abort" and halts program *)
                 | "Object.abort" ->
                     Printf.printf "abort\n";
                     exit 0
-                | "Object.copy" ->        (* NOTE store changes here! but out of convenience expression does not return it *)
+                (* copy() - make shallow copy of self
+                    if primitive, just return self, otherwise place attrs in new store locations *)
+                | "Object.copy" ->      (* NOTE store changes here! but out of convenience we do not return it *)
                     (match self with
                     | RegObj(dtype, attrs) ->
                         let namelst = List.map (fun (name, _) -> name) attrs in
@@ -393,9 +407,11 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                         let copyattrs = List.combine namelst loclst in
                         RegObj(dtype, copyattrs)
                     | _ -> self)
+                (* type_name() - returns object's dynamic type as String *)
                 | "Object.type_name" ->
                     let (dtype, _) = get_typename_attrs self in
                     StringObj(dtype)
+                (* concat() - returns self concatenated with a param *)
                 | "String.concat" ->
                     let str1 = (match self with
                     | StringObj(strval) -> strval
@@ -406,12 +422,14 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                     | _ -> failwith "internal argument type check fail (String.concat)")
                     in
                     StringObj(String.concat "" [str1; str2])
+                (* length() - returns self string length as Int *)
                 | "String.length" ->
                     let str = (match self with
                     | StringObj(strval) -> strval
                     | _ -> failwith "internal argument type check fail (String.length)")
                     in
                     IntObj(Int32.of_int (String.length str))
+                (* substr() - returns a substring of self string given start index and length *)
                 | "String.substr" ->
                     let str = (match self with
                     | StringObj(strval) -> strval
@@ -431,29 +449,33 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                         exit 1
                     | false -> ());
                     StringObj(String.sub str startind sublen)
+                (* in_string() - read and return a line from stdin, or empty string if no input or NUL appears *)
                 | "IO.in_string" ->
                     (try
                         let str = input_line stdin in
-                        (match String.contains str '\x00' with
+                        (match String.contains str '\x00' with  (* check for NUL *)
                         | true -> StringObj("")
                         | false -> StringObj(str))
                     with
                     | End_of_file -> StringObj(""))
+                (* in_int() - read line of input and parse it to an Int, return 0 if out of range or failure *)
                 | "IO.in_int" ->
                     (try
                         let str = input_line stdin in
+                        (* Scanf reads until the first non-number character *)
                         let intval = try Scanf.sscanf str " %d" (fun x -> x) with Scanf.Scan_failure(_) -> 0 in
                         (match intval < (-2147483648) || intval > 2147483647 with
                         | true -> IntObj(Int32.zero)
                         | false -> IntObj(Int32.of_int intval))
                     with
                     | (End_of_file | Failure(_)) -> IntObj(Int32.zero))
+                (* out_string() - print a String to stdout, formatting "unescaped" newlines and tabs *)
                 | "IO.out_string" ->
                     let str = (match Hashtbl.find store (Hashtbl.find env "x") with
                     | StringObj(strval) -> strval
                     | _ -> failwith "internal argument type check fail (IO.out_string)")
                     in
-                    (* prepare raw cool string for output by converting '\','n to '\n' etc. *)
+                    (* prepare raw cool string for output by converting '\','n' to '\n' etc. *)
                     let rec transform_outstr instr =
                         match String.length instr with
                         | (0 | 1) -> instr
@@ -467,6 +489,7 @@ let prog_eval (cmap:cmap) (imap:imap) (pmap:pmap) = begin
                     in
                     Printf.printf "%s" (transform_outstr str);
                     self
+                (* out_int() - print an Int to stdout *)
                 | "IO.out_int" ->
                     let intval = (match Hashtbl.find store (Hashtbl.find env "x") with
                     | IntObj(ival) -> ival

@@ -1,6 +1,3 @@
-open Printf
-open List
-
 (* identifier = line number and id name *)
 type astID = int * string;;
 (* optional astID, used for class inherits or no_inherits *)
@@ -9,7 +6,7 @@ type astIDInit =
     | IDNoInit      (*we prefix ID to avoid name conflicts with astExpInit*)
 ;;
 
-(* different types of expressions, followed by the tuple that defines their arguments *)
+(* different types of AST expressions, followed by the tuple that defines their arguments *)
 type astExp =
     | Assign of astID * astExpNode
     | SelfDispatch of astID * astExpNode list
@@ -53,7 +50,6 @@ type astFeat =
     | Attribute of astID * astID * astExpInit
     | Method of astID * (astID * astID) list * astID * astExpNode
 ;;
-
 (* class = name, optional parent, list of features *)
 type astClass = astID * astIDInit * astFeat list;;
 (* ast = list of ast classes *)
@@ -83,23 +79,23 @@ type pmap = pmapClass list;;
 (*
 takes in string filepath to cl-type file
 returns cmap * imap * pmap * ast tuple
-
-the code is a bit dense but formulaic
-a recursive inner function is defined whenever we need to read a list 
 *)
 let read_cltype filepath = begin
     let fin = open_in filepath in
+        (* read line number followed by string to get astID *)
         let read_astid fin =
             let lineno = int_of_string (input_line fin) in
             let idname = input_line fin in
             (lineno, idname)
         in
+        (* read an expression list (for e.g. the block expression) *)
         let rec read_astexpnodelist fin numleft =
             match numleft with
             | 0 -> []
             | _ ->
                 let exp = read_astexpnode fin in
                 exp :: read_astexpnodelist fin (numleft - 1)
+        (* read an expression node; big case block identifies different types of expressions *)
         and read_astexpnode fin =
             let lineno = int_of_string (input_line fin) in
             let stype = input_line fin in
@@ -164,6 +160,7 @@ let read_cltype filepath = begin
                 let node1 = read_astexpnodelist fin numargs in
                 (lineno, stype, Block(node1))
             | "let" ->
+                (* read list of let bindings (since expression has arbitrary amount) *)
                 let rec read_astexpletbind fin numleft =
                     match numleft with
                     | 0 -> []
@@ -183,6 +180,7 @@ let read_cltype filepath = begin
                 let exp = read_astexpnode fin in
                 (lineno, stype, LetBinding(bindlist, exp))
             | "case" ->
+                (* read list of case branches *)
                 let rec read_astexpcasebind fin numleft =
                     match numleft with
                     | 0 -> []
@@ -196,7 +194,7 @@ let read_cltype filepath = begin
                 let bindlist = read_astexpcasebind fin numbind in
                 (lineno, stype, Case(exp, bindlist))
             | "integer" -> let node1 = int_of_string (input_line fin) in
-                (lineno, stype, Integer(node1))
+                (lineno, stype, Integer(node1))     (* 32 bit int conversion done later *)
             | "string" -> let node1 = input_line fin in
                 (lineno, stype, String(node1))
             | "true" -> (lineno, stype, True)
@@ -205,6 +203,7 @@ let read_cltype filepath = begin
                 (lineno, stype, Internal(node1))
             | _ -> raise Not_found
         in
+        (* NOTE the ast is unused in program evaluation given all the maps but we read it anyway *)
         let read_ast fin =
             let rec read_ast_class fin numleft =
                 let rec read_ast_feature fin numleft =
