@@ -109,13 +109,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbp))
         #recurse on predicate expression
         regp = expConvert(node.args[0])
-        if isinstance(regp, TACClassAttr):
-            attreg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAssign(attreg, regp))
-            regp = attreg
-        if regp.boxed:
-            TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
-        regp.boxed = False
+        regp = unbox(regp, node.args[0].type)
         #emit label for loop breakout -- if predicate is false, we jump there
         lbb = TACIndexer.label()
         regpbar = TACIndexer.reg()
@@ -136,13 +130,7 @@ def expConvert(node):
     elif node.expr == 'if':
         #recurse on predicate expression
         regp = expConvert(node.args[0])
-        if isinstance(regp, TACClassAttr):
-            attreg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAssign(attreg, regp))
-            regp = attreg
-        if regp.boxed:
-            TACIndexer.pushIns(TACAssign(regp, TACClassAttr(regp, 'Bool', 'val')))
-        regp.boxed = False
+        regp = unbox(regp, 'Bool')
         regpbar = TACIndexer.reg()
         regpbar.boxed = False
         TACIndexer.pushIns(TACAssign(regpbar, regp))
@@ -153,15 +141,28 @@ def expConvert(node):
         TACIndexer.pushIns(TACBT(regpbar, lbe))
         #recurse on then body, emit join label and jump there at end
         #also, place then result into join register
-        regt = box(expConvert(node.args[1]), node.args[1].type) # TODO: leave unboxed if both unboxed
+        regt = expConvert(node.args[1]) 
         regj = TACIndexer.reg()
+        # Do auto-boxing of result
+        if node.type not in ['Int', 'Bool']:
+            regt = box(regt, node.args[1].type)
+        else:
+            regt = unbox(regt, node.args[1].type)
+            regj.boxed = False
         TACIndexer.pushIns(TACAssign(regj, regt))
+
         lbj = TACIndexer.label()
         TACIndexer.pushIns(TACJmp(lbj))
+
         #insert label for else
         TACIndexer.pushIns(TACLabel(lbe))
         #recurse on else body
-        rege = box(expConvert(node.args[2]), node.args[2].type)
+        rege = expConvert(node.args[2])
+        # Do auto-boxing of result
+        if node.type not in ['Int', 'Bool']:
+            rege = box(rege, node.args[2].type)
+        else:
+            rege = unbox(rege, node.args[2].type)
         #place result into join register
         TACIndexer.pushIns(TACAssign(regj, rege))
         #insert join label
@@ -225,7 +226,12 @@ def expConvert(node):
             TACIndexer.pushIns(TACLabel(blabels[i]))
             regci = TACIndexer.map(node.args[1][i].name.name, True)
             TACIndexer.pushIns(TACAssign(regci, regc))
-            regb = box(expConvert(node.args[1][i].body), node.args[1][i].body.type)
+            regb = expConvert(node.args[1][i].body)
+            if node.type in ['Bool', 'Int']:
+                regb = unbox(regb, node.args[1][i].type)
+                regj.boxed = False
+            else:
+                regb = box(regb,node.args[1][i].type)
             TACIndexer.pop(node.args[1][i].name.name)
             TACIndexer.pushIns(TACAssign(regj, regb))
             TACIndexer.pushIns(TACJmp(lbj))
@@ -264,53 +270,29 @@ def expConvert(node):
 
     #for negate and not only
     elif node.expr in ASTExpression.exp1:
-        regr = expConvert(node.args)
+        op1 = unbox(expConvert(node.args), node.args.type)
 
-        if isinstance(regr, TACClassAttr):
-            attreg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAssign(attreg, regr))
-            regr = attreg
-
-        op1 = TACIndexer.reg()
-        op1.boxed = False
-        if regr.boxed:
-            TACIndexer.pushIns(TACAssign(op1, TACClassAttr(regr, 'Int', 'val')))
-        else:
-            TACIndexer.pushIns(TACAssign(op1, regr))
 
         TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], op1))
         return op1
 
     elif node.expr in ASTExpression.exp2:
-        regr0 = expConvert(node.args[0])
-        regr1 = expConvert(node.args[1])
-
-        if isinstance(regr0, TACClassAttr):
-            attreg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAssign(attreg, regr0))
-            regr0 = attreg
-        if isinstance(regr1, TACClassAttr):
-            attreg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAssign(attreg, regr1))
-            regr1 = attreg
+        regr1 = expConvert(node.args[0])
+        regr2 = expConvert(node.args[1])
 
         op1 = TACIndexer.reg()
         op2 = TACIndexer.reg()
 
-        if regr0.boxed and node.args[0].type in ['Bool', 'Int']:
-            TACIndexer.pushIns(TACAssign(op1, TACClassAttr(regr0, 'Int', 'val')))
-        else:
-            TACIndexer.pushIns(TACAssign(op1, regr0))
+        TACIndexer.pushIns(TACAssign(op1,regr1))
+        TACIndexer.pushIns(TACAssign(op2,regr2))
+        op1.boxed = isinstance(regr1, TACClassAttr) or regr1.boxed
+        op2.boxed = isinstance(regr2, TACClassAttr) or regr2.boxed
+        
+        
+        op1 = unbox(op1, node.args[0].type)
+        op2 = unbox(op2, node.args[1].type)
 
-        if regr1.boxed and node.args[0].type in ['Bool', 'Int']:
-            TACIndexer.pushIns(TACAssign(op2, TACClassAttr(regr1, 'Int', 'val')))
-        else:
-            TACIndexer.pushIns(TACAssign(op2, regr1))
-
-        op1.boxed = False
-        op2.boxed = False
-
-        resreg = op1
+        resreg = TACIndexer.reg()
         #check if divisor is zero, and if so, err and exit
         if node.expr == 'divide':
             regz = TACIndexer.reg()
@@ -330,7 +312,8 @@ def expConvert(node):
         if node.expr in ['plus','minus','times','divide']:
             #abuse of notation - for non-commutative operators, having op2 as 1st operand is useful
             TACIndexer.pushIns(TACOp2(op1, astTacMap[node.expr], op2, op1))
-            resreg = op1
+            TACIndexer.pushIns(TACAssign(resreg, op1))
+            resreg.boxed = False
         else:
             #must be comparison operator, so use a subclass that captures the static type
             ptype = ''
@@ -341,7 +324,8 @@ def expConvert(node):
             else:
                 ptype = 'Object'    #pointer compare
             TACIndexer.pushIns(TACCompare(op2, astTacMap[node.expr], op1, op2, ptype))
-            resreg = op2
+            TACIndexer.pushIns(TACAssign(resreg, op2))
+            resreg.boxed = False
 
         # Hacky solution for conflicts with consecutive divides,
         # Spill result over to another temporary to give result
@@ -476,6 +460,19 @@ def box(reg, type):
         TACIndexer.pushIns(TACAllocate(breg, 'new', type))
         TACIndexer.pushIns(TACAssign(TACClassAttr(breg, type, 'val'), reg))
         reg = breg
+    return reg
+
+def unbox(reg, type):
+    if type in ['Bool', 'Int']:
+        if isinstance(reg, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, reg))
+            reg = attreg
+        if reg.boxed:
+            uboxreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(uboxreg, TACClassAttr(reg, type, 'val')))
+            uboxreg.boxed=False
+            reg = uboxreg
     return reg
 
 #for CA2, looks for the first method of first class and generates its TAC code
