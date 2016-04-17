@@ -327,14 +327,6 @@ def expConvert(node):
             TACIndexer.pushIns(TACAssign(resreg, op2))
             resreg.boxed = False
 
-        # Hacky solution for conflicts with consecutive divides,
-        # Spill result over to another temporary to give result
-        # a chance to get out of rax
-        if node.expr in ['times', 'divide']:
-            spillreg = TACIndexer.reg()
-            spillreg.boxed = False
-            TACIndexer.pushIns(TACAssign(spillreg, resreg))
-            resreg = spillreg
 
         return resreg
 
