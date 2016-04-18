@@ -228,10 +228,10 @@ def expConvert(node):
             TACIndexer.pushIns(TACAssign(regci, regc))
             regb = expConvert(node.args[1][i].body)
             if node.type in ['Bool', 'Int']:
-                regb = unbox(regb, node.args[1][i].type)
+                regb = unbox(regb, node.args[1][i].body.type)
                 regj.boxed = False
             else:
-                regb = box(regb,node.args[1][i].type)
+                regb = box(regb,node.args[1][i].body.type)
             TACIndexer.pop(node.args[1][i].name.name)
             TACIndexer.pushIns(TACAssign(regj, regb))
             TACIndexer.pushIns(TACJmp(lbj))
