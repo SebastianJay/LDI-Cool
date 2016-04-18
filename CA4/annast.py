@@ -18,6 +18,9 @@ def readClType(path):
     pmap.load(iter(lines[pmapind+1:astind]))
     ast = AST()
     ast.load(iter(lines[astind:]))
+
+    imap.loadFormalTypes(ast)
+
     return (cmap.classMap, imap.implMap, pmap.parentMap, ast)
 
 #class map
@@ -71,11 +74,21 @@ class IMap:
                 self.implMap[clsName].append(iMethod)
         return l
 
+    def loadFormalTypes(self, ast):
+        for c in ast.classes:
+            for feat in c.features:
+                if isinstance(feat, ASTMethod):
+                    for meth in self.implMap[c.name.name]:
+                        if meth.name == feat.name.name:
+                            meth.formalTypes = map(lambda x: x[1].name, feat.formals)
+
+
 #wrapper for info about one method of a class
 class IMapMethod:
     def __init__(self, *args):
         self.name = ''
         self.formals = []
+        self.formalTypes = []
         self.orig = ''  #name of original class where method was defined
         self.body = None
 
