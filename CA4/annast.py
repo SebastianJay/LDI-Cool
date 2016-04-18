@@ -75,12 +75,34 @@ class IMap:
         return l
 
     def loadFormalTypes(self, ast):
+        # Put in original methods
         for c in ast.classes:
             for feat in c.features:
                 if isinstance(feat, ASTMethod):
                     for meth in self.implMap[c.name.name]:
                         if meth.name == feat.name.name:
                             meth.formalTypes = map(lambda x: x[1].name, feat.formals)
+
+        # Put in inherited methods
+        for c in self.implMap:
+            for meth in self.implMap[c]:
+                if meth.orig != c:
+                    for smeth in self.implMap[meth.orig]:
+                        if smeth.name == meth.name:
+                            meth.formalTypes = smeth.formalTypes
+        # Put in internal functions
+        for c in self.implMap:
+            for meth in self.implMap[c]:
+                if meth.orig == 'IO':
+                    if meth.name == 'out_int':
+                        meth.formalTypes = ['Int']
+                    elif meth.name == 'out_string':
+                        meth.formalTypes = ['String']
+                if meth.orig == 'String':
+                    if meth.name == 'substr':
+                        meth.formalTypes = ['Int', 'Int']
+                    if meth.name == 'concat':
+                        meth.formalTypes = ['String']
 
 
 #wrapper for info about one method of a class
