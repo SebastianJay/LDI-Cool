@@ -338,7 +338,23 @@ def expConvert(node):
     #   find function to call in vtable if necessary
     #   call function and assign result into new register
     elif node.expr == 'dynamic_dispatch':
-        regs = [box(expConvert(e), e.type) for e in node.args[2]]
+        # Find method in imap
+        cname = node.args[0].type if node.args[0].type != "SELF_TYPE" else TACIndexer.cname
+        meth = None
+        for m in TACIndexer.imap[cname]:
+            if m.name == node.args[1].name:
+                meth = m
+                break
+        # Box Int/Bool args only if they are used for Object parameter
+        regs = []
+        for i, e in enumerate(node.args[2]):
+            r = expConvert(e)
+            if meth.formalTypes[i] in ['Int', 'Bool']:
+                r = unbox(r, e.type)
+            else:
+                r = box(r, e.type)
+            regs.append(r)
+        
         regc = box(expConvert(node.args[0]), node.args[0].type)
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
@@ -350,7 +366,6 @@ def expConvert(node):
         TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
         reglb = TACIndexer.reg()
-        cname = node.args[0].type if node.args[0].type != "SELF_TYPE" else TACIndexer.cname
         TACIndexer.pushIns(TACVTable(reglb, regc, cname, node.args[1].name))
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
@@ -358,7 +373,24 @@ def expConvert(node):
         return regr
 
     elif node.expr == 'static_dispatch':
-        regs = [box(expConvert(e), e.type) for e in node.args[3]]
+        # Find method in imap
+        cname = node.args[0].type if node.args[0].type != "SELF_TYPE" else TACIndexer.cname
+        meth = None
+        for m in TACIndexer.imap[cname]:
+            if m.name == node.args[2].name:
+                meth = m
+                break
+
+        # Box Int/Bool args only if they are used for Object parameter
+        regs = []
+        for i, e in enumerate(node.args[3]):
+            r = expConvert(e)
+            if meth.formalTypes[i] in ['Int', 'Bool']:
+                r = unbox(r, e.type)
+            else:
+                r = box(r, e.type)
+            regs.append(r)
+
         regc = box(expConvert(node.args[0]), node.args[0].type)
         regv = TACIndexer.reg()
         regvbar = TACIndexer.reg()
@@ -384,7 +416,23 @@ def expConvert(node):
 
     #note: no dispatch on void check needed here since "self" is always valid
     elif node.expr == 'self_dispatch':
-        regs = [box(expConvert(e), e.type) for e in node.args[1]]
+        # Find method in imap
+        cname = TACIndexer.cname
+        meth = None
+        for m in TACIndexer.imap[cname]:
+            if m.name == node.args[0].name:
+                meth = m
+                break
+        # Box Int/Bool args only if they are used for Object parameter
+        regs = []
+        for i, e in enumerate(node.args[1]):
+            r = expConvert(e)
+            if meth.formalTypes[i] in ['Int', 'Bool']:
+                r = unbox(r, e.type)
+            else:
+                r = box(r, e.type)
+            regs.append(r)
+
         regc = TACIndexer.map('self')
         regs = [regc] + regs
         reglb = TACIndexer.reg()
@@ -433,6 +481,8 @@ def methodConvert(node):
     #assign method args to registers
     for formal in node.formals:
         reg = TACIndexer.map(formal[0].name, True)
+        if formal[1].name in ['Int', 'Bool']:
+            reg.boxed = False
         TACIndexer.pushIns(TACAssign(reg, TACMethodArg(TACIndexer.cname, TACIndexer.mname, formal[0].name)))
     reg = expConvert(node.body)
 
