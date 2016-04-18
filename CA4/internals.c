@@ -71,7 +71,7 @@ void out_error(const char* format, long long lineno);
 
 IO* IO_new()
 {
-    IO* io = (IO*)calloc(1,sizeof(IO));
+    IO* io = (IO*)malloc(sizeof(IO));
     io->type = IO_TAG;
     io->vtable = NULL;
     io->objSize = 0;
@@ -89,7 +89,7 @@ long long in_int()
 {
     long long i = 0;
     int lenstr = 4096;
-    char* c = (char*)calloc(lenstr, 1);
+    char* c = (char*)malloc(lenstr);
     char buffer[4096];
     memset(buffer, 0, 4096);
     //consume whole line until newline or eof
@@ -112,7 +112,7 @@ long long in_int()
             break;
         }
         lenstr += 4096;
-        char* newc = (char*)calloc(lenstr, 1);
+        char* newc = (char*)malloc(lenstr);
         strcpy(newc, c);
         free(c);
         c = newc;
@@ -151,7 +151,7 @@ char* in_string()
 {
     int numread = 0;
     int lenbuffer = 4096;
-    char* buffer = (char*)calloc(lenbuffer, sizeof(char));
+    char* buffer = (char*)malloc(lenbuffer);
     while (1) {
         //get a new character from stream
         int c = fgetc(stdin);
@@ -186,7 +186,7 @@ char* in_string()
         if (numread == lenbuffer - 1) {
             buffer[numread] = '\0';
             lenbuffer += 4096;
-            char* newbuffer = (char*)calloc(lenbuffer, sizeof(char));
+            char* newbuffer = (char*)malloc(lenbuffer);
             strcpy(newbuffer, buffer);
             free(buffer);
             buffer = newbuffer;
@@ -204,7 +204,7 @@ void out_string(const char* c)
 {
     //before printing, convert escape sequences \t, \n
     int len = strlen(c);
-    char* cpy = (char*)calloc(len+1, sizeof(char));
+    char* cpy = (char*)malloc(len+1);
     strcpy(cpy, c);
     int i;
     int num = 0;    //number of replacements made
@@ -236,7 +236,7 @@ void out_error(const char* format, long long lineno)
 }
 
 Object* Object_new() {
-    Object* o = (Object*)calloc(1,sizeof(Object));
+    Object* o = (Object*)malloc(sizeof(Object));
     o->type = OBJECT_TAG;
     o->vtable = NULL;
     o->objSize = 0;
@@ -258,7 +258,7 @@ String* Object_type_name(Object * self) {
 // long long* to get around type checking
 long long* Object_copy(Object * self) {
     int i;
-    long long* res = calloc(3 + self->objSize, 8);
+    long long* res = malloc((3 + self->objSize) * 8);
     res[0] = self->type;
     res[1] = (long long) self->vtable;
     res[2] = self->objSize;
@@ -269,7 +269,7 @@ long long* Object_copy(Object * self) {
 }
 
 String* String_new() {
-    String* s =(String*)calloc(1, sizeof(String));
+    String* s =(String*)malloc(sizeof(String));
     s->type = STRING_TAG;
     s->vtable = NULL;
     s->objSize = 1;
@@ -285,7 +285,7 @@ Int* String_length(String* self) {
 
 String* String_concat(String* self, String* s) {
     int len = strlen(self->c) + strlen(s->c);
-    char* dest = calloc(len+1, sizeof(char));
+    char* dest = malloc(len+1);
     strcpy(dest, self->c);
     strcat(dest, s->c);
     String* res = String_new();
@@ -302,7 +302,7 @@ String* String_substr(String* self, Int* ibox, Int* lbox) {
         //program halts
     }
     String* res = String_new();
-    char* resStr = calloc(l+1, sizeof(char));
+    char* resStr = malloc(l+1);
     int j;
     for (j = 0; j < l; j++) {
         resStr[j] = self->c[j+i];
@@ -314,7 +314,7 @@ String* String_substr(String* self, Int* ibox, Int* lbox) {
 
 Int* Int_new()
 {
-    Int* i = (Int*)calloc(1,sizeof(Int));
+    Int* i = (Int*)malloc(sizeof(Int));
     i->type = INT_TAG;
     i->vtable = NULL;
     i->objSize = 0;
@@ -324,7 +324,7 @@ Int* Int_new()
 
 Bool* Bool_new()
 {
-    Bool* b = (Bool*)calloc(1,sizeof(Bool));
+    Bool* b = (Bool*)malloc(sizeof(Bool));
     b->type = BOOL_TAG;
     b->vtable = NULL;
     b->objSize = 0;

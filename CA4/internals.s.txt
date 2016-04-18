@@ -6,26 +6,12 @@
 IO.new:
 .LFB61:
 	.cfi_startproc
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$24, %esi
-	movl	$1, %edi
-	call	calloc
+        pushq   $24
+        call    getmem
+        addq    $8, %rsp
 	movq	$3, (%rax)
 	movq	$IO_vtable, 8(%rax)
 	movq	$0, 16(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
 	ret
 	.cfi_endproc
 .LFE61:
@@ -79,7 +65,6 @@ in_int:
 	.cfi_def_cfa_offset 24
 	.cfi_offset 3, -24
 	movl	$4096, %edi
-	movl	$1, %esi
 	movl	$8192, %ebp
 	subq	$4128, %rsp
 	.cfi_def_cfa_offset 4176
@@ -88,7 +73,7 @@ in_int:
 	movq	%fs:40, %rax
 	movq	%rax, 4120(%rsp)
 	xorl	%eax, %eax
-	call	calloc
+	call	malloc
 	movl	$512, %ecx
 	movq	%rax, %rbx
 	movq	%r12, %rdi
@@ -103,9 +88,8 @@ in_int:
 	cmpb	$10, (%rax)
 	je	.L19
 	movq	%rbp, %rdi
-	movl	$1, %esi
 	addq	$4096, %rbp
-	call	calloc
+	call	malloc
 	movq	%rbx, %rsi
 	movq	%rax, %r13
 	movq	%rax, %rdi
@@ -277,12 +261,11 @@ in_string:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	movl	$1, %esi
 	movl	$4096, %edi
 	xorl	%ebx, %ebx
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 48
-	call	calloc
+	call	malloc
 	movq	%rax, %rbp
 	jmp	.L26
 	.p2align 4,,10
@@ -306,10 +289,9 @@ in_string:
 	jne	.L53
 	movslq	%edx, %rdx
 	addl	$4096, %r12d
-	movl	$1, %esi
 	movb	$0, 0(%rbp,%rdx)
 	movslq	%r12d, %rdi
-	call	calloc
+	call	malloc
 	movq	%rbp, %rsi
 	movq	%rax, %rdi
 	movq	%rax, %r13
@@ -427,10 +409,9 @@ out_string:
 	call	strlen
 	leal	1(%rax), %edi
 	movq	%rax, %r12
-	movl	$1, %esi
 	movl	%eax, %ebx
 	movslq	%edi, %rdi
-	call	calloc
+	call	malloc
 	leaq	1(%r12), %rdx
 	movq	%rbp, %rsi
 	movq	%rax, %rdi
@@ -591,30 +572,12 @@ out_error:
 Object.new:
 .LFB71:
 	.cfi_startproc
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$24, %esi
-	movl	$1, %edi
-	call	calloc
+        pushq   $24
+        call    getmem
+        addq    $8, %rsp
 	movq	$0, (%rax)
 	movq	$Object_vtable, 8(%rax)
 	movq	$0, 16(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
 .LFE71:
@@ -692,22 +655,15 @@ Object.copy:
 	.cfi_startproc
 	pushq	%rbp
 	movq	%rsp, %rbp
-	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	movq	16(%rbp), %rdi
-	movq	16(%rdi), %rax
-	movq	%rdi, %rbx
-	movl	$8, %esi
-	leaq	3(%rax), %rdi
-	call	calloc
+        pushq   %rbx
+        pushq   %rcx
+	movq	16(%rbp), %rdx
+	movq	16(%rdx), %rax
+	movq	%rdx, %rbx
+	leaq	24(,%rax,8), %rdx
+        pushq   %rdx
+	call	getmem
+        addq    $8, %rsp
 	movq	(%rbx), %rdx
 	movq	%rdx, (%rax)
 	movq	8(%rbx), %rdx
@@ -717,8 +673,6 @@ Object.copy:
 	cmpq	$0, 16(%rbx)
 	movl	$1, %edx
 	jle	.L58
-	.p2align 4,,10
-	.p2align 3
 .L59:
 	movq	16(%rbx,%rdx,8), %rcx
 	movq	%rcx, 16(%rax,%rdx,8)
@@ -727,15 +681,9 @@ Object.copy:
 	cmpq	16(%rbx), %rcx
 	jl	.L59
 .L58:
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	popq	%rbx
-	.cfi_def_cfa_offset 8
+        popq    %rcx
+        popq    %rbx
+        .cfi_def_cfa_offset 8
 	leave
 	ret
 	.cfi_endproc
@@ -767,30 +715,14 @@ Object.type_name:
 String.new:
 .LFB75:
 	.cfi_startproc
-	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$32, %esi
-	movl	$1, %edi
-	call	calloc
+        pushq   $32
+        call    getmem
+        addq    $8, %rsp
 	movq	$2, (%rax)
 	movq	$String_vtable, 8(%rax)
 	movq	$1, 16(%rax)
 	movq	$.LC2, 24(%rax)
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-	addq	$8, %rsp
 	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
@@ -865,9 +797,8 @@ String.concat:
 	movq	%rax, %rbp
 	call	strlen
 	leal	1(%rax,%rbp), %edi
-	movl	$1, %esi
 	movslq	%edi, %rdi
-	call	calloc
+	call	malloc
 	leaq	1(%rbp), %rdx
 	movq	%r13, %rsi
 	movq	%rax, %rdi
@@ -1003,10 +934,9 @@ String.substr:
 	leaq	1(%r13), %rbp
 	xorl	%eax, %eax
 	call	String.new
-	movl	$1, %esi
 	movq	%rbp, %rdi
 	movq	%rax, %r14
-	call	calloc
+	call	malloc
 	xorl	%ecx, %ecx
 	testq	%r13, %r13
 	movl	$1, %edx
@@ -1055,31 +985,13 @@ String.substr:
 Int.new:
 .LFB79:
 	.cfi_startproc
-	.cfi_def_cfa_offset 16
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	subq 	$8, %rsp
-	movl	$32, %esi
-	movl	$1, %edi
-	call	calloc
-	movq	$1, (%rax)
-	movq	$Int_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	movq	$0, 24(%rax)
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
+        pushq $32
+        call getmem
+        addq $8, %rsp
+        movq $1, (%rax)
+        movq $Int_vtable, 8(%rax)
+        movq $1, 16(%rax)
+        movq $0, 24(%rax)
 	ret
 	.cfi_endproc
 .LFE79:
@@ -1090,8 +1002,26 @@ Int.new:
 Bool.new:
 .LFB80:
 	.cfi_startproc
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 16
+        pushq $32
+        call getmem
+        addq $8, %rsp
+        movq $4, (%rax)
+        movq $Bool_vtable, 8(%rax)
+        movq $1, 16(%rax)
+        movq $0, 24(%rax)
+	ret
+	.cfi_endproc
+.LFE80:
+	.size	Bool.new, .-Bool.new
+        .globl getmem
+        .type getmem, @function
+getmem:
+        pushq %rbx
+        movq heap_next, %rax
+        movq 16(%rsp), %rbx 
+        addq %rax, %rbx
+        cmpq %rbx, heap_end
+        jg .getmem_1
 	pushq	%rsi
 	pushq	%rdi
 	pushq	%rcx
@@ -1099,13 +1029,8 @@ Bool.new:
 	pushq	%r9
 	pushq	%r10
 	pushq	%r11
-	movl	$32, %esi
-	movl	$1, %edi
-	call	calloc
-	movq	$4, (%rax)
-	movq	$Bool_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	movq	$0, 24(%rax)
+        movq $heap_block_size, %rdi
+        call malloc
 	popq	%r11
 	popq	%r10
 	popq	%r9
@@ -1113,10 +1038,31 @@ Bool.new:
 	popq	%rcx
 	popq	%rdi
 	popq	%rsi
-	addq	$8, %rsp
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE80:
-	.size	Bool.new, .-Bool.new
+        leaq heap_block_size(%rax), %rbx
+        movq %rbx, heap_end
+        movq 16(%rsp), %rbx
+        addq %rax, %rbx
+.getmem_1:
+        movq %rbx, heap_next
+        popq %rbx
+        ret
+        .size getmem, .-getmem
+        .globl main
+        .type main, @function
+main:
+        movq $heap_block_size, %rdi
+        call malloc
+        leaq heap_block_size(%rax), %rbx
+        movq %rbx, heap_end
+        movq $0, %rbx
+        movq %rax, heap_next
+        call _main
+        ret
+        .size main, .-main
+        .section .data
+heap_next:
+        .quad 0
+heap_end:
+        .quad 0
+.set heap_block_size, 4194304
 ### END Internals

@@ -125,7 +125,13 @@ class Main inherits IO {
 
    main() : Object {
       {
-	 mylist <- new List.cons(1).cons(2).cons(3).cons(4).cons(5);
+            mylist <- new List;
+            let i:Int <- 0 in
+            while i < 100 loop
+                {
+                    mylist <- mylist.cons(i);
+                    i <- i + 1;
+                } pool;
 	 while (not mylist.isNil()) loop
 	    {
 	       print_list(mylist);
