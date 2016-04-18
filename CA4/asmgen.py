@@ -4,6 +4,26 @@ from registerAllocate import registerAllocate
 import sys
 from deadcode import globalDeadRemove
 
+#if a different width of a register is needed find the label in this mapping
+regWidthMap = {
+    '%rax' : ['%rax', '%eax', '%ax', '%al'],
+    '%rbx' : ['%rbx', '%ebx', '%bx', '%bl'],
+    '%rcx' : ['%rcx', '%ecx', '%cx', '%cl'],
+    '%rdx' : ['%rdx', '%edx', '%dx', '%dl'],
+    '%rsi' : ['%rsi', '%esi', '%si', '%sil'],
+    '%rdi' : ['%rdi', '%edi', '%di', '%dil'],
+    '%rbp' : ['%rbp', '%ebp', '%bp', '%bpl'],
+    '%rsp' : ['%rsp', '%esp', '%sp', '%spl'],
+    '%r8' : ['%r8', '%r8d', '%r8w', '%r8b'],
+    '%r9' : ['%r9', '%r9d', '%r9w', '%r9b'],
+    '%r10' : ['%r10', '%r10d', '%r10w', '%r10b'],
+    '%r11' : ['%r11', '%r11d', '%r11w', '%r11b'],
+    '%r12' : ['%r12', '%r12d', '%r12w', '%r12b'],
+    '%r13' : ['%r13', '%r13d', '%r13w', '%r13b'],
+    '%r14' : ['%r14', '%r14d', '%r14w', '%r14b'],
+    '%r15' : ['%r15', '%r15d', '%r15w', '%r15b'],
+}
+
 #maps int result of graph coloring to x64 register name
 cRegMap = {
     0 : '%rax',     #return value for function calls
@@ -236,6 +256,7 @@ class ASMOp(ASMInstruction):
         self.assignee = assignee
         self.opcode = opcode
         self.operands = operands
+        self.halfreg = False
     def expand(self):
         asm = []
 
@@ -264,7 +285,13 @@ class ASMOp(ASMInstruction):
                     asm.append(ASMAssign('%rbx', self.assignee))
                     self.assignee = '%rbx'
 
-            asm.append(ASMCmp(self.operands[1], self.operands[0]))
+            cmpop1 = self.operands[1]
+            if cmpop1 in registers and cmpop1 not in [rsp, rbp]:
+                cmpop1 = regWidthMap[cmpop1][1]
+            cmpop0 = self.operands[0]
+            if cmpop0 in registers and cmpop0 not in [rsp, rbp]:
+                cmpop0 = regWidthMap[cmpop0][1]
+            asm.append(ASMCmp(cmpop1, cmpop0, True))
             asm.append(ASMConstant(self.assignee, 'bool', 'false'))
             asm.append(ASMConstant('%rdx', 'bool', 'true'))
             asm.append(self)
@@ -280,26 +307,28 @@ class ASMOp(ASMInstruction):
             asm.append(ASMAssign(self.assignee, self.operands[0]))
 
         if self.opcode == '/':
-            asm.append(ASMMisc('cltq'))     #sign extend eax to rax
-            asm.append(ASMMisc('cqto'))     #sign extend rax to rdx:rax
+            asm.append(ASMMisc('cdq'))  #sign extend eax to edx:eax
+
+        #switch to 32 bit registers for arithmetic
+        if self.opcode in ['+', '-', '*', '/', '~'] and self.assignee not in [rsp, rbp]:
+            if self.operands[0] in registers:
+                self.operands[0] = regWidthMap[self.operands[0]][1]
+            if self.opcode in ['+', '-'] and self.assignee in registers:
+                self.assignee = regWidthMap[self.assignee][1]
+            self.halfreg = True
 
         asm.append(self)
-
-        if self.opcode in ['+', '-', '*', '/', '~'] and self.assignee not in [rsp, rbp]:
-            #sign-extend the upper half of the 64 bit register
-            asm.append(ASMOp(self.assignee, '<<', ['$32', self.assignee]))
-            asm.append(ASMOp(self.assignee, '>>', ['$32', self.assignee]))
-
         return asm
+        
     def __str__(self):
         if self.opcode == '+':
-            return 'addq ' + self.operands[0] + ', ' + self.assignee
+            return ('addl ' if self.halfreg else 'addq ') + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '-':
-            return 'subq ' + self.operands[0] + ', ' + self.assignee
+            return ('subl ' if self.halfreg else 'subq ') + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '*':
-            return 'imulq ' + self.operands[0]
+            return ('imull ' if self.halfreg else 'imulq ') + self.operands[0]
         elif self.opcode == '/':
-            return 'idivq ' + self.operands[0]
+            return ('idivl ' if self.halfreg else 'idivq ') + self.operands[0]
         elif self.opcode == '<':
             return 'cmovlq ' + '%rdx' + ', ' + self.assignee
         elif self.opcode == '<=':
@@ -311,7 +340,7 @@ class ASMOp(ASMInstruction):
         elif self.opcode == 'isvoid':
             pass
         elif self.opcode == '~':
-            return 'negq ' + self.operands[0]
+            return ('negl ' if self.halfreg else 'negq ') + self.operands[0]
         elif self.opcode == '&':
             return 'andq ' + self.operands[0] + ', ' + self.assignee
         elif self.opcode == '|':
@@ -324,11 +353,12 @@ class ASMOp(ASMInstruction):
 
 #compare two numbers and set appropriate flags for conditional moves/jumps
 class ASMCmp(ASMInstruction):
-    def __init__(self, op1, op2):
+    def __init__(self, op1, op2, halfreg=False):
         self.op1 = op1
         self.op2 = op2
+        self.halfreg = halfreg
     def __str__(self):
-        return 'cmpq ' + self.op1 + ', ' + self.op2
+        return ('cmpl ' if self.halfreg else 'cmpq ') + self.op1 + ', ' + self.op2
 
 #ASM instruction which assigns one variable into another
 class ASMAssign(ASMInstruction):
