@@ -22,17 +22,10 @@ IO.new:
 IO.in_int:
 .LFB62:
 	.cfi_startproc
-	pushq	%rbx
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
 	xorl	%eax, %eax
-	call	Int.new
-	movq	%rax, %rbx
-	xorl	%eax, %eax
 	call	in_int
-	movq	%rax, 24(%rbx)
-	movq	%rbx, %rax
-	popq	%rbx
 	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
@@ -850,18 +843,9 @@ String.length:
 	pushq	%r10
 	pushq	%r11
 	movq	16(%rbp), %rdi
-	xorl	%eax, %eax
-	movq	%rdi, %rbp
-	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
-	.cfi_def_cfa_offset 32
-	call	Int.new
-	movq	24(%rbp), %rdi
-	movq	%rax, %rbx
+	movq	24(%rdi), %rdi
+        xorq    %rax, %rax
 	call	strlen
-	movq	%rax, 24(%rbx)
-	.cfi_def_cfa_offset 24
-	movq	%rbx, %rax
 	popq	%r11
 	popq	%r10
 	popq	%r9

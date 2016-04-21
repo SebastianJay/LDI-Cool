@@ -370,6 +370,8 @@ def expConvert(node):
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
+        if meth.body.type in ['Int','Bool']:
+            regr.boxed = False
         return regr
 
     elif node.expr == 'static_dispatch':
@@ -412,6 +414,8 @@ def expConvert(node):
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
+        if meth.body.type in ['Int','Bool']:
+            regr.boxed = False
         return regr
 
     #note: no dispatch on void check needed here since "self" is always valid
@@ -440,6 +444,8 @@ def expConvert(node):
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
+        if meth.body.type in ['Int','Bool']:
+            regr.boxed = False
         return regr
 
     elif node.expr == 'new':
@@ -491,13 +497,16 @@ def methodConvert(node):
     for formal in node.formals:
         TACIndexer.pop(formal[0].name)
 
-    reg = box(reg, node.body.type)
+    if node.body.type in ['Int', 'Bool']:
+        reg = unbox(reg, node.body.type)
+    else:
+        reg = box(reg, node.body.type)
     retreg = TACIndexer.returnReg
     TACIndexer.pushIns(TACAssign(retreg, reg))
     TACIndexer.pushIns(TACReturn(retreg))
 
 def box(reg, type):
-    if isinstance(reg, TACRegister) and not reg.boxed:
+    if type in ['Bool', 'Int'] and isinstance(reg, TACRegister) and not reg.boxed:
         breg = TACIndexer.reg()
         TACIndexer.pushIns(TACAllocate(breg, 'new', type))
         TACIndexer.pushIns(TACAssign(TACClassAttr(breg, type, 'val'), reg))

@@ -60,7 +60,10 @@ class TACBasicBlock:
     def __str__(self):
         retval = ''
         for ins in self.instructions:
-            retval += str(ins) + '\n'
+            if isinstance(ins, TACLabel):
+                retval += str(ins) + '\n'
+            else:
+                retval += '\t' + str(ins) + '\n'
         return retval
 
 #"abstract" class for one TAC instruction

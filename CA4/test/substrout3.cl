@@ -10,6 +10,13 @@ class Main inherits IO {
                     out_string(s.substr(i,s.length()-i).concat("\n"));
                     i <- i - 1;
                 } pool;
+                out_string(s.substr(0, func(5)));
              }
+    };
+    func(i : Int) : Int {
+        func2(i)
+    };
+    func2(i: Int) : Int {
+        2*i
     };
 };
