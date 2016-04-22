@@ -7,9 +7,8 @@ from registerAllocate import registerAllocate
 import asmgen
 import sys
 
-debug = False
 if __name__=="__main__":
-
+    debug = '-d' in sys.argv
     #load the cl-type file
     cmap, imap, pmap, ast = readClType(sys.argv[1])
 

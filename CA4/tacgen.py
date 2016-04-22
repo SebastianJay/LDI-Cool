@@ -408,16 +408,29 @@ def expConvert(node):
             else:
                 r = box(r, e.type)
             regs.append(r)
-        
-        regc = box(expConvert(node.args[0]), node.args[0].type)
-        regv = TACIndexer.reg()
-        regvbar = TACIndexer.reg()
-        lbd = TACIndexer.label()
-        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
-        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
-        TACIndexer.pushIns(TACBT(regvbar, lbd))
-        TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
-        TACIndexer.pushIns(TACLabel(lbd))
+
+        regc = expConvert(node.args[0])
+
+        if node.args[0].type in ['Int', 'Bool']:
+            reg = TACIndexer.reg()
+            if node.args[1].name == 'type_name':
+                TACIndexer.pushIns(TACConstant(reg, 'string', node.args[0].type))
+                return reg
+            if node.args[1].name == 'copy':
+                TACIndexer.pushIns(TACAssign(reg, regc))
+                reg.boxed = regc.boxed
+                return reg
+            
+        regc = box(regc, node.args[0].type) 
+        if node.args[0].type not in ['Int', 'Bool', 'String']:
+            regv = TACIndexer.reg()
+            regvbar = TACIndexer.reg()
+            lbd = TACIndexer.label()
+            TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
+            TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
+            TACIndexer.pushIns(TACBT(regvbar, lbd))
+            TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
+            TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
         reglb = TACIndexer.reg()
         TACIndexer.pushIns(TACVTable(reglb, regc, cname, node.args[1].name))
@@ -447,15 +460,27 @@ def expConvert(node):
                 r = box(r, e.type)
             regs.append(r)
 
-        regc = box(expConvert(node.args[0]), node.args[0].type)
-        regv = TACIndexer.reg()
-        regvbar = TACIndexer.reg()
-        lbd = TACIndexer.label()
-        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
-        TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
-        TACIndexer.pushIns(TACBT(regvbar, lbd))
-        TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
-        TACIndexer.pushIns(TACLabel(lbd))
+        regc = expConvert(node.args[0])
+        if node.args[0].type in ['Int', 'Bool']:
+            reg = TACIndexer.reg()
+            if node.args[2].name == 'type_name':
+                TACIndexer.pushIns(TACConstant(reg, 'string', node.args[0].type))
+                return reg
+            if node.args[2].name == 'copy':
+                TACIndexer.pushIns(TACAssign(reg, regc))
+                reg.boxed = regc.boxed
+                return reg
+
+        regc = box(regc, node.args[0].type)
+        if node.args[0].type not in ['String', 'Int', 'Bool']:
+            regv = TACIndexer.reg()
+            regvbar = TACIndexer.reg()
+            lbd = TACIndexer.label()
+            TACIndexer.pushIns(TACOp1(regv, 'isvoid', regc))
+            TACIndexer.pushIns(TACOp1(regvbar, 'not', regv))
+            TACIndexer.pushIns(TACBT(regvbar, lbd))
+            TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
+            TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
         # Find base class for given method
         basec = node.args[1].name
