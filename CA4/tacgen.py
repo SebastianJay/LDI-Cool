@@ -141,7 +141,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACBT(regpbar, lbe))
         #recurse on then body, emit join label and jump there at end
         #also, place then result into join register
-        regt = expConvert(node.args[1]) 
+        regt = expConvert(node.args[1])
         regj = TACIndexer.reg()
         # Do auto-boxing of result
         if node.type not in ['Int', 'Bool']:
@@ -189,50 +189,73 @@ def expConvert(node):
         return regr
 
     elif node.expr == 'case':
-        #generate code for case expression
-        regc = box(expConvert(node.args[0]), node.args[0].type)
+        #avoid void check if we know it is primitive
+        regc = expConvert(node.args[0])
+        if isinstance(regc, TACClassAttr):
+            attreg = TACIndexer.reg()
+            TACIndexer.pushIns(TACAssign(attreg, regc))
+            regc = attreg
         #fail if case "caller" is void
-        regv = TACIndexer.reg()
-        lbc = TACIndexer.label()
-        TACIndexer.pushIns(TACAssign(regv, regc))
-        TACIndexer.pushIns(TACOp1(regv, 'isvoid', regv))
-        TACIndexer.pushIns(TACOp1(regv, 'not', regv))
-        TACIndexer.pushIns(TACBT(regv, lbc))
-        TACIndexer.pushIns(TACError(node.line, 'casevoid'))
-        TACIndexer.pushIns(TACLabel(lbc))
-        #generate labels for branches, and record branch types
-        blabels = [TACIndexer.label() for i in range(len(node.args[1]))]
-        btypes = [branch.type.name for branch in node.args[1]]
-        #create join reg and label
+        if regc.boxed or node.args[0].type not in ['String', 'Int', 'Bool']:
+            regv = TACIndexer.reg()
+            regv.boxed = False
+            lbc = TACIndexer.label()
+            TACIndexer.pushIns(TACAssign(regv, regc))
+            TACIndexer.pushIns(TACOp1(regv, 'isvoid', regv))
+            TACIndexer.pushIns(TACOp1(regv, 'not', regv))
+            TACIndexer.pushIns(TACBT(regv, lbc))
+            TACIndexer.pushIns(TACError(node.line, 'casevoid'))
+            TACIndexer.pushIns(TACLabel(lbc))
+        regc = box(regc, node.args[0].type)
+        #find which branch types can be possibly taken based on static type of obj
+        btypesall = [branch.type.name for branch in node.args[1]]
+        caseobjtype = node.args[0].type
+        if node.args[0].type == 'SELF_TYPE':
+            caseobjtype = TACIndexer.cname  #we could be more restrictive on subclasses inheriting exp
+        btypes = [clsname for clsname in btypesall if (caseobjtype in subtreeList(clsname, TACIndexer.pmap)\
+            or clsname in subtreeList(caseobjtype, TACIndexer.pmap))]
+        #create join reg
         regj = TACIndexer.reg()
+        #generate join label
         lbj = TACIndexer.label()
-        #generate type evaluation to find least type and jump to appropriate label
-        #   reverse toposort to get least to greatest order
-        usedtypes = set()
-        for clsname in reversed(toposort(TACIndexer.pmap)):
-            if clsname not in btypes:
-                continue
-            ind = btypes.index(clsname)
-            sublst = subtreeList(clsname, TACIndexer.pmap)
-            for subclsname in sublst:
-                if subclsname in usedtypes:
+        if len(btypes) > 0:
+            #generate labels for branches, and record branch types
+            blabels = [TACIndexer.label() for i in range(len(btypes))]
+            #generate type evaluation to find least type and jump to appropriate label
+            #   reverse toposort to get least to greatest order
+            usedtypes = set()
+            for clsname in reversed(toposort(TACIndexer.pmap)):
+                if clsname not in btypes:
                     continue
-                usedtypes.add(subclsname)
-                TACIndexer.pushIns(TACBTypeEq(regc, subclsname, blabels[ind]))
+                ind = btypes.index(clsname)
+                sublst = subtreeList(clsname, TACIndexer.pmap)
+                for subclsname in sublst:
+                    if subclsname in usedtypes:
+                        continue
+                    usedtypes.add(subclsname)
+                    TACIndexer.pushIns(TACBTypeEq(regc, subclsname, blabels[ind]))
+        elif len(btypes) == 0:
+            #we need to return something for rest of code gen so we'll just return 0
+            TACIndexer.pushIns(TACConstant(regj, 'int', '0'))
+            return regj
+
         #fail if no type found
         TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
+
         #loop over branches: emit label, generate code, result in join reg + jump to join label
-        for i in range(len(node.args[1])):
+        for i in range(len(btypes)):
+            btype = btypes[i]
+            branch = [br for br in node.args[1] if br.type.name == btype][0]
             TACIndexer.pushIns(TACLabel(blabels[i]))
-            regci = TACIndexer.map(node.args[1][i].name.name, True)
+            regci = TACIndexer.map(branch.name.name, True)
             TACIndexer.pushIns(TACAssign(regci, regc))
-            regb = expConvert(node.args[1][i].body)
+            regb = expConvert(branch.body)
             if node.type in ['Bool', 'Int']:
-                regb = unbox(regb, node.args[1][i].type)
+                regb = unbox(regb, branch.type.name)
                 regj.boxed = False
             else:
-                regb = box(regb,node.args[1][i].type)
-            TACIndexer.pop(node.args[1][i].name.name)
+                regb = box(regb, branch.type.name)
+            TACIndexer.pop(branch.name.name)
             TACIndexer.pushIns(TACAssign(regj, regb))
             TACIndexer.pushIns(TACJmp(lbj))
         #emit join label
@@ -261,7 +284,7 @@ def expConvert(node):
 
         op1 = TACIndexer.reg()
         op1.boxed = False
-        if not regr.boxed or node.args.type == 'String' or node.args.type == 'Int' or node.args.type == 'Bool':
+        if not regr.boxed or node.args.type in ['String', 'Int', 'Bool']:
             #isvoid is always false for primitives
             TACIndexer.pushIns(TACConstant(op1, 'bool', 'false'))
         else:
@@ -287,8 +310,8 @@ def expConvert(node):
         TACIndexer.pushIns(TACAssign(op2,regr2))
         op1.boxed = isinstance(regr1, TACClassAttr) or regr1.boxed
         op2.boxed = isinstance(regr2, TACClassAttr) or regr2.boxed
-        
-        
+
+
         op1 = unbox(op1, node.args[0].type)
         op2 = unbox(op2, node.args[1].type)
 
@@ -474,22 +497,6 @@ def unbox(reg, type):
             uboxreg.boxed=False
             reg = uboxreg
     return reg
-
-#for CA2, looks for the first method of first class and generates its TAC code
-def mainConvert(ast):
-    #only convert the first method of the first class
-    if ast.classes:
-        mclass = ast.classes[0]
-        #set prefix for future labels
-        TACIndexer.cname = mclass.name.name
-        for feature in mclass.features:
-            if isinstance(feature, ASTMethod):
-                #set prefix for future labels
-                TACIndexer.mname = feature.name.name
-                methodConvert(feature)
-                break
-    else:
-        print 'ERROR: could not find any classes in AST'
 
 #for CA4, go through all methods of user-defined classes and generate TAC for bodies
 def implConvert(ast):
