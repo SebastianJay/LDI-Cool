@@ -49,7 +49,7 @@ long long* Obj_copy(Object * self);
 String* String_new();
 Int* String_length(String* self);
 String* String_concat(String* self, String* s);
-String* String_substr(String* self, Int* i, Int* l);
+String* String_substr(String* self, long long i, long long l);
 
 Int* Int_new();
 
@@ -57,7 +57,7 @@ Bool* Bool_new();
 
 IO* IO_new();
 Int* IO_in_int(IO* self);
-IO* IO_out_int(IO* self, Int* i);
+IO* IO_out_int(IO* self, long long i);
 String* IO_in_string(IO* self);
 IO* IO_out_string(IO* self, String* s);
 
@@ -128,9 +128,9 @@ long long in_int()
     return i;
 }
 
-IO* IO_out_int(IO* self, Int* i)
+IO* IO_out_int(IO* self, long long i)
 {
-    out_int(i->value);
+    out_int(i);
     return self;
 }
 
@@ -293,10 +293,8 @@ String* String_concat(String* self, String* s) {
     return res;
 }
 
-String* String_substr(String* self, Int* ibox, Int* lbox) {
+String* String_substr(String* self, long long i, long long l) {
     int len = strlen(self->c);
-    long long i = ibox->value;
-    long long l = lbox->value;
     if (i < 0 || l < 0 || i + l > len) {
         out_error("ERROR: %lld: Exception: String index out of bounds", 0ll);
         //program halts
