@@ -172,15 +172,36 @@ def expConvert(node):
     elif node.expr == 'let':
         # Bind the let vars
         for binding in node.args[0]:
+            
             if binding.init is not None:
                 # if there is an init, generate the init code
-                regi = box(expConvert(binding.init), binding.init.type)
-                reg = TACIndexer.map(binding.name.name,True)    #create reg here so previous binding holds in init expr
+                regi = expConvert(binding.init)
+                
+                #create reg here so previous binding holds in init expr
+                reg = TACIndexer.map(binding.name.name,True)    
+                if binding.type.name in ['Int', 'Bool']:
+                    reg.boxed = False
+                else:
+                    reg.boxed = True
+
+                if reg.boxed:
+                    regi = box(regi, binding.init.type)
+                else:
+                    regi = unbox(regi, binding.init.type)
                 TACIndexer.pushIns(TACAssign(reg,regi))
             else:
+                
+                #create reg here so previous binding holds in init expr
+                reg = TACIndexer.map(binding.name.name,True)    
+                if binding.type.name in ['Int', 'Bool']:
+                    reg.boxed = False
+                else:
+                    reg.boxed = True
                 #otherwise generate default init
-                reg = TACIndexer.map(binding.name.name,True)
-                TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
+                if reg.boxed:
+                    TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
+                else:
+                    TACIndexer.pushIns(TACConstant(reg, 'int', 0))
         # Generate the body code
         regr = expConvert(node.args[1])
         # Unbind the let vars
@@ -245,9 +266,12 @@ def expConvert(node):
         return reg  #last expression evaluated is the return val
 
     elif node.expr == 'assign':
-        regr = box(expConvert(node.args[1]), node.args[1].type)
-
+        regr = expConvert(node.args[1])
         reg = TACIndexer.map(node.args[0].name)
+        if isinstance(reg, TACClassAttr) or reg.boxed:
+            regr = box(regr, node.args[1].type)
+        else:
+            regr = unbox(regr, node.args[1].type)
         TACIndexer.pushIns(TACAssign(reg, regr))
         return regr
 
@@ -270,8 +294,12 @@ def expConvert(node):
 
     #for negate and not only
     elif node.expr in ASTExpression.exp1:
-        op1 = unbox(expConvert(node.args), node.args.type)
-
+        op1 = TACIndexer.reg()
+        reg1 = expConvert(node.args)
+        TACIndexer.pushIns(TACAssign(op1, reg1))
+        op1.boxed = isinstance(reg1, TACClassAttr) or reg1.boxed 
+        op1 = unbox(op1, node.args.type)
+        
 
         TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], op1))
         return op1
