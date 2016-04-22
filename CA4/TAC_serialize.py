@@ -239,8 +239,9 @@ class TACClassAttr(TACOperand):
         self.reg = reg
         self.cname = cname
         self.aname = aname
+        self.boxed = True
     def __str__(self):
-        return str(self.reg)+'@'+self.cname+':'+self.aname
+        return str(self.reg)+'@'+self.cname+':'+self.aname+ ('' if self.boxed else '[x]')
 
 class TACMethodArg(TACOperand):
     def __init__(self, cname, mname, fname):

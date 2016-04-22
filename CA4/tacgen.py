@@ -53,10 +53,10 @@ class TACIndexer:
         TACIndexer.mname = mname
 
     @staticmethod
-    def addClassAttr(cname, attrname):
+    def addClassAttr(cname, attrname, boxed = True):
         if cname not in TACIndexer.classAttrs:
-            TACIndexer.classAttrs[cname] = set()
-        TACIndexer.classAttrs[cname].add(attrname)
+            TACIndexer.classAttrs[cname] = {}
+        TACIndexer.classAttrs[cname][attrname] = boxed
 
     #increments a counter and returns a string label
     @staticmethod
@@ -77,7 +77,9 @@ class TACIndexer:
             TACIndexer.varRegMap[var] = []
         if len(TACIndexer.varRegMap[var]) == 0 or forceNew:
             if not forceNew and var in TACIndexer.classAttrs[TACIndexer.cname]:
-                return TACClassAttr(TACIndexer.map('self'), TACIndexer.cname, var)
+                reg= TACClassAttr(TACIndexer.map('self'), TACIndexer.cname, var)
+                reg.boxed = TACIndexer.classAttrs[TACIndexer.cname][var]
+                return reg
             else:
                 reg = TACIndexer.reg()
                 TACIndexer.varRegMap[var].append(reg)
@@ -268,7 +270,7 @@ def expConvert(node):
     elif node.expr == 'assign':
         regr = expConvert(node.args[1])
         reg = TACIndexer.map(node.args[0].name)
-        if isinstance(reg, TACClassAttr) or reg.boxed:
+        if reg.boxed:
             regr = box(regr, node.args[1].type)
         else:
             regr = unbox(regr, node.args[1].type)
@@ -281,6 +283,7 @@ def expConvert(node):
         if isinstance(regr, TACClassAttr):
             attreg = TACIndexer.reg()
             TACIndexer.pushIns(TACAssign(attreg, regr))
+            attreg.boxed = regr.boxed
             regr = attreg
 
         op1 = TACIndexer.reg()
@@ -297,7 +300,7 @@ def expConvert(node):
         op1 = TACIndexer.reg()
         reg1 = expConvert(node.args)
         TACIndexer.pushIns(TACAssign(op1, reg1))
-        op1.boxed = isinstance(reg1, TACClassAttr) or reg1.boxed 
+        op1.boxed = reg1.boxed 
         op1 = unbox(op1, node.args.type)
         
 
@@ -313,8 +316,8 @@ def expConvert(node):
 
         TACIndexer.pushIns(TACAssign(op1,regr1))
         TACIndexer.pushIns(TACAssign(op2,regr2))
-        op1.boxed = isinstance(regr1, TACClassAttr) or regr1.boxed
-        op2.boxed = isinstance(regr2, TACClassAttr) or regr2.boxed
+        op1.boxed = regr1.boxed
+        op2.boxed = regr2.boxed
         
         
         op1 = unbox(op1, node.args[0].type)
@@ -534,7 +537,7 @@ def methodConvert(node):
     TACIndexer.pushIns(TACReturn(retreg))
 
 def box(reg, type):
-    if type in ['Bool', 'Int'] and isinstance(reg, TACRegister) and not reg.boxed:
+    if type in ['Bool', 'Int'] and not reg.boxed:
         breg = TACIndexer.reg()
         TACIndexer.pushIns(TACAllocate(breg, 'new', type))
         TACIndexer.pushIns(TACAssign(TACClassAttr(breg, type, 'val'), reg))
@@ -546,6 +549,7 @@ def unbox(reg, type):
         if isinstance(reg, TACClassAttr):
             attreg = TACIndexer.reg()
             TACIndexer.pushIns(TACAssign(attreg, reg))
+            attreg.boxed = reg.boxed
             reg = attreg
         if reg.boxed:
             uboxreg = TACIndexer.reg()
@@ -593,9 +597,8 @@ def implConvert(ast):
 def attrConvert(ast):
     #add mappings of attributes so TACIndexer can find them if not in symbol table
     for mclass in TACIndexer.cmap:
-        TACIndexer.classAttrs[mclass] = set()
         for mattr in TACIndexer.cmap[mclass]:
-            TACIndexer.addClassAttr(mclass, mattr.name)
+            TACIndexer.addClassAttr(mclass, mattr.name, mattr.type not in ['Int', 'Bool'])
     #go through user-defined attributes
     for mclass in ast.classes:
         attrlst = TACIndexer.cmap[mclass.name.name]
@@ -609,14 +612,21 @@ def attrConvert(ast):
         #make first pass to default initialize fields
         for mattr in attrlst:
             reg = TACIndexer.reg()
-            TACIndexer.pushIns(TACAllocate(reg, 'default', mattr.type))
+            if mattr.type in ['Bool', 'Int']:
+                TACIndexer.pushIns(TACConstant(reg, 'int', 0))
+            else:
+                TACIndexer.pushIns(TACAllocate(reg, 'default', mattr.type))
             TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
+
         #make second pass for those with initializer expressions
         for mattr in attrlst:
             if mattr.init is not None:
                 reg = expConvert(mattr.init)
-                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name),
-                                             box(reg, mattr.init.type)))
+                if mattr.type in ['Bool', 'Int']:
+                    reg = unbox(reg,mattr.init.type)
+                else:
+                    reg = box(reg,mattr.init.type)
+                TACIndexer.pushIns(TACAssign(TACIndexer.map(mattr.name), reg))
         #return pointer to new object
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.map('self')))
