@@ -432,9 +432,12 @@ def expConvert(node):
             TACIndexer.pushIns(TACError(node.line, 'dispatchvoid'))
             TACIndexer.pushIns(TACLabel(lbd))
         regs = [regc] + regs
-        reglb = TACIndexer.reg()
-        TACIndexer.pushIns(TACVTable(reglb, regc, cname, node.args[1].name))
-        TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
+        if node.args[0].type not in ['Int', 'Bool', 'String']:
+            reglb = TACIndexer.reg()
+            TACIndexer.pushIns(TACVTable(reglb, regc, cname, node.args[1].name))
+            TACIndexer.pushIns(TACCall(TACIndexer.returnReg, reglb, regs))
+        else:
+            TACIndexer.pushIns(TACCall(TACIndexer.returnReg, meth.orig + '.' + meth.name, regs))
         regr = TACIndexer.reg()
         TACIndexer.pushIns(TACAssign(regr, TACIndexer.returnReg))
         if meth.body.type in ['Int','Bool']:
