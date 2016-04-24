@@ -174,13 +174,13 @@ def expConvert(node):
     elif node.expr == 'let':
         # Bind the let vars
         for binding in node.args[0]:
-            
+
             if binding.init is not None:
                 # if there is an init, generate the init code
                 regi = expConvert(binding.init)
-                
+
                 #create reg here so previous binding holds in init expr
-                reg = TACIndexer.map(binding.name.name,True)    
+                reg = TACIndexer.map(binding.name.name,True)
                 if binding.type.name in ['Int', 'Bool']:
                     reg.boxed = False
                 else:
@@ -192,9 +192,9 @@ def expConvert(node):
                     regi = unbox(regi, binding.init.type)
                 TACIndexer.pushIns(TACAssign(reg,regi))
             else:
-                
+
                 #create reg here so previous binding holds in init expr
-                reg = TACIndexer.map(binding.name.name,True)    
+                reg = TACIndexer.map(binding.name.name,True)
                 if binding.type.name in ['Int', 'Bool']:
                     reg.boxed = False
                 else:
@@ -212,15 +212,16 @@ def expConvert(node):
         return regr
 
     elif node.expr == 'case':
-        #avoid void check if we know it is primitive
+        #generate case object expression
         regc = expConvert(node.args[0])
         if isinstance(regc, TACClassAttr):
             attreg = TACIndexer.reg()
             TACIndexer.pushIns(TACAssign(attreg, regc))
             attreg.boxed = regc.boxed
             regc = attreg
-        #fail if case "caller" is void
-        if regc.boxed or node.args[0].type not in ['String', 'Int', 'Bool']:
+        #avoid void check if we know it is primitive or self
+        if regc.boxed or node.args[0].type not in ['String', 'Int', 'Bool', 'SELF_TYPE']:
+            #fail if case "caller" is void
             regv = TACIndexer.reg()
             regv.boxed = False
             lbc = TACIndexer.label()
@@ -230,6 +231,7 @@ def expConvert(node):
             TACIndexer.pushIns(TACBT(regv, lbc))
             TACIndexer.pushIns(TACError(node.line, 'casevoid'))
             TACIndexer.pushIns(TACLabel(lbc))
+        #box case object
         regc = box(regc, node.args[0].type)
         #find which branch types can be possibly taken based on static type of obj
         btypesall = [branch.type.name for branch in node.args[1]]
@@ -323,9 +325,8 @@ def expConvert(node):
         op1 = TACIndexer.reg()
         reg1 = expConvert(node.args)
         TACIndexer.pushIns(TACAssign(op1, reg1))
-        op1.boxed = reg1.boxed 
+        op1.boxed = reg1.boxed
         op1 = unbox(op1, node.args.type)
-        
 
         TACIndexer.pushIns(TACOp1(op1, astTacMap[node.expr], op1))
         return op1
@@ -341,8 +342,7 @@ def expConvert(node):
         TACIndexer.pushIns(TACAssign(op2,regr2))
         op1.boxed = regr1.boxed
         op2.boxed = regr2.boxed
-        
-        
+
         op1 = unbox(op1, node.args[0].type)
         op2 = unbox(op2, node.args[1].type)
 
@@ -420,9 +420,9 @@ def expConvert(node):
                 TACIndexer.pushIns(TACAssign(reg, regc))
                 reg.boxed = regc.boxed
                 return reg
-            
-        regc = box(regc, node.args[0].type) 
-        if node.args[0].type not in ['Int', 'Bool', 'String']:
+
+        regc = box(regc, node.args[0].type)
+        if node.args[0].type not in ['Int', 'Bool', 'String', 'SELF_TYPE']:
             regv = TACIndexer.reg()
             regvbar = TACIndexer.reg()
             lbd = TACIndexer.label()
@@ -475,7 +475,7 @@ def expConvert(node):
                 return reg
 
         regc = box(regc, node.args[0].type)
-        if node.args[0].type not in ['String', 'Int', 'Bool']:
+        if node.args[0].type not in ['String', 'Int', 'Bool', 'SELF_TYPE']:
             regv = TACIndexer.reg()
             regvbar = TACIndexer.reg()
             lbd = TACIndexer.label()
@@ -491,7 +491,6 @@ def expConvert(node):
             if meth.name == node.args[2].name:
                 basec = meth.orig
                 break
-
         calllb = basec + '.' + node.args[2].name
         TACIndexer.pushIns(TACCall(TACIndexer.returnReg, calllb, regs))
         regr = TACIndexer.reg()
