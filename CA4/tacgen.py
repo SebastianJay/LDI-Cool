@@ -238,13 +238,15 @@ def expConvert(node):
         caseobjtype = node.args[0].type
         if node.args[0].type == 'SELF_TYPE':
             caseobjtype = TACIndexer.cname  #we could be more restrictive on subclasses inheriting exp
-        btypes = [clsname for clsname in btypesall if (caseobjtype in subtreeList(clsname, TACIndexer.pmap)\
-            or clsname in subtreeList(caseobjtype, TACIndexer.pmap))]
-        #create join reg
-        regj = TACIndexer.reg()
-        #generate join label
-        lbj = TACIndexer.label()
-        if len(btypes) > 0:
+        #branch types which MUST be taken (static type conforms to branch type)
+        btypes1 = [clsname for clsname in btypesall if caseobjtype in subtreeList(clsname, TACIndexer.pmap)]
+        #branch types which might be taken (branch type conforms to static type)
+        btypes2 = [clsname for clsname in btypesall if clsname in subtreeList(caseobjtype, TACIndexer.pmap) \
+            and clsname not in btypes1]
+        btypes = btypes1 + btypes2
+        #if we only have one branch and it must be taken, omit join label and type checks
+        needcheck = not (len(btypes2) == 0 and len(btypes1) == 1)
+        if needcheck:
             #generate labels for branches, and record branch types
             blabels = [TACIndexer.label() for i in range(len(btypes))]
             #generate type evaluation to find least type and jump to appropriate label
@@ -260,18 +262,22 @@ def expConvert(node):
                         continue
                     usedtypes.add(subclsname)
                     TACIndexer.pushIns(TACBTypeEq(regc, subclsname, blabels[ind]))
-        elif len(btypes) == 0:
-            #we need to return something for rest of code gen so we'll just return 0
-            TACIndexer.pushIns(TACConstant(regj, 'int', '0'))
 
-        #fail if no type found
-        TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
+        #if no branches that must be taken exist we generate the fallthrough case
+        if len(btypes1) == 0:
+            #fail if no type found
+            TACIndexer.pushIns(TACError(node.line, 'casenomatch'))
 
+        #generate join label
+        lbj = TACIndexer.label()
+        #create join reg
+        regj = TACIndexer.reg()
         #loop over branches: emit label, generate code, result in join reg + jump to join label
         for i in range(len(btypes)):
             btype = btypes[i]
             branch = [br for br in node.args[1] if br.type.name == btype][0]
-            TACIndexer.pushIns(TACLabel(blabels[i]))
+            if needcheck:
+                TACIndexer.pushIns(TACLabel(blabels[i]))
             regci = TACIndexer.map(branch.name.name, True)
             TACIndexer.pushIns(TACAssign(regci, regc))
             regb = expConvert(branch.body)
@@ -281,10 +287,14 @@ def expConvert(node):
             else:
                 regb = box(regb, branch.type.name)
             TACIndexer.pop(branch.name.name)
-            TACIndexer.pushIns(TACAssign(regj, regb))
-            TACIndexer.pushIns(TACJmp(lbj))
-        #emit join label
-        TACIndexer.pushIns(TACLabel(lbj))
+            if needcheck:
+                TACIndexer.pushIns(TACAssign(regj, regb))
+                TACIndexer.pushIns(TACJmp(lbj))
+            else:
+                return regb
+        if needcheck:
+            #emit join label
+            TACIndexer.pushIns(TACLabel(lbj))
         return regj
 
     elif node.expr == 'block':
@@ -313,7 +323,7 @@ def expConvert(node):
 
         op1 = TACIndexer.reg()
         op1.boxed = False
-        if not regr.boxed or node.args.type in ['String', 'Int', 'Bool']:
+        if not regr.boxed or node.args.type in ['String', 'Int', 'Bool', 'SELF_TYPE']:
             #isvoid is always false for primitives
             TACIndexer.pushIns(TACConstant(op1, 'bool', 'false'))
         else:
