@@ -12,7 +12,7 @@ class Main inherits IO {
 class Foo {
     z : Int;
     x : Int <- x + y + 1;
-    y : Int <- x + y + 1;
+    y : Int <- x + y + 2;
     x() : Int {
         x
     };

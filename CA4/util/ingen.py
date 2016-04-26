@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import random
 
 for x in range(100):
