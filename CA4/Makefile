@@ -29,7 +29,7 @@ test: build in.txt
 	    $(COOL) $(t) < in.txt > ref.out; \
 	    gcc $(patsubst %.cl,%.s,$(t));\
 	    ./a.out < in.txt > $(t).out; \
-	    diff $(t).out ref.out; \
+	    diff -q $(t).out ref.out; \
 	    rm -f $(t).out ref.out a.out;) 
 
 

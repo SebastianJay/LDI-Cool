@@ -77,6 +77,14 @@ def genRegGraph(cfg):
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     regGraph[inst.assignee.reg.name][1] = 0
                     preColor[inst.assignee.reg.name] = 0
+            elif isinstance(inst,TAC_serialize.TACAllocate):
+                if inst.allop == 'new' or inst.ptype == 'Int' or inst.ptype == 'Bool' or inst.ptype == 'String':
+                    if isinstance(inst.assignee, TAC_serialize.TACRegister):
+                        regGraph[inst.assignee.name][1] = 0
+                        preColor[inst.assignee.name] = 0
+                    elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
+                        regGraph[inst.assignee.reg.name][1] = 0
+                        preColor[inst.assignee.reg.name] = 0
     return regGraph, preColor
 
 def degree(regGraph):

@@ -201,7 +201,12 @@ def expConvert(node):
                     reg.boxed = True
                 #otherwise generate default init
                 if reg.boxed:
-                    TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
+                    if binding.type.name == 'String':
+                        regn = TACIndexer.reg()
+                        TACIndexer.pushIns(TACAllocate(regn, 'default', binding.type.name))
+                        TACIndexer.pushIns(TACAssign(reg, regn))
+                    else:
+                        TACIndexer.pushIns(TACAllocate(reg,'default',binding.type.name))
                 else:
                     TACIndexer.pushIns(TACConstant(reg, 'int', 0))
         # Generate the body code
@@ -549,7 +554,9 @@ def expConvert(node):
             TACIndexer.pushIns(TACAssign(reg, TACIndexer.returnReg))
         else:
             TACIndexer.pushIns(TACAllocate(reg, 'new', node.args.name))
-        return reg
+        regr = TACIndexer.reg()
+        TACIndexer.pushIns(TACAssign(regr, reg))
+        return regr
 
     elif node.expr == 'identifier':
         reg = TACIndexer.map(node.args.name)
