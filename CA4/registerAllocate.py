@@ -70,6 +70,7 @@ def genRegGraph(cfg):
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     regGraph[inst.assignee.reg.name][1] = 0
                     preColor[inst.assignee.reg.name] = 0
+            # Malloc is a call, returns in rax
             elif isinstance(inst,TAC_serialize.TACMalloc):
                 if isinstance(inst.assignee, TAC_serialize.TACRegister):
                     regGraph[inst.assignee.name][1] = 0
@@ -77,6 +78,7 @@ def genRegGraph(cfg):
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     regGraph[inst.assignee.reg.name][1] = 0
                     preColor[inst.assignee.reg.name] = 0
+            # Allocate is somtimes a call, returns in rax in those cases
             elif isinstance(inst,TAC_serialize.TACAllocate):
                 if inst.allop == 'new' or inst.ptype == 'Int' or inst.ptype == 'Bool' or inst.ptype == 'String':
                     if isinstance(inst.assignee, TAC_serialize.TACRegister):
@@ -86,6 +88,7 @@ def genRegGraph(cfg):
                         regGraph[inst.assignee.reg.name][1] = 0
                         preColor[inst.assignee.reg.name] = 0
             
+            # Force second argument/result into a register to avoid double memory errors
             elif isinstance(inst,TAC_serialize.TACOp2):
                 if isinstance(inst.assignee, TAC_serialize.TACRegister):
                     preColor[inst.op2.name] = -1
