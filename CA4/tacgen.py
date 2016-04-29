@@ -373,9 +373,8 @@ def expConvert(node):
             lba = TACIndexer.label()
             TACIndexer.pushIns(TACConstant(regz, 'int', '0'))
             TACIndexer.pushIns(TACCompare(regz, '=', op2, regz, 'Int'))
-            TACIndexer.pushIns(TACAssign(rege, regz))
-            TACIndexer.pushIns(TACOp1(regebar, 'not', rege))
-            TACIndexer.pushIns(TACBT(regebar, lba))
+            TACIndexer.pushIns(TACOp1(regz, 'not', regz))
+            TACIndexer.pushIns(TACBT(regz, lba))
             TACIndexer.pushIns(TACError(node.line, 'dividezero'))
             TACIndexer.pushIns(TACLabel(lba))
         if node.expr in ['plus','minus','times','divide']:

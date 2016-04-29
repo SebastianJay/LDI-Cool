@@ -15,6 +15,7 @@ def genRegGraph(cfg):
         regGraph[v]=[set(),paramRegs[i]]
         preColor[v] = paramRegs[i]
     
+    methParams = []
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
         live = set(block.liveOut)
@@ -37,26 +38,30 @@ def genRegGraph(cfg):
                     regGraph[killed] = [set(), -1]
 
 
-            # Live when used
-            used = deadcode.getRead(inst)
-            if used is not None:
-                for r in used:
-                    live.add(r)
 
             # Update graph connections
             for t in live:
                 if t not in regGraph:
                     regGraph[t] = [set(), -1]
-                for r in live:
-                    if r != t:
-                        regGraph[t][0].add(r)
+#                for r in live:
+#                    if r != t:
+#                        regGraph[t][0].add(r)
                 if killed is not None and t != killed:
                     regGraph[t][0].add(killed)
                     regGraph[killed][0].add(t)
+            # Live when used
+            used = deadcode.getRead(inst)
+            if used is not None:
+                for r in used:
+                    live.add(r)
+                    if r not in regGraph:
+                        regGraph[r] = [set(), -1]
 
             # Everything conflicts with %rdx
             for l in live:
-                regGraph[l][0].add('p3')
+                # Method params don't conflict
+                if not l[0] == '#':
+                    regGraph[l][0].add('p3')
 
             if isinstance(inst, TAC_serialize.TACCall):
                # # Precolor parameters dead after the call to their register
@@ -141,10 +146,21 @@ def genRegGraph(cfg):
                     preColor[inst.op2.name] = -1
                 elif isinstance(inst.assignee, TAC_serialize.TACClassAttr):
                     preColor[inst.op2.reg.name] = -1
+            elif isinstance(inst, TAC_serialize.TACAssign):
+                if isinstance(inst.assignor, TAC_serialize.TACMethodArg):
+                    methParams.append(str(inst.assignor))
 
- #   for x in sorted(regGraph.keys()):
- #       print x, regGraph[x]
- #   print "----"
+    for i,p in enumerate(reversed(methParams)):
+        if i < len(params):
+            preColor[p] = paramRegs[i]
+            regGraph[p][1] = paramRegs[i]
+        else:
+            break
+        
+
+#    for x in sorted(regGraph.keys()):
+#        print x, regGraph[x]
+#    print "----"
     for x in sorted(regGraph.keys()):
         for c in sorted(regGraph[x][0]):
             if regGraph[x][1] == regGraph[c][1] and regGraph[x][1] != -1:

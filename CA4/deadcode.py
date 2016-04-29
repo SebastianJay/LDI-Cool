@@ -40,6 +40,8 @@ def getRead(inst):
                 resu.append(r.name)
             elif isinstance(r, TACClassAttr):
                 resu.append(r.reg.name)
+            elif isinstance(r, TACMethodArg):
+                resu.append(str(r))
             #ignore method arg
 
     return resu

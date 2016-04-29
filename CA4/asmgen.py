@@ -597,7 +597,7 @@ def funcConvert(cfg, regMap):
         ]
 
     # Save non-parameter registers 
-    maxreg = min(max(regMap.values()), 12)
+    maxreg = min(max(regMap.values()), max(cRegMap.keys()))
     if maxreg > 0:
         for i in range(1, maxreg+1):
             if i not in paramRegs:
@@ -754,7 +754,7 @@ def convert(taclist):
         # print '-----'
 
         #regmap = registerAllocate(cfg,13)
-        regmap = registerAllocate(cfg,13)        #stopgap until registerAllocate is fixed
+        regmap = registerAllocate(cfg,len(cRegMap))        #stopgap until registerAllocate is fixed
 
         asmlist += funcConvert(cfg, regmap)
 
