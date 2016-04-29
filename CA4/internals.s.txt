@@ -1,64 +1,34 @@
 	.file	"internals.c"
-	.text
-	.p2align 4,,15
-	.globl	IO.new
-	.type	IO.new, @function
-IO.new:
-.LFB61:
-	.cfi_startproc
-        pushq   $24
-        call    getmem
-        addq    $8, %rsp
-	movq	$3, (%rax)
-	movq	$IO_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	ret
-	.cfi_endproc
-.LFE61:
-	.size	IO.new, .-IO.new
-	.p2align 4,,15
-	.globl	IO.in_int
-	.type	IO.in_int, @function
-IO.in_int:
-.LFB62:
-	.cfi_startproc
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	call	in_int
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE62:
-	.size	IO.in_int, .-IO.in_int
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LC0:
 	.string	"%lld"
+	.section	.text.unlikely,"ax",@progbits
+.LCOLDB1:
 	.text
+.LHOTB1:
 	.p2align 4,,15
 	.globl	in_int
 	.type	in_int, @function
 in_int:
-.LFB63:
+.LFB62:
 	.cfi_startproc
-	pushq	%rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	pushq	%rbx
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	pushq	%r12
-	pushq	%r13
 	pushq	%r14
+	.cfi_def_cfa_offset 16
+	.cfi_offset 14, -16
+	pushq	%r13
 	.cfi_def_cfa_offset 24
-	.cfi_offset 3, -24
+	.cfi_offset 13, -24
 	movl	$4096, %edi
+	pushq	%r12
+	.cfi_def_cfa_offset 32
+	.cfi_offset 12, -32
+	pushq	%rbp
+	.cfi_def_cfa_offset 40
+	.cfi_offset 6, -40
 	movl	$8192, %ebp
+	pushq	%rbx
+	.cfi_def_cfa_offset 48
+	.cfi_offset 3, -48
 	subq	$4128, %rsp
 	.cfi_def_cfa_offset 4176
 	leaq	16(%rsp), %r12
@@ -72,14 +42,14 @@ in_int:
 	movq	%r12, %rdi
 	xorl	%eax, %eax
 	rep stosq
-	jmp	.L11
+	jmp	.L8
 	.p2align 4,,10
 	.p2align 3
-.L20:
+.L16:
 	movslq	%r13d, %r13
 	leaq	-1(%rbx,%r13), %rax
 	cmpb	$10, (%rax)
-	je	.L19
+	je	.L15
 	movq	%rbp, %rdi
 	addq	$4096, %rbp
 	call	malloc
@@ -90,40 +60,41 @@ in_int:
 	movq	%rbx, %rdi
 	movq	%r13, %rbx
 	call	free
-.L11:
+.L8:
 	movq	stdin(%rip), %rdx
-	movl	$4096, %esi
 	movq	%r12, %rdi
+	movl	$4096, %esi
 	call	fgets
-	movq	%rbx, %rax
-.L4:
-	movl	(%rax), %ecx
-	addq	$4, %rax
-	leal	-16843009(%rcx), %edx
-	notl	%ecx
-	andl	%ecx, %edx
-	andl	$-2139062144, %edx
-	je	.L4
-	movl	%edx, %ecx
-	leaq	2(%rax), %rdi
+	movq	%rbx, %rdi
+.L2:
+	movl	(%rdi), %edx
+	addq	$4, %rdi
+	leal	-16843009(%rdx), %eax
+	notl	%edx
+	andl	%edx, %eax
+	andl	$-2139062144, %eax
+	je	.L2
+	movl	%eax, %edx
 	movq	%r12, %rsi
-	shrl	$16, %ecx
-	testl	$32896, %edx
-	cmove	%ecx, %edx
-	cmovne	%rax, %rdi
-	addb	%dl, %dl
+	shrl	$16, %edx
+	testl	$32896, %eax
+	cmove	%edx, %eax
+	leaq	2(%rdi), %rdx
+	movl	%eax, %ecx
+	cmove	%rdx, %rdi
+	addb	%al, %cl
 	sbbq	$3, %rdi
 	call	stpcpy
+	subq	%rbx, %rax
+	testl	%eax, %eax
 	movq	%rax, %r13
-	subq	%rbx, %r13
-	testl	%r13d, %r13d
-	movl	%r13d, %r14d
-	je	.L12
+	movl	%eax, %r14d
+	je	.L4
 	movq	stdin(%rip), %rdi
 	call	feof
 	testl	%eax, %eax
-	je	.L20
-.L10:
+	je	.L16
+.L7:
 	leaq	8(%rsp), %rdx
 	xorl	%eax, %eax
 	movl	$.LC0, %esi
@@ -131,109 +102,274 @@ in_int:
 	call	__isoc99_sscanf
 	addl	$1, %eax
 	cmpl	$1, %eax
-	jbe	.L12
-	movq	8(%rsp), %rdx
-	movl	$2147483648, %esi
+	jbe	.L4
+	movq	8(%rsp), %rax
+	movl	$2147483648, %edx
 	movl	$4294967295, %ecx
-	xorl	%eax, %eax
-	addq	%rdx, %rsi
-	cmpq	%rcx, %rsi
-	cmovbe	%rdx, %rax
-.L7:
-	movq	4120(%rsp), %rsi
-	xorq	%fs:40, %rsi
-	jne	.L21
+	addq	%rax, %rdx
+	cmpq	%rcx, %rdx
+	ja	.L4
+.L9:
+	movq	4120(%rsp), %rcx
+	xorq	%fs:40, %rcx
+	jne	.L17
 	addq	$4128, %rsp
 	.cfi_remember_state
-	popq	%r14
-	popq	%r13
-	popq	%r12
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
+	.cfi_def_cfa_offset 48
 	popq	%rbx
-	.cfi_def_cfa_offset 16
+	.cfi_def_cfa_offset 40
 	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
 	.cfi_def_cfa_offset 8
 	ret
 	.p2align 4,,10
 	.p2align 3
-.L12:
+.L4:
 	.cfi_restore_state
 	xorl	%eax, %eax
-	jmp	.L7
+	jmp	.L9
 	.p2align 4,,10
 	.p2align 3
-.L19:
+.L15:
 	cmpl	$1, %r14d
 	movb	$0, (%rax)
-	jle	.L10
+	jle	.L7
 	leaq	-2(%rbx,%r13), %rax
 	cmpb	$13, (%rax)
-	jne	.L10
+	jne	.L7
 	movb	$0, (%rax)
-	jmp	.L10
-.L21:
+	jmp	.L7
+.L17:
 	call	__stack_chk_fail
 	.cfi_endproc
-.LFE63:
+.LFE62:
 	.size	in_int, .-in_int
-	.section	.rodata.str1.1
-.LC1:
-	.string	"%d"
+	.section	.text.unlikely
+.LCOLDE1:
 	.text
+.LHOTE1:
+	.section	.text.unlikely
+.LCOLDB2:
+	.text
+.LHOTB2:
+	.p2align 4,,15
+	.globl	IO.in_int
+	.type	IO.in_int, @function
+IO.in_int:
+.LFB61:
+	.cfi_startproc
+	xorl	%eax, %eax
+	jmp	in_int
+	.cfi_endproc
+.LFE61:
+	.size	IO.in_int, .-IO.in_int
+	.section	.text.unlikely
+.LCOLDE2:
+	.text
+.LHOTE2:
+	.section	.rodata.str1.1
+.LC3:
+	.string	"%d"
+	.section	.text.unlikely
+.LCOLDB4:
+	.text
+.LHOTB4:
 	.p2align 4,,15
 	.globl	IO.out_int
 	.type	IO.out_int, @function
 IO.out_int:
-.LFB64:
+.LFB63:
 	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
 	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
-	movq	24(%rbp), %rdx
-	movq	16(%rbp), %rbx
-	movl	$.LC1, %esi
+	movl	%esi, %edx
+	movq	%rdi, %rbx
+	movl	$.LC3, %esi
 	movl	$1, %edi
 	xorl	%eax, %eax
 	call	__printf_chk
 	movq	%rbx, %rax
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
 	popq	%rbx
 	.cfi_def_cfa_offset 8
-	leave
 	ret
 	.cfi_endproc
-.LFE64:
+.LFE63:
 	.size	IO.out_int, .-IO.out_int
-	.section	.rodata.str1.1
-.LC2:
-	.string	""
+	.section	.text.unlikely
+.LCOLDE4:
 	.text
+.LHOTE4:
+	.section	.text.unlikely
+.LCOLDB5:
+	.text
+.LHOTB5:
+	.p2align 4,,15
+	.globl	out_int
+	.type	out_int, @function
+out_int:
+.LFB64:
+	.cfi_startproc
+	movl	%edi, %edx
+	movl	$.LC3, %esi
+	movl	$1, %edi
+	xorl	%eax, %eax
+	jmp	__printf_chk
+	.cfi_endproc
+.LFE64:
+	.size	out_int, .-out_int
+	.section	.text.unlikely
+.LCOLDE5:
+	.text
+.LHOTE5:
+	.section	.rodata.str1.1
+.LC6:
+	.string	""
+	.section	.text.unlikely
+.LCOLDB7:
+	.text
+.LHOTB7:
 	.p2align 4,,15
 	.globl	in_string
 	.type	in_string, @function
 in_string:
-.LFB67:
+.LFB66:
+	.cfi_startproc
+	pushq	%r14
+	.cfi_def_cfa_offset 16
+	.cfi_offset 14, -16
+	pushq	%r13
+	.cfi_def_cfa_offset 24
+	.cfi_offset 13, -24
+	movl	$4096, %edi
+	pushq	%r12
+	.cfi_def_cfa_offset 32
+	.cfi_offset 12, -32
+	pushq	%rbp
+	.cfi_def_cfa_offset 40
+	.cfi_offset 6, -40
+	movl	$4096, %r13d
+	pushq	%rbx
+	.cfi_def_cfa_offset 48
+	.cfi_offset 3, -48
+	xorl	%ebp, %ebp
+	xorl	%ebx, %ebx
+	call	malloc
+	movq	%rax, %r12
+	jmp	.L23
+	.p2align 4,,10
+	.p2align 3
+.L30:
+	addq	$1, %rbx
+.L23:
+	movq	stdin(%rip), %rdi
+	call	fgetc
+	cmpl	$-1, %eax
+	je	.L37
+	testl	%eax, %eax
+	je	.L28
+	cmpl	$10, %eax
+	je	.L38
+	leal	-1(%r13), %edx
+	addl	$1, %ebp
+	movb	%al, (%r12,%rbx)
+	cmpl	%edx, %ebp
+	jne	.L30
+	addl	$4096, %r13d
+	movb	$0, 1(%r12,%rbx)
+	movslq	%r13d, %rdi
+	call	malloc
+	movq	%r12, %rsi
+	movq	%rax, %rdi
+	movq	%rax, %r14
+	call	strcpy
+	movq	%r12, %rdi
+	movq	%r14, %r12
+	call	free
+	jmp	.L30
+	.p2align 4,,10
+	.p2align 3
+.L39:
+	cmpl	$10, %eax
+	je	.L25
+.L28:
+	movq	stdin(%rip), %rdi
+	call	fgetc
+	cmpl	$-1, %eax
+	jne	.L39
+.L25:
+	movl	$.LC6, %eax
+.L26:
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L37:
+	.cfi_restore_state
+	testl	%ebp, %ebp
+	je	.L25
+.L31:
+	popq	%rbx
+	.cfi_remember_state
+	.cfi_def_cfa_offset 40
+	movq	%r12, %rax
+	popq	%rbp
+	.cfi_def_cfa_offset 32
+	popq	%r12
+	.cfi_def_cfa_offset 24
+	popq	%r13
+	.cfi_def_cfa_offset 16
+	popq	%r14
+	.cfi_def_cfa_offset 8
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L38:
+	.cfi_restore_state
+	movslq	%ebp, %rax
+	testl	%ebp, %ebp
+	movb	$0, (%r12,%rax)
+	je	.L31
+	leaq	-1(%r12,%rax), %rdx
+	movq	%r12, %rax
+	cmpb	$13, (%rdx)
+	jne	.L26
+	movb	$0, (%rdx)
+	jmp	.L26
+	.cfi_endproc
+.LFE66:
+	.size	in_string, .-in_string
+	.section	.text.unlikely
+.LCOLDE7:
+	.text
+.LHOTE7:
+	.section	.rodata.str1.1
+.LC8:
+	.string	"%s"
+	.section	.text.unlikely
+.LCOLDB9:
+	.text
+.LHOTB9:
+	.p2align 4,,15
+	.globl	out_string
+	.type	out_string, @function
+out_string:
+.LFB68:
 	.cfi_startproc
 	pushq	%r13
 	.cfi_def_cfa_offset 16
@@ -241,159 +377,11 @@ in_string:
 	pushq	%r12
 	.cfi_def_cfa_offset 24
 	.cfi_offset 12, -24
-	movl	$4096, %r12d
+	movq	%rdi, %r13
 	pushq	%rbp
 	.cfi_def_cfa_offset 32
 	.cfi_offset 6, -32
 	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movl	$4096, %edi
-	xorl	%ebx, %ebx
-	subq	$8, %rsp
-	.cfi_def_cfa_offset 48
-	call	malloc
-	movq	%rax, %rbp
-	jmp	.L26
-	.p2align 4,,10
-	.p2align 3
-.L53:
-	addq	$1, %rbx
-.L26:
-	movq	stdin(%rip), %rdi
-	call	fgetc
-	cmpl	$-1, %eax
-	je	.L40
-	testl	%eax, %eax
-	je	.L31
-	cmpl	$10, %eax
-	.p2align 4,,3
-	je	.L41
-	leal	-1(%r12), %edx
-	leal	1(%rbx), %ecx
-	movb	%al, 0(%rbp,%rbx)
-	cmpl	%ecx, %edx
-	jne	.L53
-	movslq	%edx, %rdx
-	addl	$4096, %r12d
-	movb	$0, 0(%rbp,%rdx)
-	movslq	%r12d, %rdi
-	call	malloc
-	movq	%rbp, %rsi
-	movq	%rax, %rdi
-	movq	%rax, %r13
-	call	strcpy
-	movq	%rbp, %rdi
-	movq	%r13, %rbp
-	call	free
-	jmp	.L53
-	.p2align 4,,10
-	.p2align 3
-.L42:
-	cmpl	$-1, %eax
-	je	.L28
-.L31:
-	movq	stdin(%rip), %rdi
-	call	fgetc
-	cmpl	$10, %eax
-	jne	.L42
-.L28:
-	movl	$.LC2, %eax
-.L29:
-	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	.cfi_def_cfa_offset 40
-	popq	%rbx
-	.cfi_def_cfa_offset 32
-	popq	%rbp
-	.cfi_def_cfa_offset 24
-	popq	%r12
-	.cfi_def_cfa_offset 16
-	popq	%r13
-	.cfi_def_cfa_offset 8
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L40:
-	.cfi_restore_state
-	testl	%ebx, %ebx
-	je	.L28
-.L34:
-	addq	$8, %rsp
-	.cfi_remember_state
-	.cfi_def_cfa_offset 40
-	movq	%rbp, %rax
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	.cfi_def_cfa_offset 40
-	popq	%rbx
-	.cfi_def_cfa_offset 32
-	popq	%rbp
-	.cfi_def_cfa_offset 24
-	popq	%r12
-	.cfi_def_cfa_offset 16
-	popq	%r13
-	.cfi_def_cfa_offset 8
-	ret
-	.p2align 4,,10
-	.p2align 3
-.L41:
-	.cfi_restore_state
-	movslq	%ebx, %rax
-	testl	%ebx, %ebx
-	movb	$0, 0(%rbp,%rax)
-	je	.L34
-	leaq	-1(%rbp,%rax), %rdx
-	movq	%rbp, %rax
-	cmpb	$13, (%rdx)
-	jne	.L29
-	movb	$0, (%rdx)
-	jmp	.L29
-	.cfi_endproc
-.LFE67:
-	.size	in_string, .-in_string
-	.section	.rodata.str1.1
-.LC3:
-	.string	"%s"
-	.text
-	.p2align 4,,15
-	.globl	out_string
-	.type	out_string, @function
-out_string:
-.LFB69:
-	.cfi_startproc
-	pushq	%r13
-	.cfi_def_cfa_offset 16
-	.cfi_offset 13, -16
-	pushq	%r12
-	pushq	%rbp
-	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq %rdi, %rbp
 	.cfi_def_cfa_offset 40
 	.cfi_offset 3, -40
 	subq	$8, %rsp
@@ -405,76 +393,68 @@ out_string:
 	movslq	%edi, %rdi
 	call	malloc
 	leaq	1(%r12), %rdx
-	movq	%rbp, %rsi
+	movq	%r13, %rsi
 	movq	%rax, %rdi
-	movq	%rax, %r13
-	xorl	%ebp, %ebp
+	movq	%rax, %rbp
 	call	memcpy
+	xorl	%r8d, %r8d
 	cmpl	$1, %r12d
-	leaq	1(%r13), %r9
-	movl	$1, %r10d
-	jg	.L43
-	jmp	.L35
+	leaq	2(%rbp), %rdi
+	movl	$1, %esi
+	jg	.L50
+	jmp	.L46
 	.p2align 4,,10
 	.p2align 3
-.L32:
-	addl	$1, %r10d
-	movq	%r11, %r9
-	cmpl	%r10d, %ebx
-	jle	.L35
+.L42:
+	addq	$1, %rsi
+	addq	$1, %rdi
+	cmpl	%esi, %ebx
+	jle	.L46
+.L50:
+	cmpb	$92, -2(%rdi)
+	movl	%esi, %eax
+	jne	.L42
+	movzbl	-1(%rdi), %edx
+	cmpb	$116, %dl
+	je	.L48
+	cmpb	$110, %dl
+	jne	.L42
+	movl	$10, %r9d
 .L43:
-	cmpb	$92, -1(%r9)
-	leaq	1(%r9), %r11
-	jne	.L32
-	movzbl	(%r9), %ecx
-	cmpb	$116, %cl
-	je	.L39
-	cmpb	$110, %cl
-	jne	.L32
-	movl	$10, %r12d
-.L33:
-	movl	%ebx, %eax
-	leaq	1(%r9), %r11
-	subl	%ebp, %eax
-	cmpl	%eax, %r10d
-	jge	.L37
-	subl	%r10d, %eax
-	movq	%r11, %rcx
-	subl	$1, %eax
-	leaq	2(%r9,%rax), %r8
+	movl	%ebx, %edx
+	subl	%r8d, %edx
+	cmpl	%eax, %edx
+	jle	.L47
+	subl	%esi, %edx
+	leal	-1(%rdx), %eax
+	leaq	2(%rsi,%rax), %rcx
+	movq	%rdi, %rax
+	addq	%rbp, %rcx
 	.p2align 4,,10
 	.p2align 3
-.L38:
-	movzbl	(%rcx), %esi
-	addq	$1, %rcx
-	movb	%sil, -2(%rcx)
-	cmpq	%r8, %rcx
-	jne	.L38
-.L37:
-	addl	$1, %r10d
-	addl	$1, %ebp
-	movb	%r12b, -1(%r9)
-	cmpl	%r10d, %ebx
-	movq	%r11, %r9
-	jg	.L43
-.L35:
-	movq	%r13, %rdx
+.L44:
+	movzbl	(%rax), %edx
+	addq	$1, %rax
+	movb	%dl, -2(%rax)
+	cmpq	%rcx, %rax
+	jne	.L44
+.L47:
+	addq	$1, %rsi
+	movb	%r9b, -2(%rdi)
+	addl	$1, %r8d
+	addq	$1, %rdi
+	cmpl	%esi, %ebx
+	jg	.L50
+.L46:
+	movq	%rbp, %rdx
 	movl	$1, %edi
-	movl	$.LC3, %esi
+	movl	$.LC8, %esi
 	xorl	%eax, %eax
 	call	__printf_chk
 	addq	$8, %rsp
 	.cfi_remember_state
 	.cfi_def_cfa_offset 40
-	movq	%r13, %rdi
-	call	free
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
+	movq	%rbp, %rdi
 	popq	%rbx
 	.cfi_def_cfa_offset 32
 	popq	%rbp
@@ -482,69 +462,57 @@ out_string:
 	popq	%r12
 	.cfi_def_cfa_offset 16
 	popq	%r13
-	ret
 	.cfi_def_cfa_offset 8
+	jmp	free
 	.p2align 4,,10
 	.p2align 3
-.L39:
+.L48:
 	.cfi_restore_state
-	movl	$9, %r12d
-	jmp	.L33
+	movl	$9, %r9d
+	jmp	.L43
 	.cfi_endproc
-.LFE69:
+.LFE68:
 	.size	out_string, .-out_string
-	.p2align 4,,15
-	.globl	IO.in_string
-	.type	IO.in_string, @function
-IO.in_string:
-.LFB66:
-	.cfi_startproc
-	pushq	%rbx
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	call	String.new
-	movq	%rax, %rbx
-	xorl	%eax, %eax
-	call	in_string
-	movq	%rax, 24(%rbx)
-	movq	%rbx, %rax
-	popq	%rbx
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE66:
-	.size	IO.in_string, .-IO.in_string
+	.section	.text.unlikely
+.LCOLDE9:
+	.text
+.LHOTE9:
+	.section	.text.unlikely
+.LCOLDB10:
+	.text
+.LHOTB10:
 	.p2align 4,,15
 	.globl	IO.out_string
 	.type	IO.out_string, @function
 IO.out_string:
-.LFB68:
+.LFB67:
 	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
 	pushq	%rbx
-	pushq	%rdi
 	.cfi_def_cfa_offset 16
 	.cfi_offset 3, -16
-	movq	16(%rbp), %rbx
-	movq	24(%rbp), %rdi
-	movq	24(%rdi), %rdi
+	movq	%rdi, %rbx
+	movq	24(%rsi), %rdi
 	call	out_string
 	movq	%rbx, %rax
-	popq	%rdi
 	popq	%rbx
 	.cfi_def_cfa_offset 8
-	leave
 	ret
 	.cfi_endproc
-.LFE68:
+.LFE67:
 	.size	IO.out_string, .-IO.out_string
+	.section	.text.unlikely
+.LCOLDE10:
+	.text
+.LHOTE10:
+	.section	.text.unlikely
+.LCOLDB11:
+	.text
+.LHOTB11:
 	.p2align 4,,15
 	.globl	out_error
 	.type	out_error, @function
 out_error:
-.LFB70:
+.LFB69:
 	.cfi_startproc
 	movq	%rsi, %rdx
 	subq	$8, %rsp
@@ -556,106 +524,252 @@ out_error:
 	movl	$1, %edi
 	call	exit
 	.cfi_endproc
-.LFE70:
+.LFE69:
 	.size	out_error, .-out_error
-	.p2align 4,,15
-	.globl	Object.new
-	.type	Object.new, @function
-Object.new:
-.LFB71:
-	.cfi_startproc
-        pushq   $24
-        call    getmem
-        addq    $8, %rsp
-	movq	$0, (%rax)
-	movq	$Object_vtable, 8(%rax)
-	movq	$0, 16(%rax)
-	ret
-	.cfi_endproc
-.LFE71:
-	.size	Object.new, .-Object.new
-	.section	.rodata.str1.1
-.LC4:
-	.string	"abort\n"
+	.section	.text.unlikely
+.LCOLDE11:
 	.text
+.LHOTE11:
+	.section	.rodata.str1.1
+.LC12:
+	.string	"abort\n"
+	.section	.text.unlikely
+.LCOLDB13:
+	.text
+.LHOTB13:
 	.p2align 4,,15
 	.globl	Object.abort
 	.type	Object.abort, @function
 Object.abort:
-.LFB72:
+.LFB71:
 	.cfi_startproc
-	movl	$.LC4, %edi
+	movl	$.LC12, %edi
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
 	call	out_string
 	xorl	%edi, %edi
 	call	exit
 	.cfi_endproc
-.LFE72:
+.LFE71:
 	.size	Object.abort, .-Object.abort
+	.section	.text.unlikely
+.LCOLDE13:
+	.text
+.LHOTE13:
+	.section	.text.unlikely
+.LCOLDB14:
+	.text
+.LHOTB14:
 	.p2align 4,,15
 	.globl	Object.cmp
 	.type	Object.cmp, @function
 Object.cmp:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	pushq	%rbx
-	pushq	%rcx
-	movq	16(%rbp), %rax
-	movq	24(%rbp), %rbx
-	andq	%rax, %rax
-	jz	.Object.cmp_1
-	andq	%rbx, %rbx
-	jz	.Object.cmp_1
-	movq	0(%rax), %rcx
-	movq	0(%rbx), %rdx
-	cmpq	%rcx, %rdx
-	jne	.Object.cmp_1
-	cmpq	$1, %rcx
-	je	.Object.cmp_2
-	cmpq	$4, %rcx
-	je	.Object.cmp_2
-	cmpq	$2, %rcx
-	je	.Object.cmp_3
-.Object.cmp_1:
-	cmpq	%rax, %rbx
-	movq	$1, %rax
-	movq	$0, %rdx
-	cmoveq	%rdx, %rax
-	jmp .Object.cmp_4
-.Object.cmp_2:
-	movq	24(%rax), %rax
-	movq	24(%rbx), %rbx
-	subq	%rbx, %rax
-	jmp .Object.cmp_4
-.Object.cmp_3:
-	pushq	%rbx
-	pushq	%rax
-	call String.cmp
-        addq    $16, %rsp
-.Object.cmp_4:
-	popq	%rcx
-	popq	%rbx
-	leave
+.LFB74:
+	.cfi_startproc
+	testq	%rdi, %rdi
+	je	.L68
+	testq	%rsi, %rsi
+	je	.L68
+	movq	(%rdi), %rdx
+	cmpq	(%rsi), %rdx
+	movl	$1, %eax
+	je	.L74
 	ret
+	.p2align 4,,10
+	.p2align 3
+.L74:
+	cmpq	$1, %rdx
+	je	.L70
+	cmpq	$4, %rdx
+	je	.L70
+	cmpq	$2, %rdx
+	je	.L75
+.L68:
+	xorl	%eax, %eax
+	cmpq	%rsi, %rdi
+	setne	%al
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L70:
+	movq	24(%rdi), %rax
+	subq	24(%rsi), %rax
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L75:
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movq	24(%rsi), %rsi
+	movq	24(%rdi), %rdi
+	call	strcmp
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
+	cltq
+	ret
+	.cfi_endproc
+.LFE74:
 	.size	Object.cmp, .-Object.cmp
+	.section	.text.unlikely
+.LCOLDE14:
+	.text
+.LHOTE14:
+	.section	.text.unlikely
+.LCOLDB15:
+	.text
+.LHOTB15:
+	.p2align 4,,15
+	.globl	String.length
+	.type	String.length, @function
+String.length:
+.LFB76:
+	.cfi_startproc
+	movq	24(%rdi), %rdi
+	jmp	strlen
+	.cfi_endproc
+.LFE76:
+	.size	String.length, .-String.length
+	.section	.text.unlikely
+.LCOLDE15:
+	.text
+.LHOTE15:
+	.section	.text.unlikely
+.LCOLDB16:
+	.text
+.LHOTB16:
+	.p2align 4,,15
+	.globl	String.cmp
+	.type	String.cmp, @function
+String.cmp:
+.LFB79:
+	.cfi_startproc
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movq	24(%rsi), %rsi
+	movq	24(%rdi), %rdi
+	call	strcmp
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
+	cltq
+	ret
+	.cfi_endproc
+.LFE79:
+	.size	String.cmp, .-String.cmp
+	.section	.text.unlikely
+.LCOLDE16:
+	.text
+.LHOTE16:
+	.section	.text.unlikely
+.LCOLDB17:
+	.text
+.LHOTB17:
+	.p2align 4,,15
+	.globl	getmem
+	.type	getmem, @function
+getmem:
+.LFB82:
+	.cfi_startproc
+	movq	HEAP_NEXT(%rip), %rax
+	leaq	(%rax,%rdi), %rdx
+	cmpq	HEAP_END(%rip), %rdx
+	movq	%rdx, HEAP_NEXT(%rip)
+	jnb	.L84
+	ret
+	.p2align 4,,10
+	.p2align 3
+.L84:
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	movq	%rdi, %rbx
+	movl	$4194304, %edi
+	call	malloc
+	leaq	(%rax,%rbx), %rdi
+	leaq	4194304(%rax), %rdx
+	popq	%rbx
+	.cfi_restore 3
+	.cfi_def_cfa_offset 8
+	movq	%rdx, HEAP_END(%rip)
+	movq	%rdi, HEAP_NEXT(%rip)
+	ret
+	.cfi_endproc
+.LFE82:
+	.size	getmem, .-getmem
+	.section	.text.unlikely
+.LCOLDE17:
+	.text
+.LHOTE17:
+	.section	.text.unlikely
+.LCOLDB18:
+	.text
+.LHOTB18:
+	.p2align 4,,15
+	.globl	IO.new
+	.type	IO.new, @function
+IO.new:
+.LFB60:
+	.cfi_startproc
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movl	$24, %edi
+	call	getmem
+	movq	$3, (%rax)
+	movq	$IO_vtable, 8(%rax)
+	movq	$0, 16(%rax)
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE60:
+	.size	IO.new, .-IO.new
+	.section	.text.unlikely
+.LCOLDE18:
+	.text
+.LHOTE18:
+	.section	.text.unlikely
+.LCOLDB19:
+	.text
+.LHOTB19:
+	.p2align 4,,15
+	.globl	Object.new
+	.type	Object.new, @function
+Object.new:
+.LFB70:
+	.cfi_startproc
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movl	$24, %edi
+	call	getmem
+	movq	$0, (%rax)
+	movq	$Object_vtable, 8(%rax)
+	movq	$0, 16(%rax)
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE70:
+	.size	Object.new, .-Object.new
+	.section	.text.unlikely
+.LCOLDE19:
+	.text
+.LHOTE19:
+	.section	.text.unlikely
+.LCOLDB20:
+	.text
+.LHOTB20:
 	.p2align 4,,15
 	.globl	Object.copy
 	.type	Object.copy, @function
 Object.copy:
-.LFB74:
+.LFB73:
 	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
-        pushq   %rbx
-        pushq   %rcx
-	movq	16(%rbp), %rdx
-	movq	16(%rdx), %rax
-	movq	%rdx, %rbx
-	leaq	24(,%rax,8), %rdx
-        pushq   %rdx
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	movq	16(%rdi), %rax
+	movq	%rdi, %rbx
+	leaq	24(,%rax,8), %rdi
 	call	getmem
-        addq    $8, %rsp
 	movq	(%rbx), %rdx
 	movq	%rdx, (%rax)
 	movq	8(%rbx), %rdx
@@ -663,101 +777,123 @@ Object.copy:
 	movq	16(%rbx), %rdx
 	movq	%rdx, 16(%rax)
 	cmpq	$0, 16(%rbx)
+	jle	.L95
 	movl	$1, %edx
-	jle	.L58
-.L59:
+	.p2align 4,,10
+	.p2align 3
+.L93:
 	movq	16(%rbx,%rdx,8), %rcx
 	movq	%rcx, 16(%rax,%rdx,8)
 	movq	%rdx, %rcx
 	addq	$1, %rdx
 	cmpq	16(%rbx), %rcx
-	jl	.L59
-.L58:
-        popq    %rcx
-        popq    %rbx
-        .cfi_def_cfa_offset 8
-	leave
-	ret
-	.cfi_endproc
-.LFE74:
-	.size	Object.copy, .-Object.copy
-	.p2align 4,,15
-	.globl	Object.type_name
-	.type	Object.type_name, @function
-Object.type_name:
-.LFB73:
-	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 3, -16
-	xorl	%eax, %eax
-	movq	16(%rbp), %rax	# Self arg
-	movq 	8(%rax), %rax	# vtable
-	movq	(%rax), %rax	# String object name
+	jl	.L93
+.L95:
+	popq	%rbx
 	.cfi_def_cfa_offset 8
-	leave
 	ret
 	.cfi_endproc
 .LFE73:
-	.size	Object.type_name, .-Object.type_name
+	.size	Object.copy, .-Object.copy
+	.section	.text.unlikely
+.LCOLDE20:
+	.text
+.LHOTE20:
+	.section	.text.unlikely
+.LCOLDB21:
+	.text
+.LHOTB21:
 	.p2align 4,,15
 	.globl	String.new
 	.type	String.new, @function
 String.new:
 .LFB75:
 	.cfi_startproc
+	subq	$8, %rsp
 	.cfi_def_cfa_offset 16
-        pushq   $32
-        call    getmem
-        addq    $8, %rsp
+	movl	$32, %edi
+	call	getmem
 	movq	$2, (%rax)
 	movq	$String_vtable, 8(%rax)
 	movq	$1, 16(%rax)
-	movq	$.LC2, 24(%rax)
+	movq	$.LC6, 24(%rax)
+	addq	$8, %rsp
 	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
 .LFE75:
 	.size	String.new, .-String.new
+	.section	.text.unlikely
+.LCOLDE21:
+	.text
+.LHOTE21:
+	.section	.text.unlikely
+.LCOLDB22:
+	.text
+.LHOTB22:
 	.p2align 4,,15
-	.globl	String.cmp
-	.type	String.cmp, @function
-String.cmp:
-	pushq	%rbp
-	movq	%rsp, %rbp
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq	16(%rbp), %rdi
-	movq	24(%rbp), %rsi
-	movq	24(%rdi), %rdi
-	movq	24(%rsi), %rsi
-	call	strcmp
-	shlq $32, %rax # strcmp returns a 32bit int, sign extend
-	sarq $32, %rax
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
-	leave
+	.globl	IO.in_string
+	.type	IO.in_string, @function
+IO.in_string:
+.LFB65:
+	.cfi_startproc
+	pushq	%rbx
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	movl	$32, %edi
+	call	getmem
+	movq	%rax, %rbx
+	movq	$2, (%rax)
+	movq	$String_vtable, 8(%rax)
+	movq	$1, 16(%rax)
+	movq	$.LC6, 24(%rax)
+	xorl	%eax, %eax
+	call	in_string
+	movq	%rax, 24(%rbx)
+	movq	%rbx, %rax
+	popq	%rbx
+	.cfi_def_cfa_offset 8
 	ret
-	.size	String.cmp, .-String.cmp
+	.cfi_endproc
+.LFE65:
+	.size	IO.in_string, .-IO.in_string
+	.section	.text.unlikely
+.LCOLDE22:
+	.text
+.LHOTE22:
+	.section	.text.unlikely
+.LCOLDB23:
+	.text
+.LHOTB23:
+	.p2align 4,,15
+	.globl	Object.type_name
+	.type	Object.type_name, @function
+Object.type_name:
+.LFB72:
+	.cfi_startproc
+	.cfi_def_cfa_offset 16
+	.cfi_offset 3, -16
+	movq	8(%rdi), %rdx
+	movq	(%rdx), %rax
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE72:
+	.size	Object.type_name, .-Object.type_name
+	.section	.text.unlikely
+.LCOLDE23:
+	.text
+.LHOTE23:
+	.section	.text.unlikely
+.LCOLDB24:
+	.text
+.LHOTB24:
 	.p2align 4,,15
 	.globl	String.concat
 	.type	String.concat, @function
 String.concat:
 .LFB77:
 	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
 	pushq	%r13
 	.cfi_def_cfa_offset 16
 	.cfi_offset 13, -16
@@ -768,49 +904,37 @@ String.concat:
 	.cfi_def_cfa_offset 32
 	.cfi_offset 6, -32
 	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq	16(%rbp), %rdi
-	movq	24(%rbp), %rsi
-	movq	%rsi, %r12
 	.cfi_def_cfa_offset 40
 	.cfi_offset 3, -40
+	movq	%rsi, %rbp
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 48
 	movq	24(%rdi), %r13
 	movq	%r13, %rdi
 	call	strlen
-	movq	24(%r12), %rdi
-	movq	%rax, %rbp
+	movq	24(%rbp), %r12
+	movq	%rax, %rbx
+	movq	%r12, %rdi
 	call	strlen
-	leal	1(%rax,%rbp), %edi
+	leal	1(%rbx,%rax), %edi
 	movslq	%edi, %rdi
 	call	malloc
-	leaq	1(%rbp), %rdx
+	movq	%rbx, %rdx
+	movq	%rax, %rbp
 	movq	%r13, %rsi
 	movq	%rax, %rdi
-	movq	%rax, %rbx
 	call	memcpy
-	movq	24(%r12), %rsi
-	leaq	(%rbx,%rbp), %rdi
+	leaq	0(%rbp,%rbx), %rdi
+	movq	%r12, %rsi
 	call	strcpy
-	xorl	%eax, %eax
-	call	String.new
-	movq	%rbx, 24(%rax)
+	movl	$32, %edi
+	call	getmem
+	movq	$2, (%rax)
+	movq	$String_vtable, 8(%rax)
+	movq	$1, 16(%rax)
+	movq	%rbp, 24(%rax)
 	addq	$8, %rsp
 	.cfi_def_cfa_offset 40
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
 	popq	%rbx
 	.cfi_def_cfa_offset 32
 	popq	%rbp
@@ -819,233 +943,214 @@ String.concat:
 	.cfi_def_cfa_offset 16
 	popq	%r13
 	.cfi_def_cfa_offset 8
-	popq	%rbp
 	ret
 	.cfi_endproc
 .LFE77:
 	.size	String.concat, .-String.concat
-	.p2align 4,,15
-	.globl	String.length
-	.type	String.length, @function
-String.length:
-.LFB76:
-	.cfi_startproc
-	pushq	%rbp
-	movq	%rsp, %rbp
-	.cfi_def_cfa_offset 16
-	.cfi_offset 6, -16
-	pushq	%rbx
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq	16(%rbp), %rdi
-	movq	24(%rdi), %rdi
-        xorq    %rax, %rax
-	call	strlen
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-	popq	%rbx
-	.cfi_def_cfa_offset 16
-	popq	%rbp
-	.cfi_def_cfa_offset 8
-	ret
-	.cfi_endproc
-.LFE76:
-	.size	String.length, .-String.length
+	.section	.text.unlikely
+.LCOLDE24:
+	.text
+.LHOTE24:
 	.section	.rodata.str1.8,"aMS",@progbits,1
 	.align 8
-.LC5:
+.LC25:
 	.string	"ERROR: %lld: Exception: String index out of bounds"
+	.section	.text.unlikely
+.LCOLDB26:
 	.text
+.LHOTB26:
 	.p2align 4,,15
 	.globl	String.substr
 	.type	String.substr, @function
 String.substr:
 .LFB78:
 	.cfi_startproc
-	pushq	%rbp
-	movq 	%rsp, %rbp
-	pushq	%rsp
-	pushq	%r14
-	.cfi_def_cfa_offset 16
-	.cfi_offset 14, -16
 	pushq	%r13
-	.cfi_def_cfa_offset 24
-	.cfi_offset 13, -24
+	.cfi_def_cfa_offset 16
+	.cfi_offset 13, -16
 	pushq	%r12
+	.cfi_def_cfa_offset 24
+	.cfi_offset 12, -24
+	movq	%rdi, %r13
+	pushq	%rbp
 	.cfi_def_cfa_offset 32
-	.cfi_offset 12, -32
-	.cfi_def_cfa_offset 40
-	.cfi_offset 6, -40
+	.cfi_offset 6, -32
 	pushq	%rbx
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	movq	16(%rbp), %rdi
-	movq	24(%rbp), %rsi
-	movq	32(%rbp), %rdx
-	movq	%rdx, %r12
+	.cfi_def_cfa_offset 40
+	.cfi_offset 3, -40
 	movq	%rsi, %rbp
-	movq	%rdi, %rbx
+	movq	%rdx, %rbx
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 48
 	movq	24(%rdi), %rdi
 	call	strlen
-	movq	%r12, %r13
-	movq	%rbp, %r12
-	testq	%r12, %r12
-	js	.L83
-	movq	%r13, %rdx
+	movq	%rbp, %rdx
 	shrq	$63, %rdx
 	testb	%dl, %dl
-	jne	.L83
-	leaq	(%r12,%r13), %rdx
+	jne	.L106
+	movq	%rbx, %rdx
+	shrq	$63, %rdx
+	testb	%dl, %dl
+	jne	.L106
+	leaq	0(%rbp,%rbx), %rdx
 	cltq
 	cmpq	%rax, %rdx
-	jg	.L83
-	leaq	1(%r13), %rbp
-	xorl	%eax, %eax
-	call	String.new
-	movq	%rbp, %rdi
-	movq	%rax, %r14
+	jg	.L106
+	movl	$32, %edi
+	call	getmem
+	leaq	1(%rbx), %rdi
+	movq	$2, (%rax)
+	movq	$String_vtable, 8(%rax)
+	movq	$1, 16(%rax)
+	movq	$.LC6, 24(%rax)
+	movq	%rax, %r12
 	call	malloc
+	testq	%rbx, %rbx
+	je	.L110
+	movq	%rbp, %rsi
+	addq	24(%r13), %rsi
 	xorl	%ecx, %ecx
-	testq	%r13, %r13
-	movl	$1, %edx
-	je	.L86
 	.p2align 4,,10
 	.p2align 3
-.L88:
-	movq	%r12, %rsi
-	addq	24(%rbx), %rsi
-	movzbl	(%rsi,%rcx), %ecx
-	movb	%cl, -1(%rax,%rdx)
-	movq	%rdx, %rcx
-	addq	$1, %rdx
-	cmpq	%rbp, %rdx
-	jne	.L88
-.L86:
-	movb	$0, (%rax,%r13)
-	movq	%rax, 24(%r14)
-	movq	%r14, %rax
+.L109:
+	movzbl	(%rsi,%rcx), %edi
+	movb	%dil, (%rax,%rcx)
+	addq	$1, %rcx
+	cmpq	%rcx, %rbx
+	jne	.L109
+.L110:
+	movb	$0, (%rax,%rbx)
+	movq	%rax, 24(%r12)
+	addq	$8, %rsp
 	.cfi_remember_state
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rsi
-	popq	%rdi
+	.cfi_def_cfa_offset 40
 	popq	%rbx
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	popq	%rsp
+	.cfi_def_cfa_offset 32
+	movq	%r12, %rax
 	popq	%rbp
+	.cfi_def_cfa_offset 24
+	popq	%r12
+	.cfi_def_cfa_offset 16
+	popq	%r13
+	.cfi_def_cfa_offset 8
 	ret
-.L83:
+.L106:
 	.cfi_restore_state
 	xorl	%esi, %esi
-	movl	$.LC5, %edi
+	movl	$.LC25, %edi
 	call	out_error
 	.cfi_endproc
 .LFE78:
 	.size	String.substr, .-String.substr
+	.section	.text.unlikely
+.LCOLDE26:
+	.text
+.LHOTE26:
+	.section	.text.unlikely
+.LCOLDB27:
+	.text
+.LHOTB27:
 	.p2align 4,,15
 	.globl	Int.new
 	.type	Int.new, @function
 Int.new:
-.LFB79:
+.LFB80:
 	.cfi_startproc
-        pushq $32
-        call getmem
-        addq $8, %rsp
-        movq $1, (%rax)
-        movq $Int_vtable, 8(%rax)
-        movq $1, 16(%rax)
-        movq $0, 24(%rax)
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movl	$32, %edi
+	call	getmem
+	movq	$1, (%rax)
+	movq	$Int_vtable, 8(%rax)
+	movq	$1, 16(%rax)
+	movq	$0, 24(%rax)
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
-.LFE79:
+.LFE80:
 	.size	Int.new, .-Int.new
+	.section	.text.unlikely
+.LCOLDE27:
+	.text
+.LHOTE27:
+	.section	.text.unlikely
+.LCOLDB28:
+	.text
+.LHOTB28:
 	.p2align 4,,15
 	.globl	Bool.new
 	.type	Bool.new, @function
 Bool.new:
-.LFB80:
+.LFB81:
 	.cfi_startproc
-        pushq $32
-        call getmem
-        addq $8, %rsp
-        movq $4, (%rax)
-        movq $Bool_vtable, 8(%rax)
-        movq $1, 16(%rax)
-        movq $0, 24(%rax)
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movl	$32, %edi
+	call	getmem
+	movq	$4, (%rax)
+	movq	$Bool_vtable, 8(%rax)
+	movq	$1, 16(%rax)
+	movq	$0, 24(%rax)
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
 	ret
 	.cfi_endproc
-.LFE80:
+.LFE81:
 	.size	Bool.new, .-Bool.new
-        .globl getmem
-        .type getmem, @function
-getmem:
-        pushq %rbx
-        movq heap_next, %rax
-        movq 16(%rsp), %rbx 
-        addq %rax, %rbx
-        cmpq %rbx, heap_end
-        jg .getmem_1
-	pushq	%rsi
-	pushq	%rdi
-	pushq	%rcx
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-        movq $heap_block_size, %rdi
-        call malloc
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-	popq	%rcx
-	popq	%rdi
-	popq	%rsi
-        leaq heap_block_size(%rax), %rbx
-        movq %rbx, heap_end
-        movq 16(%rsp), %rbx
-        addq %rax, %rbx
-.getmem_1:
-        movq %rbx, heap_next
-        popq %rbx
-        ret
-        .size getmem, .-getmem
-        .globl main
-        .type main, @function
+	.section	.text.unlikely
+.LCOLDE28:
+	.text
+.LHOTE28:
+	.section	.text.unlikely
+.LCOLDB29:
+	.section	.text.startup,"ax",@progbits
+.LHOTB29:
+	.p2align 4,,15
+	.globl	main
+	.type	main, @function
 main:
-        movq $heap_block_size, %rdi
-        call malloc
-        leaq heap_block_size(%rax), %rbx
-        movq %rbx, heap_end
-        movq $0, %rbx
-        movq %rax, heap_next
-        call _main
-        ret
-        .size main, .-main
-        .section .data
-heap_next:
-        .quad 0
-heap_end:
-        .quad 0
-.set heap_block_size, 4194304
-### END Internals
+.LFB83:
+	.cfi_startproc
+	subq	$8, %rsp
+	.cfi_def_cfa_offset 16
+	movl	$4194304, %edi
+	call	malloc
+	movq	%rax, HEAP_NEXT(%rip)
+	addq	$4194304, %rax
+	movq	%rax, HEAP_END(%rip)
+	xorl	%eax, %eax
+	call	_main
+	xorl	%eax, %eax
+	addq	$8, %rsp
+	.cfi_def_cfa_offset 8
+	ret
+	.cfi_endproc
+.LFE83:
+	.size	main, .-main
+	.section	.text.unlikely
+.LCOLDE29:
+	.section	.text.startup
+.LHOTE29:
+	.globl	HEAP_END
+	.bss
+	.align 8
+	.type	HEAP_END, @object
+	.size	HEAP_END, 8
+HEAP_END:
+	.zero	8
+	.globl	HEAP_NEXT
+	.align 8
+	.type	HEAP_NEXT, @object
+	.size	HEAP_NEXT, 8
+HEAP_NEXT:
+	.zero	8
+	.globl	HEAP_SIZE
+	.section	.rodata
+	.align 4
+	.type	HEAP_SIZE, @object
+	.size	HEAP_SIZE, 4
+HEAP_SIZE:
+	.long	4194304
+	.ident	"GCC: (Ubuntu 5.3.1-14ubuntu2) 5.3.1 20160413"
+	.section	.note.GNU-stack,"",@progbits

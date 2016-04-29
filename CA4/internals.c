@@ -41,22 +41,24 @@ typedef struct {
     long long value;
 } Bool;
 
-Object* Obj_new();
-Object* Obj_abort(Object * self);
-String* Obj_type_name(Object * self);
-long long* Obj_copy(Object * self);
+Object* Object_new();
+Object* Object_abort(Object * self);
+String* Object_type_name(Object * self);
+long long* Object_copy(Object * self);
+long long Object_cmp(Object* self, Object* other);
 
 String* String_new();
-Int* String_length(String* self);
+long long String_length(String* self);
 String* String_concat(String* self, String* s);
 String* String_substr(String* self, long long i, long long l);
+long long String_cmp(String* self, String* other);
 
 Int* Int_new();
 
 Bool* Bool_new();
 
 IO* IO_new();
-Int* IO_in_int(IO* self);
+long long IO_in_int(IO* self);
 IO* IO_out_int(IO* self, long long i);
 String* IO_in_string(IO* self);
 IO* IO_out_string(IO* self, String* s);
@@ -69,20 +71,20 @@ void out_string(const char* c);
 
 void out_error(const char* format, long long lineno);
 
+void* getmem(long long size);
+
 IO* IO_new()
 {
-    IO* io = (IO*)malloc(sizeof(IO));
+    IO* io = (IO*)getmem(sizeof(IO));
     io->type = IO_TAG;
     io->vtable = NULL;
     io->objSize = 0;
     return io;
 }
 
-Int* IO_in_int(IO* self)
+long long IO_in_int(IO* self)
 {
-    Int* retval = Int_new();
-    retval->value = in_int();
-    return retval;
+    return in_int();
 }
 
 long long in_int()
@@ -236,7 +238,7 @@ void out_error(const char* format, long long lineno)
 }
 
 Object* Object_new() {
-    Object* o = (Object*)malloc(sizeof(Object));
+    Object* o = (Object*)getmem(sizeof(Object));
     o->type = OBJECT_TAG;
     o->vtable = NULL;
     o->objSize = 0;
@@ -250,15 +252,13 @@ Object* Object_abort(Object * self) {
 }
 
 String* Object_type_name(Object * self) {
-    String* s = String_new();
-    s->c = self->vtable[0];
-    return s;
+    return self->vtable[0];
 }
 
 // long long* to get around type checking
 long long* Object_copy(Object * self) {
     int i;
-    long long* res = malloc((3 + self->objSize) * 8);
+    long long* res = getmem((3 + self->objSize) * 8);
     res[0] = self->type;
     res[1] = (long long) self->vtable;
     res[2] = self->objSize;
@@ -268,8 +268,24 @@ long long* Object_copy(Object * self) {
     return res;
 }
 
+long long Object_cmp(Object *self, Object *other) {
+    if (self == NULL || other == NULL) {
+        return self == other ? 0 : 1;
+    }
+    if (self->type != other->type) {
+        return 1;
+    }
+    if (self->type == INT_TAG || self->type == BOOL_TAG) {
+        return ((Int*)self)->value - ((Int*)other)->value;
+    }
+    if (self->type == STRING_TAG) {
+        return String_cmp((String*)self, (String*)other);
+    }
+    return self == other ? 0 : 1;
+}
+
 String* String_new() {
-    String* s =(String*)malloc(sizeof(String));
+    String* s =(String*)getmem(sizeof(String));
     s->type = STRING_TAG;
     s->vtable = NULL;
     s->objSize = 1;
@@ -277,10 +293,8 @@ String* String_new() {
     return s;
 }
 
-Int* String_length(String* self) {
-    Int* retval = Int_new();
-    retval->value = strlen(self->c);
-    return retval;
+long long String_length(String* self) {
+    return strlen(self->c);
 }
 
 String* String_concat(String* self, String* s) {
@@ -309,29 +323,48 @@ String* String_substr(String* self, long long i, long long l) {
     res->c = resStr;
     return res;
 }
+long long String_cmp(String* self, String* other) {
+    return strcmp(self->c, other->c);
+}
 
 Int* Int_new()
 {
-    Int* i = (Int*)malloc(sizeof(Int));
+    Int* i = (Int*)getmem(sizeof(Int));
     i->type = INT_TAG;
     i->vtable = NULL;
-    i->objSize = 0;
+    i->objSize = 1;
     i->value = 0;   //default val = 0
     return i;
 }
 
 Bool* Bool_new()
 {
-    Bool* b = (Bool*)malloc(sizeof(Bool));
+    Bool* b = (Bool*)getmem(sizeof(Bool));
     b->type = BOOL_TAG;
     b->vtable = NULL;
-    b->objSize = 0;
+    b->objSize = 1;
     b->value = 0;   //default val = false
     return b;
 }
 
+const int HEAP_SIZE = 4194304;
+void* HEAP_NEXT = 0;
+void* HEAP_END  = 0;
+void* getmem(long long size) {
+    void* res = HEAP_NEXT;
+    HEAP_NEXT += size;
+    if (HEAP_NEXT >= HEAP_END) {
+        HEAP_NEXT = malloc(HEAP_SIZE);
+        HEAP_END = HEAP_NEXT + HEAP_SIZE;
+        res = HEAP_NEXT;    
+        HEAP_NEXT += size;
+    }
+    return res;
+}
+extern void _main();
 int main(int argc, char** argv)
 {
+    /*
     int i = 0;
     IO* io = IO_new();
     for (; i < 130; i++) {
@@ -342,6 +375,7 @@ int main(int argc, char** argv)
         printf("\n");
 
     }
+    */
     ///test in and out string and int
     /*
     char* i = in_string();
@@ -383,6 +417,8 @@ int main(int argc, char** argv)
     //Int* len = IO_in_int(io);
     //String* substr = String_substr(s, start, len);
     //IO_out_string(io, substr);
-
+    HEAP_NEXT = malloc(HEAP_SIZE);
+    HEAP_END = HEAP_NEXT + HEAP_SIZE;
+    _main(); 
     return 0;
 }

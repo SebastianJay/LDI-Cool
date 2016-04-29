@@ -224,7 +224,8 @@ class TACBTypeEq(TACAux):
 #abstract class representing something TAC can compute on
 # register, attr (from memory), method arg
 class TACOperand:
-    pass
+    def getName():
+        pass
 
 class TACRegister(TACOperand):
     def __init__(self, name, boxed = True):
@@ -232,6 +233,9 @@ class TACRegister(TACOperand):
         self.boxed = boxed
     def __str__(self):
         return self.name + ('' if self.boxed else '[x]')
+
+    def getName(self):
+        return self.name
 
 
 class TACClassAttr(TACOperand):
@@ -242,6 +246,8 @@ class TACClassAttr(TACOperand):
         self.boxed = True
     def __str__(self):
         return str(self.reg)+'@'+self.cname+':'+self.aname+ ('' if self.boxed else '[x]')
+    def getName(self):
+        return self.reg.name
 
 class TACMethodArg(TACOperand):
     def __init__(self, cname, mname, fname):

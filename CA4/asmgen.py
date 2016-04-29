@@ -27,23 +27,24 @@ regWidthMap = {
 #maps int result of graph coloring to x64 register name
 cRegMap = {
     0 : '%rax',     #return value for function calls
-    1 : '%rbx',
-    2 : '%rcx',
-#    3 : '%rdx',    # Save rdx for multiplication, division, double memory, and bool logic
-    3 : '%rsi',
-    4 : '%rdi',
+    1 : '%rdi',
+    2 : '%rsi',
+    3 : '%rdx',
+    4 : '%rcx',
     5 : '%r8',      #64 bit mode registers
     6 : '%r9',
     7 : '%r10',
     8 : '%r11',
-    9 : '%r12',
-    10 : '%r13',
-    11 : '%r14',
-    12 : '%r15',
+    9 : '%rbx',
+    10 : '%r12',
+    11 : '%r13',
+    12 : '%r14',
+    13 : '%r15',
 }
 rsp = '%rsp'
 rbp = '%rbp'
 retreg = 0
+paramRegs = [1,2,3,4,5,6,7,8]
 
 registers = cRegMap.values() + [rsp, rbp]
 
@@ -445,13 +446,15 @@ class ASMCall(ASMControl):
         self.args = args
     def expand(self):
         asm = []
+        for i, arg in enumerate(self.args[:len(paramRegs)]):
+            asm.append(ASMAssign(cRegMap[paramRegs[i]], arg))
         #push args onto stack in reverse order
-        for arg in reversed(self.args):
+        for arg in reversed(self.args[len(paramRegs):]):
             asm.append(ASMPush(arg))
         asm.append(self)
         #deallocate args
-        if len(self.args) != 0:
-            lisize = '$'+str(len(self.args) * 8)
+        if len(self.args) > len(paramRegs):
+            lisize = '$'+str((len(self.args)-len(paramRegs)) * 8)
             asm.append(ASMOp(rsp, '+', [lisize, rsp]))
         return asm
     def __str__(self):
@@ -572,7 +575,11 @@ def funcConvert(cfg, regMap):
                 rreg = cRegMap[regMap[vreg]]
             return offsetStr(8 * ASMIndexer.attrOffset[operand.cname][operand.aname], rreg)
         elif isinstance(operand, TACMethodArg):
-            return offsetStr(8 * (ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname] + 2), rbp)
+            ind = ASMIndexer.methOffset[operand.cname][operand.mname][operand.fname]
+            if ind < len(paramRegs):
+                return cRegMap[paramRegs[ind]]
+            else:
+                return offsetStr(8 * ((ind - len(paramRegs))+ 2), rbp)
 
     inslst = cfg.toList()
 
@@ -593,12 +600,13 @@ def funcConvert(cfg, regMap):
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
 
-    # Save rbx-highest used register, everything is callee save
+    # Save non-parameter registers 
     maxreg = min(max(regMap.values()), 12)
     if maxreg > 0:
         for i in range(1, maxreg+1):
-            preamble.append(ASMPush(cRegMap[i]))
-            epilogue = [ASMPop(cRegMap[i])] + epilogue
+            if i not in paramRegs:
+                preamble.append(ASMPush(cRegMap[i]))
+                epilogue = [ASMPop(cRegMap[i])] + epilogue
 
     asmlst = []
     #make list of ASM instructions from TAC instructions
@@ -661,17 +669,19 @@ def funcConvert(cfg, regMap):
         elif isinstance(ins, TACConstant):
             asmlst.append(ASMConstant(realReg(ins.assignee), ins.ptype, ins.const))
         elif isinstance(ins, TACVTable):
-            insreg = ins.obj
-            if insreg not in registers:
-                asmlst += [ASMAssign('%rdx', realReg(ins.obj))]
-                insreg = '%rdx'
+            # Comment with method name
+            asmlst.append(ASMComment(ins.cname + '.' + ins.mname))
+
+            insreg = realReg(ins.assignee)
+            objreg = realReg(ins.obj)
+            if objreg not in registers:
+                asmlst.append(ASMAssign('%rdx', objreg))
+                objreg = '%rdx'
             asmlst += [
-                # Comment with method name
-                ASMComment(ins.cname + '.' + ins.mname),
                 # vtable addr -> rdx
-                ASMAssign('%rdx', offsetStr(8, insreg)),
+                ASMAssign(insreg, offsetStr(8, objreg)),
                 # method addr -> assignee
-                ASMAssign(realReg(ins.assignee), offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), '%rdx'))
+                ASMAssign(insreg, offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), insreg))
             ]
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])

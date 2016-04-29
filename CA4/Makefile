@@ -5,11 +5,13 @@ TESTS=$(wildcard test/*.cl)
 TEST_TYPES=$(patsubst %.cl,%.cl-type,$(TESTS))
 TEST_ASM=$(patsubst %.cl,%.s,$(TESTS))
 
-COMP_FILES=$(wildcard *.py)
+COMP_FILES=$(wildcard *.py) internals.s.txt
 
 BENCH=valgrind --tool=callgrind --cache-sim=yes
 
-build: $(TESTS) $(TEST_TYPES) $(TEST_ASM)
+all: $(TESTS) $(TEST_TYPES) $(TEST_ASM)
+
+type: $(TESTS) $(TEST_TYPES)
 
 %.cl-type: %.cl
 	$(COOL) --type $<
@@ -26,7 +28,7 @@ in.txt:
 	./util/ingen.py > in.txt
 
 .SILENT:test
-test: build in.txt
+test: all in.txt
 	$(foreach t, $(TESTS), \
 	    $(COOL) $(t) < in.txt > ref.out; \
 	    gcc $(patsubst %.cl,%.s,$(t));\
