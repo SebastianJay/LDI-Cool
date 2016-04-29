@@ -273,35 +273,14 @@ class ASMOp(ASMInstruction):
 
         # Bool logic expand
         if self.opcode in ['<', '=', '<=']:
-            # Can't do cmove on a memory address, so have to push/pop some stuff
-            if self.assignee not in registers:
-                # Can't use rax as a temp if it's one of the operands
-                if '%rax' not in self.operands:
-                    asm.append(ASMPush('%rax'))
-                    asm.append(ASMAssign('%rax', self.assignee))
-                    self.assignee = '%rax'
-                # If rax is an operand, rbx isn't because the other is memory
-                else:
-                    asm.append(ASMPush('%rbx'))
-                    asm.append(ASMAssign('%rbx', self.assignee))
-                    self.assignee = '%rbx'
-
             cmpop1 = self.operands[1]
             if cmpop1 in registers and cmpop1 not in [rsp, rbp]:
                 cmpop1 = regWidthMap[cmpop1][1]
             cmpop0 = self.operands[0]
             if cmpop0 in registers and cmpop0 not in [rsp, rbp]:
                 cmpop0 = regWidthMap[cmpop0][1]
-            asm.append(ASMCmp(cmpop1, cmpop0, True))
-            asm.append(ASMConstant(self.assignee, 'bool', 'false'))
-            asm.append(ASMConstant('%rdx', 'bool', 'true'))
-            asm.append(self)
 
-            # Restore the temporary register and put the result in the right place
-            if self.operands[1] not in registers and self.operands[1] != '$0':
-                asm.append(ASMAssign(self.operands[1], self.assignee))
-                asm.append(ASMPop(self.assignee))
-            return asm
+            asm.append(ASMCmp(cmpop1, cmpop0, True))
 
         if (len(self.operands) == 1 and self.operands[0] != self.assignee)\
            or (len(self.operands) == 2 and self.operands[1] != self.assignee):
@@ -331,11 +310,11 @@ class ASMOp(ASMInstruction):
         elif self.opcode == '/':
             return ('idivl ' if self.halfreg else 'idivq ') + self.operands[0]
         elif self.opcode == '<':
-            return 'cmovlq ' + '%rdx' + ', ' + self.assignee
+            return 'setl ' + regWidthMap[self.assignee][3]
         elif self.opcode == '<=':
-            return 'cmovleq ' + '%rdx' + ', ' + self.assignee
+            return 'setle ' + regWidthMap[self.assignee][3]
         elif self.opcode == '=':
-            return 'cmoveq ' + '%rdx' + ', ' + self.assignee
+            return 'sete ' + regWidthMap[self.assignee][3]
         elif self.opcode == 'not':
             return 'xorq $1, ' + self.assignee
         elif self.opcode == 'isvoid':
@@ -506,9 +485,9 @@ class ASMBT(ASMControl):
         self.cond = cond
         self.label = label
     def expand(self):
-        return [ASMCmp('$1', self.cond), self]
+        return [ASMMisc('testq',['$1', self.cond]), self]
     def __str__(self):
-        return 'je ' + self.label
+        return 'jne ' + self.label
 
 class ASMBTypeEq(ASMInstruction):
     def __init__(self, obj, clstag, label):
