@@ -43,7 +43,10 @@ if __name__=="__main__":
     #create list of ASM instructions
     insts = [asmgen.ASMInfo('text')] + asmgen.convert(taclist)
     
-    insts = peephole(insts)
+    oldinsts = [] 
+    while oldinsts != insts: 
+        oldinsts = list(insts)
+        insts = peephole(insts)
 
     #serialize list to string
     outbuf = asmgen.readInternals()

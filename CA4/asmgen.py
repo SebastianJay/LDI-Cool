@@ -333,12 +333,13 @@ class ASMOp(ASMInstruction):
 
 #compare two numbers and set appropriate flags for conditional moves/jumps
 class ASMCmp(ASMInstruction):
-    def __init__(self, op1, op2, halfreg=False):
+    def __init__(self, op1, op2, halfreg=False, comp=True):
         self.op1 = op1
         self.op2 = op2
         self.halfreg = halfreg
+        self.comp = comp
     def __str__(self):
-        return ('cmpl ' if self.halfreg else 'cmpq ') + self.op1 + ', ' + self.op2
+        return ('cmp' if self.comp else 'test')+('l ' if self.halfreg else 'q ') + self.op1 + ', ' + self.op2
 
 #ASM instruction which assigns one variable into another
 class ASMAssign(ASMInstruction):
@@ -492,7 +493,7 @@ class ASMBT(ASMControl):
         self.l = not self.l
         self.e = not self.e
     def expand(self):
-        return [ASMMisc('testq',['$1', self.cond]), self]
+        return [ASMCmp('$1', self.cond, False, False), self]
     def __str__(self):
         condstr = ''
         condstr += 'g' if self.g else ''
