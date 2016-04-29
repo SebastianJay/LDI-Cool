@@ -4,6 +4,7 @@ import tacgen
 import TAC_serialize
 import deadcode
 from registerAllocate import registerAllocate
+from peephole import peephole
 import asmgen
 import sys
 
@@ -41,6 +42,8 @@ if __name__=="__main__":
 
     #create list of ASM instructions
     insts = [asmgen.ASMInfo('text')] + asmgen.convert(taclist)
+    
+    insts = peephole(insts)
 
     #serialize list to string
     outbuf = asmgen.readInternals()

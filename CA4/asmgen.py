@@ -481,13 +481,30 @@ class ASMReturn(ASMControl):
 
 #Bt instruction
 class ASMBT(ASMControl):
-    def __init__(self, cond, label):
+    def __init__(self, cond, label, g=True, l=True, e=False):
         self.cond = cond
         self.label = label
+        self.g = g
+        self.l = l
+        self.e = e
+    def invert(self):
+        self.g = not self.g
+        self.l = not self.l
+        self.e = not self.e
     def expand(self):
         return [ASMMisc('testq',['$1', self.cond]), self]
     def __str__(self):
-        return 'jne ' + self.label
+        condstr = ''
+        condstr += 'g' if self.g else ''
+        condstr += 'l' if self.l else ''
+        condstr += 'e' if self.e else ''
+        if condstr == 'gle':
+            # completes to jmp
+            condstr = 'mp'
+        elif condstr == 'gl':
+            condstr = 'ne'
+
+        return 'j{} {}'.format(condstr, self.label)
 
 class ASMBTypeEq(ASMInstruction):
     def __init__(self, obj, clstag, label):
