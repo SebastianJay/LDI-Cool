@@ -305,7 +305,7 @@ String* String_concat(String* self, String* s) {
 }
 
 String* String_substr(String* self, long long i, long long l) {
-    int len = strlen(self->c);
+    int len = self->length;
     if (i < 0 || l < 0 || i + l > len) {
         out_error("ERROR: %lld: Exception: String index out of bounds", 0ll);
         //program halts

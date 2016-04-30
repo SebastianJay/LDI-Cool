@@ -853,18 +853,15 @@ String.substr:
 	pushq	%r12
 	.cfi_def_cfa_offset 16
 	.cfi_offset 12, -16
-	movq	%rdi, %r12
 	pushq	%rbp
 	.cfi_def_cfa_offset 24
 	.cfi_offset 6, -24
+	movq	%rdx, %rbp
+	movq	%rsi, %rdx
 	pushq	%rbx
 	.cfi_def_cfa_offset 32
 	.cfi_offset 3, -32
-	movq	24(%rdi), %rdi
-	movq	%rsi, %rbx
-	movq	%rdx, %rbp
-	call	strlen
-	movq	%rbx, %rdx
+	movq	32(%rdi), %rax
 	shrq	$63, %rdx
 	testb	%dl, %dl
 	jne	.L115
@@ -872,10 +869,12 @@ String.substr:
 	shrq	$63, %rdx
 	testb	%dl, %dl
 	jne	.L115
-	leaq	(%rbx,%rbp), %rdx
+	leaq	(%rsi,%rbp), %rdx
 	cltq
+	movq	%rsi, %rbx
 	cmpq	%rax, %rdx
 	jg	.L115
+	movq	%rdi, %r12
 	movl	$40, %edi
 	call	getmem
 	movq	$.LC4, 24(%rax)
