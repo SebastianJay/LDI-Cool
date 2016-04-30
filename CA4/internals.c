@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 const int OBJECT_TAG = 0;
@@ -178,7 +177,7 @@ char* in_string(int *len)
         buffer[numread++] = (char)c;
         //if current buffer is filled, allocate larger buffer
         if (numread == lenbuffer - 1) {
-            // Reserve more memory, shuold still be contiguous
+            // Reserve more memory, should still be contiguous
             getmem(lenbuffer);
         }
     }
@@ -188,7 +187,7 @@ IO* IO_out_string(IO* self, String* s)
 {
     //before printing, convert escape sequences \t, \n
     int len = s->length;
-    char* cpy = (char*)getmem(len+1);
+    char cpy[len+1];
     int i,j=0;
     for (i = 0; i < len; i++) {
         if (i < len-1 && s->c[i] == '\\') {
@@ -210,7 +209,7 @@ IO* IO_out_string(IO* self, String* s)
 
     }
     cpy[j] = '\0';
-    printf("%s", cpy);
+    fputs(cpy, stdout);
 
     return self;
 }
@@ -357,59 +356,6 @@ void* getmem(long long size) {
 extern void _main();
 int main(int argc, char** argv)
 {
-    /*
-    int i = 0;
-    IO* io = IO_new();
-    for (; i < 130; i++) {
-        printf("%d", i);
-        String* s = IO_in_string(io);
-        IO_out_string(io, s);
-        IO_out_int(io, String_length(s));
-        printf("\n");
-
-    }
-    */
-    ///test in and out string and int
-    /*
-    char* i = in_string();
-    out_string(i);
-    i = in_string();
-    out_string(i);
-    i = in_string();
-    out_string(i);
-    printf("\n");
-    if (i == "") {
-        printf("empty string received");
-    }
-    */
-
-    /*
-    long long j = in_int();
-    out_int(j);
-    j = in_int();
-    out_int(j);
-    j = in_int();
-    out_int(j);
-    */
-
-    //char* c = in_string();
-    //out_string(c);
-
-    ///test printf on long ints
-    //long long ll = 2147483648ll;
-    //printf("%d", ll);
-
-    ///test string read in and length
-    //IO* io = IO_new();
-    //String* s = IO_in_string(io);
-    //IO_out_string(io, s);
-    //IO_out_int(io, String_length(s));
-
-    ///test substring
-    //Int* start = IO_in_int(io);
-    //Int* len = IO_in_int(io);
-    //String* substr = String_substr(s, start, len);
-    //IO_out_string(io, substr);
     HEAP_NEXT = sbrk(HEAP_SIZE);
     HEAP_END = HEAP_NEXT + HEAP_SIZE;
     _main(); 

@@ -47,6 +47,7 @@ test: all in.txt
 
 %.bench: %.s in.txt
 	gcc -g $<
+	-mv $@ $@.old
 	-$(BENCH) --callgrind-out-file=$@ ./a.out < in.txt > /dev/null
 	-rm a.out
 	
