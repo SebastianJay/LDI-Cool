@@ -227,6 +227,7 @@ class ASMIndexer:
     def genStr():
         slist = []
         for s in ASMIndexer.strMap:
+            slen = len(s.replace('\\\\', '\\').replace('\\\"', '\"'))
             slist += [
                 # String literal
                 ASMLabel(ASMIndexer.strMap[s]+"_l"),
@@ -235,8 +236,9 @@ class ASMIndexer:
                 ASMLabel(ASMIndexer.strMap[s]),
                 ASMInfo('quad', str(ASMIndexer.clsTags['String'])),
                 ASMInfo('quad', 'String_vtable'),
-                ASMInfo('quad', '1'),
-                ASMInfo('quad', ASMIndexer.strMap[s]+"_l")
+                ASMInfo('quad', '2'),
+                ASMInfo('quad', ASMIndexer.strMap[s]+"_l"),
+                ASMInfo('quad', str(slen))
             ]
         return slist
 

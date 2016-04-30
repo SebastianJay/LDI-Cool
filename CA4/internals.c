@@ -25,7 +25,8 @@ typedef struct {
     long long type;
     void** vtable;
     long long objSize;
-    const char* c;
+    char* c;
+    long long length;
 } String;
 
 typedef struct {
@@ -40,6 +41,12 @@ typedef struct {
     long long objSize;
     long long value;
 } Bool;
+
+extern void** IO_vtable;
+extern void** Object_vtable;
+extern void** String_vtable;
+extern void** Int_vtable;
+extern void** Bool_vtable;
 
 Object* Object_new();
 Object* Object_abort(Object * self);
@@ -77,79 +84,58 @@ IO* IO_new()
 {
     IO* io = (IO*)getmem(sizeof(IO));
     io->type = IO_TAG;
-    io->vtable = NULL;
+    io->vtable = IO_vtable;
     io->objSize = 0;
     return io;
 }
 
 long long IO_in_int(IO* self)
 {
-    return in_int();
-}
-
-long long in_int()
-{
-    long long i = 0;
-    int lenstr = 4096;
-    char* c = (char*)malloc(lenstr);
+    long long i;
     char buffer[4096];
-    memset(buffer, 0, 4096);
-    //consume whole line until newline or eof
-    while (1) {
-        fgets(buffer, 4096, stdin);
-        strcat(c, buffer);
-        int len = strlen(c);
-        if (len == 0) {
-            return 0;
-        }
-        if (feof(stdin)) {
-            break;
-        }
-        //remove newline chars before processing
-        if (c[len-1] == '\n') {
-            c[len-1] = '\0';
-            if (len > 1 && c[len-2] == '\r') {
-                c[len-2] = '\0';
+    int retcode;
+    i = (long long)fgets(buffer, 4096, stdin);
+    if (i == 0) return 0;
+    i=0;
+    while (buffer[i] != '\0') i++;
+    if (buffer[i-1] != '\n') {
+        while (1) {
+            int c = fgetc(stdin);
+            if (c == EOF)
+                return 0;
+            if (c == '\n' || c == '\0') {
+                retcode = sscanf(buffer, "%lld", &i);
+                if (retcode == EOF || retcode == 0) {
+                    return 0;
+                }
+                else return i;
             }
-            break;
         }
-        lenstr += 4096;
-        char* newc = (char*)malloc(lenstr);
-        strcpy(newc, c);
-        free(c);
-        c = newc;
+        return 0;
     }
-    //parse string to int
-    int retcode = sscanf(c, "%lld", &i);
-    // Return 0 on bad input
-    if (retcode == EOF || retcode == 0)
+
+    retcode = sscanf(buffer, "%lld", &i);
+    if (retcode == EOF || retcode == 0 || i < -2147483648 || i > 2147483647) {
         return 0;
-    // reject input outside range of 32 bit signed int
-    if (i > 2147483647ll || i < -2147483648ll)
-        return 0;
-    return i;
+    } 
+    else return i;
 }
 
 IO* IO_out_int(IO* self, long long i)
 {
-    out_int(i);
+    printf("%d",(int)i);
     return self;
 }
 
-void out_int(long long i)
-{
-    //i should always be 32 bit signed int
-    printf("%d", (int)i);
-}
 
 String* IO_in_string(IO* self)
 {
     String* retval = String_new();
-    retval->c = in_string();
+    retval->c = in_string(&retval->length);
     return retval;
 }
 
-char* in_string()
+char* in_string(int *len)
 {
     int numread = 0;
     int lenbuffer = 4096;
@@ -160,8 +146,10 @@ char* in_string()
         if (c == EOF) {
             //if reached end of file, return current buffer
             if (numread == 0) {
+                *len = 0;
                 return "";
             } else {
+                *len = numread;
                 return buffer;
             }
         } else if (c == '\0') {
@@ -172,6 +160,7 @@ char* in_string()
                     break;
                 }
             }
+            *len = 0; 
             return "";
         } else if (c == '\n') {
             //if read newline, stop reading and return buffer
@@ -179,17 +168,21 @@ char* in_string()
             //remove carriage return if it is present
             if (numread > 0 && buffer[numread-1] == '\r') {
                 buffer[numread-1] = '\0';
+                numread -=1;
             }
+            *len = numread;
             return buffer;
         }
         //otherwise append character
         buffer[numread++] = (char)c;
         //if current buffer is filled, allocate larger buffer
         if (numread == lenbuffer - 1) {
-            buffer[numread] = '\0';
+            int i;
             lenbuffer += 4096;
             char* newbuffer = (char*)malloc(lenbuffer);
-            strcpy(newbuffer, buffer);
+            for (i = 0; i< numread; i++) {
+                newbuffer[i] = buffer[i];
+            }
             free(buffer);
             buffer = newbuffer;
         }
@@ -198,37 +191,34 @@ char* in_string()
 
 IO* IO_out_string(IO* self, String* s)
 {
-    out_string(s->c);
-    return self;
-}
-
-void out_string(const char* c)
-{
     //before printing, convert escape sequences \t, \n
-    int len = strlen(c);
+    int len = s->length;
     char* cpy = (char*)malloc(len+1);
-    strcpy(cpy, c);
-    int i;
-    int num = 0;    //number of replacements made
-    for (i = 1; i < len; i++) {
-        char replace = '\0';    //dummy char
-        if (cpy[i-1] == '\\' && cpy[i] == 't') {
-            replace = '\t';
-        } else if (cpy[i-1] == '\\' && cpy[i] == 'n') {
-            replace = '\n';
-        }
-        if (replace != '\0') {
-            int j;
-            //shift left remaining characters
-            for (j = i; j < len-num; j++) {
-                cpy[j] = cpy[j+1];
+    int i,j=0;
+    for (i = 0; i < len; i++) {
+        if (i < len-1 && s->c[i] == '\\') {
+            if (s->c[i+1] == 'n') {
+                cpy[j++] = '\n';
+                i++;
             }
-            cpy[i-1] = replace;   //make replacement
-            num++;
+            else if (s->c[i+1] == 't') {
+                cpy[j++] = '\t';
+                i++;
+            }
+            else {
+                cpy[j++] = s->c[i];
+            }
         }
+        else {
+            cpy[j++] = s->c[i];
+        }
+
     }
+    cpy[j] = '\0';
     printf("%s", cpy);
     free(cpy);
+
+    return self;
 }
 
 void out_error(const char* format, long long lineno)
@@ -240,13 +230,13 @@ void out_error(const char* format, long long lineno)
 Object* Object_new() {
     Object* o = (Object*)getmem(sizeof(Object));
     o->type = OBJECT_TAG;
-    o->vtable = NULL;
+    o->vtable = Object_vtable;
     o->objSize = 0;
     return o;
 }
 
 Object* Object_abort(Object * self) {
-    out_string("abort\n");
+    printf("abort\n");
     exit(0);
     return self;
 }
@@ -287,23 +277,30 @@ long long Object_cmp(Object *self, Object *other) {
 String* String_new() {
     String* s =(String*)getmem(sizeof(String));
     s->type = STRING_TAG;
-    s->vtable = NULL;
-    s->objSize = 1;
+    s->vtable = String_vtable;
+    s->objSize = 2;
     s->c = "";  //default val = empty string
+    s->length = 0;
     return s;
 }
 
 long long String_length(String* self) {
-    return strlen(self->c);
+    return self->length;
 }
 
 String* String_concat(String* self, String* s) {
-    int len = strlen(self->c) + strlen(s->c);
-    char* dest = malloc(len+1);
-    strcpy(dest, self->c);
-    strcat(dest, s->c);
+    int len = self->length + s->length;
+    int i;
     String* res = String_new();
-    res->c = dest;
+    res->c = getmem(len+1);
+    res->length = len;
+    for (i = 0; i < self->length; i++) {
+        res->c[i] = self->c[i];
+    }
+    for (; i < len; i++) {
+        res->c[i] = s->c[i-self->length];
+    }
+    res->c[i] = '\0';
     return res;
 }
 
@@ -314,24 +311,29 @@ String* String_substr(String* self, long long i, long long l) {
         //program halts
     }
     String* res = String_new();
-    char* resStr = malloc(l+1);
-    int j;
-    for (j = 0; j < l; j++) {
-        resStr[j] = self->c[j+i];
-    }
-    resStr[l] = '\0';
-    res->c = resStr;
+    res->c = (self->c)+i; 
+    res->length = l;
     return res;
 }
 long long String_cmp(String* self, String* other) {
-    return strcmp(self->c, other->c);
+    int i;
+    int bd = self->length < other->length ? self->length : other->length;
+    while (i < bd && self->c[i] == other->c[i]) {
+        i++;
+    }
+    if (i == bd) {
+        if (self->length == other->length)
+            return 0;
+        return self->length < other->length ? -1 : 1;
+    }
+    return self->c[i] < other->c[i] ? -1 : 1;    
 }
 
 Int* Int_new()
 {
     Int* i = (Int*)getmem(sizeof(Int));
     i->type = INT_TAG;
-    i->vtable = NULL;
+    i->vtable = Int_vtable;
     i->objSize = 1;
     i->value = 0;   //default val = 0
     return i;
@@ -341,7 +343,7 @@ Bool* Bool_new()
 {
     Bool* b = (Bool*)getmem(sizeof(Bool));
     b->type = BOOL_TAG;
-    b->vtable = NULL;
+    b->vtable = Bool_vtable;
     b->objSize = 1;
     b->value = 0;   //default val = false
     return b;

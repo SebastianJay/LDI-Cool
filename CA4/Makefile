@@ -20,6 +20,13 @@ type: $(TESTS) $(TEST_TYPES)
 %.s: %.cl-type $(COMP_FILES)
 	$(COMP) $<
 
+%.out: %.s
+	gcc -g $<
+
+internals.s.txt: internals.c
+	gcc -O2 -S -o internals.s.txt internals.c
+	sed -i 's/\(Object\|String\|IO\|Int\|Bool\)_\([^v]\)/\1\.\2/g' internals.s.txt
+	sed -i 's/\(\w\+\)_vtable(%rip)/\$$\1_vtable/g' internals.s.txt
 
 clean:
 	-rm -f $(TEST_TYPES) $(TEST_ASM) $(patsubst %.cl,%.bench,$(TESTS))
@@ -33,7 +40,7 @@ test: all in.txt
 	    $(COOL) $(t) < in.txt > ref.out; \
 	    gcc $(patsubst %.cl,%.s,$(t));\
 	    ./a.out < in.txt > $(t).out; \
-	    diff -q $(t).out ref.out; \
+	    cmp $(t).out ref.out; \
 	    rm -f $(t).out ref.out a.out;) 
 
 %.bench: %.s in.txt
