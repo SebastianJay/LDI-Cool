@@ -24,7 +24,7 @@ type: $(TESTS) $(TEST_TYPES)
 	gcc -g $<
 
 internals.s.txt: internals.c
-	gcc -O2 -S -o internals.s.txt internals.c
+	gcc -O9 -S -o internals.s.txt internals.c
 	sed -i 's/\(Object\|String\|IO\|Int\|Bool\)_\([^v]\)/\1\.\2/g' internals.s.txt
 	sed -i 's/\(\w\+\)_vtable(%rip)/\$$\1_vtable/g' internals.s.txt
 	sed -i 's/rep ret/ret/g' internals.s.txt
