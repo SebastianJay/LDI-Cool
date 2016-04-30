@@ -2,6 +2,11 @@ from asmgen import *
 def peephole(ins):
     i = 0
     while i < len(ins): 
+        if i > 2:
+            if check(['mov', 'mov'], ins[i-1:i+1]):
+                if ins[i-1].assignee == ins[i].assignor and ins[i-1].assignor == ins[i].assignee:
+                    ins = ins[:i] + ins[i+1:]
+                    i-=1
         if i > 3:
             if check(['not', 'any', 'bt'], ins[i-2:i+1]):
                 ins[i].invert()

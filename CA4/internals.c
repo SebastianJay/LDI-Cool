@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 const int OBJECT_TAG = 0;
 const int INT_TAG = 1;
@@ -92,9 +93,9 @@ IO* IO_new()
 long long IO_in_int(IO* self)
 {
     long long i;
-    char buffer[4096];
+    char buffer[128];
     int retcode;
-    i = (long long)fgets(buffer, 4096, stdin);
+    i = (long long)fgets(buffer, 128, stdin);
     if (i == 0) return 0;
     i=0;
     while (buffer[i] != '\0') i++;
@@ -138,8 +139,8 @@ String* IO_in_string(IO* self)
 char* in_string(int *len)
 {
     int numread = 0;
-    int lenbuffer = 4096;
-    char* buffer = (char*)malloc(lenbuffer);
+    int lenbuffer = 128;
+    char* buffer = (char*)getmem(lenbuffer);
     while (1) {
         //get a new character from stream
         int c = fgetc(stdin);
@@ -177,14 +178,8 @@ char* in_string(int *len)
         buffer[numread++] = (char)c;
         //if current buffer is filled, allocate larger buffer
         if (numread == lenbuffer - 1) {
-            int i;
-            lenbuffer += 4096;
-            char* newbuffer = (char*)malloc(lenbuffer);
-            for (i = 0; i< numread; i++) {
-                newbuffer[i] = buffer[i];
-            }
-            free(buffer);
-            buffer = newbuffer;
+            // Reserve more memory, shuold still be contiguous
+            getmem(lenbuffer);
         }
     }
 }
@@ -193,7 +188,7 @@ IO* IO_out_string(IO* self, String* s)
 {
     //before printing, convert escape sequences \t, \n
     int len = s->length;
-    char* cpy = (char*)malloc(len+1);
+    char* cpy = (char*)getmem(len+1);
     int i,j=0;
     for (i = 0; i < len; i++) {
         if (i < len-1 && s->c[i] == '\\') {
@@ -216,7 +211,6 @@ IO* IO_out_string(IO* self, String* s)
     }
     cpy[j] = '\0';
     printf("%s", cpy);
-    free(cpy);
 
     return self;
 }
@@ -356,10 +350,7 @@ void* getmem(long long size) {
     void* res = HEAP_NEXT;
     HEAP_NEXT += size;
     if (HEAP_NEXT >= HEAP_END) {
-        HEAP_NEXT = malloc(HEAP_SIZE);
-        HEAP_END = HEAP_NEXT + HEAP_SIZE;
-        res = HEAP_NEXT;    
-        HEAP_NEXT += size;
+        HEAP_END = sbrk(HEAP_SIZE) + HEAP_SIZE;
     }
     return res;
 }
@@ -419,7 +410,7 @@ int main(int argc, char** argv)
     //Int* len = IO_in_int(io);
     //String* substr = String_substr(s, start, len);
     //IO_out_string(io, substr);
-    HEAP_NEXT = malloc(HEAP_SIZE);
+    HEAP_NEXT = sbrk(HEAP_SIZE);
     HEAP_END = HEAP_NEXT + HEAP_SIZE;
     _main(); 
     return 0;
