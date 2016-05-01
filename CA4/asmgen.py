@@ -71,12 +71,12 @@ class ASMIndexer:
 
     #string class => list of string labels
     vtableMap = {
-        'Object' : ['name_Object', 'Object.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
-        'Bool' : ['name_Bool', 'Bool.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
-        'Int' : ['name_Int', 'Int.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
-        'IO' : ['name_IO', 'IO.new', 'Object.abort', 'Object.copy', 'Object.type_name', \
+        'Object' : ['name_Object', '0', 'Object.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
+        'Bool' : ['name_Bool', '1', 'Bool.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
+        'Int' : ['name_Int', '1', 'Int.new', 'Object.abort', 'Object.copy', 'Object.type_name'],
+        'IO' : ['name_IO', '0','IO.new', 'Object.abort', 'Object.copy', 'Object.type_name', \
             'IO.in_int', 'IO.in_string', 'IO.out_int', 'IO.out_string'],
-        'String' : ['name_String', 'String.new', 'Object.abort', 'Object.copy', 'Object.type_name', \
+        'String' : ['name_String', '2','String.new', 'Object.abort', 'Object.copy', 'Object.type_name', \
             'String.concat', 'String.length', 'String.substr'],
     }
 
@@ -155,28 +155,28 @@ class ASMIndexer:
                 strind += 1
         #TODO cull list after optimization to remove unused strings
 
+
+        #create attrOffset
+        for cname in cmap:
+            attrmap = {}
+            #attr index 0 = vtable pointer
+            # other attributes start at index 1
+            for i, cattr in enumerate(cmap[cname]):
+                attrmap[cattr.name] = i+1
+            ASMIndexer.attrOffset[cname] = attrmap
+
         #create vtableMap
         for i, cname in enumerate(imap):
             if cname in ASMIndexer.vtableMap:
                 continue
             #entry 0 of vtable is string of class name
-            #entry 1 is new method
-            labels = [ASMIndexer.strMap[cname], cname + '.new']
+            #entry 1 is number of fields
+            #entry 2 is new method
+            labels = [ASMIndexer.strMap[cname], str(len(ASMIndexer.attrOffset[cname])), cname + '.new']
             # methods start at index 2 of table
             for imeth in imap[cname]:
                 labels.append(imeth.orig + '.' + imeth.name)
             ASMIndexer.vtableMap[cname] = labels
-
-        #create attrOffset
-        for cname in cmap:
-            attrmap = {}
-            #attr index 0 = class tag
-            #attr index 1 = vtable pointer
-            #attr index 2 = object size
-            # other attributes start at index 3
-            for i, cattr in enumerate(cmap[cname]):
-                attrmap[cattr.name] = i+3
-            ASMIndexer.attrOffset[cname] = attrmap
 
         #create methOffset
         for cname in imap:
@@ -196,8 +196,9 @@ class ASMIndexer:
             methmap = {}
             for i, imeth in enumerate(imap[cname]):
                 #index 0 of vtable contains type name string
-                #index 1 is constructor
-                methmap[imeth.name] = i+2
+                #index 1 is object size
+                #index 2 is constructor
+                methmap[imeth.name] = i+3
             ASMIndexer.vtableOffset[cname] = methmap
 
     @staticmethod
@@ -205,7 +206,7 @@ class ASMIndexer:
         ind = -1
         for i, meth in enumerate(ASMIndexer.vtableMap[cname]):
             # Skip name string
-            if i < 1:
+            if i < 2:
                 continue
             if meth.split('.')[1] == methname:
                 ind = i
@@ -234,9 +235,7 @@ class ASMIndexer:
                 ASMInfo('string', '"' + s + '"'),
                 # String object
                 ASMLabel(ASMIndexer.strMap[s]),
-                ASMInfo('quad', str(ASMIndexer.clsTags['String'])),
                 ASMInfo('quad', 'String_vtable'),
-                ASMInfo('quad', '2'),
                 ASMInfo('quad', ASMIndexer.strMap[s]+"_l"),
                 ASMInfo('quad', str(slen))
             ]
@@ -521,7 +520,7 @@ class ASMBTypeEq(ASMInstruction):
             asm.append(ASMAssign('%rdx', self.obj))
             self.obj = '%rdx'
         # do cmp on obj class tag and self.clstag
-        asm.append(ASMCmp('$'+str(self.clstag), '0('+self.obj+')'))
+        asm.append(ASMCmp('$'+self.clstag +'_vtable', '0('+self.obj+')'))
         # do conditional jump to self.label if cmp yields equal
         asm.append(ASMMisc('je', [self.label]))
         return asm
@@ -678,20 +677,18 @@ def funcConvert(cfg, regMap):
                 objreg = '%rdx'
             asmlst += [
                 # vtable addr -> rdx
-                ASMAssign(insreg, offsetStr(8, objreg)),
+                ASMAssign(insreg, offsetStr(0, objreg)),
                 # method addr -> assignee
                 ASMAssign(insreg, offsetStr(ASMIndexer.getvtableind(ins.cname, ins.mname), insreg))
             ]
         elif isinstance(ins, TACMalloc):
             nattrs = len(ASMIndexer.attrOffset[ins.cname])
             asmlst += [
-                ASMCall('%rax', 'getmem', ['$' + str(8*(nattrs + 3))]),
-                ASMAssign('(%rax)', '$' + str(ASMIndexer.clsTags[ins.cname])),
-                ASMAssign('8(%rax)', '$' + ins.cname + "_vtable"),
-                ASMAssign('16(%rax)', '$' + str(nattrs))
+                ASMCall('%rax', 'getmem', ['$' + str(8*(nattrs + 1))]),
+                ASMAssign('0(%rax)', '$' + ins.cname + "_vtable"),
             ]
         elif isinstance(ins, TACBTypeEq):
-            asmlst.append(ASMBTypeEq(realReg(ins.obj), ASMIndexer.clsTags[ins.dtype], ins.label))
+            asmlst.append(ASMBTypeEq(realReg(ins.obj), ins.dtype, ins.label))
         elif isinstance(ins, TACError):
             asmlst += [
                 ASMAssign('%rsi', '$' + str(ins.lineno)),

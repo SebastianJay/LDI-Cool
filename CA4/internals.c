@@ -2,43 +2,27 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-const int OBJECT_TAG = 0;
-const int INT_TAG = 1;
-const int STRING_TAG = 2;
-const int IO_TAG = 3;
-const int BOOL_TAG = 4;
-
 typedef struct {
-    long long type;
     void** vtable;
-    long long objSize;
 } Object;
 
 typedef struct {
-    long long type;
     void** vtable;
-    long long objSize;
     long long value;
 } Int;
 
 typedef struct {
-    long long type;
     void** vtable;
-    long long objSize;
     char* c;
     long long length;
 } String;
 
 typedef struct {
-    long long type;
     void** vtable;
-    long long objSize;
 } IO;
 
 typedef struct {
-    long long type;
     void** vtable;
-    long long objSize;
     long long value;
 } Bool;
 
@@ -83,9 +67,7 @@ void* getmem(long long size);
 IO* IO_new()
 {
     IO* io = (IO*)getmem(sizeof(IO));
-    io->type = IO_TAG;
     io->vtable = IO_vtable;
-    io->objSize = 0;
     return io;
 }
 
@@ -222,9 +204,7 @@ void out_error(const char* format, long long lineno)
 
 Object* Object_new() {
     Object* o = (Object*)getmem(sizeof(Object));
-    o->type = OBJECT_TAG;
     o->vtable = Object_vtable;
-    o->objSize = 0;
     return o;
 }
 
@@ -241,12 +221,10 @@ String* Object_type_name(Object * self) {
 // long long* to get around type checking
 long long* Object_copy(Object * self) {
     int i;
-    long long* res = getmem((3 + self->objSize) * 8);
-    res[0] = self->type;
-    res[1] = (long long) self->vtable;
-    res[2] = self->objSize;
-    for (i = 0; i < self->objSize; i++) {
-        res[3+i] = ((long long*) self)[3+i];
+    long long* res = getmem((1 + (long long)self->vtable[1]) * 8);
+    res[0] = (long long) self->vtable;
+    for (i = 0; i < (long long)self->vtable[1]; i++) {
+        res[1+i] = ((long long*) self)[1+i];
     }
     return res;
 }
@@ -255,13 +233,13 @@ long long Object_cmp(Object *self, Object *other) {
     if (self == NULL || other == NULL) {
         return self == other ? 0 : 1;
     }
-    if (self->type != other->type) {
+    if (self->vtable != other->vtable) {
         return 1;
     }
-    if (self->type == INT_TAG || self->type == BOOL_TAG) {
+    if (self->vtable == Int_vtable || self->vtable == Bool_vtable) {
         return ((Int*)self)->value - ((Int*)other)->value;
     }
-    if (self->type == STRING_TAG) {
+    if (self->vtable == String_vtable) {
         return String_cmp((String*)self, (String*)other);
     }
     return self == other ? 0 : 1;
@@ -269,9 +247,7 @@ long long Object_cmp(Object *self, Object *other) {
 
 String* String_new() {
     String* s =(String*)getmem(sizeof(String));
-    s->type = STRING_TAG;
     s->vtable = String_vtable;
-    s->objSize = 2;
     s->c = "";  //default val = empty string
     s->length = 0;
     return s;
@@ -325,9 +301,7 @@ long long String_cmp(String* self, String* other) {
 Int* Int_new()
 {
     Int* i = (Int*)getmem(sizeof(Int));
-    i->type = INT_TAG;
     i->vtable = Int_vtable;
-    i->objSize = 1;
     i->value = 0;   //default val = 0
     return i;
 }
@@ -335,9 +309,7 @@ Int* Int_new()
 Bool* Bool_new()
 {
     Bool* b = (Bool*)getmem(sizeof(Bool));
-    b->type = BOOL_TAG;
     b->vtable = Bool_vtable;
-    b->objSize = 1;
     b->value = 0;   //default val = false
     return b;
 }
