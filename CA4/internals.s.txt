@@ -202,7 +202,7 @@ in_string:
 	subq	$8, %rsp
 	.cfi_def_cfa_offset 48
 	movq	HEAP_NEXT(%rip), %r12
-	leaq	64(%r12), %rax
+	leaq	128(%r12), %rax
 	cmpq	HEAP_END(%rip), %rax
 	movq	%rax, HEAP_NEXT(%rip)
 	jnb	.L47
@@ -224,10 +224,10 @@ in_string:
 	je	.L49
 	leal	1(%rbx), %ebp
 	movb	%al, (%r12,%rbx)
-	cmpl	$63, %ebp
+	cmpl	$127, %ebp
 	jne	.L42
 	movq	HEAP_NEXT(%rip), %rax
-	addq	$64, %rax
+	subq	$-128, %rax
 	cmpq	HEAP_END(%rip), %rax
 	movq	%rax, HEAP_NEXT(%rip)
 	jb	.L42
