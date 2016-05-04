@@ -192,7 +192,7 @@ def registerAllocate(cfg, nregs):
                 continue
 
             # Eliminate colors of adjacent nodes
-            availableColors = set(range(nregs)) # [0,..,maxColor+1]
+            availableColors = set(range(nregs)) # [0,..,maxColor]
             for adj in graph[node][0]:
                 availableColors -= set([graph[adj][1]])
 
@@ -220,7 +220,7 @@ def registerAllocate(cfg, nregs):
 
             # Spill a temp
             nspill = max([x for x in regGraph if  regGraph[x][1] == -1], key = lambda x: deg[x])
-            availableSpills = set(range(nregs+1,nregs+maxSpill+2))
+            availableSpills = set(range(nregs,nregs+maxSpill+2))
 
             for adj in regGraph[nspill][0]:
                 availableSpills -= set([regGraph[adj][1]])

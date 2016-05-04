@@ -9,7 +9,10 @@ COMP_FILES=$(wildcard *.py) internals.s.txt
 
 BENCH=valgrind --tool=callgrind --cache-sim=yes
 
-all: $(TESTS) $(TEST_TYPES) $(TEST_ASM)
+all: $(TESTS) $(TEST_TYPES) $(TEST_ASM) ca5.zip
+
+ca5.zip: $(COMP_FILES) team.txt
+	zip ca5.zip $(COMP_FILES) team.txt
 
 type: $(TESTS) $(TEST_TYPES)
 
