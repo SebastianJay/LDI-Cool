@@ -1,0 +1,15642 @@
+7103
+	movq %reg0, %reg1	
+
+2248
+	.quad String_vtable	
+
+2168
+	movq %reg0, %rdi	
+
+1892
+	movq %rax, %reg1	
+
+1358
+	movq %reg0, %rsi	
+
+1346
+	movq %reg0, %rax	
+
+1283
+	pushq %reg0	
+
+1254
+	call *%reg0	
+
+1253
+	movq 0(%reg0), %reg1	
+
+835
+	movq %rbx, %reg1	
+
+832
+	testq $1, %reg0	
+
+831
+	movq $0, %reg0	
+
+790
+	.quad Object.abort	
+
+790
+	.quad Object.type_name	
+
+790
+	.quad Object.copy	
+
+717
+	movq %rax, %rdi	
+
+708
+	popq %reg0	
+
+689
+	call out_error	
+
+667
+	movq %rdi, %reg1	
+
+641
+	call *%rax	
+
+640
+	movq 0(%reg0), %rax	
+
+597
+	movq -8(%rbp), %reg1	
+
+593
+	movq %rbx, %rdi	
+
+575
+	leave	
+
+575
+	movq %rsp, %rbp	
+
+575
+	movq %rsp, %reg1	
+
+575
+	pushq %rbp	
+
+575
+	ret	
+
+575
+	movq %reg0, %rbp	
+
+557
+	movq 0(%rbx), %reg1	
+
+553
+	movq %r12, %reg1	
+
+520
+	.quad 2	
+
+515
+	cmpl %reg0, %reg1	
+
+498
+	movq %rax, %rsi	
+
+490
+	.quad 0	
+
+462
+	movq 64(%reg0), %reg0	
+
+431
+	sete %reg0l	
+
+402
+	movq %rdi, %rax	
+
+392
+	.quad 4	
+
+386
+	movq $.string2_l, %rdi	
+
+386
+	movq $.string2_l, %reg0	
+
+378
+	addl %reg0, %reg1	
+
+363
+	movq %reg0, %rdx	
+
+345
+	movq 0(%rdx), %reg1	
+
+332
+	pushq %rbx	
+
+332
+	popq %rbx	
+
+326
+	sete %dil	
+
+323
+	cdq	
+
+321
+	movq 0(%rbx), %rax	
+
+319
+	cmpl $0, %reg0	
+
+314
+	.quad 1	
+
+308
+	movq %rsi, %reg1	
+
+304
+	sete %reg0	
+
+301
+	call *%r12	
+
+301
+	movq 0(%reg0), %r12	
+
+298
+	movq -8(%rbp), %rdx	
+
+298
+	movq -8(%rbp), %rdi	
+
+290
+	testq $1, %rdi	
+
+290
+	negl %reg0	
+
+289
+	movq %r12, %rsi	
+
+286
+	movq %reg0, %rcx	
+
+278
+	movq 0(%rax), %reg1	
+
+276
+	subl %reg0, %reg1	
+
+260
+	.quad IO.in_int	
+
+260
+	.quad IO.out_string	
+
+260
+	.quad IO.in_string	
+
+260
+	.quad IO.out_int	
+
+257
+	movq 0(%rdx), %rax	
+
+253
+	testq $1, %rax	
+
+252
+	.quad 6	
+
+246
+	.quad 42	
+
+244
+	movq 72(%reg0), %reg0	
+
+243
+	movq 64(%rax), %rax	
+
+242
+	imull %reg0	
+
+241
+	cmpl $0, %eax	
+
+239
+	movq %r13, %reg1	
+
+235
+	movq $0, %rdi	
+
+230
+	movq %reg0, %rbx	
+
+227
+	addl %reg0, %eax	
+
+224
+	movq %reg0, %r12	
+
+223
+	idivl %reg0	
+
+222
+	movq $1, %reg0	
+
+220
+	movq $12, %reg0	
+
+213
+	movq $0, %rsi	
+
+210
+	movq 0(%rbx), %r12	
+
+208
+	call *%rbx	
+
+208
+	movq 0(%reg0), %rbx	
+
+199
+	cmpl %edi, %reg1	
+
+190
+	cmpl %reg0, %eax	
+
+184
+	popq %r12	
+
+184
+	pushq %r12	
+
+182
+	cmpl %reg0, %esi	
+
+175
+	call getmem	
+
+174
+	addl %edi, %reg1	
+
+173
+	movq 48(%reg0), %reg0	
+
+172
+	sete %al	
+
+172
+	movq 64(%r12), %r12	
+
+170
+	.quad 3	
+
+170
+	addl %edi, %eax	
+
+165
+	movq %reg0, 8(%reg1)	
+
+165
+	movq 0(%rax), %rbx	
+
+161
+	movq %rax, %r12	
+
+160
+	sete %reg0b	
+
+152
+	cmpl %edi, %eax	
+
+143
+	movq 80(%reg0), %reg0	
+
+143
+	movq 48(%rax), %rax	
+
+142
+	cmpl %esi, %reg1	
+
+142
+	negl %eax	
+
+142
+	subl %reg0, %eax	
+
+138
+	movq %r12, %rdi	
+
+138
+	addl %eax, %reg1	
+
+134
+	movq $8, %reg0	
+
+133
+	movq %rdi, %rbx	
+
+131
+	movq $0, %rax	
+
+129
+	subl %eax, %reg1	
+
+128
+	.quad Main.main	
+
+128
+	.quad 7	
+
+126
+	call Main.new	
+
+126
+	sete %cl	
+
+125
+	movq %reg0, %r13	
+
+123
+	.text 	
+
+123
+	.string ""	
+
+123
+empty_string_l:	
+
+123
+	.quad 54	
+
+123
+	.quad String.substr	
+
+123
+	.quad substrerr_string_l	
+
+123
+name_Int:	
+
+123
+	.quad name_String_l	
+
+123
+Object_vtable:	
+
+123
+.string4:	
+
+123
+	.quad name_IO	
+
+123
+	.quad .string3_l	
+
+123
+	.quad Object.new	
+
+123
+	.section .rodata	
+
+123
+	.string "Main"	
+
+123
+empty_string:	
+
+123
+.string2_l:	
+
+123
+.string5:	
+
+123
+	.quad String.new	
+
+123
+	.string "IO"	
+
+123
+	.quad .string0_l	
+
+123
+	.quad .string4_l	
+
+123
+percents_string:	
+
+123
+percents_string_l:	
+
+123
+	.quad String.length	
+
+123
+.string0_l:	
+
+123
+name_IO:	
+
+123
+	.quad name_IO_l	
+
+123
+	.string "Bool"	
+
+123
+percentlld_string:	
+
+123
+	.string "ERROR: %lld: Exception: division by zero\n"	
+
+123
+substrerr_string_l:	
+
+123
+	.string "ERROR: %lld: Exception: case without matching branch\n"	
+
+123
+	.string "ERROR: %lld: Exception: stack overflow\n"	
+
+123
+	.quad 50	
+
+123
+	movq $Main_vtable, 0(%reg0)	
+
+123
+	.quad percents_string_l	
+
+123
+name_Bool:	
+
+123
+name_String:	
+
+123
+	.quad .string1_l	
+
+123
+.string1:	
+
+123
+	.quad name_Bool	
+
+123
+	je .._main_1	
+
+123
+	.quad 40	
+
+123
+name_Object_l:	
+
+123
+.._main_1:	
+
+123
+	movq $Main_vtable, 0(%rax)	
+
+123
+._main:	
+
+123
+	.globl Main.new	
+
+123
+	.quad 38	
+
+123
+	.quad abort_string_l	
+
+123
+name_Int_l:	
+
+123
+	.quad name_String	
+
+123
+.string0:	
+
+123
+.string2:	
+
+123
+percentd_string:	
+
+123
+Main_vtable:	
+
+123
+	.quad name_Int	
+
+123
+	.string "%s"	
+
+123
+	.quad Main.new	
+
+123
+name_Bool_l:	
+
+123
+	.globl _main	
+
+123
+	.quad Bool.new	
+
+123
+.string1_l:	
+
+123
+percentlld_string_l:	
+
+123
+	.string "abort\\n"	
+
+123
+	.quad .string0	
+
+123
+	.string "ERROR: %lld: Exception: case on void\n"	
+
+123
+	.string "Object"	
+
+123
+abort_string:	
+
+123
+	.type Main.new, @function	
+
+123
+	.size _main, .-_main	
+
+123
+abort_string_l:	
+
+123
+Main.new:	
+
+123
+percentd_string_l:	
+
+123
+	.size Main.new, .-Main.new	
+
+123
+	.string "%lld"	
+
+123
+Bool_vtable:	
+
+123
+	.string "%d"	
+
+123
+	.quad percentd_string_l	
+
+123
+	.quad percentlld_string_l	
+
+123
+	.quad IO.new	
+
+123
+	.string "ERROR: %lld: Exception: dispatch on void\n"	
+
+123
+	.quad Int.new	
+
+123
+String_vtable:	
+
+123
+	.quad name_Int_l	
+
+123
+.string3:	
+
+123
+name_IO_l:	
+
+123
+	.string "Int"	
+
+123
+	.type _main, @function	
+
+123
+	.quad String.concat	
+
+123
+	.quad name_Object	
+
+123
+name_String_l:	
+
+123
+	.quad empty_string_l	
+
+123
+	.quad name_Bool_l	
+
+123
+	.string "ERROR: %lld: Exception: String index out of bounds"	
+
+123
+.string3_l:	
+
+123
+substrerr_string:	
+
+123
+	.string "String"	
+
+123
+	.quad .string5_l	
+
+123
+name_Object:	
+
+123
+	.quad .string2_l	
+
+123
+	.quad name_Object_l	
+
+123
+IO_vtable:	
+
+123
+Int_vtable:	
+
+123
+.string4_l:	
+
+123
+_main:	
+
+123
+.string5_l:	
+
+122
+	.size Main.main, .-Main.main	
+
+122
+Main.main:	
+
+122
+	.globl Main.main	
+
+122
+	.type Main.main, @function	
+
+121
+	movq $8, %rdi	
+
+117
+	movq %reg0, %r8	
+
+115
+	imull %esi	
+
+114
+	movq %rcx, %reg1	
+
+114
+	movq 72(%rax), %rax	
+
+113
+	movq 80(%rbx), %rbx	
+
+112
+	movq %reg0, 8(%rax)	
+
+109
+	movq %rbx, %rsi	
+
+108
+	movq %r14, %reg1	
+
+107
+	idivl %ecx	
+
+107
+	movq %rsi, %rdi	
+
+105
+	movq $.string1_l, %reg0	
+
+105
+	sete %sil	
+
+105
+	movq $.string1_l, %rdi	
+
+104
+	cmpl $0, %reg0d	
+
+101
+	movq $.string3_l, %rdi	
+
+101
+	movq $.string3_l, %reg0	
+
+100
+	movq %rbx, %rax	
+
+100
+	idivl %reg0d	
+
+99
+	movq 8(%reg0), %reg1	
+
+98
+	movq $1, %rax	
+
+97
+	idivl %esi	
+
+95
+	cmpl %ecx, %reg1	
+
+95
+	cmpl %ecx, %esi	
+
+95
+	movq %r12, %rax	
+
+93
+	testq $1, %rcx	
+
+92
+	movq %rsi, %rcx	
+
+92
+	movq $3000, %rdi	
+
+92
+	movq $3000, %reg0	
+
+91
+	movq -16(%rbp), %reg1	
+
+91
+	movq $0, %rcx	
+
+90
+	movq $.string6, %reg0	
+
+90
+	movq %r13, %rsi	
+
+90
+	movq %rax, %rcx	
+
+89
+	movq $12, %rsi	
+
+89
+	movq %rax, %r13	
+
+88
+	movq $2, %reg0	
+
+86
+	subl %edi, %reg1	
+
+86
+	subl %reg0, %edi	
+
+86
+	setl %reg0l	
+
+85
+	movq $3, %reg0	
+
+84
+	testq $1, %rsi	
+
+84
+	addl %reg0, %edi	
+
+84
+	subl %edi, %eax	
+
+83
+	subl %eax, %edi	
+
+81
+	sete %r8b	
+
+80
+	addl %eax, %edi	
+
+79
+	cmpl %eax, %reg1	
+
+76
+	popq %r13	
+
+76
+	pushq %r13	
+
+76
+.Main.main_1:	
+
+75
+	cmpl %reg0, %edi	
+
+75
+	movq %rdi, %rsi	
+
+72
+	movq 0(%rax), %r12	
+
+71
+	cmpl %reg0d, %reg1	
+
+70
+	movq 56(%reg0), %reg0	
+
+70
+	movq %rax, %rbx	
+
+70
+	movq %rsi, %rax	
+
+69
+	movq %rdi, 8(%reg1)	
+
+69
+	movq %rdi, 8(%rax)	
+
+68
+	movq 88(%reg0), %reg0	
+
+68
+	cmpl %reg0, %ecx	
+
+68
+	cmpl %reg0d, %ecx	
+
+68
+	cmpl %esi, %ecx	
+
+68
+	imull %ecx	
+
+67
+	movq $5, %reg0	
+
+67
+	movq $.string5_l, %rdi	
+
+67
+	movq $.string5_l, %reg0	
+
+66
+	setle %reg0l	
+
+66
+	movq %reg0, %r14	
+
+65
+	cmpl %reg0d, %reg1d	
+
+65
+	movq 72(%r12), %r12	
+
+64
+	movq 8(%rbx), %reg1	
+
+64
+	movq $4, %reg0	
+
+64
+	cmpl %r8d, %ecx	
+
+64
+	cmpl %r8d, %reg1	
+
+63
+.string6:	
+
+63
+.Main.main_2:	
+
+63
+	movq $12, %rcx	
+
+63
+	je .Main.main_1	
+
+63
+	.quad .string6_l	
+
+63
+.string6_l:	
+
+62
+	movq -32(%rbp), %reg1	
+
+62
+	movq %r13, %rdi	
+
+62
+	movq %r13, %rax	
+
+60
+	negl %esi	
+
+60
+	setl %dil	
+
+60
+	movq %r8, %reg1	
+
+59
+	popq %rax	
+
+59
+	pushq %rax	
+
+59
+	movq -24(%rbp), %reg1	
+
+56
+	movq -96(%rbp), %reg1	
+
+56
+	imull %edi	
+
+56
+	testq $1, %r8	
+
+56
+	movq -128(%rbp), %reg1	
+
+56
+	movq $0, %r8	
+
+55
+	setle %dil	
+
+55
+	idivl %r8d	
+
+55
+	movq -40(%rbp), %reg1	
+
+54
+	cmpl $0, %ebx	
+
+54
+	movq 0(%reg0), %r13	
+
+54
+	call *%r13	
+
+53
+	movq 16(%reg0), %reg1	
+
+52
+	movq %rax, 8(%reg1)	
+
+52
+	movq $1, %rdi	
+
+51
+	imull %reg0d	
+
+51
+	movq -80(%rbp), %reg1	
+
+50
+.Main.main_3:	
+
+50
+	cmpl $0, %r13d	
+
+49
+	movq %rax, %r14	
+
+49
+	movq -56(%rbp), %reg1	
+
+49
+	movq -152(%rbp), %reg1	
+
+48
+	movq -48(%rbp), %reg1	
+
+47
+	movq $.string6, %rax	
+
+47
+	movq %reg0, 8(%rbx)	
+
+47
+	cmpl %edi, %esi	
+
+47
+	call Object.cmp	
+
+46
+	movq %rax, 8(%rbx)	
+
+46
+	negl %edi	
+
+46
+	movq %reg0, %r9	
+
+46
+	movq $.string8, %reg0	
+
+45
+	movq %rcx, %rax	
+
+45
+	movq -88(%rbp), %reg1	
+
+45
+	movq -160(%rbp), %reg1	
+
+45
+	setle %reg0	
+
+44
+	addl %reg0, %esi	
+
+44
+	movq -64(%rbp), %reg1	
+
+44
+	je .Main.main_2	
+
+43
+	movq %reg0, 16(%reg1)	
+
+43
+	movq -144(%rbp), %reg1	
+
+43
+.Main.main_4:	
+
+43
+	movq $3, %rsi	
+
+42
+	movq -112(%rbp), %reg1	
+
+42
+	movq -136(%rbp), %reg1	
+
+42
+	movq -120(%rbp), %reg1	
+
+42
+	movq -104(%rbp), %reg1	
+
+42
+	movq %rax, %r8	
+
+42
+	movq 0(%r12), %reg1	
+
+42
+	movq -168(%rbp), %reg1	
+
+41
+	movq 0(%rdx), %rbx	
+
+41
+	movq -72(%rbp), %reg1	
+
+40
+	cmpl $0, %r12d	
+
+40
+	cmpl %eax, %esi	
+
+39
+	popq %r14	
+
+39
+	cmpl %eax, %edi	
+
+39
+	movq $12, %r8	
+
+39
+	pushq %r14	
+
+38
+	addl %esi, %reg1	
+
+38
+	movq 88(%rax), %rax	
+
+38
+	movq $16, %reg0	
+
+38
+	movq $.string7, %reg0	
+
+38
+	cmpl %reg0, %reg1d	
+
+38
+	cmpl %esi, %eax	
+
+37
+	negl %ecx	
+
+37
+	movq %r14, %rax	
+
+37
+	movq %rcx, %rsi	
+
+37
+	movq 16(%rbx), %reg1	
+
+37
+	movq %r15, %reg1	
+
+37
+	setl %reg0	
+
+36
+	movq 8(%reg0), %reg0	
+
+36
+	call Int.new	
+
+36
+	movq 72(%rbx), %rbx	
+
+36
+	cmpl %esi, %edi	
+
+36
+	movq %r14, %rsi	
+
+36
+	movq 56(%rax), %rax	
+
+36
+	subl %esi, %reg1	
+
+36
+	movq $10, %reg0	
+
+35
+	movq $16, %rdi	
+
+35
+	addl %eax, %esi	
+
+34
+	setl %al	
+
+34
+	.quad .string1	
+
+34
+	movq -32(%rbp), %rax	
+
+34
+	movq 0(%r12), %rax	
+
+34
+	addl %esi, %eax	
+
+33
+	cmpl %ecx, %reg1d	
+
+33
+	movq 8(%rax), %rax	
+
+33
+	subl %esi, %eax	
+
+33
+	cmpl %ecx, %r8d	
+
+33
+	cmpl %reg0, %r8d	
+
+32
+	movq -16(%rbp), %rdi	
+
+32
+.Main.main_5:	
+
+32
+	sete %r9b	
+
+32
+	movq 64(%rbx), %rbx	
+
+31
+	movq $2, %rax	
+
+31
+.Main.main_6:	
+
+30
+	movq $1, %r12	
+
+30
+	movq -24(%rbp), %rax	
+
+30
+	movq %r12, 8(%reg1)	
+
+30
+	movq 8(%reg0), %rdi	
+
+30
+.string7:	
+
+30
+.string7_l:	
+
+30
+	call String.cmp	
+
+30
+	.quad .string7_l	
+
+30
+	movq %r12, 8(%rax)	
+
+29
+	movq %reg0, 24(%reg1)	
+
+29
+	movq $13, %reg0	
+
+29
+	movq %rcx, %r8	
+
+29
+	setle %al	
+
+29
+	je .Main.main_3	
+
+28
+	movq 0(%r13), %reg1	
+
+28
+	movq $6, %reg0	
+
+28
+	cmpl %r9d, %reg1d	
+
+28
+	movq $4, %rsi	
+
+28
+	testq $1, %r9	
+
+28
+	movq -184(%rbp), %reg1	
+
+28
+	movq -48(%rbp), %rax	
+
+28
+	movq $0, %r9	
+
+27
+	movq $10, %rsi	
+
+27
+	movq $7, %reg0	
+
+27
+	movq -176(%rbp), %reg1	
+
+27
+	movq -112(%rbp), %rax	
+
+27
+	movq -16(%rbp), %rax	
+
+27
+	movq $0, %r12	
+
+27
+	addl %ecx, %reg1	
+
+27
+	movq 8(%rax), %reg1	
+
+26
+	movq %r8, %rcx	
+
+26
+	subl %reg0, %esi	
+
+26
+	movq 0(%r13), %rax	
+
+26
+	movq -128(%rbp), %rax	
+
+26
+	movq $2, %rdi	
+
+26
+	jmp .Main.main_4	
+
+26
+	imull %r8d	
+
+26
+	setl %sil	
+
+26
+	movq -80(%rbp), %rax	
+
+26
+	movq 8(%reg0), %rax	
+
+25
+	movq %rsi, %r12	
+
+25
+	movq 0(%reg0), %r14	
+
+25
+	movq -56(%rbp), %rax	
+
+25
+	movq $5, %rsi	
+
+25
+	movq $13, %rsi	
+
+25
+	call *%r15	
+
+25
+	call *%r14	
+
+25
+	cmpl %reg0d, %r8d	
+
+25
+	movq -168(%rbp), %rax	
+
+25
+	movq 0(%reg0), %r15	
+
+25
+	cmpl %r9d, %r8d	
+
+25
+	je .Main.main_4	
+
+25
+.Main.main_7:	
+
+24
+	movq -152(%rbp), %rax	
+
+24
+	idivl %r9d	
+
+24
+	movq 0(%rax), %r13	
+
+24
+	movq %reg0, 16(%rax)	
+
+24
+	movq 80(%rax), %rax	
+
+24
+	subl %eax, %esi	
+
+24
+	cmpl %reg0d, %r9d	
+
+24
+	call String.concat	
+
+23
+.Main.main_8:	
+
+22
+	movq $.string9, %reg0	
+
+22
+	movq $.string8, %rax	
+
+22
+	movq -96(%rbp), %rax	
+
+22
+	addl %reg0d, %reg1	
+
+22
+	movq 24(%reg0), %reg1	
+
+22
+	call Foo.new	
+
+22
+	subl %ecx, %eax	
+
+22
+	addl %ecx, %eax	
+
+22
+	addl %reg0d, %eax	
+
+22
+	sete %r13b	
+
+22
+	subl %ecx, %reg1	
+
+22
+.Main.main_9:	
+
+22
+	movq -40(%rbp), %rax	
+
+21
+	movq $Foo_vtable, 0(%rax)	
+
+21
+	addl %reg0, %ecx	
+
+21
+Foo_vtable:	
+
+21
+	subl %eax, %ecx	
+
+21
+	movq $64, %reg0	
+
+21
+	movq $34, %reg0	
+
+21
+	movq $Foo_vtable, 0(%reg0)	
+
+21
+	.string "Foo"	
+
+21
+	subl %reg0d, %eax	
+
+21
+	subl %reg0d, %reg1	
+
+21
+	.quad Foo.new	
+
+21
+	movq -120(%rbp), %rax	
+
+21
+	.size Foo.new, .-Foo.new	
+
+21
+	.type Foo.new, @function	
+
+21
+	movq %r14, %rdi	
+
+21
+Foo.new:	
+
+21
+	movq 16(%reg0), %rdi	
+
+21
+	.globl Foo.new	
+
+21
+	negl %reg0d	
+
+21
+	addl %eax, %ecx	
+
+21
+	subl %reg0, %ecx	
+
+21
+	movq -144(%rbp), %rax	
+
+20
+.Main.main_11:	
+
+20
+	movq 8(%rbx), %rdi	
+
+20
+	movq %rdi, 16(%reg1)	
+
+20
+	movq $64, %rsi	
+
+20
+	movq $34, %rsi	
+
+20
+	movq 8(%rbx), %rax	
+
+20
+	call String.substr	
+
+20
+	movq $.string4_l, %rdi	
+
+20
+	movq %rdi, 16(%rax)	
+
+20
+	movq %reg0, 32(%reg1)	
+
+20
+	movq -88(%rbp), %rax	
+
+20
+	movq $17, %reg0	
+
+20
+	movq $.string4_l, %reg0	
+
+20
+.Main.main_10:	
+
+19
+	movq %rax, 16(%reg1)	
+
+19
+	call String.length	
+
+19
+	movq %r9, %reg1	
+
+19
+.Main.main_12:	
+
+19
+	movq %rdx, %reg1	
+
+19
+	movq 0(%rdx), %r12	
+
+19
+	call Bar.new	
+
+19
+	movq -160(%rbp), %rax	
+
+19
+	movq 16(%reg0), %rax	
+
+19
+	movq %rdi, %r12	
+
+19
+	je .Main.main_6	
+
+19
+	movq $.string7, %rax	
+
+19
+	movq $11, %reg0	
+
+18
+.Main.main_13:	
+
+18
+	cmpq $String_vtable, 0(%reg0)	
+
+18
+	movq $17, %rsi	
+
+18
+	movq %reg0, 24(%rbx)	
+
+18
+	movq %rax, 24(%rbx)	
+
+18
+	movq %rax, 24(%reg1)	
+
+18
+	movq %reg0, 16(%rbx)	
+
+18
+	movq -72(%rbp), %rax	
+
+18
+.string8_l:	
+
+18
+	movq -136(%rbp), %rax	
+
+18
+.string8:	
+
+18
+	.quad .string8_l	
+
+18
+	movq $15, %reg0	
+
+18
+	pushq %r15	
+
+18
+	movq %rax, 16(%rbx)	
+
+18
+	movq 16(%rbx), %rax	
+
+18
+	movq %rdi, %r13	
+
+18
+	cmpq $Int_vtable, 0(%reg0)	
+
+18
+	movq %r15, %rsi	
+
+18
+	popq %r15	
+
+17
+	movq 32(%rbx), %reg1	
+
+17
+	movq %reg0, %r10	
+
+17
+	cmpq $Bool_vtable, 0(%reg0)	
+
+17
+	movq %r8, %r9	
+
+17
+	movq 40(%reg0), %reg0	
+
+17
+	movq 88(%r12), %r12	
+
+17
+	setl %reg0b	
+
+17
+	movq %r8, %rax	
+
+17
+	movq 32(%reg0), %reg1	
+
+17
+.Main.main_14:	
+
+17
+	movq -104(%rbp), %rax	
+
+17
+	cmpl %r8d, %r9d	
+
+17
+	cmpq $Object_vtable, 0(%reg0)	
+
+17
+	movq %reg0, 40(%reg1)	
+
+17
+	cmpl %r8d, %reg1d	
+
+17
+	je .Main.main_7	
+
+17
+	subl %reg0, %reg1d	
+
+17
+	cmpq $IO_vtable, 0(%reg0)	
+
+17
+	cmpq $Main_vtable, 0(%reg0)	
+
+16
+	subl %r8d, %reg1	
+
+16
+	subl %eax, %reg1d	
+
+16
+	idivl %edi	
+
+16
+	movq -96(%rbp), %rsi	
+
+16
+	movq $49, %reg0	
+
+16
+	subl %r8d, %eax	
+
+16
+	movq 8(%reg0), %rdx	
+
+16
+	movq $49, %rsi	
+
+16
+	setle %bl	
+
+16
+	movq $15, %rsi	
+
+16
+	movq 24(%rbx), %reg1	
+
+16
+	movq $7, %rsi	
+
+16
+	movq $6, %rsi	
+
+16
+	.string "\\n"	
+
+16
+	movq $19, %reg0	
+
+15
+	movq -64(%rbp), %rax	
+
+15
+	movq -88(%rbp), %rdi	
+
+15
+	jmp .Main.main_8	
+
+15
+	movq %reg0, -16(%rbp)	
+
+15
+	jmp .Main.main_5	
+
+15
+	movq 16(%rax), %reg1	
+
+15
+	movq 24(%reg0), %reg0	
+
+15
+.string9:	
+
+15
+	.quad .string9_l	
+
+15
+.string9_l:	
+
+15
+	je .Main.main_5	
+
+15
+	movq 72(%r13), %r13	
+
+15
+	call String.new	
+
+15
+	movq 56(%r12), %r12	
+
+14
+	movq $0, %rbx	
+
+14
+	movq $151, %rsi	
+
+14
+	.type Main.func, @function	
+
+14
+	cmpl $0, 8(%reg0)	
+
+14
+	movq %reg0, -8(%rbp)	
+
+14
+	addl %eax, %reg1d	
+
+14
+	.globl Main.func	
+
+14
+	movq %rax, %r9	
+
+14
+	movq 0(%rbx), %r13	
+
+14
+	addl %reg0, %reg1d	
+
+14
+	.quad Main.func	
+
+14
+	movq $145, %reg0	
+
+14
+	movq %rdi, -8(%rbp)	
+
+14
+	movq 104(%reg0), %reg0	
+
+14
+	movq $70, %reg0	
+
+14
+	jmp .Main.main_12	
+
+14
+	movq $70, %rsi	
+
+14
+	movq 8(%rbx), %rdx	
+
+14
+Main.func:	
+
+14
+	movq $145, %rsi	
+
+14
+	.size Main.func, .-Main.func	
+
+14
+	movq 96(%reg0), %reg0	
+
+14
+	movq $19, %rsi	
+
+14
+	je .Main.main_9	
+
+14
+	movq $151, %reg0	
+
+13
+	movq 0(%rdx), %r13	
+
+13
+	movq $12, %rdi	
+
+13
+	movq 0(%rdx), %r15	
+
+13
+	movq %rax, -16(%rbp)	
+
+13
+	movq -80(%rbp), %rdi	
+
+13
+	movq -40(%rbp), %rsi	
+
+13
+	cmpl $0, %r14d	
+
+13
+	.quad .string2	
+
+13
+	movq -96(%rbp), %rdi	
+
+13
+	movq $2147483647, %reg0	
+
+13
+	movq %reg0, 48(%reg1)	
+
+13
+	movq $0, %r13	
+
+13
+	movq %r13, %rdx	
+
+13
+	movq -184(%rbp), %rax	
+
+13
+	jmp .Main.main_2	
+
+13
+	movq $2147483647, %rax	
+
+13
+	movq $.string6, %rbx	
+
+13
+	movq -40(%rbp), %rdi	
+
+12
+	movq $.string10, %reg0	
+
+12
+	movq 16(%rax), %rax	
+
+12
+	movq %r12, %r13	
+
+12
+	cmpl $0, 8(%rbx)	
+
+12
+	movq 16(%reg0), %reg0	
+
+12
+	movq %rax, 32(%reg1)	
+
+12
+	movq $67, %rsi	
+
+12
+	movq -56(%rbp), %rdi	
+
+12
+	.quad 5	
+
+12
+	movq $.string9, %rax	
+
+12
+	je .Main.main_11	
+
+12
+	movq %r15, %rax	
+
+12
+	movq %reg0, %r11	
+
+12
+	movq -152(%rbp), %rsi	
+
+12
+	movq $.string6, %r12	
+
+12
+	movq $5, %rdi	
+
+12
+	negl %r8d	
+
+12
+	movq %rax, 32(%rbx)	
+
+12
+	call Bool.new	
+
+12
+	movq $67, %reg0	
+
+12
+	movq -24(%rbp), %rdi	
+
+12
+	movq %reg0, 32(%rbx)	
+
+12
+	movq $5, %rax	
+
+12
+	movq %reg0, 56(%reg1)	
+
+11
+	cmpl $0, 16(%reg0)	
+
+11
+	jmp .Main.main_1	
+
+11
+	movq -160(%rbp), %rdi	
+
+11
+	movq 8(%reg0), %r12	
+
+11
+	movq %rdi, 24(%rax)	
+
+11
+	movq $3, %rax	
+
+11
+	movq 64(%r13), %r13	
+
+11
+.string10:	
+
+11
+	movq %rdi, 24(%reg1)	
+
+11
+	movq 40(%r12), %r12	
+
+11
+	movq $11, %rsi	
+
+11
+	movq -136(%rbp), %rdi	
+
+11
+	movq %reg0, 64(%reg1)	
+
+11
+	movq 16(%rax), %rdi	
+
+11
+	movq -16(%rbp), %rsi	
+
+11
+	setle %sil	
+
+11
+.Main.main_15:	
+
+11
+	movq 72(%r15), %r15	
+
+11
+	movq -160(%rbp), %rsi	
+
+11
+	movq 0(%rax), %r14	
+
+11
+	.quad .string10_l	
+
+11
+	jmp .Main.main_6	
+
+11
+.string10_l:	
+
+11
+	movq %r10, %reg1	
+
+11
+	movq $308, %rsi	
+
+11
+	movq 16(%reg0), %rdx	
+
+11
+	movq $308, %reg0	
+
+11
+	movq -128(%rbp), %rdi	
+
+11
+	movq %reg0, 24(%rax)	
+
+11
+	movq $.string8, %r12	
+
+11
+	movq %rbx, %r12	
+
+10
+	movq 24(%rbx), %rax	
+
+10
+	movq 56(%r15), %r15	
+
+10
+	cmpq $Bar_vtable, 0(%reg0)	
+
+10
+	.globl Bar.new	
+
+10
+	.quad Bar.new	
+
+10
+	.string "Bar"	
+
+10
+Bar.new:	
+
+10
+	movq %rsi, %rbx	
+
+10
+	movq %r9, %r8	
+
+10
+	movq -32(%rbp), %rdi	
+
+10
+	movq 16(%rbx), %rdi	
+
+10
+	movq $52, %reg0	
+
+10
+	je .Main.main_10	
+
+10
+	cmpl %r10d, %reg1d	
+
+10
+	movq -144(%rbp), %rsi	
+
+10
+	.type Bar.new, @function	
+
+10
+	movq 8(%rax), %rdi	
+
+10
+	movq -128(%rbp), %rsi	
+
+10
+	cmpl $0, %edi	
+
+10
+	imull %r9d	
+
+10
+	movq %r11, %reg1	
+
+10
+	movq 24(%rax), %rax	
+
+10
+	je .Main.main_13	
+
+10
+	.size Bar.new, .-Bar.new	
+
+10
+	movq $0, %r10	
+
+10
+	testq $1, %r10	
+
+10
+	movq 48(%r13), %r13	
+
+10
+	movq -104(%rbp), %rdi	
+
+10
+	movq $112, %rsi	
+
+10
+	movq -64(%rbp), %rdi	
+
+10
+Bar_vtable:	
+
+10
+	cmpq $Bar_vtable, 0(%rbx)	
+
+10
+	movq $Bar_vtable, 0(%rax)	
+
+10
+	movq $112, %reg0	
+
+10
+	sete %r10b	
+
+10
+	movq -80(%rbp), %rsi	
+
+10
+.Main.main_16:	
+
+10
+	jmp .Main.main_3	
+
+10
+	movq -120(%rbp), %rsi	
+
+10
+	movq -104(%rbp), %rsi	
+
+10
+	movq 24(%reg0), %rax	
+
+10
+	movq $Bar_vtable, 0(%reg0)	
+
+9
+	cmpq $Object_vtable, 0(%rax)	
+
+9
+	movq $3, %r12	
+
+9
+	addl %r8d, %eax	
+
+9
+	cmpq $IO_vtable, 0(%rax)	
+
+9
+	movq $8, %rsi	
+
+9
+	movq %rdi, 48(%reg1)	
+
+9
+	cmpq $Int_vtable, 0(%rax)	
+
+9
+	movq %reg0, -32(%rbp)	
+
+9
+	movq 120(%reg0), %reg0	
+
+9
+	cmpq $Razz_vtable, 0(%reg0)	
+
+9
+	movq $1, %rbx	
+
+9
+	movq $1, %rsi	
+
+9
+	cmpq $Main_vtable, 0(%rax)	
+
+9
+	movq -176(%rbp), %rax	
+
+9
+	movq $61, %rsi	
+
+9
+	movq $61, %reg0	
+
+9
+	cmpq $Bool_vtable, 0(%rax)	
+
+9
+.Main.main_17:	
+
+9
+	je .Main.main_23	
+
+9
+	movq -136(%rbp), %rsi	
+
+9
+	movq %rdi, 40(%reg1)	
+
+9
+	movq $52, %rsi	
+
+9
+	movq %reg0, -40(%rbp)	
+
+9
+	addl %r8d, %reg1	
+
+9
+	je .Main.main_15	
+
+9
+	movq 0(%rbx), %r14	
+
+9
+	movq $.string7_l, %rdi	
+
+9
+	movq %reg0, 40(%rbx)	
+
+9
+	je .Main.main_16	
+
+9
+	movq $.string7_l, %reg0	
+
+9
+	movq -72(%rbp), %rsi	
+
+9
+	imull %r11d	
+
+9
+	cmpq $String_vtable, 0(%rax)	
+
+9
+	movq -16(%rbp), %rdx	
+
+9
+	movq -72(%rbp), %rdi	
+
+9
+	jge .Main.main_2	
+
+9
+	movq $14, %reg0	
+
+9
+	movq %rax, -24(%rbp)	
+
+9
+	cmpq $Razz_vtable, 0(%rbx)	
+
+9
+	movq 104(%rax), %rax	
+
+9
+	movq -64(%rbp), %rsi	
+
+9
+	movq %reg0, -24(%rbp)	
+
+9
+	je .Main.main_8	
+
+9
+	movq %rax, -40(%rbp)	
+
+8
+.Main.main_19:	
+
+8
+	movq %rdi, 40(%rax)	
+
+8
+	movq %reg0, 64(%rax)	
+
+8
+.Main.main_23:	
+
+8
+	movq %reg0, 48(%rax)	
+
+8
+	jmp .Main.main_14	
+
+8
+	cmpl $0, 16(%rbx)	
+
+8
+	movq %reg0, -112(%rbp)	
+
+8
+	cmpq $Foo_vtable, 0(%rbx)	
+
+8
+	movq 48(%rbx), %reg1	
+
+8
+	movq $5, %rcx	
+
+8
+	movq %reg0, -96(%rbp)	
+
+8
+	movq -144(%rbp), %rdi	
+
+8
+.Main.main_24:	
+
+8
+	movq -48(%rbp), %rdi	
+
+8
+	movq %rax, 40(%reg1)	
+
+8
+	movq %reg0, -128(%rbp)	
+
+8
+	movq $2, %rsi	
+
+8
+	movq $24, %reg0	
+
+8
+	movq -152(%rbp), %rdi	
+
+8
+	movq %rdi, 48(%rax)	
+
+8
+	movq $31, %reg0	
+
+8
+	jne .Main.main_1	
+
+8
+	movq %reg0, 56(%rax)	
+
+8
+	movq %rdi, 64(%reg1)	
+
+8
+	movq $115, %reg0	
+
+8
+	je .Main.func_2	
+
+8
+	je .Main.main_14	
+
+8
+	movq $20, %reg0	
+
+8
+	movq %rdi, 64(%rax)	
+
+8
+	cmpl $0, -16(%rbp)	
+
+8
+	movq 48(%reg0), %reg1	
+
+8
+	cmpq $Foo_vtable, 0(%reg0)	
+
+8
+	movq %rax, -112(%rbp)	
+
+8
+	subl %reg0, %r8d	
+
+8
+	movq %rdi, 32(%rax)	
+
+8
+	call Object.new	
+
+8
+	movq $31, %rsi	
+
+8
+	movq %reg0, 72(%reg1)	
+
+8
+	movq %rdi, 56(%reg1)	
+
+8
+.Main.main_21:	
+
+8
+	movq 136(%reg0), %reg0	
+
+8
+	movq %rdi, 56(%rax)	
+
+8
+	movq %rax, %r10	
+
+8
+	movq %rax, 40(%rbx)	
+
+8
+.Main.main_18:	
+
+8
+.Main.main_20:	
+
+8
+.Main.main_22:	
+
+8
+	movq %reg0, 32(%rax)	
+
+8
+	movq $115, %rsi	
+
+8
+	call Razz.new	
+
+8
+	movq %rdi, 32(%reg1)	
+
+8
+	movq -112(%rbp), %rsi	
+
+8
+	movq %reg0, -72(%rbp)	
+
+8
+	movq 32(%reg0), %reg0	
+
+8
+	movq -32(%rbp), %rsi	
+
+8
+	movq %reg0, 40(%rax)	
+
+8
+	movq $.string6, %r15	
+
+8
+	movq 16(%rbx), %rdx	
+
+7
+	movq -184(%rbp), %rsi	
+
+7
+	movq 152(%reg0), %reg0	
+
+7
+	xorq $1, %rax	
+
+7
+	movq 112(%reg0), %reg0	
+
+7
+	movq %rax, -72(%rbp)	
+
+7
+	addl %r10d, %eax	
+
+7
+	movq 96(%rax), %rax	
+
+7
+	movq %reg0, -120(%rbp)	
+
+7
+	movq $1, %rcx	
+
+7
+	movq $.string11, %reg0	
+
+7
+	movq $2, %r12	
+
+7
+	movq %r10, %rax	
+
+7
+	addl %r10d, %reg1	
+
+7
+	movq %reg0, -80(%rbp)	
+
+7
+	movq %rax, -80(%rbp)	
+
+7
+	movq 48(%rbx), %rbx	
+
+7
+	movq $2, %rcx	
+
+7
+	movq $4, %rdi	
+
+7
+	jmp .Main.main_7	
+
+7
+	jmp .Main.main_11	
+
+7
+	movq %rax, -96(%rbp)	
+
+7
+	je .Main.new_2	
+
+7
+	subl %eax, %r8d	
+
+7
+	movq %r14, %rdx	
+
+7
+	movq %rax, %rdx	
+
+7
+	movq $9, %reg0	
+
+7
+	idivl %r11d	
+
+7
+	movq %reg0, -104(%rbp)	
+
+7
+	xorq $1, %reg0	
+
+7
+	.quad Foo.getX	
+
+7
+	movq %r9, %rax	
+
+7
+	cmpl %r10d, %r9d	
+
+7
+	movq -88(%rbp), %rsi	
+
+7
+	movq %rax, -120(%rbp)	
+
+7
+	.quad Foo.setX	
+
+7
+	movq $316, %rsi	
+
+7
+	call Cons.new	
+
+7
+	movq %r13, %r12	
+
+7
+	movq $316, %reg0	
+
+7
+	movq 128(%reg0), %reg0	
+
+7
+	movq -24(%rbp), %rsi	
+
+7
+	movq $1, %r13	
+
+7
+	movq %rax, -32(%rbp)	
+
+7
+	movq 48(%r14), %r14	
+
+6
+	sete %r11b	
+
+6
+	movq 24(%rax), %reg1	
+
+6
+	jg .Main.main_13	
+
+6
+.Main.func_1:	
+
+6
+	movq $3, %r8	
+
+6
+.Main.main_32:	
+
+6
+	movq %reg0, -56(%rbp)	
+
+6
+	movq %reg0, 80(%reg1)	
+
+6
+	movq $0, %r11	
+
+6
+	movq %rdi, 80(%rax)	
+
+6
+	movq 32(%rax), %rax	
+
+6
+	movq -168(%rbp), %rsi	
+
+6
+	movq %r12, %r14	
+
+6
+	.quad .string11_l	
+
+6
+.Main.main_25:	
+
+6
+	movq -48(%rbp), %rsi	
+
+6
+.Main.main_31:	
+
+6
+	movq $24, %rdi	
+
+6
+	movq $142, %rsi	
+
+6
+	movq 48(%r12), %r12	
+
+6
+	.quad Main.printY	
+
+6
+	movq 32(%reg0), %rdi	
+
+6
+	movq 32(%rbx), %rdi	
+
+6
+	sete %bl	
+
+6
+	movq %rdi, 72(%rax)	
+
+6
+	addl %eax, %r8d	
+
+6
+	movq %rdi, 80(%reg1)	
+
+6
+	movq $1, %r8	
+
+6
+	movq $.string13, %reg0	
+
+6
+	movq %rbx, %r14	
+
+6
+.Main.func_2:	
+
+6
+.Main.main_26:	
+
+6
+	movq $4, %r8	
+
+6
+	movq %r12, %rdx	
+
+6
+	je .Main.main_12	
+
+6
+	movq %reg0, -152(%rbp)	
+
+6
+	movq %rax, -104(%rbp)	
+
+6
+	movq %rax, 8(%rdi)	
+
+6
+.string11:	
+
+6
+	movq 32(%reg0), %rax	
+
+6
+	movq $empty_string, %reg0	
+
+6
+	testq $1, %r11	
+
+6
+	jmp .Main.main_10	
+
+6
+	movq %rax, -136(%rbp)	
+
+6
+	movq $142, %reg0	
+
+6
+.string11_l:	
+
+6
+	cmpl %reg0d, %r10d	
+
+6
+	movq $2, %r8	
+
+6
+.Main.main_30:	
+
+6
+	movq %reg0, -136(%rbp)	
+
+6
+	movq %reg0, -64(%rbp)	
+
+6
+	movq 24(%reg0), %rdi	
+
+6
+	movq %reg0, 80(%rax)	
+
+6
+	.globl Foo.getX	
+
+6
+	movq 8(%rax), %r12	
+
+6
+	movq %rax, -56(%rbp)	
+
+6
+	.quad 8	
+
+6
+	jne .Main.main_3	
+
+6
+	sete %r14b	
+
+6
+	setl %r14b	
+
+6
+	movq -176(%rbp), %rsi	
+
+6
+	movq $14, %rsi	
+
+6
+	je .Main.new_3	
+
+6
+	movq 32(%rbx), %rax	
+
+6
+	movq 8(%reg0), %rbx	
+
+6
+	movq %reg0, 8(%rdi)	
+
+6
+	movq %reg0, %r15	
+
+6
+	movq %rax, -64(%rbp)	
+
+6
+	movq $4, %rcx	
+
+6
+.Main.main_29:	
+
+6
+	movq %rdi, 72(%reg1)	
+
+6
+	movq 88(%rbx), %rbx	
+
+6
+	.size Foo.getX, .-Foo.getX	
+
+6
+.Main.main_27:	
+
+6
+	movq -56(%rbp), %rsi	
+
+6
+	movq %rbx, %rdx	
+
+6
+	movq %reg0, -144(%rbp)	
+
+6
+.Main.main_28:	
+
+6
+	movq %rax, %r11	
+
+6
+	movq %rax, -128(%rbp)	
+
+6
+	movq %reg0, 72(%rax)	
+
+6
+	movq $4, %rax	
+
+6
+	addl %reg0, %r8d	
+
+6
+	movq $3, %rcx	
+
+6
+	idivl %r10d	
+
+6
+	.type Foo.getX, @function	
+
+6
+Foo.getX:	
+
+6
+	setl %r13b	
+
+6
+	movq 0(%rax), %r15	
+
+5
+	movq %reg0, -48(%rbp)	
+
+5
+	movq $.string7, %r12	
+
+5
+	movq 88(%r14), %r14	
+
+5
+	je .Main.func_1	
+
+5
+	movq -104(%rbp), %rcx	
+
+5
+	cmpl $0, 32(%rbx)	
+
+5
+	call IO.new	
+
+5
+	cmpl %ebx, %reg1d	
+
+5
+	movq -120(%rbp), %rdi	
+
+5
+	movq 56(%r13), %r13	
+
+5
+	.type Foo.setX, @function	
+
+5
+.Main.main_34:	
+
+5
+	movq %rax, %r15	
+
+5
+	movq -32(%rbp), %rdx	
+
+5
+	movq $6, %rax	
+
+5
+	movq 24(%rbx), %rbx	
+
+5
+	movq 128(%rax), %rax	
+
+5
+.Main.main_42:	
+
+5
+.Main.main_40:	
+
+5
+.Main.main_39:	
+
+5
+.Main.main_48:	
+
+5
+	movq $5, %r12	
+
+5
+	movq %rax, -152(%rbp)	
+
+5
+	movq -176(%rbp), %rdi	
+
+5
+.Main.main_33:	
+
+5
+	cmpl $0, 32(%reg0)	
+
+5
+	call Main.func	
+
+5
+	movq $10, %rax	
+
+5
+	movq %rax, -48(%rbp)	
+
+5
+	movq -16(%rbp), %rbx	
+
+5
+Foo.setX:	
+
+5
+	movq -112(%rbp), %rdi	
+
+5
+	movq %reg0, -88(%rbp)	
+
+5
+	jge .Main.main_9	
+
+5
+	.size Foo.setX, .-Foo.setX	
+
+5
+.Main.main_52:	
+
+5
+	cmpq $Main_vtable, 0(%rdi)	
+
+5
+	je .Main.main_47	
+
+5
+	movq 8(%rbx), %r12	
+
+5
+	movq %rdx, %rsi	
+
+5
+	movq -184(%rbp), %rcx	
+
+5
+.Main.main_37:	
+
+5
+	cmpq $Int_vtable, 0(%rdi)	
+
+5
+	addl %r9d, %reg1	
+
+5
+	movq 40(%rax), %rax	
+
+5
+.Main.main_38:	
+
+5
+.Main.main_41:	
+
+5
+.Main.main_47:	
+
+5
+	subl %reg0, %r9d	
+
+5
+.Main.main_49:	
+
+5
+	movq $.string10, %rax	
+
+5
+	movq %rax, -144(%rbp)	
+
+5
+.Main.main_36:	
+
+5
+	movq %reg0, 48(%rbx)	
+
+5
+	testq $1, %r13	
+
+5
+	cmpq $Object_vtable, 0(%rdi)	
+
+5
+.Main.main_46:	
+
+5
+.Main.main_44:	
+
+5
+	cmpq $IO_vtable, 0(%rdi)	
+
+5
+	movq $23, %rsi	
+
+5
+	movq $9, %rax	
+
+5
+	movq $100, %reg0	
+
+5
+	jmp .Main.func_7	
+
+5
+	addl %r9d, %eax	
+
+5
+	jmp .Main.main_24	
+
+5
+	.quad List.cons	
+
+5
+	cmpq $String_vtable, 0(%rdi)	
+
+5
+	movq $22, %reg0	
+
+5
+.Main.main_35:	
+
+5
+.Main.main_50:	
+
+5
+	movq %reg0, -160(%rbp)	
+
+5
+	addl %ecx, %esi	
+
+5
+	movq $39, %reg0	
+
+5
+	movq -64(%rbp), %rcx	
+
+5
+	je .Main.main_41	
+
+5
+	movq -56(%rbp), %rcx	
+
+5
+	testq $1, %rbx	
+
+5
+	movq $12, %r10	
+
+5
+	.globl Foo.setX	
+
+5
+	cmpq $Bool_vtable, 0(%rdi)	
+
+5
+	movq $.string8, %r13	
+
+5
+	movq %r15, %rdi	
+
+5
+	movq 120(%rax), %rax	
+
+5
+	movq %rax, -160(%rbp)	
+
+5
+	subl %eax, %r9d	
+
+5
+	je .Main.main_19	
+
+5
+	movq %rax, -88(%rbp)	
+
+5
+	.quad Foo.func	
+
+5
+	movq $7, %rax	
+
+5
+	movq $3, %rdi	
+
+5
+	movq 8(%rax), %rbx	
+
+5
+.Main.main_43:	
+
+5
+	je .Main.main_21	
+
+5
+.Main.main_45:	
+
+5
+.Main.main_51:	
+
+5
+	movq $23, %reg0	
+
+5
+	movq $.string7, %rbx	
+
+5
+	cmpl %r13d, %reg1d	
+
+5
+	movq $4, %r12	
+
+4
+	movq %rdi, 128(%rax)	
+
+4
+	je .Main.main_51	
+
+4
+	je .Main.main_33	
+
+4
+	call List.new	
+
+4
+	je .Main.out_whatever_2	
+
+4
+	movq 56(%r14), %r14	
+
+4
+.Main.main_72:	
+
+4
+	movq %rdi, 104(%reg1)	
+
+4
+	movq %rdi, 176(%rax)	
+
+4
+	movq %reg0, 128(%rax)	
+
+4
+	addl %edi, %esi	
+
+4
+	movq %rdi, 200(%rax)	
+
+4
+	movq $0, %r14	
+
+4
+	je .Main.funccase_2	
+
+4
+	movq %reg0, 192(%rax)	
+
+4
+	movq %reg0, 168(%reg1)	
+
+4
+	movq %reg0, 112(%reg1)	
+
+4
+	subq $8, %rsp	
+
+4
+	movq $.string7, %r13	
+
+4
+	movq %rdi, 144(%reg1)	
+
+4
+	negl %r11d	
+
+4
+	movq 104(%rbx), %rbx	
+
+4
+	movq -48(%rbp), %rcx	
+
+4
+	.quad Bar.getX	
+
+4
+	movq $.string13, %rax	
+
+4
+	je .Main.main_53	
+
+4
+	movq %rdi, 128(%reg1)	
+
+4
+	je .Main.main_22	
+
+4
+	movq 8(%reg0), %r13	
+
+4
+	movq $76, %reg0	
+
+4
+	setl %r12b	
+
+4
+	movq %reg0, -168(%rbp)	
+
+4
+	movq $39, %rsi	
+
+4
+	jmp .Bar.new_6	
+
+4
+	movq %reg0, 152(%rax)	
+
+4
+	movq %rdi, 96(%reg1)	
+
+4
+	cmpl %ebx, %r11d	
+
+4
+	movq 112(%rax), %rax	
+
+4
+	je .Main.main_25	
+
+4
+	movq $name_Bool, %rax	
+
+4
+	.size Foo.func, .-Foo.func	
+
+4
+	jg .Main.main_6	
+
+4
+.Main.main_63:	
+
+4
+.Main.main_65:	
+
+4
+.Main.main_73:	
+
+4
+.Main.main_71:	
+
+4
+	movq %rdi, 104(%rax)	
+
+4
+	movq $20, %rax	
+
+4
+	.type Foo.func, @function	
+
+4
+	movq %reg0, 88(%rax)	
+
+4
+	movq %rax, 48(%rbx)	
+
+4
+	call Object.abort	
+
+4
+	movq %reg0, 104(%rax)	
+
+4
+	movq -40(%rbp), %rcx	
+
+4
+	call Object.type_name	
+
+4
+	cmpq $Bazz_vtable, 0(%rbx)	
+
+4
+	je .Main.main_24	
+
+4
+	imull %r10d	
+
+4
+.Main.main_54:	
+
+4
+	movq 136(%rax), %rax	
+
+4
+	movq $.string6, %r14	
+
+4
+	subq $8, %reg0	
+
+4
+	.globl Foo.func	
+
+4
+	movq %rax, 56(%rbx)	
+
+4
+.Main.main_66:	
+
+4
+	movq %rdi, 152(%reg1)	
+
+4
+	movq %reg0, 144(%reg1)	
+
+4
+	jmp .Main.main_16	
+
+4
+	movq %r11, %r10	
+
+4
+	movq -120(%rbp), %rcx	
+
+4
+	movq %rdi, 120(%rax)	
+
+4
+	movq %rbx, 8(%rax)	
+
+4
+	movq %reg0, 120(%rax)	
+
+4
+	movq %reg0, 88(%reg1)	
+
+4
+	je .Main.main_27	
+
+4
+	movq %rdi, 120(%reg1)	
+
+4
+	movq %reg0, 192(%reg1)	
+
+4
+	movq $88, %reg0	
+
+4
+	movq $.string8, %rdi	
+
+4
+	movq %rdi, 112(%reg1)	
+
+4
+	jmp .Bazz.new_6	
+
+4
+	jmp .Razz.new_6	
+
+4
+	movq %reg0, 144(%rax)	
+
+4
+	movq $21, %reg0	
+
+4
+	movq %rdi, 88(%reg1)	
+
+4
+	movq $21, %rsi	
+
+4
+	movq %reg0, 136(%reg1)	
+
+4
+	movq %rax, -168(%rbp)	
+
+4
+	movq %reg0, 200(%reg1)	
+
+4
+	cmpl %r9d, %reg1	
+
+4
+	movq $32, %reg0	
+
+4
+Foo.func:	
+
+4
+	je .Main.main_59	
+
+4
+	movq %rdi, 160(%reg1)	
+
+4
+	movq $.string6, %r13	
+
+4
+	movq %rdi, 152(%rax)	
+
+4
+	call DicNode.new	
+
+4
+	addl %esi, %edi	
+
+4
+	movq %rdi, 168(%reg1)	
+
+4
+	movq %rdi, 112(%rax)	
+
+4
+.Main.main_55:	
+
+4
+	movq %rsi, 16(%rax)	
+
+4
+	jmp .Foo.new_6	
+
+4
+	movq %rdi, 192(%reg1)	
+
+4
+	movq %reg0, 96(%rax)	
+
+4
+	movq %rdi, 200(%reg1)	
+
+4
+	movq %reg0, 152(%reg1)	
+
+4
+	.string "hello"	
+
+4
+	movq %reg0, 104(%reg1)	
+
+4
+	movq $138, %rsi	
+
+4
+	movq %reg0, 184(%reg1)	
+
+4
+	movq %reg0, 168(%rax)	
+
+4
+	movq $103, %reg0	
+
+4
+	movq 8(%rdi), %reg1	
+
+4
+	movq $138, %reg0	
+
+4
+	addl %eax, %r9d	
+
+4
+.Main.main_70:	
+
+4
+	movq $76, %rsi	
+
+4
+	.quad Bazz.printh	
+
+4
+	.quad 10	
+
+4
+	cmpq $Bazz_vtable, 0(%reg0)	
+
+4
+	movq %reg0, 136(%rax)	
+
+4
+	movq $20, %rsi	
+
+4
+	cmpl %r9d, %ecx	
+
+4
+	je .Main.main_43	
+
+4
+	movq %rax, 56(%reg1)	
+
+4
+	movq 152(%r13), %r13	
+
+4
+.Main.main_69:	
+
+4
+	jmp .Main.new_4	
+
+4
+.Main.main_57:	
+
+4
+.Main.main_61:	
+
+4
+	movq %reg0, 112(%rax)	
+
+4
+	movq -168(%rbp), %rdi	
+
+4
+.Main.main_67:	
+
+4
+	movq $12, %r9	
+
+4
+	movq %reg0, 176(%rax)	
+
+4
+	movq -24(%rbp), %rdx	
+
+4
+	movq $127, %rsi	
+
+4
+	je .Main.main_55	
+
+4
+	movq $.string9, %rbx	
+
+4
+	movq -96(%rbp), %rcx	
+
+4
+	movq 8(%reg0), %rsi	
+
+4
+	addl %reg0, %r9d	
+
+4
+	movq %reg0, 160(%reg1)	
+
+4
+	movq %rdi, 144(%rax)	
+
+4
+	je .Main.main_17	
+
+4
+	je .Main.main_37	
+
+4
+	movq %reg0, 184(%rax)	
+
+4
+	movq %rdi, 192(%rax)	
+
+4
+	movq %reg0, 200(%rax)	
+
+4
+	movq %rdi, 136(%rax)	
+
+4
+	movq %rdi, 168(%rax)	
+
+4
+	movq %rdi, 184(%rax)	
+
+4
+	idivl %r12d	
+
+4
+	movq %rdi, 176(%reg1)	
+
+4
+	movq %rdi, 184(%reg1)	
+
+4
+	je .Main.main_18	
+
+4
+	je .Main.main_34	
+
+4
+	cmpl %reg0, %r11d	
+
+4
+	movq %rbx, 8(%reg1)	
+
+4
+	movq $11, %rax	
+
+4
+	movq $12, %rax	
+
+4
+	movq %reg0, 56(%rbx)	
+
+4
+	movq %reg0, 120(%reg1)	
+
+4
+	movq 8(%r12), %reg1	
+
+4
+.Main.main_56:	
+
+4
+.Main.main_68:	
+
+4
+	movq %rbx, %r13	
+
+4
+	movq %reg0, -176(%rbp)	
+
+4
+.Main.main_58:	
+
+4
+.Main.main_60:	
+
+4
+.Main.main_62:	
+
+4
+	movq %rdi, 88(%rax)	
+
+4
+	movq $103, %rsi	
+
+4
+	movq $.string11, %rax	
+
+4
+	.string "Hello"	
+
+4
+	movq %reg0, 128(%reg1)	
+
+4
+	movq %rdi, 160(%rax)	
+
+4
+	movq %rdi, 96(%rax)	
+
+4
+	movq %r14, %rcx	
+
+4
+.Main.main_64:	
+
+4
+	movq %rdi, 136(%reg1)	
+
+4
+.Main.main_53:	
+
+4
+	movq %rsi, 16(%reg1)	
+
+4
+.Main.main_59:	
+
+4
+	jne .Main.main_17	
+
+4
+	movq $127, %reg0	
+
+4
+	movq %reg0, 160(%rax)	
+
+4
+	jg .Main.main_3	
+
+4
+	movq %reg0, 176(%reg1)	
+
+4
+	movq %reg0, 96(%reg1)	
+
+4
+	movq $name_Bool, %reg0	
+
+4
+	movq %rax, 48(%reg1)	
+
+3
+.Main.main_80:	
+
+3
+	subl %reg0, %r10d	
+
+3
+	movq 136(%r12), %r12	
+
+3
+	movq $37, %reg0	
+
+3
+	movq %rbx, %r11	
+
+3
+	movq 0(%r14), %reg1	
+
+3
+	movq 8(%rdi), %rdi	
+
+3
+	cmpl %r11d, %ebx	
+
+3
+.Main.main_82:	
+
+3
+	movq %rax, -176(%rbp)	
+
+3
+.Main.main_74:	
+
+3
+	je .Main.main_20	
+
+3
+	je .Main.main_52	
+
+3
+	.type Bar.getX, @function	
+
+3
+	je .Main.main_30	
+
+3
+	movq $208, %reg0	
+
+3
+	movq 8(%rdi), %rax	
+
+3
+	movq $110, %reg0	
+
+3
+	subl %ebx, %reg1	
+
+3
+	je .Main.main_63	
+
+3
+	jmp .Main.main_22	
+
+3
+	.type Baz.new, @function	
+
+3
+	movq 8(%r12), %rax	
+
+3
+List.new:	
+
+3
+	movq $100, %rdi	
+
+3
+	movq 24(%reg0), %rsi	
+
+3
+	je .Main.main_82	
+
+3
+	movq 16(%rax), %rdx	
+
+3
+	movq -40(%rbp), %rdx	
+
+3
+	movq $.string15, %reg0	
+
+3
+	je .Main.main_64	
+
+3
+	je .Main.main_31	
+
+3
+	cmpl %reg0d, %r12d	
+
+3
+	movq $22, %rsi	
+
+3
+	.size Bar.getX, .-Bar.getX	
+
+3
+	movq -168(%rbp), %rcx	
+
+3
+	cmpl %r11d, %reg1	
+
+3
+	.string "Baz"	
+
+3
+	subl %ebx, %eax	
+
+3
+	movq %r11, %rbx	
+
+3
+	movq -72(%rbp), %r8	
+
+3
+	je .Main.main_46	
+
+3
+	movq $4, %rbx	
+
+3
+	idivl %ebx	
+
+3
+	movq -64(%rbp), %r8	
+
+3
+.Main.new_4:	
+
+3
+	movq $.string14, %reg0	
+
+3
+.Main.new_2:	
+
+3
+	je .Main.main_67	
+
+3
+	movq -128(%rbp), %rcx	
+
+3
+	je .Main.main_58	
+
+3
+	movq %r10, %r11	
+
+3
+.Main.main_79:	
+
+3
+	movq $Baz_vtable, 0(%rax)	
+
+3
+	movq 32(%reg0), %rdx	
+
+3
+	je .Main.main_72	
+
+3
+	jg .Main.main_10	
+
+3
+	movq $200, %rsi	
+
+3
+	movq $26, %reg0	
+
+3
+	je .Main.main_66	
+
+3
+	jmp .Foo.new_11	
+
+3
+.Main.new_3:	
+
+3
+.Main.new_1:	
+
+3
+List_vtable:	
+
+3
+	cmpl $0, 16(%rax)	
+
+3
+	movq $204, %rsi	
+
+3
+	movq %r11, %rax	
+
+3
+	movq $153, %reg0	
+
+3
+	movq %reg0, 8(%reg0)	
+
+3
+	je .Main.main_44	
+
+3
+.Main.main_81:	
+
+3
+	negl %ebx	
+
+3
+	je .Main.main_29	
+
+3
+	movq 24(%rax), %rdi	
+
+3
+	movq %reg0, 64(%rbx)	
+
+3
+	movq $26, %rsi	
+
+3
+	.quad .string3	
+
+3
+	movq $37, %rsi	
+
+3
+	movq $153, %rsi	
+
+3
+	movq $40, %reg0	
+
+3
+	movq -16(%rbp), %rcx	
+
+3
+	call Matrix.new	
+
+3
+	movq $.string12, %reg0	
+
+3
+	movq %rsi, %r8	
+
+3
+	cmpl %reg0d, %ebx	
+
+3
+	je .Main.main_26	
+
+3
+	jmp .Razz.new_11	
+
+3
+	jge .Main.main_5	
+
+3
+	movq $name_Int, %reg0	
+
+3
+	je .Main.main_73	
+
+3
+	je .Main.main_28	
+
+3
+	.quad List.new	
+
+3
+	movq $8, %rax	
+
+3
+	.quad Foo.doh	
+
+3
+	.globl List.new	
+
+3
+	movq 24(%rbx), %rdi	
+
+3
+.Main.func_3:	
+
+3
+	jmp .Main.funccase_5	
+
+3
+	movq 64(%r15), %r15	
+
+3
+	jmp .Main.main_32	
+
+3
+	je .Main.main_45	
+
+3
+	movq $Baz_vtable, 0(%reg0)	
+
+3
+	movq $.string8, %rbx	
+
+3
+	je .Main.main_70	
+
+3
+	.size List.new, .-List.new	
+
+3
+	addl %reg0, %r10d	
+
+3
+	.globl Bar.getX	
+
+3
+	movq %r12, %rbx	
+
+3
+	jmp .Main.main_28	
+
+3
+	movq $204, %reg0	
+
+3
+	jmp .Bar.new_11	
+
+3
+	movq -16(%rbp), %r8	
+
+3
+	cmpl $0, -32(%rbp)	
+
+3
+	.string "List"	
+
+3
+	movq -176(%rbp), %rcx	
+
+3
+	cmpl %reg0d, %r14d	
+
+3
+Bar.getX:	
+
+3
+.Main.main_78:	
+
+3
+	.quad Baz.new	
+
+3
+.Main.main_76:	
+
+3
+	jmp .Main.main_38	
+
+3
+	movq $.string7, %r14	
+
+3
+Baz.new:	
+
+3
+	cmpl %r10d, %r11d	
+
+3
+	movq 72(%r14), %r14	
+
+3
+	je .Main.main_60	
+
+3
+	movq $14, %rax	
+
+3
+	jne .Main.main_2	
+
+3
+	je .Main.main_36	
+
+3
+Baz_vtable:	
+
+3
+	idivl %r14d	
+
+3
+	movq $88, %rsi	
+
+3
+	movq %r13, 8(%rax)	
+
+3
+.Main.main_77:	
+
+3
+	cmpl %r11d, %r10d	
+
+3
+.Main.main_75:	
+
+3
+	cmpl $0, -24(%rbp)	
+
+3
+	movq %r13, 8(%reg1)	
+
+3
+	movq -152(%rbp), %rcx	
+
+3
+	call ListNode.new	
+
+3
+	movq %rax, 8(%rax)	
+
+3
+	je .Main.main_56	
+
+3
+	jmp .Main.out_whatever_5	
+
+3
+	je .Main.main_48	
+
+3
+	subl %eax, %r10d	
+
+3
+	movq 144(%reg0), %reg0	
+
+3
+	movq 48(%reg0), %rax	
+
+3
+	movq %rbx, %rcx	
+
+3
+	movq 48(%rbx), %rax	
+
+3
+	.type List.new, @function	
+
+3
+	movq %r14, 8(%reg1)	
+
+3
+	jmp .Main.main_26	
+
+3
+	cmpl %reg0d, %r11d	
+
+3
+	jge .Main.main_3	
+
+3
+	subl %esi, %edi	
+
+3
+	movq $7, %rbx	
+
+3
+	jne .Main.main_23	
+
+3
+	cmpl %r9d, %r10d	
+
+3
+	je .Main.main_75	
+
+3
+	movq 32(%rbx), %rdx	
+
+3
+	.globl Baz.new	
+
+3
+	movq -88(%rbp), %rcx	
+
+3
+	jmp .Main.main_18	
+
+3
+	movq $32, %rdi	
+
+3
+	je .Main.main_54	
+
+3
+	movq $empty_string, %rax	
+
+3
+	je .Main.main_69	
+
+3
+	movq $List_vtable, 0(%reg0)	
+
+3
+	movq $200, %reg0	
+
+3
+	je .Main.main_32	
+
+3
+	addl %eax, %r10d	
+
+3
+	movq 0(%r12), %r13	
+
+3
+	imull %ebx	
+
+3
+	.size Baz.new, .-Baz.new	
+
+3
+	movq $10, %rdi	
+
+3
+	jmp .Main.main_20	
+
+3
+	cmpl %r11d, %reg1d	
+
+3
+	movq 0(%rbx), %r15	
+
+3
+	cmpl %r13d, %r12d	
+
+3
+	movq $List_vtable, 0(%rax)	
+
+2
+	.type ListNode.new, @function	
+
+2
+	cmpq $Bool_vtable, 0(%rbx)	
+
+2
+	call Yaz.new	
+
+2
+	movq %reg0, -184(%rbp)	
+
+2
+	movq $208, %rsi	
+
+2
+ListNode.new:	
+
+2
+	.quad .string14_l	
+
+2
+	.string "3"	
+
+2
+	movq $48, %rdi	
+
+2
+	negl -24(%rbp)	
+
+2
+	movq %reg0, 600(%rax)	
+
+2
+	movq %reg0, 320(%reg1)	
+
+2
+.Main.main_88:	
+
+2
+	je .Main.main_68	
+
+2
+	movq %reg0, 568(%rax)	
+
+2
+	movq %rdi, 552(%rax)	
+
+2
+.Main.main_162:	
+
+2
+.Main.main_164:	
+
+2
+	.globl Foo.foo	
+
+2
+	movq $38801, %rax	
+
+2
+	.string "\\t"	
+
+2
+	.globl Cons.init	
+
+2
+	movq 48(%reg0), %rdi	
+
+2
+.Main.main_192:	
+
+2
+	.type List.isNil, @function	
+
+2
+	movq $80, %reg0	
+
+2
+	movq %rdi, 464(%reg1)	
+
+2
+.Main.main_190:	
+
+2
+	movq $55, %reg0	
+
+2
+	jg .Main.main_4	
+
+2
+	movq %rdi, 400(%rax)	
+
+2
+	movq %reg0, 312(%reg1)	
+
+2
+	movq %rdi, 408(%reg1)	
+
+2
+	.size Foo.foo, .-Foo.foo	
+
+2
+	movq %rdi, 440(%rax)	
+
+2
+	movq %rdi, 736(%reg1)	
+
+2
+	movq %rdi, 672(%reg1)	
+
+2
+Cons.init:	
+
+2
+	movq %rdi, 576(%reg1)	
+
+2
+	movq %reg0, 432(%rax)	
+
+2
+	je .Main.main_179	
+
+2
+	movq %rdi, 312(%reg1)	
+
+2
+	.globl Yaz.new	
+
+2
+	jmp .Main.main_30	
+
+2
+	movq %rdi, 384(%rax)	
+
+2
+	movq $Yaz_vtable, 0(%rax)	
+
+2
+	movq %reg0, 456(%rax)	
+
+2
+	movq $4, %r13	
+
+2
+	jmp .Main.func_2	
+
+2
+	movq %rdi, 704(%rax)	
+
+2
+	movq -144(%rbp), %r10	
+
+2
+	movq $101, %reg0	
+
+2
+	movq $30, %reg0	
+
+2
+	movq %reg0, 376(%reg1)	
+
+2
+	movq 24(%reg0), %rdx	
+
+2
+	.quad Main.func2	
+
+2
+	.type Foo.foo, @function	
+
+2
+	movq %reg0, 384(%rax)	
+
+2
+	jmp .Main.main_39	
+
+2
+	movq $101, %rdi	
+
+2
+.Main.main_175:	
+
+2
+	movq -80(%rbp), %rcx	
+
+2
+	movq %reg0, 608(%rax)	
+
+2
+	movq $18, %reg0	
+
+2
+	movq %reg0, 648(%rax)	
+
+2
+.Main.main_173:	
+
+2
+	movq -136(%rbp), %rcx	
+
+2
+	movq $6, %r12	
+
+2
+	subl %r9d, %eax	
+
+2
+	movq $Yaz_vtable, 0(%reg0)	
+
+2
+	je .Main.main_78	
+
+2
+	movq $110, %rdi	
+
+2
+	.quad List.cdr	
+
+2
+	je .Main.main_65	
+
+2
+.Main.main_161:	
+
+2
+.Main.main_163:	
+
+2
+	movq %rdi, 456(%rax)	
+
+2
+	movq %reg0, 592(%rax)	
+
+2
+	movq %reg0, 648(%reg1)	
+
+2
+	movq %reg0, 232(%rax)	
+
+2
+	movq 96(%rbx), %rbx	
+
+2
+.Main.main_169:	
+
+2
+	.quad Cons.init	
+
+2
+	movq %reg0, 264(%rax)	
+
+2
+	movq %rdi, 512(%reg1)	
+
+2
+	subq $16, %reg0	
+
+2
+	movq -32(%rbp), %rbx	
+
+2
+.Main.main_112:	
+
+2
+	movq 8(%rax), %rdx	
+
+2
+	movq %reg0, 464(%reg1)	
+
+2
+	movq $133, %reg0	
+
+2
+	movq %reg0, 392(%rax)	
+
+2
+	movq $25, %reg0	
+
+2
+	movq %reg0, 456(%reg1)	
+
+2
+	movq $.string16, %reg0	
+
+2
+	.string "Fail"	
+
+2
+	je .Main.main_178	
+
+2
+	je .Main.func_6	
+
+2
+	jmp .Main.main_31	
+
+2
+.string15:	
+
+2
+	movq %rdi, 544(%rax)	
+
+2
+	.type Main.printY, @function	
+
+2
+	.quad List.isNil	
+
+2
+	movq %rdi, 416(%reg1)	
+
+2
+	movq %rdi, 288(%reg1)	
+
+2
+	movq $22, %rax	
+
+2
+	.string "string"	
+
+2
+	movq %reg0, 336(%reg1)	
+
+2
+	.quad ListNode.new	
+
+2
+	movq %reg0, 256(%rax)	
+
+2
+	jmp .Main.func_3	
+
+2
+	movq %rdi, 592(%reg1)	
+
+2
+	movq %reg0, 344(%reg1)	
+
+2
+	movq %reg0, 552(%reg1)	
+
+2
+Foo.setBar:	
+
+2
+	movq %reg0, 368(%reg1)	
+
+2
+	je .Main.main_100	
+
+2
+	movq $.string6, %rdi	
+
+2
+	movq %reg0, 288(%reg1)	
+
+2
+	movq %rdi, 680(%rax)	
+
+2
+	movq %reg0, 248(%reg1)	
+
+2
+	cmpl $0, 48(%reg0)	
+
+2
+	movq %rdi, 464(%rax)	
+
+2
+	movq %reg0, 392(%reg1)	
+
+2
+	movq $35, %rsi	
+
+2
+	cmpl $0, 48(%rbx)	
+
+2
+	movq -48(%rbp), %r8	
+
+2
+	movq -152(%rbp), %r8	
+
+2
+	movq %rdi, 272(%reg1)	
+
+2
+	movq %reg0, 352(%reg1)	
+
+2
+	movq %reg0, 568(%reg1)	
+
+2
+	movq $6, %r13	
+
+2
+Cons.isNil:	
+
+2
+.Main.main_135:	
+
+2
+.Main.main_133:	
+
+2
+	.string "+"	
+
+2
+.Main.main_121:	
+
+2
+.Main.main_123:	
+
+2
+	movq %rdi, 624(%rax)	
+
+2
+	movq %rdi, 368(%reg1)	
+
+2
+	.type Cons.init, @function	
+
+2
+	movq $74, %rsi	
+
+2
+.string15_l:	
+
+2
+	movq %rdi, 664(%rax)	
+
+2
+	.size List.isNil, .-List.isNil	
+
+2
+.string12_l:	
+
+2
+	movq %reg0, 704(%reg1)	
+
+2
+	movq $58, %rsi	
+
+2
+	movq %rdi, 392(%reg1)	
+
+2
+	movq %rdi, 400(%reg1)	
+
+2
+	movq $156, %rsi	
+
+2
+	movq %reg0, 584(%rax)	
+
+2
+	.string "e"	
+
+2
+	movq %reg0, 528(%rax)	
+
+2
+	movq %reg0, 224(%rax)	
+
+2
+	movq %rdi, 728(%rax)	
+
+2
+	movq %rdi, 536(%rax)	
+
+2
+	.quad Yaz.new	
+
+2
+	jmp .Main.main_49	
+
+2
+	movq 80(%reg0), %rax	
+
+2
+.Main.main_184:	
+
+2
+	.type Foo.setBar, @function	
+
+2
+	movq %rdx, -128(%rbp)	
+
+2
+.Main.main_182:	
+
+2
+	movq %reg0, 720(%rax)	
+
+2
+	movq %r15, 8(%reg1)	
+
+2
+.Main.main_90:	
+
+2
+	setl %cl	
+
+2
+	call IO.out_string	
+
+2
+	jmp .Main.main_36	
+
+2
+	movq %rdi, 456(%reg1)	
+
+2
+	movq %rdi, 728(%reg1)	
+
+2
+	movq %reg0, 600(%reg1)	
+
+2
+	movq 144(%rax), %rax	
+
+2
+	je .Main.func_3	
+
+2
+.Main.main_129:	
+
+2
+	movq %rdi, 232(%reg1)	
+
+2
+	sete %r12b	
+
+2
+	movq %reg0, 328(%rax)	
+
+2
+	je .Main.main_175	
+
+2
+	movq %rdi, 440(%reg1)	
+
+2
+	movq %rdi, 392(%rax)	
+
+2
+	movq %rdi, 672(%rax)	
+
+2
+	movq %rdi, 256(%rax)	
+
+2
+	jmp .Main.main_52	
+
+2
+	je .Main.main_81	
+
+2
+	movq %rax, 64(%reg1)	
+
+2
+.Main.main_102:	
+
+2
+	je .Main.main_49	
+
+2
+	movq %reg0, 720(%reg1)	
+
+2
+	subq $32, %rsp	
+
+2
+.Main.main_134:	
+
+2
+	movq $48, %reg0	
+
+2
+	.globl Cons.isNil	
+
+2
+	movq %rdi, 288(%rax)	
+
+2
+.Main.main_136:	
+
+2
+	movq %rdi, 512(%rax)	
+
+2
+	movq %rdi, 448(%rax)	
+
+2
+ListNode_vtable:	
+
+2
+	movq 32(%reg0), %r12	
+
+2
+	movq $.string9, %r12	
+
+2
+	movq %reg0, 536(%rax)	
+
+2
+	movq 80(%r13), %r13	
+
+2
+	.size Cons.isNil, .-Cons.isNil	
+
+2
+	movq %rdi, 368(%rax)	
+
+2
+	movq %rdi, 328(%reg1)	
+
+2
+	jne .Main.main_62	
+
+2
+	movq %reg0, 344(%rax)	
+
+2
+	movq $0, %r15	
+
+2
+	.string "hi"	
+
+2
+	.size Yaz.new, .-Yaz.new	
+
+2
+	.globl Cons.new	
+
+2
+	movq %rdi, 296(%reg1)	
+
+2
+	jmp .Main.main_15	
+
+2
+	movq %rdi, 680(%reg1)	
+
+2
+List.isNil:	
+
+2
+	cmpq $IO_vtable, 0(%rbx)	
+
+2
+	movq %rdi, 504(%reg1)	
+
+2
+	movq %reg0, 672(%reg1)	
+
+2
+	movq 32(%r12), %r12	
+
+2
+	movq %reg0, 488(%rax)	
+
+2
+	jmp .Main.main_48	
+
+2
+	movq $203, %reg0	
+
+2
+	movq %rdi, 632(%reg1)	
+
+2
+	movq %reg0, 288(%rax)	
+
+2
+	.type Main.getFoo, @function	
+
+2
+	.quad Foo.getBar	
+
+2
+	jge .Main.main_11	
+
+2
+	movq $229, %rsi	
+
+2
+	movq %rdi, 248(%rax)	
+
+2
+	je .Main.main_174	
+
+2
+.Main.main_144:	
+
+2
+	movq %reg0, 376(%rax)	
+
+2
+.Main.main_142:	
+
+2
+	movq %rdi, 384(%reg1)	
+
+2
+	movq %reg0, 632(%rax)	
+
+2
+.Main.main_174:	
+
+2
+	movq %rdi, %rcx	
+
+2
+	movq %rdi, 592(%rax)	
+
+2
+	movq %rdi, 640(%reg1)	
+
+2
+	je .Main.main_35	
+
+2
+	movq %r13, %r8	
+
+2
+.Main.main_176:	
+
+2
+	movq %rdi, 360(%rax)	
+
+2
+	je .Main.main_80	
+
+2
+	je .Main.main_140	
+
+2
+	.quad Baz.main	
+
+2
+	movq $5, %r14	
+
+2
+	je .Main.main_156	
+
+2
+	movq $156, %reg0	
+
+2
+.Main.main_92:	
+
+2
+.Main.main_94:	
+
+2
+	movq -64(%rbp), %r9	
+
+2
+	movq $55, %rsi	
+
+2
+	subq $32, %reg0	
+
+2
+	movq %r15, %r14	
+
+2
+	jne .Main.main_7	
+
+2
+	movq %reg0, 536(%reg1)	
+
+2
+	movq %reg0, 400(%reg1)	
+
+2
+	movq %reg0, 624(%reg1)	
+
+2
+	jne .Main.main_6	
+
+2
+.Main.main_159:	
+
+2
+	movq %rdi, 344(%reg1)	
+
+2
+	movq %reg0, 584(%reg1)	
+
+2
+	movq %r14, %r8	
+
+2
+.Main.main_157:	
+
+2
+	movq %reg0, 640(%rax)	
+
+2
+	movq %reg0, 672(%rax)	
+
+2
+	je .Main.main_191	
+
+2
+	movq 48(%rbx), %rdx	
+
+2
+.Main.main_151:	
+
+2
+	movq %r13, %r14	
+
+2
+	.type Cons.isNil, @function	
+
+2
+	movq %rdi, 264(%rax)	
+
+2
+	movq $82, %rsi	
+
+2
+	.size Foo.setBar, .-Foo.setBar	
+
+2
+	movq $173, %reg0	
+
+2
+	je .Main.main_177	
+
+2
+	je .Main.main_117	
+
+2
+	movq 8(%rax), %rsi	
+
+2
+	movq $107, %reg0	
+
+2
+	movq %rdi, 688(%reg1)	
+
+2
+.Main.main_118:	
+
+2
+.Main.main_147:	
+
+2
+.Main.main_145:	
+
+2
+	movq %rdi, 704(%reg1)	
+
+2
+	movq $5, %rbx	
+
+2
+	movq 72(%reg0), %reg1	
+
+2
+	movq $203, %rsi	
+
+2
+	movq $87, %reg0	
+
+2
+	call Bazz.doh	
+
+2
+.Main.main_89:	
+
+2
+	movq %rdi, 720(%reg1)	
+
+2
+	movq %reg0, 312(%rax)	
+
+2
+	je .Main.main_61	
+
+2
+	movq -32(%rbp), %r8	
+
+2
+.Main.main_95:	
+
+2
+	je .Main.main_39	
+
+2
+	movq %reg0, 248(%rax)	
+
+2
+.Main.main_97:	
+
+2
+	movq $11, %rdi	
+
+2
+	movq %reg0, 560(%reg1)	
+
+2
+	movq 72(%rbx), %rax	
+
+2
+Main.getFoo:	
+
+2
+	movq %reg0, 448(%reg1)	
+
+2
+	movq %rdi, 320(%reg1)	
+
+2
+	movq %reg0, 304(%reg1)	
+
+2
+	movq %rdi, 296(%rax)	
+
+2
+	movq %rdi, 208(%reg1)	
+
+2
+	movq %reg0, 680(%rax)	
+
+2
+	movq %reg0, 520(%reg1)	
+
+2
+.Main.main_191:	
+
+2
+	movq $107, %rsi	
+
+2
+	je .Main.main_77	
+
+2
+.Main.main_185:	
+
+2
+	movq $empty_string, %rdi	
+
+2
+	movq %reg0, 608(%reg1)	
+
+2
+	movq 48(%rbx), %rdi	
+
+2
+.Main.main_187:	
+
+2
+	movq $111, %rdi	
+
+2
+	movq 0(%rdx), %r14	
+
+2
+	movq 80(%rbx), %rax	
+
+2
+	je .Main.main_190	
+
+2
+.Main.main_87:	
+
+2
+	movq %rdi, 720(%rax)	
+
+2
+	movq %rdi, 696(%reg1)	
+
+2
+.string14_l:	
+
+2
+	movq $.string10, %r12	
+
+2
+	movq -128(%rbp), %r9	
+
+2
+	je .Main.main_176	
+
+2
+	movq %rdi, 240(%reg1)	
+
+2
+.Main.main_117:	
+
+2
+	movq $15, %rax	
+
+2
+.string13:	
+
+2
+	movq %reg0, 504(%reg1)	
+
+2
+	.string "true"	
+
+2
+	movq %rdi, 448(%reg1)	
+
+2
+	movq %reg0, 528(%reg1)	
+
+2
+.Main.main_119:	
+
+2
+	movq -160(%rbp), %rcx	
+
+2
+	movq %reg0, 336(%rax)	
+
+2
+	movq %rdi, 504(%rax)	
+
+2
+	movq %rdi, 336(%reg1)	
+
+2
+	movq %rdi, 224(%reg1)	
+
+2
+	movq $40, %rdi	
+
+2
+	je .Main.main_86	
+
+2
+	movq 24(%rax), %rsi	
+
+2
+List.cons:	
+
+2
+	movq %rdi, 280(%reg1)	
+
+2
+	cmpl $0, 24(%reg0)	
+
+2
+	movq $133, %rsi	
+
+2
+.Main.main_166:	
+
+2
+	movq 96(%r14), %r14	
+
+2
+.Main.main_160:	
+
+2
+	movq 112(%r12), %r12	
+
+2
+	movq %reg0, 504(%rax)	
+
+2
+.Main.main_111:	
+
+2
+.Main.main_168:	
+
+2
+	movq %reg0, 208(%reg1)	
+
+2
+	movq %rdi, 712(%reg1)	
+
+2
+	movq %rdi, 544(%reg1)	
+
+2
+.Main.main_107:	
+
+2
+	movq %reg0, 736(%reg1)	
+
+2
+	movq -184(%rbp), %r8	
+
+2
+.Main.main_105:	
+
+2
+	.size Foo.getBar, .-Foo.getBar	
+
+2
+	movq %reg0, 696(%rax)	
+
+2
+	movq %rdi, 232(%rax)	
+
+2
+	je .Main.main_180	
+
+2
+	movq 96(%r13), %r13	
+
+2
+	movq %reg0, 664(%reg1)	
+
+2
+Main.func2:	
+
+2
+	.quad 12	
+
+2
+	movq %reg0, 304(%rax)	
+
+2
+	movq -128(%rbp), %r8	
+
+2
+	movq %reg0, 616(%reg1)	
+
+2
+	movq %reg0, 432(%reg1)	
+
+2
+	movq %rdi, 272(%rax)	
+
+2
+	movq %reg0, 296(%rax)	
+
+2
+	movq %rdi, 432(%rax)	
+
+2
+	movq %rdi, 520(%reg1)	
+
+2
+	movq %reg0, 352(%rax)	
+
+2
+	movq %reg0, 592(%reg1)	
+
+2
+.string13_l:	
+
+2
+	movq %rdi, 696(%rax)	
+
+2
+.Main.main_114:	
+
+2
+	je .Main.main_115	
+
+2
+	.quad Main.getFoo	
+
+2
+Foo.foo:	
+
+2
+	movq %rdi, 312(%rax)	
+
+2
+	movq $87, %rsi	
+
+2
+	movq %rdi, 616(%reg1)	
+
+2
+	movq %reg0, 712(%rax)	
+
+2
+	movq %reg0, 480(%reg1)	
+
+2
+	.type Main.func2, @function	
+
+2
+	movq %reg0, 728(%rax)	
+
+2
+	addl %eax, %ebx	
+
+2
+	movq %reg0, 208(%rax)	
+
+2
+	je .Main.main_92	
+
+2
+	negl %r9d	
+
+2
+	movq %rdi, 248(%reg1)	
+
+2
+	.globl Main.getFoo	
+
+2
+	movq %rdi, 584(%rax)	
+
+2
+	movq $6, %rbx	
+
+2
+	movq %rdi, 648(%rax)	
+
+2
+	.string "Cons"	
+
+2
+	movq %r15, 8(%rax)	
+
+2
+	movq $74, %reg0	
+
+2
+	movq %rdi, 408(%rax)	
+
+2
+	movq %reg0, 408(%rax)	
+
+2
+	.quad List.insert	
+
+2
+.Main.main_126:	
+
+2
+.Main.main_120:	
+
+2
+	.globl List.insert	
+
+2
+.Main.main_154:	
+
+2
+.Main.main_143:	
+
+2
+	movq $13, %rax	
+
+2
+	movq %rdi, 376(%reg1)	
+
+2
+.Main.main_156:	
+
+2
+	movq %reg0, 416(%reg1)	
+
+2
+.Main.main_116:	
+
+2
+	je .Main.main_62	
+
+2
+	movq %reg0, 280(%rax)	
+
+2
+	.quad List.car	
+
+2
+	movq %rdi, 552(%reg1)	
+
+2
+	cmpq $Int_vtable, 0(%rsi)	
+
+2
+	movq %rsi, 8(%rax)	
+
+2
+	movq %reg0, 272(%reg1)	
+
+2
+	movq %reg0, 440(%reg1)	
+
+2
+	.type List.insert, @function	
+
+2
+	movq %rdi, 480(%reg1)	
+
+2
+	.string "4"	
+
+2
+	je .Main.main_181	
+
+2
+	je .Main.main_136	
+
+2
+	movq %reg0, 216(%reg1)	
+
+2
+	movq $ListNode_vtable, 0(%reg0)	
+
+2
+.Main.main_104:	
+
+2
+	movq %rdi, 664(%reg1)	
+
+2
+	movq %reg0, 224(%reg1)	
+
+2
+	movq %reg0, 632(%reg1)	
+
+2
+	movq %rdi, 688(%rax)	
+
+2
+.Main.main_128:	
+
+2
+	.size Main.func2, .-Main.func2	
+
+2
+	movq %rdi, 376(%rax)	
+
+2
+	movq $19, %rax	
+
+2
+	movq %rdi, 480(%rax)	
+
+2
+	je .Main.main_103	
+
+2
+	movq %rdi, 256(%reg1)	
+
+2
+	.quad Foo.setBar	
+
+2
+	.quad Cons.isNil	
+
+2
+	movq -72(%rbp), %rcx	
+
+2
+	.globl Foo.setBar	
+
+2
+	.globl List.isNil	
+
+2
+	movq $12, %r14	
+
+2
+Foo.getBar:	
+
+2
+	je .Main.main_93	
+
+2
+	movq %reg0, 480(%rax)	
+
+2
+.Main.main_131:	
+
+2
+	movq 0(%r12), %rbx	
+
+2
+	movq %reg0, 640(%reg1)	
+
+2
+	subl %r10d, %reg1	
+
+2
+	movq %reg0, 256(%reg1)	
+
+2
+	.quad .string13_l	
+
+2
+Yaz_vtable:	
+
+2
+	je .Main.main_71	
+
+2
+	movq %rdi, 264(%reg1)	
+
+2
+	movq %rdi, 360(%reg1)	
+
+2
+.Main.main_110:	
+
+2
+.Main.main_137:	
+
+2
+	movq %rdi, 304(%reg1)	
+
+2
+.Main.main_127:	
+
+2
+	.size ListNode.new, .-ListNode.new	
+
+2
+.Main.main_125:	
+
+2
+.Main.main_86:	
+
+2
+.Main.main_84:	
+
+2
+	.string "Yaz"	
+
+2
+	movq %rdi, 568(%rax)	
+
+2
+	cmpq $Int_vtable, 0(%rbx)	
+
+2
+	movq $78, %reg0	
+
+2
+	movq %rdi, 416(%rax)	
+
+2
+	movq %reg0, 552(%rax)	
+
+2
+	movq %reg0, 704(%rax)	
+
+2
+	movq %reg0, 296(%reg1)	
+
+2
+	movq %reg0, 560(%rax)	
+
+2
+	.globl ListNode.new	
+
+2
+	.string "ListNode"	
+
+2
+	jmp .Razz.new_17	
+
+2
+	je .List.cons_1	
+
+2
+.Main.main_139:	
+
+2
+	je .Main.main_173	
+
+2
+	movq %rdi, 520(%rax)	
+
+2
+	movq $89, %reg0	
+
+2
+	movq %reg0, 72(%rbx)	
+
+2
+	movq 0(%r12), %r14	
+
+2
+	movq %reg0, 544(%rax)	
+
+2
+	.quad Foo.foo	
+
+2
+	movq %rdi, 584(%reg1)	
+
+2
+.Main.main_171:	
+
+2
+	movq %rdi, 712(%rax)	
+
+2
+.Main.main_177:	
+
+2
+	jge .Main.main_29	
+
+2
+	subl %r9d, %reg1	
+
+2
+.Main.main_167:	
+
+2
+	movq %rax, 72(%rbx)	
+
+2
+.Main.main_165:	
+
+2
+	je .Main.main_38	
+
+2
+	movq $9, %rsi	
+
+2
+.Main.main_179:	
+
+2
+	je .Main.main_76	
+
+2
+	movq 80(%r12), %r12	
+
+2
+	movq $17, %rax	
+
+2
+	movq 72(%rbx), %reg1	
+
+2
+	.globl Main.printY	
+
+2
+	movq %rdi, 608(%reg1)	
+
+2
+	movq 120(%r12), %r12	
+
+2
+	movq %reg0, 424(%rax)	
+
+2
+	movq $58, %reg0	
+
+2
+	movq %reg0, 272(%rax)	
+
+2
+	imull %r12d	
+
+2
+	movq $30, %rsi	
+
+2
+	movq %reg0, 488(%reg1)	
+
+2
+	movq 80(%rbx), %reg1	
+
+2
+	cmpq $Main_vtable, 0(%rbx)	
+
+2
+	movq %reg0, 472(%rax)	
+
+2
+	movq %rdi, 216(%reg1)	
+
+2
+	movq %r12, %rcx	
+
+2
+	movq %reg0, 520(%rax)	
+
+2
+	movq %rdi, 208(%rax)	
+
+2
+	je .Main.main_172	
+
+2
+	jmp .Main.main_40	
+
+2
+	.size List.insert, .-List.insert	
+
+2
+	movq 8(%rbx), %r13	
+
+2
+	movq %reg0, 576(%reg1)	
+
+2
+	movq $1, %r14	
+
+2
+	movq %reg0, 464(%rax)	
+
+2
+	movq %rdi, 328(%rax)	
+
+2
+	movq %reg0, 440(%rax)	
+
+2
+	subl %edi, %esi	
+
+2
+	movq %rdi, 632(%rax)	
+
+2
+	je .Main.main_182	
+
+2
+	movq %reg0, 688(%reg1)	
+
+2
+Cons_vtable:	
+
+2
+List.insert:	
+
+2
+	movq %rdi, 280(%rax)	
+
+2
+.Main.main_140:	
+
+2
+.Main.main_146:	
+
+2
+	movq $ListNode_vtable, 0(%rax)	
+
+2
+	je .Main.main_95	
+
+2
+.Main.main_148:	
+
+2
+	movq %reg0, 328(%reg1)	
+
+2
+	je .Main.main_42	
+
+2
+	je .Main.main_88	
+
+2
+.Main.main_172:	
+
+2
+	movq %rsi, 8(%reg1)	
+
+2
+	movq 88(%r13), %r13	
+
+2
+	jge .Main.main_1	
+
+2
+.Main.main_170:	
+
+2
+	movq %reg0, 656(%reg1)	
+
+2
+	movq 48(%reg0), %rdx	
+
+2
+	movq %reg0, 240(%rax)	
+
+2
+	jne .Main.main_21	
+
+2
+.Main.main_178:	
+
+2
+	movq $.string12, %rax	
+
+2
+	.quad .string12_l	
+
+2
+	movq %rdi, 640(%rax)	
+
+2
+	movq %rdi, 600(%reg1)	
+
+2
+	movq 80(%reg0), %reg1	
+
+2
+.Main.main_96:	
+
+2
+	cmpq $Object_vtable, 0(%rbx)	
+
+2
+	.globl Main.func2	
+
+2
+	movq -168(%rbp), %r8	
+
+2
+	movq $16, %rax	
+
+2
+	movq %rdi, 240(%rax)	
+
+2
+	movq %reg0, 216(%rax)	
+
+2
+	movq 72(%reg0), %rax	
+
+2
+.List.cons_1:	
+
+2
+.Main.main_188:	
+
+2
+	movq %reg0, 472(%reg1)	
+
+2
+.Main.main_186:	
+
+2
+	movq %r14, 8(%rax)	
+
+2
+	movq $35, %reg0	
+
+2
+	.type Yaz.new, @function	
+
+2
+	movq %reg0, 512(%reg1)	
+
+2
+	jmp .Main.main_65	
+
+2
+.Main.main_180:	
+
+2
+	call A2I.new	
+
+2
+	je .Main.main_184	
+
+2
+	movq %reg0, 616(%rax)	
+
+2
+	movq %reg0, 320(%rax)	
+
+2
+	je .Main.main_144	
+
+2
+.Main.main_98:	
+
+2
+	movq $168, %reg0	
+
+2
+	movq %reg0, 384(%reg1)	
+
+2
+	je .Main.main_119	
+
+2
+	jmp .Main.main_17	
+
+2
+.string12:	
+
+2
+	movq %rdi, 320(%rax)	
+
+2
+	movq %reg0, 448(%rax)	
+
+2
+	jmp .Main.main_50	
+
+2
+	je .Main.new_1	
+
+2
+.string14:	
+
+2
+	movq %reg0, 360(%reg1)	
+
+2
+.Main.main_100:	
+
+2
+	movq %r9, %r10	
+
+2
+	.size Main.printY, .-Main.printY	
+
+2
+	movq %rdi, 424(%rax)	
+
+2
+	je .Main.main_96	
+
+2
+	movq %reg0, 400(%rax)	
+
+2
+.Main.main_108:	
+
+2
+	movq %reg0, 680(%reg1)	
+
+2
+.Main.main_132:	
+
+2
+.Main.main_130:	
+
+2
+	.type Cons.new, @function	
+
+2
+	.type Foo.getBar, @function	
+
+2
+	movq 0(%r14), %rax	
+
+2
+	movq %rdi, 472(%rax)	
+
+2
+	movq $173, %rsi	
+
+2
+	.string "2"	
+
+2
+	.size List.cons, .-List.cons	
+
+2
+	movq %rdi, 560(%reg1)	
+
+2
+	movq %reg0, 424(%reg1)	
+
+2
+	movq %rdi, 536(%reg1)	
+
+2
+	movq $78, %rsi	
+
+2
+	movq %rdi, 304(%rax)	
+
+2
+	.globl Foo.getBar	
+
+2
+	jg .Main.main_11	
+
+2
+	movq $.string17, %reg0	
+
+2
+	movq $229, %reg0	
+
+2
+.Main.main_106:	
+
+2
+	movq %rdi, 656(%reg1)	
+
+2
+	movq $82, %reg0	
+
+2
+	movq %rdi, 600(%rax)	
+
+2
+	movq -128(%rbp), %rdx	
+
+2
+.Main.main_189:	
+
+2
+	movq $.string15, %rax	
+
+2
+	movq %reg0, 416(%rax)	
+
+2
+.Main.main_183:	
+
+2
+.Main.main_181:	
+
+2
+	je .Main.main_185	
+
+2
+.Main.main_138:	
+
+2
+	movq %reg0, 656(%rax)	
+
+2
+	movq %rdi, 560(%rax)	
+
+2
+	je .Main.main_129	
+
+2
+	movq -176(%rbp), %r9	
+
+2
+	movq %reg0, 240(%reg1)	
+
+2
+	movq $.string10, %rbx	
+
+2
+	movq $7, %r12	
+
+2
+	call Baz.new	
+
+2
+	movq %reg0, 264(%reg1)	
+
+2
+	movq %reg0, 512(%rax)	
+
+2
+	movq %rdi, 336(%rax)	
+
+2
+	.quad Cons.new	
+
+2
+	jge .Main.main_7	
+
+2
+	je .Main.main_74	
+
+2
+	movq %reg0, 408(%reg1)	
+
+2
+Yaz.new:	
+
+2
+	je .Main.main_187	
+
+2
+	je .Main.main_107	
+
+2
+	.quad .string15_l	
+
+2
+	movq %rdi, 608(%rax)	
+
+2
+	subl %r10d, %eax	
+
+2
+	movq %rdi, 528(%reg1)	
+
+2
+	movq %rdi, 528(%rax)	
+
+2
+	.size Cons.init, .-Cons.init	
+
+2
+	movq %reg0, 664(%rax)	
+
+2
+	movq -24(%rbp), %rcx	
+
+2
+	je .Main.main_40	
+
+2
+.Main.main_103:	
+
+2
+.Main.main_109:	
+
+2
+	movq %rdi, 496(%reg1)	
+
+2
+	movq %reg0, 728(%reg1)	
+
+2
+	movq %reg0, 624(%rax)	
+
+2
+.Main.new_5:	
+
+2
+	je .Main.main_57	
+
+2
+	movq %rdi, 576(%rax)	
+
+2
+	movq %reg0, 576(%rax)	
+
+2
+	movq %reg0, 360(%rax)	
+
+2
+	.string "1"	
+
+2
+	cmpq $String_vtable, 0(%rbx)	
+
+2
+	movq $111, %reg0	
+
+2
+	.quad .string4	
+
+2
+	.globl List.cons	
+
+2
+	movq $168, %rsi	
+
+2
+	movq %reg0, 712(%reg1)	
+
+2
+	movq %rdi, 216(%rax)	
+
+2
+.Main.main_113:	
+
+2
+.Main.main_153:	
+
+2
+.Main.main_155:	
+
+2
+	.type List.cons, @function	
+
+2
+	movq $Cons_vtable, 0(%rax)	
+
+2
+	subq $16, %rsp	
+
+2
+	movq %reg0, 544(%reg1)	
+
+2
+	je .Main.main_151	
+
+2
+	movq %rdi, 432(%reg1)	
+
+2
+	movq %rdi, 568(%reg1)	
+
+2
+	movq %rdi, 352(%reg1)	
+
+2
+.Main.main_101:	
+
+2
+	je .Main.main_186	
+
+2
+	movq %rdi, 488(%rax)	
+
+2
+	movq $89, %rsi	
+
+2
+	movq %rdi, 488(%reg1)	
+
+2
+	.size Cons.new, .-Cons.new	
+
+2
+	movq %rdi, 344(%rax)	
+
+2
+.Main.main_141:	
+
+2
+	movq $38801, %reg0	
+
+2
+	je .Main.main_188	
+
+2
+	je .Main.main_124	
+
+2
+	movq %rdi, 616(%rax)	
+
+2
+	movq 80(%r14), %r14	
+
+2
+	movq %reg0, 280(%reg1)	
+
+2
+.Main.main_149:	
+
+2
+.Main.main_83:	
+
+2
+Main.printY:	
+
+2
+	movq %rdi, 224(%rax)	
+
+2
+	movq %reg0, 232(%reg1)	
+
+2
+	movq $Cons_vtable, 0(%reg0)	
+
+2
+	movq %rdi, 624(%reg1)	
+
+2
+	movq %reg0, 688(%rax)	
+
+2
+	movq %reg0, 496(%rax)	
+
+2
+.Main.main_91:	
+
+2
+	movq %reg0, 496(%reg1)	
+
+2
+	cmpl $0, 8(%rax)	
+
+2
+.Main.main_93:	
+
+2
+	cmpq $String_vtable, 0(%rsi)	
+
+2
+	movq %rdi, 496(%rax)	
+
+2
+Cons.new:	
+
+2
+	.size Main.getFoo, .-Main.getFoo	
+
+2
+	je .Main.main_50	
+
+2
+	je .Main.main_79	
+
+2
+	cmpl %r13d, %r14d	
+
+2
+.Main.main_122:	
+
+2
+.Main.main_115:	
+
+2
+	call Object.copy	
+
+2
+.Main.main_124:	
+
+2
+.Main.main_158:	
+
+2
+.Main.main_152:	
+
+2
+.Main.main_85:	
+
+2
+	movq %rdx, -184(%rbp)	
+
+2
+	addl %reg0, %ebx	
+
+2
+.Main.main_150:	
+
+2
+	je .Main.main_162	
+
+2
+.Main.main_99:	
+
+2
+	movq %reg0, 736(%rax)	
+
+2
+	movq %rdi, 648(%reg1)	
+
+2
+	movq %reg0, 696(%reg1)	
+
+2
+	movq $name_Int, %rax	
+
+2
+	movq $24, %rsi	
+
+2
+	movq %rdi, 736(%rax)	
+
+2
+	jmp .Bar.new_17	
+
+2
+	movq %rdi, 424(%reg1)	
+
+2
+	movq $3, %rbx	
+
+2
+	movq %reg0, 368(%rax)	
+
+2
+	movq 8(%rbx), %rsi	
+
+2
+	movq -24(%rbp), %rbx	
+
+2
+	je .Main.main_189	
+
+2
+	je .Main.main_102	
+
+2
+	jmp .Main.main_44	
+
+2
+	movq %rax, 72(%reg1)	
+
+2
+	movq %rax, 64(%rbx)	
+
+2
+	movq 32(%rbx), %r12	
+
+2
+	movq 16(%reg0), %r12	
+
+2
+	movq %rdi, 352(%rax)	
+
+2
+	je .Main.main_109	
+
+2
+	movq %rdi, 656(%rax)	
+
+2
+	movq %rdi, 472(%reg1)	
+
+1
+	jne .Matrix.set_40	
+
+1
+	.quad Cons.head	
+
+1
+	movq $38220, -32(%rbp)	
+
+1
+	jmp .Matrix.set_52	
+
+1
+	.quad CellularAutomaton.cell_right_neighbor	
+
+1
+	movq $62150, %reg0	
+
+1
+	movq -160(%rbp), %r9	
+
+1
+	jg .Main.new_12	
+
+1
+	movq $29773, %rax	
+
+1
+	movq $17376, %reg0	
+
+1
+	movq $57963, %reg0	
+
+1
+	.quad Complex.reflect_X	
+
+1
+	.quad Nil.print_list	
+
+1
+Foo.x:	
+
+1
+	movq $180, %rsi	
+
+1
+	movq 576(%reg0), %rax	
+
+1
+	movq 472(%reg0), %reg1	
+
+1
+	movq $5880, %reg0	
+
+1
+	movq 704(%rbx), %reg1	
+
+1
+	.type Complex.reflect_X, @function	
+
+1
+	.size Foo.doh, .-Foo.doh	
+
+1
+List.tail:	
+
+1
+	.quad List.rcons	
+
+1
+	movq $52306, %reg0	
+
+1
+	addl %eax, %r12d	
+
+1
+	movq 608(%reg0), %r12	
+
+1
+.Cons.insert_5:	
+
+1
+	.quad 25	
+
+1
+	jge .Main.main_138	
+
+1
+	movq $126, %rsi	
+
+1
+	jmp .Main.funcifi_2	
+
+1
+	.size Bar.getJ, .-Bar.getJ	
+
+1
+	movq 504(%reg0), %r12	
+
+1
+	.type Complex.y_value, @function	
+
+1
+	movq $51233, %rax	
+
+1
+	jmp .Main.main_99	
+
+1
+	cmpl %r14d, %r13d	
+
+1
+	jmp .Main.main_167	
+
+1
+	je .List.insert_1	
+
+1
+	movq $30018, %rax	
+
+1
+	movq %rdx, -96(%rbp)	
+
+1
+	.size Main.funccaseb, .-Main.funccaseb	
+
+1
+	jne .Matrix.get_32	
+
+1
+	jne .CellularAutomaton.cell_left_neighbor_1	
+
+1
+	je .Main.out_whatever_1	
+
+1
+	jne .Matrix.set_15	
+
+1
+	.quad 15	
+
+1
+	movq $47218, %reg0	
+
+1
+Main.funccasei:	
+
+1
+	movq $8271, %rsi	
+
+1
+	.string "X"	
+
+1
+	jmp .Matrix.set_26	
+
+1
+	movq $33, %rax	
+
+1
+	movq $.string7, %rdi	
+
+1
+	movq $58652, %reg0	
+
+1
+	jmp .Matrix.get_9	
+
+1
+	jne .Complex.equal_2	
+
+1
+	movq 16(%rax), %r12	
+
+1
+.Bar.new_7:	
+
+1
+	.quad Foo.z	
+
+1
+	jmp .Main.main_101	
+
+1
+	movq $72, %rdi	
+
+1
+	movq $14461, %rdi	
+
+1
+	movq $47353, %reg0	
+
+1
+	movq $20908, %reg0	
+
+1
+	.globl Main.fib	
+
+1
+	.quad Main.out_whatever	
+
+1
+	movq $56918, %reg0	
+
+1
+.ListNode.push_1:	
+
+1
+	movq $10478, %reg0	
+
+1
+.Matrix.get_14:	
+
+1
+	movq $179, %rsi	
+
+1
+	movq $16280, %reg0	
+
+1
+DicNode.incr:	
+
+1
+Main.funcwhilei:	
+
+1
+	.size Complex.reflect_Y, .-Complex.reflect_Y	
+
+1
+	movq 136(%r13), %r13	
+
+1
+	movq 552(%reg0), %reg1	
+
+1
+	movq $20509, %rax	
+
+1
+	je .Main.main_145	
+
+1
+	.globl Nil.rcons	
+
+1
+	movq 200(%reg0), %reg0	
+
+1
+	jne .Matrix.set_17	
+
+1
+	movq $83, %reg0	
+
+1
+	jmp .Main.main_170	
+
+1
+	jne .Matrix.get_8	
+
+1
+	movq $2211, %reg0	
+
+1
+List.print_list:	
+
+1
+	jmp .A2I.c2i_14	
+
+1
+Complex.x_value:	
+
+1
+	movq $3850, %rdi	
+
+1
+	.size Nil.sort, .-Nil.sort	
+
+1
+	movq 448(%reg0), %reg1	
+
+1
+	addl %reg0, %r12d	
+
+1
+	movq 304(%reg0), %rax	
+
+1
+	.size Cons.rev, .-Cons.rev	
+
+1
+	jmp .Dictionary.insert_3	
+
+1
+Nil.rev:	
+
+1
+	movq %reg0, 16(%rdi)	
+
+1
+.Main.new_12:	
+
+1
+	jne .Matrix.set_2	
+
+1
+	.quad Main.print_list	
+
+1
+	movq $34313, %reg0	
+
+1
+	movq $63252, %rax	
+
+1
+	jne .Main.funcwhileb_2	
+
+1
+.Matrix.set_45:	
+
+1
+	movq $49411, %rsi	
+
+1
+.DicNode.insert_1:	
+
+1
+	.quad .string17_l	
+
+1
+	.globl List.head	
+
+1
+	jne .Matrix.set_4	
+
+1
+	movq $108, %reg0	
+
+1
+	movq $18391, %rdi	
+
+1
+List.cdr:	
+
+1
+	jge .A2I.a2i_aux_2	
+
+1
+	.string "A"	
+
+1
+	.size Bar.getI, .-Bar.getI	
+
+1
+.DicNode.get_6:	
+
+1
+	movq $34320, %rcx	
+
+1
+	movq 616(%reg0), %reg1	
+
+1
+	movq $21018, %rax	
+
+1
+	movq $39506, %reg0	
+
+1
+	movq $28227, %r11	
+
+1
+Matrix.get:	
+
+1
+	movq 536(%reg0), %rax	
+
+1
+	movq $62331, %rax	
+
+1
+	movq $228, %rsi	
+
+1
+	movq 120(%reg0), %r12	
+
+1
+.DicNode.insert_3:	
+
+1
+	jg .Main.main_7	
+
+1
+	movq 264(%reg0), %reg1	
+
+1
+.DicNode.insert_5:	
+
+1
+	.type Matrix.set, @function	
+
+1
+	.globl List.rev	
+
+1
+Cons.cdr:	
+
+1
+	.type Main.funcwhilei, @function	
+
+1
+	.globl DicNode.decr	
+
+1
+	.globl Foo.z	
+
+1
+	movq 384(%rbx), %reg1	
+
+1
+	movq $29524, %reg0	
+
+1
+	setl %r15b	
+
+1
+	movq $58419, %reg0	
+
+1
+	movq $34313, %r12	
+
+1
+	movq 456(%rbx), %reg1	
+
+1
+	movq $45807, %reg0	
+
+1
+	movq $15469, %reg0	
+
+1
+	movq $30996, %reg0	
+
+1
+	movq $21514, %rdi	
+
+1
+	movq 520(%rbx), %reg1	
+
+1
+	movq $.string16, %rax	
+
+1
+	jne .Main.main_57	
+
+1
+	.type Cons.head, @function	
+
+1
+	movq $3828, %rsi	
+
+1
+	movq $12591, %rdi	
+
+1
+.Matrix.set_22:	
+
+1
+	movq 136(%reg0), %reg1	
+
+1
+	movq $25185, %rax	
+
+1
+	.string "d"	
+
+1
+	movq $80, %rsi	
+
+1
+	movq 304(%rbx), %rax	
+
+1
+.Matrix.get_26:	
+
+1
+	je .Main.main_131	
+
+1
+	jne .Main.main_111	
+
+1
+	je .Cons.print_list_1	
+
+1
+.Matrix.get_20:	
+
+1
+	movq $26972, %reg0	
+
+1
+	movq 288(%rbx), %r12	
+
+1
+	.size CellularAutomaton.cell, .-CellularAutomaton.cell	
+
+1
+	movq $41765, %reg0	
+
+1
+	jmp .Complex.equal_6	
+
+1
+	jmp .Main.main_54	
+
+1
+	movq 184(%rax), %rax	
+
+1
+	movq $21018, %reg0	
+
+1
+	jmp .A2I.a2i_aux_1	
+
+1
+	movq 376(%reg0), %rax	
+
+1
+	jne .Matrix.get_15	
+
+1
+	movq 64(%rbx), %reg1	
+
+1
+	movq 504(%reg0), %reg1	
+
+1
+.Matrix.get_56:	
+
+1
+	jmp .Matrix.elMul_1	
+
+1
+	movq $1317, %reg0	
+
+1
+	.globl DicNode.next	
+
+1
+	movq $40570, %r8	
+
+1
+	movq $5456, %reg0	
+
+1
+	jge .Main.funcwhilei_2	
+
+1
+	movq $Razz_vtable, 0(%reg0)	
+
+1
+	jge .Main.main_14	
+
+1
+	movq $12757, %reg0	
+
+1
+	.size A2I.i2a, .-A2I.i2a	
+
+1
+	movq $60127, %r10	
+
+1
+	movq $35237, %r8	
+
+1
+	movq $59495, %reg0	
+
+1
+	.string "B\\n"	
+
+1
+	jmp .A2I.i2a_4	
+
+1
+	movq $32079, %rdi	
+
+1
+	movq 448(%reg0), %rax	
+
+1
+	movq $2730, %reg0	
+
+1
+.Razz.new_12:	
+
+1
+	.globl CellularAutomaton.cell	
+
+1
+	je .Razz.new_4	
+
+1
+	movq $1, %r9	
+
+1
+	.globl Main.setFoo	
+
+1
+.Matrix.get_16:	
+
+1
+	.string "678987"	
+
+1
+	.type CellularAutomaton.init, @function	
+
+1
+	.string "PASS"	
+
+1
+	movq $Matrix_vtable, 0(%reg0)	
+
+1
+.Main.func2_2:	
+
+1
+	movq 592(%rbx), %reg1	
+
+1
+	.globl Dictionary.setHead	
+
+1
+	.size Main.out_whatever, .-Main.out_whatever	
+
+1
+	movq $51233, %reg0	
+
+1
+	movq 224(%reg0), %rax	
+
+1
+	movq 560(%reg0), %r12	
+
+1
+	.type Bar.setI, @function	
+
+1
+	movq $118, %reg0	
+
+1
+	.size A2I.new, .-A2I.new	
+
+1
+	.size Matrix.get, .-Matrix.get	
+
+1
+	jmp .A2I.c2i_16	
+
+1
+	movq 256(%reg0), %r12	
+
+1
+	movq $47963, %r9	
+
+1
+	movq $17155, %reg0	
+
+1
+	movq %rdx, -104(%rbp)	
+
+1
+	jne .Matrix.set_45	
+
+1
+	movq 552(%rbx), %reg1	
+
+1
+	jge .Main.new_4	
+
+1
+	movq $29790, %reg0	
+
+1
+	.globl DicNode.incr	
+
+1
+	movq $16280, %rsi	
+
+1
+	movq $52033, %rax	
+
+1
+	movq $0, -24(%rbp)	
+
+1
+	jne .A2I.i2c_7	
+
+1
+	movq $164, %rsi	
+
+1
+	jge .Main.main_61	
+
+1
+	movq $18781, %reg0	
+
+1
+	movq 680(%rbx), %reg1	
+
+1
+.Main.fib_2:	
+
+1
+	.size ListNode.push, .-ListNode.push	
+
+1
+	movq $29252, %rcx	
+
+1
+	jmp .Main.print_list_3	
+
+1
+	.type A2I.a2i, @function	
+
+1
+	movq $59495, %r11	
+
+1
+	movq $14546, %rax	
+
+1
+	movq $10174, %reg0	
+
+1
+	movq $192, %reg0	
+
+1
+	jge .Main.main_21	
+
+1
+Main.fib:	
+
+1
+	jmp .Matrix.get_63	
+
+1
+	jmp .Matrix.get_16	
+
+1
+	.size Matrix.elMul, .-Matrix.elMul	
+
+1
+	jmp .Main.main_13	
+
+1
+	.quad CellularAutomaton.new	
+
+1
+Foo.y:	
+
+1
+	movq $180, %reg0	
+
+1
+	movq $39506, %rsi	
+
+1
+	movq $60913, %reg0	
+
+1
+	.quad Main.iota	
+
+1
+	jge .Main.main_45	
+
+1
+	movq $18841, %reg0	
+
+1
+	jmp .Main.main_164	
+
+1
+	jmp .Main.main_139	
+
+1
+	movq 560(%reg0), %reg1	
+
+1
+	movq %rdi, 48(%rbx)	
+
+1
+	movq 528(%reg0), %reg1	
+
+1
+	movq $33976, %rdi	
+
+1
+	movq $3, %r9	
+
+1
+	jmp .A2I.c2i_8	
+
+1
+	jmp .Main.main_83	
+
+1
+	movq $90, %reg0	
+
+1
+	.globl Cons.insert	
+
+1
+	movq $25185, %reg0	
+
+1
+	movq 360(%reg0), %reg1	
+
+1
+	jne .A2I.i2c_9	
+
+1
+	movq 648(%rbx), %r12	
+
+1
+	jmp .Matrix.set_5	
+
+1
+.Matrix.get_28:	
+
+1
+Baz.main:	
+
+1
+	.globl Cons.sort	
+
+1
+	movq 600(%reg0), %rax	
+
+1
+	movq $48608, %reg0	
+
+1
+	.size Complex.new, .-Complex.new	
+
+1
+	jmp .Matrix.set_20	
+
+1
+	movq 280(%reg0), %r12	
+
+1
+	movq $49695, %rdi	
+
+1
+.Matrix.set_31:	
+
+1
+	movq $97, %reg0	
+
+1
+	je .Main.main_138	
+
+1
+	movq $64582, %reg0	
+
+1
+.Main.new_11:	
+
+1
+Matrix_vtable:	
+
+1
+	movq $24092, %rax	
+
+1
+	movq $72, %reg0	
+
+1
+	movq 144(%rbx), %reg1	
+
+1
+.Matrix.set_25:	
+
+1
+	cmpq $Bool_vtable, 0(%rsi)	
+
+1
+.Matrix.set_56:	
+
+1
+.Matrix.set_43:	
+
+1
+	jmp .A2I.i2a_aux_2	
+
+1
+	movq $2211, %rsi	
+
+1
+.Razz.new_20:	
+
+1
+	movq $44, %reg0	
+
+1
+	.size Cons.rcons, .-Cons.rcons	
+
+1
+.Main.new_13:	
+
+1
+	movq $33, %reg0	
+
+1
+	movq $25036, %reg0	
+
+1
+.Main.funcifb_1:	
+
+1
+	jne .A2I.c2i_11	
+
+1
+.Razz.new_18:	
+
+1
+	jne .Main.main_11	
+
+1
+.Matrix.set_65:	
+
+1
+	movq $19020, %rsi	
+
+1
+	jmp .A2I.i2c_12	
+
+1
+	.type Cons.print_list, @function	
+
+1
+	movq 128(%rbx), %r12	
+
+1
+	.type Main.myInt, @function	
+
+1
+	jg .Main.main_15	
+
+1
+	movq $130, %rdi	
+
+1
+	call Foo.getX	
+
+1
+	movq $53642, %rax	
+
+1
+	movq $48985, %rax	
+
+1
+.Main.print_list_1:	
+
+1
+	movq 464(%rbx), %rax	
+
+1
+.Main.func_7:	
+
+1
+	movq $37473, %reg0	
+
+1
+	movq $25099, %rsi	
+
+1
+	jmp .Main.main_19	
+
+1
+	movq -136(%rbp), %r8	
+
+1
+.Razz.new_5:	
+
+1
+	jmp .Matrix.get_39	
+
+1
+.A2I.a2i_5:	
+
+1
+	.quad DicNode.init	
+
+1
+.Complex.equal_5:	
+
+1
+	cmpl %reg0, %r12d	
+
+1
+	movq 336(%rbx), %reg1	
+
+1
+	movq $26083, %reg0	
+
+1
+	.string "6"	
+
+1
+	movq $12843, %reg0	
+
+1
+	movq $36, %rsi	
+
+1
+	movq $5660, %reg0	
+
+1
+	movq $11513, %reg0	
+
+1
+	.size CellularAutomaton.print, .-CellularAutomaton.print	
+
+1
+	.type List.car, @function	
+
+1
+	.type Matrix.get, @function	
+
+1
+	movq $name_Object, %reg0	
+
+1
+Dictionary.setHead:	
+
+1
+	.globl List.print_list	
+
+1
+	movq $1, %r15	
+
+1
+	movq $33158, %rsi	
+
+1
+	movq $15079, %rax	
+
+1
+	je .Main.new_6	
+
+1
+	cmpl $0, 24(%rbx)	
+
+1
+	movq $1202, %rax	
+
+1
+	jne .Matrix.get_4	
+
+1
+	.globl Foo.y	
+
+1
+	movq $47, %reg0	
+
+1
+	call Complex.new	
+
+1
+	.quad Cons.sort	
+
+1
+	movq $40570, %reg0	
+
+1
+	jge .Cons.insert_1	
+
+1
+	movq $36519, %reg0	
+
+1
+	je .Main.main_141	
+
+1
+	movq $17979, %rbx	
+
+1
+	movq $16, %rsi	
+
+1
+	.globl DicNode.new	
+
+1
+List.sort:	
+
+1
+	movq $21813, %rdi	
+
+1
+	movq $25351, %rax	
+
+1
+	.globl Complex.reflect_0	
+
+1
+	movq $15798, %reg0	
+
+1
+	movq 40(%rbx), %reg1	
+
+1
+	movq $48457, %reg0	
+
+1
+	movq 136(%rbx), %rax	
+
+1
+	.globl Matrix.set	
+
+1
+	movq $31735, %reg0	
+
+1
+	movq $62150, %rax	
+
+1
+	.quad 26	
+
+1
+	jg .Main.main_42	
+
+1
+	.quad Complex.reflect_0	
+
+1
+	movq $28968, %rax	
+
+1
+	.string "Matrix"	
+
+1
+.Matrix.set_39:	
+
+1
+	movq $36010, %reg0	
+
+1
+Main.myInt:	
+
+1
+Foo.getY:	
+
+1
+	movq 168(%rbx), %reg1	
+
+1
+	movq 440(%reg0), %reg1	
+
+1
+	movq $52033, %reg0	
+
+1
+ListNode.next:	
+
+1
+	movq $47308, %rsi	
+
+1
+	.type Bazz.doh, @function	
+
+1
+	.type Main.fib, @function	
+
+1
+.Complex.print_2:	
+
+1
+	movq %rdx, -72(%rbp)	
+
+1
+	movq $.string14, %rdi	
+
+1
+	movq 328(%rbx), %reg1	
+
+1
+	.quad Bar.getJ	
+
+1
+	addl %ebx, %reg1	
+
+1
+	.globl ListNode.insert	
+
+1
+	.globl A2I.new	
+
+1
+	.type Cons.insert, @function	
+
+1
+	movq 720(%reg0), %r12	
+
+1
+	movq $58210, %reg0	
+
+1
+	jge .Main.main_13	
+
+1
+	movq 64(%reg0), %reg1	
+
+1
+.Matrix.get_25:	
+
+1
+	.type Foo.z, @function	
+
+1
+	movq 448(%rbx), %reg1	
+
+1
+	movq $15735, %rax	
+
+1
+	.string "true\\n"	
+
+1
+.Matrix.set_38:	
+
+1
+	je .Matrix.set_38	
+
+1
+.Matrix.get_6:	
+
+1
+	movq 288(%reg0), %r12	
+
+1
+	movq $8640, %reg0	
+
+1
+	.type ListNode.push, @function	
+
+1
+	movq $48027, %r12	
+
+1
+	movq 352(%rbx), %reg1	
+
+1
+	movq $63899, %rax	
+
+1
+	movq $33866, %reg0	
+
+1
+	jge .Main.main_68	
+
+1
+	je .Main.funccase_6	
+
+1
+	.type List.getHead, @function	
+
+1
+	movq $21060, %reg0	
+
+1
+	movq $.string11, %r15	
+
+1
+	jmp .Matrix.get_20	
+
+1
+	movq $19020, %reg0	
+
+1
+	movq $23915, %rax	
+
+1
+.Matrix.set_33:	
+
+1
+	.quad CellularAutomaton.cell_left_neighbor	
+
+1
+	je .Matrix.set_66	
+
+1
+	movq 320(%rbx), %rax	
+
+1
+	movq $30631, %rdi	
+
+1
+.Matrix.set_66:	
+
+1
+	movq $8800, %r12	
+
+1
+	.quad Main.funcifb	
+
+1
+.string21:	
+
+1
+	movq $58921, %reg0	
+
+1
+	movq $48557, %reg0	
+
+1
+	.type DicNode.insert, @function	
+
+1
+	movq $18444, %rax	
+
+1
+	movq %r10, %r9	
+
+1
+	.globl Complex.y_value	
+
+1
+	movq 368(%rbx), %r12	
+
+1
+	jmp .Matrix.set_57	
+
+1
+	movq $28227, %reg0	
+
+1
+	je .ListNode.push_1	
+
+1
+.A2I.a2i_3:	
+
+1
+	jne .Matrix.get_14	
+
+1
+	movq $42968, %rdi	
+
+1
+	jne .Matrix.get_21	
+
+1
+	movq $10280, %reg0	
+
+1
+.Matrix.get_21:	
+
+1
+.Matrix.set_60:	
+
+1
+	je .DicNode.get_3	
+
+1
+	jge .Main.main_66	
+
+1
+.Dictionary.get_4:	
+
+1
+	jmp .Main.main_165	
+
+1
+	movq $88, %rdi	
+
+1
+.string17_l:	
+
+1
+	movq 8(%r12), %r13	
+
+1
+	jmp .Matrix.set_37	
+
+1
+.Matrix.set_51:	
+
+1
+	.quad .string19_l	
+
+1
+	.globl Baz.main	
+
+1
+	jmp .Main.fib_2	
+
+1
+	movq 648(%reg0), %reg1	
+
+1
+	movq $4, %r9	
+
+1
+	movq 592(%reg0), %reg1	
+
+1
+	movq 488(%reg0), %rax	
+
+1
+.Bar.new_1:	
+
+1
+	.size Foo.setS, .-Foo.setS	
+
+1
+.Matrix.set_13:	
+
+1
+	jne .A2I.c2i_1	
+
+1
+	.quad Foo.x	
+
+1
+Bar.getI:	
+
+1
+	jmp .Main.new_5	
+
+1
+	jne .Matrix.set_43	
+
+1
+	movq $14379, %rax	
+
+1
+	movq $53595, %rsi	
+
+1
+	movq $10152, %reg0	
+
+1
+Dictionary.new:	
+
+1
+	movq 656(%reg0), %r12	
+
+1
+	jg .Main.funcifi_1	
+
+1
+	movq $166, %reg0	
+
+1
+	jne .Matrix.get_27	
+
+1
+	movq $24092, %reg0	
+
+1
+	movq 224(%rbx), %rax	
+
+1
+	.size DicNode.insert, .-DicNode.insert	
+
+1
+	je .Main.main_183	
+
+1
+	movq $181, %rsi	
+
+1
+	movq $60323, %reg0	
+
+1
+	movq 696(%reg0), %r12	
+
+1
+	movq 448(%rbx), %rax	
+
+1
+List.rcons:	
+
+1
+	.size Cons.car, .-Cons.car	
+
+1
+	movq $5660, %r8	
+
+1
+	.string "         X         "	
+
+1
+	.globl Main.funcifi	
+
+1
+	jne .Matrix.set_62	
+
+1
+	movq $181, %reg0	
+
+1
+	.string "!"	
+
+1
+	movq $46874, %rax	
+
+1
+	jmp .Matrix.get_5	
+
+1
+	movq $8, %rcx	
+
+1
+	movq 16(%rdi), %rax	
+
+1
+	movq 408(%reg0), %reg1	
+
+1
+	jne .Matrix.get_17	
+
+1
+	movq $2438, %rsi	
+
+1
+Nil_vtable:	
+
+1
+	movq $6934, %rsi	
+
+1
+	movq 520(%reg0), %r12	
+
+1
+	.size Bar.foo, .-Bar.foo	
+
+1
+	.type Nil.print_list, @function	
+
+1
+	movq $11513, %rdi	
+
+1
+	movq $17815, %reg0	
+
+1
+	je .Foo.new_9	
+
+1
+	movq $21813, %reg0	
+
+1
+	je .Nil.rcons_1	
+
+1
+	.type List.head, @function	
+
+1
+	movq $48985, %reg0	
+
+1
+	movq $3850, %reg0	
+
+1
+	movq $110, %rsi	
+
+1
+	movq $21521, %reg0	
+
+1
+	.type Foo.get, @function	
+
+1
+	.string "O\\n"	
+
+1
+	movq $18189, %r11	
+
+1
+	movq 384(%reg0), %reg1	
+
+1
+	movq $15735, %reg0	
+
+1
+	cmpl %reg0d, %r13d	
+
+1
+	movq $604, -24(%rbp)	
+
+1
+	movq 504(%rbx), %r12	
+
+1
+	jmp .CellularAutomaton.evolve_1	
+
+1
+.Matrix.get_54:	
+
+1
+	movq $16420, %rsi	
+
+1
+	.globl A2I.c2i	
+
+1
+	movq 112(%reg0), %r12	
+
+1
+	je .Matrix.get_64	
+
+1
+CellularAutomaton.print:	
+
+1
+	.quad Complex.new	
+
+1
+.Bar.new_14:	
+
+1
+.Complex.equal_4:	
+
+1
+.Main.iota_1:	
+
+1
+	movq $27, %reg0	
+
+1
+	movq $8800, %reg0	
+
+1
+.Foo.new_8:	
+
+1
+	.globl DicNode.insert	
+
+1
+	.type CellularAutomaton.evolve, @function	
+
+1
+	movq 232(%rbx), %reg1	
+
+1
+	movq 360(%reg0), %r12	
+
+1
+	jne .Matrix.set_27	
+
+1
+	movq $9042, %rax	
+
+1
+	.type DicNode.getCount, @function	
+
+1
+	movq 384(%rbx), %r12	
+
+1
+	movq 640(%reg0), %r12	
+
+1
+	movq 232(%reg0), %r12	
+
+1
+	jne .Matrix.set_6	
+
+1
+	jne .Matrix.get_49	
+
+1
+	movq 496(%reg0), %reg1	
+
+1
+	je .Main.main_142	
+
+1
+	.string "5"	
+
+1
+	movq $51549, %rax	
+
+1
+	movq $48457, %rax	
+
+1
+	.globl Foo.x	
+
+1
+	.quad DicNode.new	
+
+1
+	movq $29011, %rax	
+
+1
+	movq 160(%reg0), %reg0	
+
+1
+.CellularAutomaton.cell_right_neighbor_2:	
+
+1
+	.quad .string16_l	
+
+1
+	movq 104(%reg0), %r12	
+
+1
+	je .Cons.insert_5	
+
+1
+	movq $222, %reg0	
+
+1
+.Matrix.get_43:	
+
+1
+	movq -24(%rbp), %r8	
+
+1
+	movq 440(%reg0), %rax	
+
+1
+	movq 8(%rax), %r13	
+
+1
+	movq 536(%reg0), %reg1	
+
+1
+	je .Foo.new_7	
+
+1
+Matrix.elMul:	
+
+1
+	jmp .Matrix.get_52	
+
+1
+.Matrix.get_9:	
+
+1
+	.size Cons.sort, .-Cons.sort	
+
+1
+Main.funcwhileb:	
+
+1
+	movq $4844, %reg0	
+
+1
+	movq 632(%reg0), %reg1	
+
+1
+	movq $10464, %reg0	
+
+1
+	.quad CellularAutomaton.print	
+
+1
+	.globl List.rcons	
+
+1
+	.quad Nil.isNil	
+
+1
+	je .Main.main_168	
+
+1
+	.string "True"	
+
+1
+	je .Complex.equal_1	
+
+1
+	.type CellularAutomaton.cell, @function	
+
+1
+.Matrix.set_58:	
+
+1
+	je .Main.main_133	
+
+1
+	subl %ecx, %reg1d	
+
+1
+	je .Matrix.get_12	
+
+1
+	jmp .Main.main_70	
+
+1
+	movq 320(%reg0), %rax	
+
+1
+	je .Main.print_list_1	
+
+1
+	movq -112(%rbp), %rcx	
+
+1
+	movq $1170, %reg0	
+
+1
+	jmp .Main.main_76	
+
+1
+	movq $47127, %rsi	
+
+1
+	movq $34498, %rsi	
+
+1
+	.size Complex.init, .-Complex.init	
+
+1
+.string18:	
+
+1
+	movq 120(%r13), %r13	
+
+1
+	movq $38661, %reg0	
+
+1
+	.quad Bar.getI	
+
+1
+	.quad Cons.insert	
+
+1
+	movq 296(%rbx), %reg1	
+
+1
+	.quad Matrix.set	
+
+1
+	movq $38661, %rdi	
+
+1
+	.type List.sort, @function	
+
+1
+	movq 24(%rax), %rdx	
+
+1
+	movq $2562, %reg0	
+
+1
+	jmp .Matrix.set_16	
+
+1
+	.type Nil.sort, @function	
+
+1
+	jg .Main.main_9	
+
+1
+	jmp .Main.main_56	
+
+1
+	jmp .A2I.i2a_2	
+
+1
+	movq $25834, %reg0	
+
+1
+	jne .Matrix.get_10	
+
+1
+	.size List.rev, .-List.rev	
+
+1
+.List.insert_1:	
+
+1
+	movq $12, %r12	
+
+1
+	.type ListNode.next, @function	
+
+1
+	je .Main.main_111	
+
+1
+	movq 664(%rbx), %rax	
+
+1
+	movq $24320, %reg0	
+
+1
+	.quad Dictionary.setHead	
+
+1
+	je .Bar.new_8	
+
+1
+	movq $43617, %rsi	
+
+1
+	movq $60606, %reg0	
+
+1
+.Matrix.get_2:	
+
+1
+	movq 552(%reg0), %rax	
+
+1
+	.quad Matrix.new	
+
+1
+.Matrix.get_4:	
+
+1
+	movq $1073741824, %rax	
+
+1
+	movq -112(%rbp), %r8	
+
+1
+	je .Razz.new_2	
+
+1
+	je .Foo.new_2	
+
+1
+	.quad Bar.setI	
+
+1
+	je .Bar.new_12	
+
+1
+	movq $32079, %reg0	
+
+1
+	movq 312(%reg0), %reg1	
+
+1
+	jmp .CellularAutomaton.cell_at_next_evolution_4	
+
+1
+	movq $21613, %r12	
+
+1
+.string16:	
+
+1
+	.quad List.tail	
+
+1
+	movq $20995, %reg0	
+
+1
+	.globl DicNode.get	
+
+1
+	movq $28260, %rax	
+
+1
+	jge .Main.main_22	
+
+1
+.string20:	
+
+1
+	movq $113, %rsi	
+
+1
+	jmp .Matrix.set_11	
+
+1
+	movq 536(%rbx), %reg1	
+
+1
+	movq $33158, %reg0	
+
+1
+	movq 584(%reg0), %r12	
+
+1
+CellularAutomaton.init:	
+
+1
+	.string "false\\n"	
+
+1
+	movq 496(%rbx), %reg1	
+
+1
+	.string "H"	
+
+1
+	movq 528(%rbx), %reg1	
+
+1
+	.size ListNode.next, .-ListNode.next	
+
+1
+	je .Razz.new_15	
+
+1
+	movq $33976, %reg0	
+
+1
+	jne .Matrix.set_54	
+
+1
+.Matrix.get_60:	
+
+1
+	movq 296(%reg0), %reg1	
+
+1
+.Matrix.set_14:	
+
+1
+	movq $3966, %reg0	
+
+1
+	jne .Matrix.get_58	
+
+1
+.CellularAutomaton.evolve_1:	
+
+1
+	jne .Matrix.set_36	
+
+1
+	movq $15469, %rdi	
+
+1
+	.type DicNode.setNext, @function	
+
+1
+	je .Main.main_161	
+
+1
+	movq $48391, %rax	
+
+1
+	movq $3966, %rdi	
+
+1
+	.size CellularAutomaton.new, .-CellularAutomaton.new	
+
+1
+	movq 568(%reg0), %rax	
+
+1
+	jmp .Main.main_153	
+
+1
+	jmp .Main.main_145	
+
+1
+	jmp .Main.main_128	
+
+1
+	jmp .Main.main_81	
+
+1
+	je .Main.main_99	
+
+1
+	movq -120(%rbp), %r9	
+
+1
+	movq $20995, %rax	
+
+1
+	movq $51549, %reg0	
+
+1
+Main.funcifi:	
+
+1
+.Dictionary.get_1:	
+
+1
+	jmp .A2I.i2c_2	
+
+1
+	jmp .Main.main_9	
+
+1
+	movq 672(%reg0), %reg1	
+
+1
+	movq $.string6_l, %reg0	
+
+1
+	movq $64947, %rax	
+
+1
+	jne .Matrix.set_14	
+
+1
+	.string "0"	
+
+1
+	.size List.print_list, .-List.print_list	
+
+1
+	.quad DicNode.getCount	
+
+1
+.Main.funccaseb_2:	
+
+1
+.Matrix.set_41:	
+
+1
+	jmp .Matrix.set_9	
+
+1
+	movq 200(%rax), %rax	
+
+1
+	movq $.string13, %r12	
+
+1
+	movq $CellularAutomaton_vtable, 0(%reg0)	
+
+1
+	jmp .A2I.i2c_14	
+
+1
+	.globl Matrix.mul	
+
+1
+.CellularAutomaton.evolve_2:	
+
+1
+	movq $15487, %reg0	
+
+1
+	je .Foo.new_8	
+
+1
+	movq 496(%rbx), %rax	
+
+1
+	je .Matrix.set_51	
+
+1
+	movq 288(%reg0), %reg1	
+
+1
+	movq $18429, %r9	
+
+1
+	jne .Matrix.set_8	
+
+1
+	movq $174, %reg0	
+
+1
+	movq 216(%reg0), %r12	
+
+1
+	je .Main.main_105	
+
+1
+.Dictionary.insert_3:	
+
+1
+.Matrix.get_46:	
+
+1
+List.rev:	
+
+1
+	movq $48880, %reg0	
+
+1
+	.globl Bazz.printh	
+
+1
+	jmp .CellularAutomaton.cell_left_neighbor_2	
+
+1
+.Dictionary.insert_1:	
+
+1
+	jne .A2I.c2i_13	
+
+1
+	movq $13765, %rax	
+
+1
+	movq 528(%reg0), %rax	
+
+1
+	movq $6550, %rcx	
+
+1
+	.globl DicNode.getCount	
+
+1
+	.quad CellularAutomaton.init	
+
+1
+	movq $11282, %reg0	
+
+1
+	.string "F"	
+
+1
+Bar.foo:	
+
+1
+.Matrix.get_48:	
+
+1
+	movq 96(%reg0), %reg1	
+
+1
+Nil.new:	
+
+1
+	movq $56453, %reg0	
+
+1
+	.size DicNode.incr, .-DicNode.incr	
+
+1
+.Matrix.set_36:	
+
+1
+	jmp .Matrix.get_18	
+
+1
+	movq $8214, %reg0	
+
+1
+	.size DicNode.init, .-DicNode.init	
+
+1
+	movq $9856, %rax	
+
+1
+	jg .Main.main_19	
+
+1
+	jmp .Main.main_183	
+
+1
+	jne .Matrix.get_30	
+
+1
+	movq $5880, %rax	
+
+1
+	movq $25316, %reg0	
+
+1
+	movq 288(%rbx), %reg1	
+
+1
+	jge .Main.main_90	
+
+1
+.Foo.new_9:	
+
+1
+	movq $16693, %rax	
+
+1
+	je .Main.main_192	
+
+1
+	movq $50, %reg0	
+
+1
+	jmp .Main.main_79	
+
+1
+	.string "Complex"	
+
+1
+	jne .Matrix.get_6	
+
+1
+	movq 664(%reg0), %rax	
+
+1
+	movq $62420, %rax	
+
+1
+	movq $63562, %reg0	
+
+1
+.Razz.new_3:	
+
+1
+	movq 512(%rbx), %r12	
+
+1
+	.size Complex.print, .-Complex.print	
+
+1
+Complex.reflect_Y:	
+
+1
+	.size Complex.reflect_0, .-Complex.reflect_0	
+
+1
+	movq $744, %rdi	
+
+1
+	jmp .Matrix.get_35	
+
+1
+	movq $102, %rsi	
+
+1
+.A2I.i2c_10:	
+
+1
+.List.insert_3:	
+
+1
+	jmp .Matrix.get_65	
+
+1
+	.type Dictionary.get, @function	
+
+1
+	.size List.tail, .-List.tail	
+
+1
+	movq 192(%reg0), %reg1	
+
+1
+	.type Nil.rev, @function	
+
+1
+	movq %r12, %r15	
+
+1
+.Matrix.set_48:	
+
+1
+	movq %rdx, %rbx	
+
+1
+	movq 616(%rbx), %reg1	
+
+1
+	.size Main.funccasei, .-Main.funccasei	
+
+1
+	movq $46154, %rsi	
+
+1
+	jg .Main.main_84	
+
+1
+	movq $25099, %reg0	
+
+1
+.A2I.i2c_16:	
+
+1
+DicNode.decr:	
+
+1
+	movq 376(%rbx), %rax	
+
+1
+	movq 120(%reg0), %reg1	
+
+1
+	movq 600(%rbx), %reg1	
+
+1
+	jne .Matrix.get_54	
+
+1
+	movq $25241, %reg0	
+
+1
+	negl %r13d	
+
+1
+	movq %rdx, -176(%rbp)	
+
+1
+	.size Matrix.mul, .-Matrix.mul	
+
+1
+	movq 112(%reg0), %reg1	
+
+1
+	.type DicNode.decr, @function	
+
+1
+.Matrix.set_40:	
+
+1
+.A2I.i2c_18:	
+
+1
+	je .Cons.rcons_1	
+
+1
+	.type Complex.new, @function	
+
+1
+DicNode.setNext:	
+
+1
+	je .Main.main_169	
+
+1
+	.globl Matrix.new	
+
+1
+	movq 552(%rbx), %rax	
+
+1
+	.quad Complex.y_value	
+
+1
+	jmp .Matrix.get_61	
+
+1
+	movq 88(%reg0), %reg1	
+
+1
+	movq $12660, %reg0	
+
+1
+	cmpl %r15d, %reg1d	
+
+1
+.Matrix.get_36:	
+
+1
+	movq 216(%reg0), %reg1	
+
+1
+	.size Complex.y_value, .-Complex.y_value	
+
+1
+A2I.c2i:	
+
+1
+	.type Main.funcwhileb, @function	
+
+1
+	movq -168(%rbp), %rdx	
+
+1
+	movq 40(%rbx), %rax	
+
+1
+	je .Main.main_121	
+
+1
+	movq $12591, %reg0	
+
+1
+	movq $57936, %reg0	
+
+1
+	je .Main.main_110	
+
+1
+	movq 712(%reg0), %reg1	
+
+1
+	movq $19892, %reg0	
+
+1
+	movq %rsi, -16(%rbp)	
+
+1
+	movq 352(%reg0), %rax	
+
+1
+	.quad CellularAutomaton.num_cells	
+
+1
+	je .Main.func_4	
+
+1
+	.globl Cons.print_list	
+
+1
+	.type A2I.a2i_aux, @function	
+
+1
+.A2I.a2i_aux_1:	
+
+1
+.Main.out_whatever_3:	
+
+1
+	movq $.string8, %r15	
+
+1
+	.size Matrix.set, .-Matrix.set	
+
+1
+	movq 160(%rbx), %reg1	
+
+1
+	movq 584(%rbx), %r12	
+
+1
+	movq %r13, %rcx	
+
+1
+	movq $2739, %reg0	
+
+1
+	movq $32716, %r10	
+
+1
+	movq $179, %reg0	
+
+1
+	movq $2, %r13	
+
+1
+	movq 0(%reg0), %reg0	
+
+1
+.Bar.new_11:	
+
+1
+	jne .Main.main_42	
+
+1
+	movq $38511, %rax	
+
+1
+	je .Razz.new_3	
+
+1
+	movq $45379, %reg0	
+
+1
+	movq $15234, %r12	
+
+1
+.Foo.new_13:	
+
+1
+.Matrix.set_50:	
+
+1
+	movq 736(%reg0), %rax	
+
+1
+	movq $39523, %rsi	
+
+1
+	jmp .Matrix.set_48	
+
+1
+	.globl Razz.new	
+
+1
+	movq $1000, %reg0	
+
+1
+	movq $61695, %reg0	
+
+1
+	movq 96(%r12), %r12	
+
+1
+	.type Complex.reflect_Y, @function	
+
+1
+	movq 64(%r14), %r14	
+
+1
+	jmp .Main.main_23	
+
+1
+	.string "I\\n"	
+
+1
+	.size ListNode.insert, .-ListNode.insert	
+
+1
+	movq 664(%rbx), %reg1	
+
+1
+.Main.funcwhileb_2:	
+
+1
+	je .List.insert_4	
+
+1
+	.globl Complex.new	
+
+1
+.Complex.equal_6:	
+
+1
+	.type Bar.foo, @function	
+
+1
+	subl %eax, %r12d	
+
+1
+	jmp .Main.main_163	
+
+1
+.A2I.i2c_7:	
+
+1
+	je .Razz.new_14	
+
+1
+	jg .Main.main_126	
+
+1
+	.size Main.funcifb, .-Main.funcifb	
+
+1
+	movq 656(%rbx), %reg1	
+
+1
+	movq $60750, %r12	
+
+1
+	.type Bazz.new, @function	
+
+1
+.A2I.i2c_1:	
+
+1
+	jne .Main.main_152	
+
+1
+	movq $55049, %reg0	
+
+1
+	movq $34526, %reg0	
+
+1
+Bar.setX:	
+
+1
+.Matrix.set_37:	
+
+1
+	movq $174, %rsi	
+
+1
+	.type Complex.x_value, @function	
+
+1
+	.quad Main.funccaseb	
+
+1
+	.quad Bar.setJ	
+
+1
+	jne .A2I.c2i_3	
+
+1
+.Bar.new_9:	
+
+1
+	movq 368(%reg0), %r12	
+
+1
+	.string " is prime.\\n"	
+
+1
+	je .List.insert_2	
+
+1
+.A2I.c2i_7:	
+
+1
+	jmp .Main.funccase_8	
+
+1
+	movq $9569, %reg0	
+
+1
+	movq $17979, %reg0	
+
+1
+.A2I.c2i_1:	
+
+1
+	movq 576(%rbx), %reg1	
+
+1
+	movq 248(%reg0), %reg1	
+
+1
+	movq $56918, %rax	
+
+1
+	movq 360(%rbx), %r12	
+
+1
+	jmp .Main.main_97	
+
+1
+.A2I.i2c_9:	
+
+1
+	.type Razz.new, @function	
+
+1
+Main.out_whatever:	
+
+1
+Complex.init:	
+
+1
+	movq -120(%rbp), %r8	
+
+1
+.Foo.new_3:	
+
+1
+	je .Cons.rev_1	
+
+1
+	.quad .string18_l	
+
+1
+	movq 256(%rbx), %reg1	
+
+1
+	call CellularAutomaton.new	
+
+1
+.Matrix.get_29:	
+
+1
+	movq $2985, %r11	
+
+1
+	je .Foo.new_10	
+
+1
+.Cons.insert_2:	
+
+1
+	jne .Matrix.set_60	
+
+1
+	movq $43177, %rdi	
+
+1
+.string18_l:	
+
+1
+	jmp .Matrix.get_7	
+
+1
+	movq $50, %rsi	
+
+1
+	.globl Foo.set	
+
+1
+	.size Cons.head, .-Cons.head	
+
+1
+	.size CellularAutomaton.evolve, .-CellularAutomaton.evolve	
+
+1
+.A2I.i2a_1:	
+
+1
+	movq $9508, %rax	
+
+1
+	jne .Matrix.get_23	
+
+1
+.A2I.c2i_9:	
+
+1
+	movq $932, %reg0	
+
+1
+	movq 8(%reg0), %r15	
+
+1
+	.type DicNode.name, @function	
+
+1
+	je .Bazz.new_5	
+
+1
+	movq $38600, %r12	
+
+1
+	movq 8(%rdi), %rbx	
+
+1
+	.string "7"	
+
+1
+.Matrix.get_15:	
+
+1
+.Main.new_9:	
+
+1
+	.size Foo.getS, .-Foo.getS	
+
+1
+	movq $40813, %rdi	
+
+1
+	movq 632(%rbx), %reg1	
+
+1
+.Matrix.set_1:	
+
+1
+	jne .Main.main_50	
+
+1
+	jmp .A2I.c2i_18	
+
+1
+	.string "O"	
+
+1
+	.type CellularAutomaton.print, @function	
+
+1
+	movq $Nil_vtable, 0(%rax)	
+
+1
+	je .Main.out_whatever_6	
+
+1
+	.quad DicNode.setNext	
+
+1
+	.globl List.cdr	
+
+1
+	.globl CellularAutomaton.print	
+
+1
+	movq $147, %rsi	
+
+1
+	movq $25895, %rax	
+
+1
+	je .Cons.sort_1	
+
+1
+	movq $40488, %reg0	
+
+1
+	movq $83, %rsi	
+
+1
+.Main.funcwhilei_1:	
+
+1
+A2I.a2i_aux:	
+
+1
+	movq $55662, %reg0	
+
+1
+	movq $24923, %rsi	
+
+1
+	movq 712(%rbx), %reg1	
+
+1
+ListNode.get:	
+
+1
+	movq 344(%reg0), %reg1	
+
+1
+	movq $3520, %r9	
+
+1
+	jmp .Main.funcwhilei_1	
+
+1
+	jne .Matrix.get_28	
+
+1
+.CellularAutomaton.cell_at_next_evolution_1:	
+
+1
+.Matrix.get_30:	
+
+1
+	je .Main.main_146	
+
+1
+	movq $26972, %rax	
+
+1
+DicNode.insert:	
+
+1
+	movq $10, %r12	
+
+1
+	jmp .Matrix.get_29	
+
+1
+	movq $60858, %reg0	
+
+1
+	.quad CellularAutomaton.cell_at_next_evolution	
+
+1
+	.string "false"	
+
+1
+	jge .Main.main_80	
+
+1
+	movq $.string15, %rdi	
+
+1
+.Matrix.set_8:	
+
+1
+	movq $15755, %reg0	
+
+1
+	cmpl %r15d, %r14d	
+
+1
+	movq 272(%reg0), %r12	
+
+1
+	jmp .Main.main_61	
+
+1
+CellularAutomaton.new:	
+
+1
+	movq 272(%rbx), %r12	
+
+1
+	movq 128(%reg0), %reg1	
+
+1
+	movq $7201, %reg0	
+
+1
+.Matrix.set_53:	
+
+1
+	.quad Cons.car	
+
+1
+	jmp .Matrix.get_50	
+
+1
+	movq $29181, %reg0	
+
+1
+	movq 264(%reg0), %r12	
+
+1
+.Matrix.get_7:	
+
+1
+	movq $.string19, %reg0	
+
+1
+	.string "passed\\n"	
+
+1
+	movq $47879, %rax	
+
+1
+	.globl ListNode.init	
+
+1
+	movq 440(%rbx), %reg1	
+
+1
+.Matrix.set_6:	
+
+1
+	jne .A2I.i2c_3	
+
+1
+	movq $169, %rsi	
+
+1
+	jmp .Main.main_34	
+
+1
+	je .Main.main_135	
+
+1
+.Bazz.new_3:	
+
+1
+	subq $176, %rsp	
+
+1
+	movq $154, %rsi	
+
+1
+	movq 176(%reg0), %rax	
+
+1
+	movq $678987, %reg0	
+
+1
+	je .Main.main_159	
+
+1
+	.string "-"	
+
+1
+	movq $97, %rsi	
+
+1
+	jne .A2I.i2c_11	
+
+1
+	movq $31735, %rsi	
+
+1
+	movq 168(%reg0), %reg0	
+
+1
+	movq $55166, %reg0	
+
+1
+Cons.rcons:	
+
+1
+	.quad ListNode.next	
+
+1
+	movq $52486, %rax	
+
+1
+	movq -184(%rbp), %r9	
+
+1
+	jmp .Main.main_74	
+
+1
+	.globl Main.print_list	
+
+1
+	je .Complex.equal_3	
+
+1
+.Matrix.set_55:	
+
+1
+	movq $61569, %reg0	
+
+1
+	movq $13131, %rax	
+
+1
+	movq $23599, %rax	
+
+1
+	.string "DicNode"	
+
+1
+	jge .Main.main_10	
+
+1
+.A2I.i2a_4:	
+
+1
+	.quad Nil.new	
+
+1
+.Matrix.elMul_3:	
+
+1
+	.type Baz.main, @function	
+
+1
+	movq 296(%rbx), %r12	
+
+1
+	jmp .Main.main_58	
+
+1
+	.quad Bazz.doh	
+
+1
+A2I.i2c:	
+
+1
+	movq 408(%rbx), %r12	
+
+1
+	je .Main.new_9	
+
+1
+.Matrix.get_40:	
+
+1
+	je .Matrix.get_38	
+
+1
+	movq 544(%rbx), %r12	
+
+1
+	jne .Main.main_64	
+
+1
+	movq $213, %rsi	
+
+1
+	movq $55166, %rax	
+
+1
+Foo.setS:	
+
+1
+	movq $178, %rsi	
+
+1
+	jg .Matrix.elMul_2	
+
+1
+	movq 648(%rbx), %reg1	
+
+1
+	je .Matrix.set_25	
+
+1
+	.type Complex.init, @function	
+
+1
+	movq 392(%rbx), %reg1	
+
+1
+.Matrix.get_55:	
+
+1
+.A2I.c2i_12:	
+
+1
+.Main.funcwhileb_1:	
+
+1
+	movq 576(%rbx), %rax	
+
+1
+DicNode.next:	
+
+1
+	call Dictionary.new	
+
+1
+	movq 512(%reg0), %r12	
+
+1
+	movq $13076, %rdi	
+
+1
+.A2I.c2i_14:	
+
+1
+	.size Foo.x, .-Foo.x	
+
+1
+	movq $18391, %reg0	
+
+1
+	je .Bar.new_15	
+
+1
+.A2I.a2i_2:	
+
+1
+	movq 304(%rbx), %reg1	
+
+1
+	jmp .CellularAutomaton.cell_at_next_evolution_6	
+
+1
+	.size A2I.a2i_aux, .-A2I.a2i_aux	
+
+1
+.Matrix.set_19:	
+
+1
+	movq $3828, %reg0	
+
+1
+.Bar.getX_1:	
+
+1
+.Main.funccase_6:	
+
+1
+	movq $62343, %reg0	
+
+1
+	movq $6195, %rsi	
+
+1
+	movq 376(%reg0), %reg1	
+
+1
+	.size Razz.new, .-Razz.new	
+
+1
+	.quad Bar.foo	
+
+1
+	movq $9556, %rdi	
+
+1
+	jmp .CellularAutomaton.cell_at_next_evolution_8	
+
+1
+	je .Main.main_87	
+
+1
+	movq $3306, -32(%rbp)	
+
+1
+	movq 720(%rbx), %reg1	
+
+1
+	movq $3453, %r12	
+
+1
+Nil.insert:	
+
+1
+	movq $47988, %reg0	
+
+1
+	movq $48880, %rdi	
+
+1
+	jmp .Main.main_160	
+
+1
+	jmp .Main.main_135	
+
+1
+.Matrix.set_11:	
+
+1
+	movq $2, %rbx	
+
+1
+Complex_vtable:	
+
+1
+	jg .Main.main_127	
+
+1
+	movq 520(%rbx), %r12	
+
+1
+	.quad A2I.i2c	
+
+1
+	movq 128(%r12), %r12	
+
+1
+	je .Main.iota_2	
+
+1
+.DicNode.insert_4:	
+
+1
+	je .Main.main_90	
+
+1
+	movq %rdi, %r14	
+
+1
+	jmp .Matrix.set_31	
+
+1
+.Main.funccase_8:	
+
+1
+	.globl Complex.print	
+
+1
+	movq $30773, %reg0	
+
+1
+.A2I.i2a_aux_3:	
+
+1
+	movq $name_IO, %reg0	
+
+1
+	movq $10464, %r9	
+
+1
+	movq $9042, %reg0	
+
+1
+	movq 496(%reg0), %rax	
+
+1
+.A2I.i2c_2:	
+
+1
+	movq $218, %rsi	
+
+1
+.Main.func_4:	
+
+1
+	jmp .Matrix.set_7	
+
+1
+.A2I.i2a_aux_1:	
+
+1
+	movq $19302, %reg0	
+
+1
+	movq -144(%rbp), %rdx	
+
+1
+	movq $14356, %rbx	
+
+1
+	movq 184(%reg0), %rax	
+
+1
+	jne .Matrix.set_34	
+
+1
+	jmp .Matrix.mul_1	
+
+1
+	movq 656(%rbx), %r12	
+
+1
+	.type Cons.sort, @function	
+
+1
+	movq $192, %rsi	
+
+1
+	movq $15079, %reg0	
+
+1
+	jmp .A2I.i2c_4	
+
+1
+	movq 544(%reg0), %r12	
+
+1
+	movq 608(%rbx), %reg1	
+
+1
+	.type List.tail, @function	
+
+1
+	je .Cons.insert_4	
+
+1
+	.quad Cons.rcons	
+
+1
+.Cons.rev_2:	
+
+1
+	movq $197, %rsi	
+
+1
+	subq $168, %reg0	
+
+1
+	movq 624(%reg0), %reg1	
+
+1
+.A2I.i2c_8:	
+
+1
+.A2I.c2i_2:	
+
+1
+A2I_vtable:	
+
+1
+	.globl A2I.a2i_aux	
+
+1
+	movq $name_IO, %r12	
+
+1
+	movq 624(%reg0), %r12	
+
+1
+	movq $5137, %rdi	
+
+1
+	movq $8937, %reg0	
+
+1
+	movq $7258, %reg0	
+
+1
+	movq $51925, %rax	
+
+1
+	movq 704(%reg0), %reg1	
+
+1
+	movq 576(%reg0), %reg1	
+
+1
+.Bar.new_4:	
+
+1
+	jne .Matrix.get_62	
+
+1
+	movq $65097, %reg0	
+
+1
+.Matrix.set_5:	
+
+1
+	movq $61139, %rax	
+
+1
+	jg .Main.main_51	
+
+1
+Foo.doh:	
+
+1
+.Matrix.set_24:	
+
+1
+	movq $215, %rsi	
+
+1
+.A2I.c2i_8:	
+
+1
+	je .Matrix.set_64	
+
+1
+	subq $184, %rsp	
+
+1
+	jmp .A2I.i2c_16	
+
+1
+	movq $1823, %rax	
+
+1
+	jne .A2I.c2i_15	
+
+1
+	movq -144(%rbp), %r8	
+
+1
+	movq $17594, %reg0	
+
+1
+	movq 328(%reg0), %reg1	
+
+1
+	movq $11440, %rdi	
+
+1
+.Matrix.set_15:	
+
+1
+.Main.funccase_5:	
+
+1
+	je .Complex.equal_4	
+
+1
+	movq $40813, %reg0	
+
+1
+	je .DicNode.insert_3	
+
+1
+.A2I.i2c_3:	
+
+1
+	.string "qwerty"	
+
+1
+	movq $25947, %rsi	
+
+1
+	addl %r12d, %reg1	
+
+1
+Matrix.mul:	
+
+1
+	movq 432(%rbx), %rax	
+
+1
+.Bar.new_2:	
+
+1
+	jmp .Matrix.set_13	
+
+1
+	movq $11435, %reg0	
+
+1
+.Bazz.new_5:	
+
+1
+	movq 696(%rbx), %r12	
+
+1
+	movq $Dictionary_vtable, 0(%reg0)	
+
+1
+	movq $80, %rdi	
+
+1
+	.globl Complex.equal	
+
+1
+	.string "o"	
+
+1
+.DicNode.get_5:	
+
+1
+	.quad Foo.y	
+
+1
+	.size DicNode.next, .-DicNode.next	
+
+1
+	movq 672(%reg0), %rax	
+
+1
+CellularAutomaton.cell_left_neighbor:	
+
+1
+	movq $25036, %rdi	
+
+1
+	movq $25316, %rax	
+
+1
+	movq 112(%rbx), %rbx	
+
+1
+	movq $9556, %reg0	
+
+1
+	movq 696(%rbx), %reg1	
+
+1
+	.globl Complex.reflect_Y	
+
+1
+	movq $46154, %reg0	
+
+1
+	jmp .Matrix.get_37	
+
+1
+	movq $53748, %reg0	
+
+1
+	movq $60159, %rax	
+
+1
+	.globl Bar.foo	
+
+1
+	.string "abc"	
+
+1
+.Main.funcwhilei_2:	
+
+1
+	jmp .Matrix.get_57	
+
+1
+	movq $9886, %reg0	
+
+1
+	je .ListNode.insert_1	
+
+1
+	movq $43617, %reg0	
+
+1
+	movq 528(%rbx), %rax	
+
+1
+.CellularAutomaton.cell_at_next_evolution_2:	
+
+1
+	jg .Main.main_46	
+
+1
+	jg .Main.main_147	
+
+1
+	movq 456(%reg0), %r12	
+
+1
+	.string "ya"	
+
+1
+	.type Complex.equal, @function	
+
+1
+	je .Main.main_113	
+
+1
+	movq $157, %reg0	
+
+1
+	movq %rcx, %r12	
+
+1
+	movq 176(%reg0), %reg0	
+
+1
+	.globl Cons.rev	
+
+1
+	movq $106, %rsi	
+
+1
+	jmp .Main.main_35	
+
+1
+	je .Main.main_134	
+
+1
+	.quad Complex.init	
+
+1
+	.type A2I.i2a_aux, @function	
+
+1
+	movq $49656, %reg0	
+
+1
+	movq 192(%reg0), %reg0	
+
+1
+	.quad Foo.get	
+
+1
+	je .Main.main_158	
+
+1
+	movq $62649, %reg0	
+
+1
+	movq $7741, %r13	
+
+1
+	.string "continue"	
+
+1
+	movq $8022, %reg0	
+
+1
+	.quad List.rev	
+
+1
+	movq $744, %reg0	
+
+1
+	.size A2I.a2i, .-A2I.a2i	
+
+1
+	movq 168(%reg0), %reg1	
+
+1
+	je .CellularAutomaton.evolve_2	
+
+1
+	je .Bazz.new_4	
+
+1
+Cons.sort:	
+
+1
+	.quad 52	
+
+1
+	.quad ListNode.setVal	
+
+1
+	jne .Main.main_4	
+
+1
+	movq $61208, %rbx	
+
+1
+	movq $46167, %reg0	
+
+1
+	movq $39037, %reg0	
+
+1
+	jne .Matrix.get_36	
+
+1
+	movq 456(%reg0), %reg1	
+
+1
+	movq 280(%reg0), %reg1	
+
+1
+	movq $48391, %reg0	
+
+1
+	movq $30996, %rsi	
+
+1
+	subl %eax, %ebx	
+
+1
+	movq $27, %rsi	
+
+1
+.ListNode.insert_2:	
+
+1
+	movq $17155, %rdi	
+
+1
+	movq $52, %rax	
+
+1
+	movq 432(%rbx), %reg1	
+
+1
+	je .Main.funcifb_1	
+
+1
+.Matrix.get_13:	
+
+1
+	movq $48118, %reg0	
+
+1
+.Matrix.get_66:	
+
+1
+	movq $29011, %reg0	
+
+1
+	je .Bar.new_7	
+
+1
+	.size Dictionary.setHead, .-Dictionary.setHead	
+
+1
+	movq $46404, %r12	
+
+1
+	.globl List.sort	
+
+1
+	.size Main.funcwhilei, .-Main.funcwhilei	
+
+1
+.Razz.new_13:	
+
+1
+	movq $27399, %rdi	
+
+1
+	je .Bar.new_14	
+
+1
+	movq $50691, %r11	
+
+1
+	.type Foo.x, @function	
+
+1
+	je .Main.main_101	
+
+1
+	jne .Main.main_134	
+
+1
+DicNode.new:	
+
+1
+	movq 688(%rbx), %r12	
+
+1
+	movq $DicNode_vtable, 0(%reg0)	
+
+1
+.Matrix.set_29:	
+
+1
+	movq 336(%reg0), %rax	
+
+1
+	movq $62343, %r12	
+
+1
+	jge .Main.main_39	
+
+1
+	jmp .Matrix.set_35	
+
+1
+	movq 736(%rbx), %reg1	
+
+1
+.A2I.c2i_15:	
+
+1
+.DicNode.insert_2:	
+
+1
+Foo.set:	
+
+1
+	movq 88(%reg0), %rax	
+
+1
+.A2I.c2i_17:	
+
+1
+.CellularAutomaton.cell_at_next_evolution_8:	
+
+1
+	negl %r10d	
+
+1
+	je .Matrix.set_53	
+
+1
+	jmp .Main.main_161	
+
+1
+	movq $50929, %r10	
+
+1
+	movq $58419, %rcx	
+
+1
+	je .Razz.new_16	
+
+1
+.Main.funccase_3:	
+
+1
+	movq $64464, %rcx	
+
+1
+	movq 0(%r14), %r15	
+
+1
+	jge .A2I.i2a_3	
+
+1
+.Matrix.get_58:	
+
+1
+	movq $6550, %reg0	
+
+1
+.Main.funccase_1:	
+
+1
+	movq $840, %reg0	
+
+1
+	.string "halt"	
+
+1
+	movq $1317, %rax	
+
+1
+Dictionary.getHead:	
+
+1
+	movq $35037, %r13	
+
+1
+	.quad List.print_list	
+
+1
+	jmp .Matrix.set_44	
+
+1
+Nil.rcons:	
+
+1
+	movq %rdx, -152(%rbp)	
+
+1
+	jmp .Main.main_118	
+
+1
+	.type Main.iota, @function	
+
+1
+.string19:	
+
+1
+	movq $11, %r14	
+
+1
+	movq $33472, %rax	
+
+1
+	je .Razz.new_8	
+
+1
+	.quad Complex.reflect_Y	
+
+1
+Foo.z:	
+
+1
+	.quad Dictionary.insert	
+
+1
+	jmp .Main.main_150	
+
+1
+	movq $60238, %reg0	
+
+1
+	movq $Bazz_vtable, 0(%reg0)	
+
+1
+	jne .Matrix.get_56	
+
+1
+	movq $41765, %rax	
+
+1
+	subq $184, %reg0	
+
+1
+	je .Main.main_132	
+
+1
+	je .Foo.new_12	
+
+1
+	.size DicNode.new, .-DicNode.new	
+
+1
+	.string "CellularAutomaton"	
+
+1
+	jmp .Main.main_91	
+
+1
+	movq $18841, %rax	
+
+1
+Complex.y_value:	
+
+1
+	.quad Matrix.elMul	
+
+1
+	.size CellularAutomaton.num_cells, .-CellularAutomaton.num_cells	
+
+1
+	movq $47041, %reg0	
+
+1
+	movq $63562, %rsi	
+
+1
+.Cons.insert_4:	
+
+1
+	jne .Matrix.set_28	
+
+1
+	jne .CellularAutomaton.cell_right_neighbor_1	
+
+1
+	movq $19369, %rdi	
+
+1
+	jne .A2I.c2i_5	
+
+1
+	jne .Matrix.set_19	
+
+1
+	jmp .A2I.a2i_6	
+
+1
+	movq $163, %reg0	
+
+1
+.Main.func_5:	
+
+1
+	movq 736(%reg0), %reg1	
+
+1
+	movq $15505, %reg0	
+
+1
+	movq 144(%reg0), %r12	
+
+1
+	.string "0123456789"	
+
+1
+.Matrix.set_9:	
+
+1
+	je .Dictionary.get_1	
+
+1
+	movq $5456, %rax	
+
+1
+	movq 160(%reg0), %reg1	
+
+1
+	je .Bazz.new_3	
+
+1
+	movq $11, %r8	
+
+1
+	.globl DicNode.init	
+
+1
+	cmpq $Object_vtable, 0(%rsi)	
+
+1
+	jmp .Main.main_116	
+
+1
+	.size List.getHead, .-List.getHead	
+
+1
+	.type List.rcons, @function	
+
+1
+	movq $50347, %reg0	
+
+1
+	movq $29773, %reg0	
+
+1
+	jge .Main.fib_1	
+
+1
+	je .Razz.new_10	
+
+1
+	movq 312(%reg0), %rax	
+
+1
+	movq 312(%rbx), %rax	
+
+1
+	movq 56(%reg0), %r12	
+
+1
+	movq $.string18, %reg0	
+
+1
+	movq $12660, %rsi	
+
+1
+	movq $7258, %rsi	
+
+1
+	.globl Bar.setI	
+
+1
+	movq 416(%reg0), %rax	
+
+1
+	movq $Razz_vtable, 0(%rax)	
+
+1
+	cmpq $IO_vtable, 0(%rsi)	
+
+1
+Razz.new:	
+
+1
+	movq $13, %rbx	
+
+1
+.Matrix.set_62:	
+
+1
+	movq 40(%reg0), %reg1	
+
+1
+	movq $52306, %rdi	
+
+1
+.Matrix.set_64:	
+
+1
+	je .Main.out_whatever_4	
+
+1
+	.globl Cons.cdr	
+
+1
+	movq $3, %r13	
+
+1
+	.type CellularAutomaton.cell_at_next_evolution, @function	
+
+1
+	movq 704(%rbx), %r12	
+
+1
+	movq $27940, %r11	
+
+1
+	.globl Foo.setS	
+
+1
+	movq $60606, %rax	
+
+1
+	movq $22130, %rax	
+
+1
+	movq $18444, %reg0	
+
+1
+	movq $53085, %rsi	
+
+1
+	subq $128, %rsp	
+
+1
+	.quad 33	
+
+1
+	movq $20509, %reg0	
+
+1
+.Razz.new_15:	
+
+1
+	.globl Bar.setX	
+
+1
+	jne .Main.main_71	
+
+1
+.A2I.i2c_11:	
+
+1
+.Matrix.set_46:	
+
+1
+.A2I.i2c_13:	
+
+1
+	movq $43856, %reg0	
+
+1
+	movq $25895, %reg0	
+
+1
+	movq $8738, %r11	
+
+1
+	.globl ListNode.push	
+
+1
+.Matrix.set_10:	
+
+1
+	movq $201, %reg0	
+
+1
+	je .Main.func2_1	
+
+1
+.Razz.new_2:	
+
+1
+	movq %rdi, -16(%rbp)	
+
+1
+.Main.funcifi_2:	
+
+1
+	jne .Matrix.set_32	
+
+1
+	movq $3233, %reg0	
+
+1
+	movq $56556, %reg0	
+
+1
+	movq $12843, %r12	
+
+1
+	jg .Main.main_49	
+
+1
+	movq $84, %reg0	
+
+1
+	subq $40, %reg0	
+
+1
+	.quad Nil.rev	
+
+1
+	movq 120(%rbx), %r12	
+
+1
+.CellularAutomaton.cell_at_next_evolution_7:	
+
+1
+	movq $51816, %rax	
+
+1
+	.size ListNode.setVal, .-ListNode.setVal	
+
+1
+	movq $61456, %reg0	
+
+1
+.A2I.i2c_19:	
+
+1
+	jmp .Main.main_29	
+
+1
+	jg .Main.main_25	
+
+1
+	.quad 23	
+
+1
+	movq %rdi, -32(%rbp)	
+
+1
+	je .Main.main_137	
+
+1
+	movq $63399, %reg0	
+
+1
+	movq $.string10, %r13	
+
+1
+	movq %rcx, %r13	
+
+1
+	movq $1170, %rdi	
+
+1
+	.size CellularAutomaton.cell_left_neighbor, .-CellularAutomaton.cell_left_neighbor	
+
+1
+	movq $23915, %reg0	
+
+1
+	subl %reg0, %r12d	
+
+1
+	jne .CellularAutomaton.cell_at_next_evolution_1	
+
+1
+	je .Main.main_83	
+
+1
+	movq 224(%rbx), %reg1	
+
+1
+	.type Cons.tail, @function	
+
+1
+	.globl Foo.getS	
+
+1
+	.globl Dictionary.getHead	
+
+1
+	movq 592(%reg0), %rax	
+
+1
+	movq $2469, %r8	
+
+1
+	.type Dictionary.getHead, @function	
+
+1
+	movq $55318, %rdi	
+
+1
+	movq $21521, %r9	
+
+1
+	movq 368(%rbx), %reg1	
+
+1
+.Main.out_whatever_5:	
+
+1
+	movq $130, %reg0	
+
+1
+.Matrix.get_22:	
+
+1
+	movq 672(%rbx), %rax	
+
+1
+	movq $29789, %reg0	
+
+1
+	movq %rax, 16(%rdi)	
+
+1
+	jmp .Main.new_3	
+
+1
+	je .Main.main_171	
+
+1
+	movq $840, %rsi	
+
+1
+	movq 264(%rbx), %reg1	
+
+1
+	jne .A2I.i2c_13	
+
+1
+	movq $46874, %reg0	
+
+1
+	.size Bazz.printh, .-Bazz.printh	
+
+1
+	je .Main.main_139	
+
+1
+.Cons.rcons_1:	
+
+1
+	movq %rsi, 64(%rbx)	
+
+1
+	movq $215, %reg0	
+
+1
+	.size Cons.cdr, .-Cons.cdr	
+
+1
+.Nil.rcons_1:	
+
+1
+	movq $63399, %rsi	
+
+1
+	jmp .Matrix.get_22	
+
+1
+	je .Cons.insert_2	
+
+1
+	movq $31515, %reg0	
+
+1
+	movq 240(%reg0), %rax	
+
+1
+	jmp .Main.main_67	
+
+1
+	movq $62, %reg0	
+
+1
+	movq 416(%reg0), %reg1	
+
+1
+	movq $62, %rsi	
+
+1
+	movq $60858, %rsi	
+
+1
+	movq $.string6_l, %rdi	
+
+1
+	movq -56(%rbp), %r9	
+
+1
+.Matrix.get_24:	
+
+1
+.Matrix.set_3:	
+
+1
+	movq 176(%rbx), %reg1	
+
+1
+	movq $21060, %rax	
+
+1
+	movq $18781, %rcx	
+
+1
+	movq $10809, %rax	
+
+1
+	movq 152(%reg0), %r12	
+
+1
+	movq $32704, %reg0	
+
+1
+	movq 176(%reg0), %reg1	
+
+1
+	jmp .Main.main_125	
+
+1
+	movq -16(%rbp), %r9	
+
+1
+	movq $47963, %reg0	
+
+1
+	.string "2 is trivially prime.\\n"	
+
+1
+	movq $177, %reg0	
+
+1
+	.quad Main.myInt	
+
+1
+	jmp .Matrix.set_63	
+
+1
+	movq 184(%rbx), %reg1	
+
+1
+	.size DicNode.name, .-DicNode.name	
+
+1
+	movq $108, %rsi	
+
+1
+	je .Main.main_85	
+
+1
+	jne .Matrix.set_58	
+
+1
+	movq 128(%r13), %r13	
+
+1
+	movq 160(%rax), %rax	
+
+1
+.Matrix.get_50:	
+
+1
+	movq 152(%r12), %r12	
+
+1
+.Cons.insert_3:	
+
+1
+	.type Cons.rev, @function	
+
+1
+	movq 112(%rbx), %r12	
+
+1
+	movq $53642, %reg0	
+
+1
+	jmp .Main.main_137	
+
+1
+.Main.new_6:	
+
+1
+	movq 200(%rbx), %rax	
+
+1
+	.globl Main.funcwhileb	
+
+1
+	movq $53181, %reg0	
+
+1
+	jmp .Matrix.get_31	
+
+1
+	movq $20470, %reg0	
+
+1
+	.type A2I.i2a, @function	
+
+1
+	jg .Main.main_105	
+
+1
+	movq 120(%rbx), %reg1	
+
+1
+	.quad A2I.i2a	
+
+1
+	je .DicNode.get_6	
+
+1
+	movq $.string9, %rdi	
+
+1
+	movq 656(%reg0), %reg1	
+
+1
+	.string "Razz"	
+
+1
+	.quad Main.funcifi	
+
+1
+	je .Matrix.elMul_3	
+
+1
+	.size Nil.insert, .-Nil.insert	
+
+1
+	.size List.car, .-List.car	
+
+1
+	movq $9569, %rsi	
+
+1
+	movq $.string17, %rbx	
+
+1
+	movq 304(%reg0), %reg1	
+
+1
+	je .Main.main_116	
+
+1
+	.quad Cons.print_list	
+
+1
+	jmp .Main.main_157	
+
+1
+	movq $53587, %reg0	
+
+1
+	movq $CellularAutomaton_vtable, 0(%rax)	
+
+1
+	movq $35037, %reg0	
+
+1
+	movq $53961, %rax	
+
+1
+	movq $.string7, %r15	
+
+1
+	movq $45332, %rax	
+
+1
+	movq $27409, %r9	
+
+1
+	movq 616(%reg0), %rax	
+
+1
+	movq $22520, %rsi	
+
+1
+	.size Dictionary.new, .-Dictionary.new	
+
+1
+	movq $3, %r14	
+
+1
+	jmp .A2I.i2c_6	
+
+1
+	je .Foo.new_13	
+
+1
+	jmp .Main.main_108	
+
+1
+.Matrix.set_42:	
+
+1
+	movq 560(%rbx), %reg1	
+
+1
+	movq $53587, %rax	
+
+1
+	movq 608(%reg0), %reg1	
+
+1
+	.type ListNode.setVal, @function	
+
+1
+	movq $201, %rsi	
+
+1
+Bar.func2:	
+
+1
+	jmp .A2I.c2i_20	
+
+1
+	subl %reg0, %ebx	
+
+1
+	movq 624(%rbx), %reg1	
+
+1
+Foo.getS:	
+
+1
+	.size ListNode.init, .-ListNode.init	
+
+1
+	movq $135, %rsi	
+
+1
+	cmpl %ebx, %r12d	
+
+1
+.Foo.new_2:	
+
+1
+	jne .Matrix.get_19	
+
+1
+	movq 232(%reg0), %reg1	
+
+1
+.List.insert_2:	
+
+1
+	movq $13257, %reg0	
+
+1
+	jg .Main.main_2	
+
+1
+	addl %r12d, %eax	
+
+1
+	movq $13131, %reg0	
+
+1
+	movq 24(%rbx), %rdx	
+
+1
+Complex.reflect_0:	
+
+1
+	jne .Matrix.get_60	
+
+1
+	movq $Matrix_vtable, 0(%rax)	
+
+1
+	.globl ListNode.setVal	
+
+1
+	.type Nil.new, @function	
+
+1
+A2I.new:	
+
+1
+	je .Matrix.get_51	
+
+1
+	movq $54759, %rsi	
+
+1
+	setl %bl	
+
+1
+	movq $.string14, %r12	
+
+1
+	jmp .Matrix.set_29	
+
+1
+	.quad .string21_l	
+
+1
+	.type Foo.getS, @function	
+
+1
+.Main.func2_1:	
+
+1
+	jmp .A2I.i2c_18	
+
+1
+	jne .A2I.c2i_17	
+
+1
+	movq 640(%reg0), %reg1	
+
+1
+	movq 88(%rbx), %rax	
+
+1
+	.string " "	
+
+1
+Foo.get:	
+
+1
+.Matrix.set_21:	
+
+1
+	movq $163, %rsi	
+
+1
+	jmp .Main.funcwhileb_1	
+
+1
+Main.setFoo:	
+
+1
+	jmp .ListNode.insert_3	
+
+1
+	.quad Main.funccase	
+
+1
+.Matrix.set_23:	
+
+1
+	movq $18422, %rbx	
+
+1
+	movq %rdi, %r8	
+
+1
+	movq 464(%reg0), %reg1	
+
+1
+	movq $47279, %rdi	
+
+1
+	.type ListNode.init, @function	
+
+1
+	movq $47218, %rcx	
+
+1
+	movq $47127, %reg0	
+
+1
+	movq 512(%rbx), %reg1	
+
+1
+	movq 224(%reg0), %reg1	
+
+1
+	je .ListNode.insert_4	
+
+1
+	je .Bar.new_19	
+
+1
+.Bar.new_19:	
+
+1
+	movq 160(%reg0), %rax	
+
+1
+	movq $49288, %reg0	
+
+1
+.Razz.new_9:	
+
+1
+	movq $60238, %r11	
+
+1
+	.size CellularAutomaton.cell_at_next_evolution, .-CellularAutomaton.cell_at_next_evolution	
+
+1
+	jmp .Main.main_43	
+
+1
+.Bar.new_5:	
+
+1
+.Matrix.get_53:	
+
+1
+	jne .A2I.c2i_19	
+
+1
+	movq $226, %reg0	
+
+1
+	movq $48887, %reg0	
+
+1
+.Main.out_whatever_4:	
+
+1
+	movq $30797, %reg0	
+
+1
+	movq $14356, %reg0	
+
+1
+.Cons.rev_1:	
+
+1
+	.globl Nil.print_list	
+
+1
+	movq $2951, %reg0	
+
+1
+.ListNode.insert_3:	
+
+1
+.Matrix.get_64:	
+
+1
+	movq $.string11, %rdi	
+
+1
+	jne .Matrix.get_2	
+
+1
+.Bar.new_17:	
+
+1
+	movq 168(%rbx), %r12	
+
+1
+.ListNode.insert_1:	
+
+1
+	movq $7493, %rdi	
+
+1
+	movq 480(%rbx), %reg1	
+
+1
+	.size ListNode.get, .-ListNode.get	
+
+1
+	cmpq $Main_vtable, 0(%rsi)	
+
+1
+	.type Main.setFoo, @function	
+
+1
+	je .Razz.new_1	
+
+1
+.Razz.new_1:	
+
+1
+	movq $45332, %reg0	
+
+1
+	movq -8(%rbp), %rax	
+
+1
+	jmp .Main.main_60	
+
+1
+	je .Main.main_143	
+
+1
+	jmp .Matrix.get_55	
+
+1
+.Matrix.elMul_2:	
+
+1
+	movq $18119, %reg0	
+
+1
+	je .Main.iota_3	
+
+1
+	.quad .string20_l	
+
+1
+	je .Main.main_149	
+
+1
+	jmp .Matrix.get_42	
+
+1
+	movq 48(%reg0), %rsi	
+
+1
+Main.funccase:	
+
+1
+.Matrix.set_16:	
+
+1
+	movq $11435, %r12	
+
+1
+	je .Bazz.new_2	
+
+1
+.Main.out_whatever_6:	
+
+1
+	movq $59714, %rsi	
+
+1
+	.size Nil.rcons, .-Nil.rcons	
+
+1
+	.size Main.funccase, .-Main.funccase	
+
+1
+	.string " == "	
+
+1
+	movq 184(%rbx), %rax	
+
+1
+.Complex.equal_1:	
+
+1
+	jne .Main.main_27	
+
+1
+	movq $54460, %rax	
+
+1
+	je .Main.main_153	
+
+1
+	.type Bar.setX, @function	
+
+1
+	je .Main.main_170	
+
+1
+	.globl CellularAutomaton.new	
+
+1
+	movq $62723, %reg0	
+
+1
+	movq $100, %rax	
+
+1
+	movq 144(%reg0), %reg1	
+
+1
+DicNode_vtable:	
+
+1
+	movq $23071, %reg0	
+
+1
+	movq $13, %r15	
+
+1
+	jmp .Main.main_42	
+
+1
+	movq $7429, %reg0	
+
+1
+.CellularAutomaton.cell_right_neighbor_1:	
+
+1
+	movq $32151, %rax	
+
+1
+	.size A2I.c2i, .-A2I.c2i	
+
+1
+	.globl Nil.isNil	
+
+1
+	movq $52486, %reg0	
+
+1
+	.quad DicNode.get	
+
+1
+	movq $30605, %rax	
+
+1
+.Bazz.new_4:	
+
+1
+	movq $18046, %rdi	
+
+1
+	movq $60750, %reg0	
+
+1
+	.globl A2I.i2c	
+
+1
+	movq $57963, %rdi	
+
+1
+	movq %rdx, -32(%rbp)	
+
+1
+.Dictionary.insert_4:	
+
+1
+	je .Bar.new_5	
+
+1
+	movq 472(%reg0), %rax	
+
+1
+	movq $43177, %reg0	
+
+1
+	.globl Main.out_whatever	
+
+1
+	je .Main.main_163	
+
+1
+	.size Bazz.new, .-Bazz.new	
+
+1
+	je .Main.main_114	
+
+1
+	.string "	\\they\\n\\t  \\n\\tlisten!\\r\\b\\0\\\\\\\""	
+
+1
+	.type CellularAutomaton.new, @function	
+
+1
+	movq $18310, %rax	
+
+1
+	.quad Bar.setX	
+
+1
+	movq $42968, %reg0	
+
+1
+	movq $169, %reg0	
+
+1
+	movq 0(%r12), %r15	
+
+1
+.Cons.print_list_1:	
+
+1
+.Matrix.set_35:	
+
+1
+	movq $.string16, %rdi	
+
+1
+	movq $31786, %reg0	
+
+1
+.Matrix.mul_2:	
+
+1
+	movq 424(%rbx), %rax	
+
+1
+	movq $46404, %reg0	
+
+1
+	movq $29252, %reg0	
+
+1
+	je .Main.main_84	
+
+1
+.Matrix.mul_5:	
+
+1
+	movq $63133, %rax	
+
+1
+	movq $20470, %rcx	
+
+1
+	movq $2143, %rdi	
+
+1
+	.string "."	
+
+1
+	movq %rdx, -144(%rbp)	
+
+1
+	.size Nil.print_list, .-Nil.print_list	
+
+1
+	je .Bar.new_16	
+
+1
+.Matrix.mul_4:	
+
+1
+	movq $65097, %r12	
+
+1
+	movq $44, %rcx	
+
+1
+	movq $58688, %reg0	
+
+1
+	je .Bazz.new_1	
+
+1
+	movq $678987, %r13	
+
+1
+.ListNode.insert_4:	
+
+1
+	movq $18046, %reg0	
+
+1
+	movq $25351, %reg0	
+
+1
+	movq 240(%reg0), %reg1	
+
+1
+	jmp .Matrix.set_46	
+
+1
+	jmp .List.insert_3	
+
+1
+	movq $16029, %rax	
+
+1
+	.quad Cons.cdr	
+
+1
+	.size Cons.insert, .-Cons.insert	
+
+1
+	jne .Matrix.set_49	
+
+1
+	movq $52820, %rax	
+
+1
+CellularAutomaton_vtable:	
+
+1
+	movq $3520, %reg0	
+
+1
+	movq $30797, %r8	
+
+1
+	movq $14802, %rax	
+
+1
+	movq 328(%rbx), %rax	
+
+1
+	movq 0(%r13), %r14	
+
+1
+	movq -176(%rbp), %r10	
+
+1
+	movq $30102, %reg0	
+
+1
+	.quad Foo.getY	
+
+1
+	jge .Main.main_132	
+
+1
+	.string "\\\\"	
+
+1
+	movq $6765, %rdi	
+
+1
+	movq 128(%reg0), %r12	
+
+1
+.Cons.sort_2:	
+
+1
+	movq 688(%reg0), %reg1	
+
+1
+	.size Main.fib, .-Main.fib	
+
+1
+	movq 680(%reg0), %rax	
+
+1
+	je .CellularAutomaton.cell_at_next_evolution_7	
+
+1
+CellularAutomaton.cell_right_neighbor:	
+
+1
+	movq $40488, %rax	
+
+1
+	movq $14461, %reg0	
+
+1
+	jne .A2I.c2i_7	
+
+1
+	.size Complex.reflect_X, .-Complex.reflect_X	
+
+1
+Main.print_list:	
+
+1
+.Matrix.get_11:	
+
+1
+.Matrix.get_18:	
+
+1
+.Dictionary.get_2:	
+
+1
+	movq $64947, %reg0	
+
+1
+	jmp .Matrix.get_3	
+
+1
+	movq 136(%rbx), %reg1	
+
+1
+Main.funcifb:	
+
+1
+	jmp .Main.main_141	
+
+1
+	movq $135, %reg0	
+
+1
+	jmp .Main.main_114	
+
+1
+	movq 0(%rax), %rax	
+
+1
+	je .Main.funccase_3	
+
+1
+	movq 248(%rbx), %reg1	
+
+1
+	je .Main.out_whatever_3	
+
+1
+	movq 208(%rbx), %reg1	
+
+1
+	.type Dictionary.insert, @function	
+
+1
+	.string "VOID"	
+
+1
+	movq $61569, %rax	
+
+1
+	movq 112(%rbx), %reg1	
+
+1
+	movq $13076, %reg0	
+
+1
+	je .Main.main_128	
+
+1
+	jne .Matrix.get_34	
+
+1
+	jmp .A2I.a2i_4	
+
+1
+	movq $61456, %rdi	
+
+1
+	.string "a"	
+
+1
+	movq 584(%reg0), %reg1	
+
+1
+	jne .Matrix.get_40	
+
+1
+	.type A2I.i2c, @function	
+
+1
+	movq 568(%reg0), %reg1	
+
+1
+	.type Main.funcifi, @function	
+
+1
+	movq $50691, %reg0	
+
+1
+	je .Dictionary.insert_1	
+
+1
+	jne .A2I.c2i_9	
+
+1
+	je .DicNode.insert_6	
+
+1
+	movq $12618, %rdi	
+
+1
+.Complex.equal_3:	
+
+1
+	.quad Complex.x_value	
+
+1
+	movq $22520, %reg0	
+
+1
+	movq $33788, %reg0	
+
+1
+	.quad Complex.print	
+
+1
+	movq 48(%rbx), %rsi	
+
+1
+	.quad ListNode.get	
+
+1
+	movq $39267, %rsi	
+
+1
+	movq $12855, %reg0	
+
+1
+	movq $A2I_vtable, 0(%reg0)	
+
+1
+	.quad 92	
+
+1
+	movq $21613, %reg0	
+
+1
+	.type Foo.getY, @function	
+
+1
+	movq $55318, %reg0	
+
+1
+.Dictionary.insert_2:	
+
+1
+	movq $.string18, %rdi	
+
+1
+	movq $30215, %rax	
+
+1
+	je .Foo.new_1	
+
+1
+	movq $41455, %rax	
+
+1
+	movq $16210, %rdi	
+
+1
+CellularAutomaton.evolve:	
+
+1
+.Cons.rcons_2:	
+
+1
+	movq 344(%reg0), %r12	
+
+1
+Bazz.new:	
+
+1
+	movq $60323, %rsi	
+
+1
+.Bar.new_20:	
+
+1
+	movq $50213, %reg0	
+
+1
+	movq 176(%rax), %rax	
+
+1
+	.quad Nil.rcons	
+
+1
+	.quad Main.funcwhilei	
+
+1
+	movq $38686, %reg0	
+
+1
+	movq $21514, %reg0	
+
+1
+.Bar.new_18:	
+
+1
+	jne .Matrix.set_23	
+
+1
+Complex.reflect_X:	
+
+1
+	movq $10280, %r12	
+
+1
+	movq $147, %reg0	
+
+1
+	movq $31786, %rdi	
+
+1
+	movq $46509, %rax	
+
+1
+	.string "S\\n"	
+
+1
+	.quad Dictionary.new	
+
+1
+	.globl CellularAutomaton.cell_left_neighbor	
+
+1
+.Matrix.get_57:	
+
+1
+.Matrix.get_44:	
+
+1
+	movq $18, %rax	
+
+1
+	.size Main.funcwhileb, .-Main.funcwhileb	
+
+1
+	movq 8(%rax), %r15	
+
+1
+	.globl Dictionary.get	
+
+1
+	jmp .Main.main_63	
+
+1
+	.type Dictionary.setHead, @function	
+
+1
+	.string "Bazz"	
+
+1
+	.globl Dictionary.insert	
+
+1
+	jne .CellularAutomaton.cell_at_next_evolution_3	
+
+1
+	movq $63133, %reg0	
+
+1
+	.type Dictionary.new, @function	
+
+1
+	movq $53595, %reg0	
+
+1
+	movq $4844, %rax	
+
+1
+	.type Foo.set, @function	
+
+1
+.Matrix.get_61:	
+
+1
+.Matrix.set_34:	
+
+1
+	.type Cons.cdr, @function	
+
+1
+.Bar.new_10:	
+
+1
+	call Foo.foo	
+
+1
+.Matrix.get_63:	
+
+1
+	movq $34, %rax	
+
+1
+	movq $46167, %rdi	
+
+1
+	movq 8(%reg0), %r14	
+
+1
+	je .ListNode.insert_2	
+
+1
+	movq 488(%rbx), %rax	
+
+1
+List.head:	
+
+1
+	jmp .Main.main_57	
+
+1
+	.string "l"	
+
+1
+	movq $175, %reg0	
+
+1
+	jne .A2I.i2c_15	
+
+1
+	movq %rdi, 40(%rbx)	
+
+1
+Bazz.printh:	
+
+1
+	movq $48608, %rax	
+
+1
+.DicNode.get_2:	
+
+1
+.Matrix.get_10:	
+
+1
+.Matrix.get_32:	
+
+1
+	movq $18422, %reg0	
+
+1
+.Main.fib_1:	
+
+1
+	jmp .Cons.insert_3	
+
+1
+	movq $84, %rsi	
+
+1
+DicNode.init:	
+
+1
+.Matrix.get_12:	
+
+1
+	jmp .Complex.print_2	
+
+1
+	movq $57869, -24(%rbp)	
+
+1
+	.size Nil.rev, .-Nil.rev	
+
+1
+	movq $39037, %rdi	
+
+1
+	movq 272(%rbx), %reg1	
+
+1
+	movq 104(%reg0), %reg1	
+
+1
+	movq $18, %rsi	
+
+1
+	movq $.string9, %r14	
+
+1
+	je .DicNode.insert_4	
+
+1
+	movq 120(%rbx), %rbx	
+
+1
+	jne .Matrix.get_53	
+
+1
+	je .Main.main_160	
+
+1
+	.string "do nothing"	
+
+1
+	movq $34320, %reg0	
+
+1
+	je .Main.main_104	
+
+1
+	movq $27231, %reg0	
+
+1
+	movq $6765, %reg0	
+
+1
+	.size Dictionary.get, .-Dictionary.get	
+
+1
+	jmp .Matrix.set_61	
+
+1
+	je .Main.funccase_1	
+
+1
+	movq 456(%rbx), %r12	
+
+1
+	je .Main.main_91	
+
+1
+.Foo.new_5:	
+
+1
+Dictionary.insert:	
+
+1
+	movq $9508, %reg0	
+
+1
+	movq $6, %rcx	
+
+1
+	movq $19892, %r11	
+
+1
+.Razz.new_7:	
+
+1
+	.string "z"	
+
+1
+Complex.equal:	
+
+1
+	.quad Dictionary.get	
+
+1
+	jge .Main.main_72	
+
+1
+	.size Cons.print_list, .-Cons.print_list	
+
+1
+List.car:	
+
+1
+	movq $28147, %reg0	
+
+1
+	movq $14379, %reg0	
+
+1
+	movq 208(%rbx), %r12	
+
+1
+.Razz.new_17:	
+
+1
+	jne .A2I.i2a_1	
+
+1
+	movq $50538, %rax	
+
+1
+	movq 520(%reg0), %reg1	
+
+1
+	movq $23071, %rsi	
+
+1
+	.string "False"	
+
+1
+.A2I.i2c_20:	
+
+1
+	.type DicNode.get, @function	
+
+1
+	cmpl $0, %r15d	
+
+1
+	movq 216(%rbx), %reg1	
+
+1
+	movq 712(%reg0), %rax	
+
+1
+	jne .Matrix.set_56	
+
+1
+	movq 96(%rbx), %reg1	
+
+1
+	movq 232(%rbx), %r12	
+
+1
+	jmp .Matrix.set_50	
+
+1
+	.size Main.myInt, .-Main.myInt	
+
+1
+	movq $10174, %rax	
+
+1
+	jne .A2I.i2c_1	
+
+1
+.Matrix.set_2:	
+
+1
+	je .Main.new_5	
+
+1
+	movq 88(%rbx), %reg1	
+
+1
+	movq $175, %rsi	
+
+1
+	je .Main.main_94	
+
+1
+	movq $3233, %r9	
+
+1
+	.size List.rcons, .-List.rcons	
+
+1
+	je .Razz.new_5	
+
+1
+	.size DicNode.decr, .-DicNode.decr	
+
+1
+	movq $15505, %rax	
+
+1
+	movq 416(%rbx), %reg1	
+
+1
+.Main.print_list_3:	
+
+1
+	jmp .Main.main_155	
+
+1
+	jne .Main.new_7	
+
+1
+	jmp .Main.main_122	
+
+1
+.Matrix.get_8:	
+
+1
+	je .Main.main_89	
+
+1
+	jmp .Main.func2_2	
+
+1
+	movq 144(%rbx), %r12	
+
+1
+	movq $52290, %rsi	
+
+1
+	jne .Main.main_142	
+
+1
+	movq $2438, %reg0	
+
+1
+	movq $93, %reg0	
+
+1
+	jmp .A2I.i2c_8	
+
+1
+	movq $49119, %reg0	
+
+1
+	movq $15487, %rdi	
+
+1
+	.size DicNode.get, .-DicNode.get	
+
+1
+	.globl Nil.rev	
+
+1
+	movq $52290, %reg0	
+
+1
+	movq $62649, %r12	
+
+1
+	.string "\\\\n"	
+
+1
+	.globl ListNode.get	
+
+1
+	movq 256(%reg0), %reg1	
+
+1
+	.size CellularAutomaton.cell_right_neighbor, .-CellularAutomaton.cell_right_neighbor	
+
+1
+	jne .Matrix.set_47	
+
+1
+.Bar.new_8:	
+
+1
+	je .Bar.getX_1	
+
+1
+	movq 152(%rbx), %reg1	
+
+1
+	movq 568(%rbx), %reg1	
+
+1
+	cmpl $0, 24(%rax)	
+
+1
+	.size Cons.tail, .-Cons.tail	
+
+1
+.DicNode.get_3:	
+
+1
+	movq $53667, %rsi	
+
+1
+	.type Bar.getJ, @function	
+
+1
+	movq $34533, %rax	
+
+1
+	.quad Razz.new	
+
+1
+	movq 704(%reg0), %r12	
+
+1
+.Bar.new_6:	
+
+1
+	.size Complex.x_value, .-Complex.x_value	
+
+1
+	movq %rdx, %rdi	
+
+1
+.Foo.new_1:	
+
+1
+	movq $20968, %rsi	
+
+1
+Matrix.set:	
+
+1
+	.quad ListNode.insert	
+
+1
+	jmp .A2I.c2i_2	
+
+1
+	movq $60913, %rcx	
+
+1
+	subq $136, %reg0	
+
+1
+.Matrix.get_38:	
+
+1
+.Matrix.set_61:	
+
+1
+	movq $932, %r9	
+
+1
+	movq $8340, %rdi	
+
+1
+	.type Matrix.mul, @function	
+
+1
+Dictionary.get:	
+
+1
+	.quad List.getHead	
+
+1
+	movq $7493, %reg0	
+
+1
+	movq $.string9, %r13	
+
+1
+	jne .Main.main_19	
+
+1
+	movq -168(%rbp), %r9	
+
+1
+	.string "\\\\\\\""	
+
+1
+	je .Main.main_126	
+
+1
+.Razz.new_14:	
+
+1
+	je .Dictionary.insert_2	
+
+1
+	jmp .Main.main_104	
+
+1
+	movq $5606, %reg0	
+
+1
+	movq $13257, %rsi	
+
+1
+	movq $17107, %reg0	
+
+1
+	movq $50213, %rdi	
+
+1
+	movq $name_Int, %r12	
+
+1
+	subl %r11d, %eax	
+
+1
+	call IO.out_int	
+
+1
+	movq $14901, %rsi	
+
+1
+	jg .Main.main_37	
+
+1
+	movq $57936, %rsi	
+
+1
+.Foo.new_10:	
+
+1
+	movq $64, %rdi	
+
+1
+	movq $33866, %rdi	
+
+1
+.Main.new_8:	
+
+1
+.DicNode.get_4:	
+
+1
+	movq $324, %r13	
+
+1
+	movq $28260, %reg0	
+
+1
+.Foo.new_7:	
+
+1
+	je .Cons.sort_2	
+
+1
+	movq $14901, %reg0	
+
+1
+	movq $45402, %reg0	
+
+1
+.Matrix.set_52:	
+
+1
+	.globl Matrix.get	
+
+1
+	movq 544(%rbx), %reg1	
+
+1
+	movq $55348, %rsi	
+
+1
+	jmp .Matrix.get_33	
+
+1
+	movq 248(%rbx), %rax	
+
+1
+	.size List.sort, .-List.sort	
+
+1
+.List.insert_4:	
+
+1
+	.size Dictionary.insert, .-Dictionary.insert	
+
+1
+	.quad Main.setFoo	
+
+1
+	movq $60575, %reg0	
+
+1
+	movq $98, %rsi	
+
+1
+	jg .Main.main_73	
+
+1
+	movq 96(%rbx), %rax	
+
+1
+	.size Main.funcifi, .-Main.funcifi	
+
+1
+	movq $45, %reg0	
+
+1
+	movq $30018, %reg0	
+
+1
+	.quad Foo.setS	
+
+1
+	movq $3453, %reg0	
+
+1
+	movq %rsi, 64(%reg1)	
+
+1
+	movq $26083, %rax	
+
+1
+	.globl Bar.setJ	
+
+1
+	movq 688(%rbx), %reg1	
+
+1
+	je .Bar.new_9	
+
+1
+	movq $32151, %reg0	
+
+1
+	movq 416(%rbx), %rax	
+
+1
+	je .Main.main_154	
+
+1
+	movq $38737, %reg0	
+
+1
+	movq 104(%r12), %r12	
+
+1
+	.size DicNode.setNext, .-DicNode.setNext	
+
+1
+	jmp .Main.iota_1	
+
+1
+.Matrix.get_35:	
+
+1
+	.size A2I.i2c, .-A2I.i2c	
+
+1
+Nil.isNil:	
+
+1
+	jne .A2I.i2a_aux_1	
+
+1
+	movq $164, %reg0	
+
+1
+	movq $18119, %rax	
+
+1
+	jmp .Matrix.get_44	
+
+1
+	movq %r14, 8(%rbx)	
+
+1
+	movq $59, %reg0	
+
+1
+	movq $Bazz_vtable, 0(%rax)	
+
+1
+	movq $18189, %reg0	
+
+1
+	movq $Complex_vtable, 0(%rax)	
+
+1
+.Matrix.get_23:	
+
+1
+	jg .Main.main_35	
+
+1
+	.quad 17	
+
+1
+	.string "failed\\n"	
+
+1
+	movq 312(%rbx), %reg1	
+
+1
+	jg .Main.main_149	
+
+1
+	movq $8423, %reg0	
+
+1
+	movq $28147, %rax	
+
+1
+	.type Foo.doh, @function	
+
+1
+	movq $3326, %rsi	
+
+1
+	movq $1357, %reg0	
+
+1
+	movq 632(%reg0), %r12	
+
+1
+	movq 480(%rbx), %rax	
+
+1
+	movq $36010, %rdi	
+
+1
+	movq 424(%reg0), %rax	
+
+1
+	jmp .Main.main_71	
+
+1
+.Matrix.set_44:	
+
+1
+	.globl A2I.i2a_aux	
+
+1
+	movq $60575, %rsi	
+
+1
+	jmp .DicNode.insert_5	
+
+1
+	movq $Nil_vtable, 0(%reg0)	
+
+1
+	movq 256(%rbx), %r12	
+
+1
+	movq %rcx, %rdi	
+
+1
+	.globl Nil.insert	
+
+1
+	.globl DicNode.name	
+
+1
+	.globl A2I.i2a	
+
+1
+	movq 104(%rbx), %r12	
+
+1
+.Matrix.get_33:	
+
+1
+	.string "How many numbers to sort? "	
+
+1
+	movq 216(%rbx), %r12	
+
+1
+.Matrix.get_31:	
+
+1
+	.size Bar.setX, .-Bar.setX	
+
+1
+	movq $.string9, %r15	
+
+1
+	je .Bar.new_3	
+
+1
+	.string "Hello, world"	
+
+1
+	cmpl %r14d, %reg1d	
+
+1
+	movq 352(%reg0), %reg1	
+
+1
+	movq $10478, %rax	
+
+1
+	movq $20908, %rsi	
+
+1
+	.globl Cons.car	
+
+1
+	je .Main.main_106	
+
+1
+	movq 176(%rbx), %rax	
+
+1
+	jne .Main.main_25	
+
+1
+	movq 440(%rbx), %rax	
+
+1
+	.globl Cons.tail	
+
+1
+	movq $7, %rcx	
+
+1
+.Main.print_list_5:	
+
+1
+	movq $47, %rsi	
+
+1
+	.string "fail"	
+
+1
+	movq $2234, %rax	
+
+1
+	movq $55049, %rax	
+
+1
+	.size Foo.z, .-Foo.z	
+
+1
+	movq 40(%reg0), %rax	
+
+1
+	movq $5137, %reg0	
+
+1
+	movq $45402, %rdi	
+
+1
+	movq 616(%rbx), %rax	
+
+1
+	movq $132, %rsi	
+
+1
+	movq 360(%rbx), %reg1	
+
+1
+	.quad 19	
+
+1
+	.globl DicNode.setNext	
+
+1
+	movq 400(%rbx), %reg1	
+
+1
+	movq 424(%rbx), %reg1	
+
+1
+	je .Bar.new_10	
+
+1
+Cons.head:	
+
+1
+	movq $1202, %reg0	
+
+1
+	movq $38600, %reg0	
+
+1
+	movq $177, %rsi	
+
+1
+	je .Razz.new_12	
+
+1
+	movq 152(%rax), %rax	
+
+1
+	jne .Main.main_154	
+
+1
+	jne .Main.main_123	
+
+1
+	movq $29790, %rsi	
+
+1
+	je .Matrix.get_25	
+
+1
+	.globl Foo.getY	
+
+1
+	movq $162, %reg0	
+
+1
+	movq $222, %rdi	
+
+1
+.A2I.a2i_1:	
+
+1
+	movq $22802, %rax	
+
+1
+	.type A2I.c2i, @function	
+
+1
+	movq $39267, %reg0	
+
+1
+	.type DicNode.new, @function	
+
+1
+	jg .Main.main_131	
+
+1
+	je .Main.main_155	
+
+1
+	movq $55348, %reg0	
+
+1
+	movq $213, %reg0	
+
+1
+	movq $36519, %r11	
+
+1
+	movq $17975, %rdi	
+
+1
+	movq 560(%rbx), %r12	
+
+1
+	.quad Complex.equal	
+
+1
+	jmp .Main.main_130	
+
+1
+	jmp .Main.new_1	
+
+1
+	movq $59, %rsi	
+
+1
+	addl %ebx, %eax	
+
+1
+.Matrix.get_65:	
+
+1
+Complex.print:	
+
+1
+	movq 0(%r13), %r15	
+
+1
+	movq $54460, %reg0	
+
+1
+	movq $53667, %reg0	
+
+1
+A2I.a2i:	
+
+1
+Bar.setI:	
+
+1
+	.globl Main.funcwhilei	
+
+1
+	movq $6195, %reg0	
+
+1
+.A2I.i2c_5:	
+
+1
+.Matrix.get_5:	
+
+1
+.Complex.equal_2:	
+
+1
+	movq 264(%rbx), %r12	
+
+1
+	jmp .A2I.c2i_6	
+
+1
+	.globl List.tail	
+
+1
+	jmp .Main.main_148	
+
+1
+	.quad ListNode.init	
+
+1
+	movq $59714, %reg0	
+
+1
+	movq $30773, %rdi	
+
+1
+	movq $60127, %reg0	
+
+1
+	movq 152(%rbx), %r12	
+
+1
+	movq $61731, %reg0	
+
+1
+	.quad DicNode.decr	
+
+1
+	movq 720(%reg0), %reg1	
+
+1
+	.globl Bar.getI	
+
+1
+	subq $128, %reg0	
+
+1
+.A2I.i2a_aux_2:	
+
+1
+	jmp .Main.main_143	
+
+1
+	jmp .A2I.i2c_20	
+
+1
+	jmp .Main.main_112	
+
+1
+	movq $53961, %reg0	
+
+1
+.Matrix.get_41:	
+
+1
+	movq $28379, %reg0	
+
+1
+	call Bazz.new	
+
+1
+	movq $132, %reg0	
+
+1
+.A2I.c2i_5:	
+
+1
+.Main.funcifb_2:	
+
+1
+	movq $2562, %r11	
+
+1
+	testq $1, %r15	
+
+1
+.Matrix.get_19:	
+
+1
+	movq $126, %reg0	
+
+1
+	jne .DicNode.get_1	
+
+1
+Bazz.doh:	
+
+1
+	.globl Bazz.new	
+
+1
+	je .Main.main_123	
+
+1
+	movq $52820, %reg0	
+
+1
+	jmp .A2I.a2i_2	
+
+1
+	movq $228, %reg0	
+
+1
+	movq $8214, %r8	
+
+1
+	movq 400(%rbx), %rax	
+
+1
+	movq $.string21, %reg0	
+
+1
+	movq 736(%rbx), %rax	
+
+1
+	.quad Cons.tail	
+
+1
+.Bazz.new_6:	
+
+1
+	movq $.string17, %rdi	
+
+1
+	jmp .Matrix.set_55	
+
+1
+	movq $47279, %reg0	
+
+1
+	movq 64(%reg0), %rax	
+
+1
+	movq $19322, %rax	
+
+1
+	movq $8640, %rdi	
+
+1
+	movq $218, %reg0	
+
+1
+	movq $2234, %reg0	
+
+1
+	movq $3326, %reg0	
+
+1
+	movq $16420, %reg0	
+
+1
+	movq $19990, %rdi	
+
+1
+	movq $14802, %reg0	
+
+1
+.A2I.i2a_3:	
+
+1
+	.type Bazz.printh, @function	
+
+1
+	subq $168, %rsp	
+
+1
+	movq $45, %rsi	
+
+1
+	.type Matrix.elMul, @function	
+
+1
+	movq $8340, %reg0	
+
+1
+.Bazz.new_2:	
+
+1
+	movq $8271, %reg0	
+
+1
+	jne .Matrix.get_41	
+
+1
+.Bar.new_12:	
+
+1
+	movq 200(%reg0), %reg1	
+
+1
+	je .Foo.new_3	
+
+1
+Bazz_vtable:	
+
+1
+	.string "Hello, world.\\n"	
+
+1
+	movq $49119, %rax	
+
+1
+	.quad Foo.set	
+
+1
+	.string "FAIL"	
+
+1
+Cons.car:	
+
+1
+.A2I.a2i_4:	
+
+1
+	.string "testtesttesttesttesttesttesttesttesttesttesttesttest"	
+
+1
+	jmp .A2I.c2i_10	
+
+1
+.CellularAutomaton.cell_left_neighbor_1:	
+
+1
+.Matrix.set_18:	
+
+1
+	movq 280(%rbx), %reg1	
+
+1
+	je .Main.print_list_5	
+
+1
+	movq $DicNode_vtable, 0(%rax)	
+
+1
+	movq $62723, %r10	
+
+1
+	movq $45379, %rax	
+
+1
+	movq $93, %rsi	
+
+1
+	je .Matrix.get_66	
+
+1
+	movq $32716, %reg0	
+
+1
+	movq $11282, %rax	
+
+1
+	.quad Cons.rev	
+
+1
+	movq $33161, %reg0	
+
+1
+	movq $33636, %reg0	
+
+1
+.CellularAutomaton.cell_at_next_evolution_5:	
+
+1
+.Razz.new_16:	
+
+1
+	jne .Main.main_8	
+
+1
+	movq $38511, %reg0	
+
+1
+	jne .CellularAutomaton.cell_at_next_evolution_5	
+
+1
+	movq $49656, %rax	
+
+1
+	.size Bar.func2, .-Bar.func2	
+
+1
+	je .Foo.new_4	
+
+1
+	movq $27696, %reg0	
+
+1
+	movq $49411, %reg0	
+
+1
+	movq $27696, %rbx	
+
+1
+.Matrix.get_34:	
+
+1
+Complex.new:	
+
+1
+	movq $.string14, %rax	
+
+1
+.CellularAutomaton.cell_at_next_evolution_3:	
+
+1
+	movq 664(%reg0), %reg1	
+
+1
+	je .Main.main_130	
+
+1
+	jg .Matrix.mul_2	
+
+1
+	movq 56(%reg0), %reg1	
+
+1
+	.quad Matrix.get	
+
+1
+	movq $22130, %reg0	
+
+1
+.Matrix.get_37:	
+
+1
+	movq $15714, %reg0	
+
+1
+.Foo.new_12:	
+
+1
+	movq 392(%rbx), %r12	
+
+1
+	jmp .CellularAutomaton.cell_at_next_evolution_2	
+
+1
+	jge .Main.main_121	
+
+1
+	movq $17815, %rsi	
+
+1
+	.type Foo.setS, @function	
+
+1
+	movq $16693, %reg0	
+
+1
+	movq -176(%rbp), %r8	
+
+1
+	movq $27399, %reg0	
+
+1
+	jne .A2I.i2c_17	
+
+1
+	movq -24(%rbp), %r9	
+
+1
+	movq $7429, %rax	
+
+1
+.Matrix.set_4:	
+
+1
+	jmp .Main.main_27	
+
+1
+	movq $106, %reg0	
+
+1
+	movq 728(%rbx), %reg1	
+
+1
+	je .Dictionary.get_4	
+
+1
+	movq 344(%rbx), %r12	
+
+1
+	movq 240(%rbx), %rax	
+
+1
+	movq $8937, %rax	
+
+1
+	movq $48027, %reg0	
+
+1
+	.type Nil.insert, @function	
+
+1
+	subq $136, %rsp	
+
+1
+	movq $A2I_vtable, 0(%rax)	
+
+1
+	.quad Main.funcwhileb	
+
+1
+	.quad Main.fib	
+
+1
+	movq $6934, %reg0	
+
+1
+	movq $.string20, %rax	
+
+1
+	movq 472(%rbx), %reg1	
+
+1
+.Cons.sort_1:	
+
+1
+	movq $90, %rdi	
+
+1
+	movq $47879, %reg0	
+
+1
+.Matrix.mul_3:	
+
+1
+	jmp .Matrix.set_39	
+
+1
+	jne .Complex.print_1	
+
+1
+	movq $32, %rsi	
+
+1
+.A2I.a2i_6:	
+
+1
+	movq $63664, %reg0	
+
+1
+	je .Matrix.mul_5	
+
+1
+	movq $20384, %rdi	
+
+1
+.Matrix.mul_1:	
+
+1
+.Matrix.get_27:	
+
+1
+	je .A2I.i2a_aux_3	
+
+1
+	je .Main.main_166	
+
+1
+	movq 16(%rdi), %reg1	
+
+1
+	.globl List.car	
+
+1
+	movq $61731, %rsi	
+
+1
+	.globl CellularAutomaton.evolve	
+
+1
+	.type Nil.isNil, @function	
+
+1
+	movq 144(%rbx), %rbx	
+
+1
+	.quad Nil.insert	
+
+1
+	movq $58921, %rdi	
+
+1
+	movq 480(%reg0), %reg1	
+
+1
+	movq 408(%rbx), %reg1	
+
+1
+	movq $98, %reg0	
+
+1
+	jne .A2I.i2c_19	
+
+1
+	.string "\\n\\t"	
+
+1
+	.quad A2I.i2a_aux	
+
+1
+	je .Main.main_157	
+
+1
+	movq 632(%rbx), %r12	
+
+1
+	movq $3175, %reg0	
+
+1
+	movq $55273, %reg0	
+
+1
+	.globl Main.iota	
+
+1
+	movq $39523, %reg0	
+
+1
+	movq 592(%rbx), %rax	
+
+1
+.Matrix.elMul_1:	
+
+1
+	je .Bar.new_13	
+
+1
+	movq 648(%reg0), %r12	
+
+1
+	movq 408(%reg0), %r12	
+
+1
+	.size Foo.set, .-Foo.set	
+
+1
+	jge .Main.main_18	
+
+1
+	movq 464(%reg0), %rax	
+
+1
+	jmp .Main.funccaseb_3	
+
+1
+	movq 272(%reg0), %reg1	
+
+1
+	.type Bar.func2, @function	
+
+1
+Dictionary_vtable:	
+
+1
+.A2I.c2i_10:	
+
+1
+	.string "9"	
+
+1
+	movq $8997, %reg0	
+
+1
+	movq 184(%reg0), %reg0	
+
+1
+	movq $51824, %r8	
+
+1
+	movq $128, %reg0	
+
+1
+	movq $208, %rdi	
+
+1
+	movq 672(%rbx), %reg1	
+
+1
+	movq $33161, %r8	
+
+1
+	movq 400(%reg0), %reg1	
+
+1
+	movq $104, %reg0	
+
+1
+	.type Nil.rcons, @function	
+
+1
+	subl %ecx, %r8d	
+
+1
+	je .Bar.new_20	
+
+1
+.Matrix.get_49:	
+
+1
+	movq $178, %reg0	
+
+1
+.A2I.c2i_16:	
+
+1
+	jmp .Main.main_133	
+
+1
+	.type DicNode.init, @function	
+
+1
+.Main.funccase_4:	
+
+1
+	.type Complex.reflect_0, @function	
+
+1
+	jmp .Main.main_120	
+
+1
+	.quad 9	
+
+1
+	jmp .Main.main_89	
+
+1
+	.size A2I.i2a_aux, .-A2I.i2a_aux	
+
+1
+	movq $17376, %rax	
+
+1
+.Main.funccase_2:	
+
+1
+.A2I.c2i_18:	
+
+1
+	movq 480(%reg0), %rax	
+
+1
+	.globl Cons.head	
+
+1
+.Main.iota_3:	
+
+1
+	movq $17594, %r10	
+
+1
+	movq $48298, %reg0	
+
+1
+ListNode.setVal:	
+
+1
+	movq $116, %reg0	
+
+1
+	movq $47041, %rax	
+
+1
+.A2I.c2i_20:	
+
+1
+	.globl Main.funcifb	
+
+1
+	movq $38208, %r11	
+
+1
+	movq 352(%rbx), %rax	
+
+1
+	subl %r11d, %reg1	
+
+1
+	jne .Matrix.set_41	
+
+1
+	.globl Nil.new	
+
+1
+	movq 8(%rbx), %r14	
+
+1
+	.quad DicNode.insert	
+
+1
+	movq 280(%rbx), %r12	
+
+1
+	movq $24923, %reg0	
+
+1
+	je .Main.main_98	
+
+1
+	.type DicNode.next, @function	
+
+1
+	.globl Bar.getJ	
+
+1
+	.quad Main.funccasei	
+
+1
+	movq $37073, %reg0	
+
+1
+	movq $197, %reg0	
+
+1
+	movq $7201, %rsi	
+
+1
+	jmp .Main.main_168	
+
+1
+	.string "A2I"	
+
+1
+	movq $144, %reg0	
+
+1
+	jmp .Matrix.set_24	
+
+1
+	movq $36212, %reg0	
+
+1
+	movq 168(%rax), %rax	
+
+1
+	je .Razz.new_20	
+
+1
+	jmp .Main.main_159	
+
+1
+	jmp .Main.main_87	
+
+1
+	movq $48672, %rax	
+
+1
+	testq $1, %r14	
+
+1
+	jmp .Matrix.set_18	
+
+1
+	movq -136(%rbp), %rbx	
+
+1
+	.globl Matrix.elMul	
+
+1
+	jmp .A2I.c2i_4	
+
+1
+	movq $28379, %rsi	
+
+1
+	movq $6821, %reg0	
+
+1
+	movq 712(%rbx), %rax	
+
+1
+	je .DicNode.get_4	
+
+1
+	movq $55662, %r14	
+
+1
+	movq 16(%rbx), %r12	
+
+1
+	.size Matrix.new, .-Matrix.new	
+
+1
+	je .Bar.new_2	
+
+1
+	je .Main.main_122	
+
+1
+.Matrix.get_42:	
+
+1
+	movq 368(%reg0), %reg1	
+
+1
+.Foo.new_6:	
+
+1
+	jmp .Main.main_106	
+
+1
+	movq 728(%reg0), %reg1	
+
+1
+ListNode.init:	
+
+1
+	je .Main.print_list_4	
+
+1
+	movq $.string20, %reg0	
+
+1
+	movq $46509, %reg0	
+
+1
+	movq 192(%reg0), %rax	
+
+1
+Main.funccaseb:	
+
+1
+.Complex.print_1:	
+
+1
+	movq $51816, %reg0	
+
+1
+	.size DicNode.getCount, .-DicNode.getCount	
+
+1
+	jmp .Main.new_13	
+
+1
+	jne .Main.main_20	
+
+1
+CellularAutomaton.cell:	
+
+1
+	.globl List.getHead	
+
+1
+.Razz.new_4:	
+
+1
+	movq $8423, %rax	
+
+1
+	jge .Main.main_98	
+
+1
+	.size Nil.new, .-Nil.new	
+
+1
+	movq $25, %rsi	
+
+1
+	.globl Main.funccase	
+
+1
+	jmp .Complex.equal_5	
+
+1
+.Matrix.get_47:	
+
+1
+	.size Nil.isNil, .-Nil.isNil	
+
+1
+	movq $Dictionary_vtable, 0(%rax)	
+
+1
+	movq $8738, %reg0	
+
+1
+	movq 512(%reg0), %reg1	
+
+1
+	movq 56(%rbx), %reg1	
+
+1
+	.globl CellularAutomaton.init	
+
+1
+.Main.iota_2:	
+
+1
+.Bar.new_15:	
+
+1
+	.type Cons.rcons, @function	
+
+1
+	movq $29524, %r12	
+
+1
+	movq 728(%rbx), %rax	
+
+1
+	movq $30215, %reg0	
+
+1
+	movq $20384, %reg0	
+
+1
+	idivl %r13d	
+
+1
+	jmp .Matrix.set_3	
+
+1
+	movq $162, %rsi	
+
+1
+	je .Bar.new_18	
+
+1
+.A2I.c2i_3:	
+
+1
+	movq 24(%rbx), %rsi	
+
+1
+.Matrix.set_27:	
+
+1
+	jne .A2I.a2i_5	
+
+1
+	movq $33636, %rdi	
+
+1
+	movq $18429, %reg0	
+
+1
+	movq $2469, %reg0	
+
+1
+	.string "cycle\\n"	
+
+1
+	movq $8997, %rax	
+
+1
+	jmp .Main.main_192	
+
+1
+	movq $2739, %rsi	
+
+1
+	.type Complex.print, @function	
+
+1
+	je .Main.main_112	
+
+1
+.Dictionary.get_3:	
+
+1
+	movq $116, %rsi	
+
+1
+	.string "IO\\n"	
+
+1
+	movq $47988, %rcx	
+
+1
+	.size Complex.equal, .-Complex.equal	
+
+1
+Cons.print_list:	
+
+1
+.A2I.a2i_aux_2:	
+
+1
+	jne .Matrix.set_1	
+
+1
+	.globl Complex.reflect_X	
+
+1
+	movq 192(%rbx), %rax	
+
+1
+	je .Main.main_152	
+
+1
+	jmp .Matrix.get_59	
+
+1
+	movq $38220, %reg0	
+
+1
+	movq $25241, %rax	
+
+1
+	movq $58652, %rdi	
+
+1
+	.quad CellularAutomaton.evolve	
+
+1
+.A2I.i2c_14:	
+
+1
+	movq 136(%reg0), %rax	
+
+1
+.Matrix.set_12:	
+
+1
+	movq 640(%rbx), %r12	
+
+1
+	movq $.string19, %r12	
+
+1
+	movq $.string10, %r14	
+
+1
+	movq $2730, %rax	
+
+1
+	movq $118, %rsi	
+
+1
+	movq $50929, %reg0	
+
+1
+	movq 728(%reg0), %rax	
+
+1
+	movq 320(%reg0), %reg1	
+
+1
+	jne .DicNode.insert_1	
+
+1
+	movq $54759, %reg0	
+
+1
+	.size Bar.setJ, .-Bar.setJ	
+
+1
+	movq $7741, %reg0	
+
+1
+	.globl Complex.init	
+
+1
+	movq $27940, %reg0	
+
+1
+	jmp .Main.new_11	
+
+1
+	movq $62420, %reg0	
+
+1
+	.quad DicNode.next	
+
+1
+	movq 600(%reg0), %reg1	
+
+1
+	.type List.rev, @function	
+
+1
+	movq $61695, %rax	
+
+1
+	movq 192(%rbx), %reg1	
+
+1
+	movq $14546, %reg0	
+
+1
+	movq 624(%rbx), %r12	
+
+1
+	jmp .Main.main_46	
+
+1
+	jmp .DicNode.get_5	
+
+1
+	movq 200(%rbx), %reg1	
+
+1
+	movq $48672, %reg0	
+
+1
+	movq $38208, %reg0	
+
+1
+	.size Foo.getY, .-Foo.getY	
+
+1
+	movq $48298, %rax	
+
+1
+	jmp .CellularAutomaton.cell_right_neighbor_2	
+
+1
+	movq $38686, %r10	
+
+1
+	.quad A2I.c2i	
+
+1
+	je .Razz.new_18	
+
+1
+	movq $35043, %rsi	
+
+1
+.Main.new_10:	
+
+1
+	movq 336(%reg0), %reg1	
+
+1
+	je .Main.main_118	
+
+1
+	movq $166, %rsi	
+
+1
+	movq $38737, %rax	
+
+1
+	movq 56(%rbx), %r12	
+
+1
+	movq 640(%rbx), %reg1	
+
+1
+	je .Main.main_167	
+
+1
+	movq 568(%rbx), %rax	
+
+1
+	je .Bar.new_1	
+
+1
+	movq 40(%r15), %r15	
+
+1
+	movq $33788, %r11	
+
+1
+	movq $.string11, %r12	
+
+1
+	.quad Dictionary.getHead	
+
+1
+	movq $34526, %rdi	
+
+1
+	movq $125, %reg0	
+
+1
+	je .Main.main_127	
+
+1
+Bar.setJ:	
+
+1
+.Matrix.get_1:	
+
+1
+	movq $26355, %rax	
+
+1
+	movq $55273, %r11	
+
+1
+	movq 208(%reg0), %r12	
+
+1
+Matrix.new:	
+
+1
+	movq 336(%rbx), %rax	
+
+1
+.Bar.new_3:	
+
+1
+	.type ListNode.insert, @function	
+
+1
+.Matrix.get_3:	
+
+1
+	movq $30102, %rdi	
+
+1
+	.type Bar.getI, @function	
+
+1
+	jg .Main.main_31	
+
+1
+	.globl Nil.sort	
+
+1
+	movq $48557, %rax	
+
+1
+	.quad Bar.func2	
+
+1
+	movq 328(%reg0), %rax	
+
+1
+	movq $25947, %reg0	
+
+1
+	je .Main.main_120	
+
+1
+.string17:	
+
+1
+	je .Dictionary.insert_4	
+
+1
+	movq $53748, %rax	
+
+1
+	je .Razz.new_9	
+
+1
+	movq 184(%reg0), %reg1	
+
+1
+	.string "Dictionary"	
+
+1
+	.globl ListNode.next	
+
+1
+	jne .Matrix.get_1	
+
+1
+	movq 24(%rbx), %r12	
+
+1
+	movq $22802, %reg0	
+
+1
+	.type Foo.y, @function	
+
+1
+	movq 680(%reg0), %reg1	
+
+1
+	je .Main.main_97	
+
+1
+	movq 152(%r14), %r14	
+
+1
+	movq $33472, %reg0	
+
+1
+	movq $2143, %reg0	
+
+1
+.Matrix.get_51:	
+
+1
+	.type Cons.car, @function	
+
+1
+.Main.print_list_4:	
+
+1
+	.globl Foo.get	
+
+1
+	movq 296(%reg0), %r12	
+
+1
+	subq $176, %reg0	
+
+1
+	.globl Bar.func2	
+
+1
+	movq $144, %rsi	
+
+1
+	movq $16210, %reg0	
+
+1
+	subq $40, %rsp	
+
+1
+	movq $26355, %reg0	
+
+1
+	movq $58688, %rbx	
+
+1
+	.quad A2I.new	
+
+1
+	jmp .Matrix.set_42	
+
+1
+	.globl Dictionary.new	
+
+1
+.Main.new_7:	
+
+1
+	movq $15755, %rsi	
+
+1
+	je .Razz.new_13	
+
+1
+	jmp .Matrix.set_33	
+
+1
+.Matrix.set_49:	
+
+1
+	jmp .Main.funcifb_2	
+
+1
+	.size Main.iota, .-Main.iota	
+
+1
+	.size Main.print_list, .-Main.print_list	
+
+1
+ListNode.insert:	
+
+1
+	jmp .Matrix.get_46	
+
+1
+	jge .Main.new_10	
+
+1
+	.quad A2I.a2i_aux	
+
+1
+	.quad A2I.a2i	
+
+1
+	movq $49288, %rax	
+
+1
+	jmp .Matrix.set_59	
+
+1
+	movq $12855, %rdi	
+
+1
+	jmp .Main.main_110	
+
+1
+	movq 208(%reg0), %reg1	
+
+1
+	je .Main.funccase_7	
+
+1
+	movq $empty_string, %r12	
+
+1
+	.globl Bazz.doh	
+
+1
+	movq 488(%rbx), %reg1	
+
+1
+	jmp .DicNode.get_2	
+
+1
+.Matrix.set_30:	
+
+1
+	jmp .Main.main_169	
+
+1
+	jmp .Matrix.get_48	
+
+1
+	jmp .Main.main_158	
+
+1
+	.type ListNode.get, @function	
+
+1
+	movq $13765, %reg0	
+
+1
+	.quad Matrix.mul	
+
+1
+Cons.insert:	
+
+1
+	.type Main.funccaseb, @function	
+
+1
+	jne .Matrix.get_47	
+
+1
+.Matrix.get_52:	
+
+1
+	movq 584(%rbx), %reg1	
+
+1
+ListNode.push:	
+
+1
+	.quad Bazz.new	
+
+1
+.Main.funccaseb_3:	
+
+1
+.Main.funcifi_1:	
+
+1
+	movq $30605, %reg0	
+
+1
+.string16_l:	
+
+1
+	jmp .Matrix.get_13	
+
+1
+	movq $35043, %reg0	
+
+1
+	.string "8"	
+
+1
+	movq 384(%reg0), %r12	
+
+1
+List.getHead:	
+
+1
+	.quad CellularAutomaton.cell	
+
+1
+	movq $324, %reg0	
+
+1
+	movq $1073741824, %reg0	
+
+1
+	movq 464(%rbx), %reg1	
+
+1
+	movq $100, %rsi	
+
+1
+	movq $53085, %reg0	
+
+1
+Bar.getJ:	
+
+1
+	je .Main.main_148	
+
+1
+	movq $6821, %rsi	
+
+1
+.string19_l:	
+
+1
+.Bar.new_16:	
+
+1
+	movq $10809, %reg0	
+
+1
+	movq 160(%rbx), %rax	
+
+1
+	.globl Cons.rcons	
+
+1
+	jne .Main.main_9	
+
+1
+.Main.out_whatever_2:	
+
+1
+	je .Foo.new_5	
+
+1
+.Matrix.get_45:	
+
+1
+Main.iota:	
+
+1
+	.size Bazz.doh, .-Bazz.doh	
+
+1
+.Matrix.set_59:	
+
+1
+	.size Foo.get, .-Foo.get	
+
+1
+	movq 696(%reg0), %reg1	
+
+1
+	jmp .A2I.c2i_12	
+
+1
+	movq $40, %rsi	
+
+1
+	movq 24(%reg0), %r12	
+
+1
+	movq 320(%rbx), %reg1	
+
+1
+	jne .Matrix.get_43	
+
+1
+Cons.tail:	
+
+1
+	movq $12757, %rsi	
+
+1
+	movq $28968, %reg0	
+
+1
+	je .Dictionary.get_2	
+
+1
+	movq $27409, %reg0	
+
+1
+	movq $226, %rsi	
+
+1
+	movq $37073, %rax	
+
+1
+DicNode.getCount:	
+
+1
+	movq $18310, %reg0	
+
+1
+	.type List.print_list, @function	
+
+1
+.Razz.new_8:	
+
+1
+Razz_vtable:	
+
+1
+	movq $9856, %reg0	
+
+1
+.Main.print_list_2:	
+
+1
+	jmp .Dictionary.get_3	
+
+1
+	movq $37473, %rsi	
+
+1
+	.type DicNode.incr, @function	
+
+1
+	movq $51925, %reg0	
+
+1
+	.type Main.out_whatever, @function	
+
+1
+	movq $3175, %rsi	
+
+1
+	negl %r12d	
+
+1
+.Razz.new_6:	
+
+1
+	.globl Foo.doh	
+
+1
+	movq $50347, %rax	
+
+1
+	jg .Main.main_40	
+
+1
+	jg .Matrix.mul_4	
+
+1
+	.quad Nil.sort	
+
+1
+	movq $29789, %rsi	
+
+1
+	movq 344(%rbx), %reg1	
+
+1
+	movq $48887, %rax	
+
+1
+.Matrix.set_57:	
+
+1
+	movq $46032, %reg0	
+
+1
+	movq $39, %rdi	
+
+1
+A2I.i2a_aux:	
+
+1
+	jne .Matrix.get_45	
+
+1
+	movq $30631, %reg0	
+
+1
+DicNode.get:	
+
+1
+.Matrix.set_47:	
+
+1
+.A2I.i2c_15:	
+
+1
+	movq $2985, %reg0	
+
+1
+	movq 64(%rbx), %rax	
+
+1
+	movq $102, %reg0	
+
+1
+	movq $17975, %reg0	
+
+1
+	movq $19322, %reg0	
+
+1
+	movq $25, %rax	
+
+1
+.A2I.i2c_17:	
+
+1
+	.type Main.funccase, @function	
+
+1
+.string20_l:	
+
+1
+	movq $604, %reg0	
+
+1
+A2I.i2a:	
+
+1
+	.size Main.setFoo, .-Main.setFoo	
+
+1
+.Bazz.new_1:	
+
+1
+	movq 488(%reg0), %reg1	
+
+1
+	jmp .Main.main_69	
+
+1
+	movq $51824, %reg0	
+
+1
+	.quad Foo.getS	
+
+1
+	movq $49695, %reg0	
+
+1
+	movq $55626, %reg0	
+
+1
+	jg .Main.main_94	
+
+1
+	movq -96(%rbp), %r8	
+
+1
+.Razz.new_19:	
+
+1
+	movq $125, %rsi	
+
+1
+	movq $56453, %rsi	
+
+1
+	movq 248(%reg0), %rax	
+
+1
+	movq 200(%reg0), %rax	
+
+1
+	jne .Main.main_113	
+
+1
+	jmp .Main.main_45	
+
+1
+	movq $name_Object, %rax	
+
+1
+	movq $157, %rsi	
+
+1
+.Matrix.set_20:	
+
+1
+	jmp .Matrix.set_65	
+
+1
+	movq $43604, %reg0	
+
+1
+.CellularAutomaton.cell_left_neighbor_2:	
+
+1
+	movq $41455, %reg0	
+
+1
+	movq $34422, %rax	
+
+1
+	movq $63252, %reg0	
+
+1
+	movq $5411, %r10	
+
+1
+	je .Cons.rcons_2	
+
+1
+	movq $35237, %reg0	
+
+1
+	je .Main.main_108	
+
+1
+	movq $63080, %reg0	
+
+1
+	.string "Nil"	
+
+1
+	movq $63080, %rsi	
+
+1
+	movq $50538, %reg0	
+
+1
+	jmp .Main.main_33	
+
+1
+	movq 544(%reg0), %reg1	
+
+1
+	movq $14352, %rdi	
+
+1
+	movq $2951, %r12	
+
+1
+	movq 128(%rbx), %reg1	
+
+1
+	movq 392(%reg0), %reg1	
+
+1
+	movq $34498, %reg0	
+
+1
+	je .Main.main_164	
+
+1
+	movq $23599, %reg0	
+
+1
+	.size List.cdr, .-List.cdr	
+
+1
+.Razz.new_11:	
+
+1
+.Cons.insert_1:	
+
+1
+	movq $15714, %r9	
+
+1
+.Matrix.set_28:	
+
+1
+	.size List.head, .-List.head	
+
+1
+	call Nil.new	
+
+1
+	jge .Main.main_35	
+
+1
+.A2I.i2c_4:	
+
+1
+	.globl Complex.x_value	
+
+1
+	jge .Main.main_30	
+
+1
+	.type CellularAutomaton.num_cells, @function	
+
+1
+.A2I.i2c_6:	
+
+1
+	je .Matrix.set_12	
+
+1
+	jge .Main.main_78	
+
+1
+	movq $.string13, %rdi	
+
+1
+	movq 472(%rbx), %rax	
+
+1
+.Matrix.set_26:	
+
+1
+	movq $25834, %r12	
+
+1
+	movq 104(%rbx), %reg1	
+
+1
+	jne .A2I.i2c_5	
+
+1
+	movq $61139, %reg0	
+
+1
+	je .Cons.rev_2	
+
+1
+CellularAutomaton.cell_at_next_evolution:	
+
+1
+	je .Razz.new_19	
+
+1
+	.size Baz.main, .-Baz.main	
+
+1
+	.type Matrix.new, @function	
+
+1
+.A2I.c2i_4:	
+
+1
+	je .Main.print_list_2	
+
+1
+.A2I.c2i_6:	
+
+1
+	jne .Main.main_22	
+
+1
+	movq $19990, %reg0	
+
+1
+	jge .Main.main_146	
+
+1
+	movq $50998, %rax	
+
+1
+	movq $5, %r13	
+
+1
+	jmp .Main.main_166	
+
+1
+	movq $61208, %reg0	
+
+1
+.Matrix.get_39:	
+
+1
+	movq $63899, %reg0	
+
+1
+	movq $1357, %rax	
+
+1
+	movq $47353, %rax	
+
+1
+	movq %rdx, %rax	
+
+1
+	jmp .Main.main_85	
+
+1
+	movq $24320, %rax	
+
+1
+	movq $15798, %rax	
+
+1
+.Matrix.get_17:	
+
+1
+	movq 392(%reg0), %r12	
+
+1
+	movq $34533, %reg0	
+
+1
+	.type Main.funccasei, @function	
+
+1
+.A2I.i2a_2:	
+
+1
+Nil.print_list:	
+
+1
+	jne .Matrix.set_21	
+
+1
+	.type Main.funcifb, @function	
+
+1
+	.globl CellularAutomaton.num_cells	
+
+1
+	movq %r12, %r9	
+
+1
+	.quad List.head	
+
+1
+	movq $113, %reg0	
+
+1
+	movq $12618, %reg0	
+
+1
+	movq $64464, %reg0	
+
+1
+	jmp .Matrix.set_22	
+
+1
+	.quad DicNode.name	
+
+1
+	.size CellularAutomaton.init, .-CellularAutomaton.init	
+
+1
+.A2I.c2i_13:	
+
+1
+	movq 432(%reg0), %reg1	
+
+1
+	jmp .Matrix.get_11	
+
+1
+	movq $15234, %reg0	
+
+1
+.CellularAutomaton.cell_at_next_evolution_4:	
+
+1
+	jg .Main.main_20	
+
+1
+	movq $46032, %rdi	
+
+1
+	.globl Main.funccasei	
+
+1
+Nil.sort:	
+
+1
+	movq $16029, %reg0	
+
+1
+.CellularAutomaton.cell_at_next_evolution_6:	
+
+1
+	movq $32704, %rsi	
+
+1
+	movq $38915, %rdi	
+
+1
+	movq $50998, %reg0	
+
+1
+	movq $57869, %reg0	
+
+1
+	movq 152(%reg0), %reg1	
+
+1
+	.size Bar.setI, .-Bar.setI	
+
+1
+	je .Main.funccaseb_2	
+
+1
+	je .Main.func_5	
+
+1
+	movq $104, %rsi	
+
+1
+Cons.rev:	
+
+1
+	jne .Matrix.set_10	
+
+1
+	movq 504(%rbx), %reg1	
+
+1
+	movq 376(%rbx), %reg1	
+
+1
+	jmp .Main.main_171	
+
+1
+	je .Bar.new_4	
+
+1
+	movq 168(%reg0), %r12	
+
+1
+	movq 688(%reg0), %r12	
+
+1
+.Foo.new_4:	
+
+1
+.DicNode.get_1:	
+
+1
+	movq $14352, %reg0	
+
+1
+	jmp .A2I.i2c_10	
+
+1
+	movq $5411, %reg0	
+
+1
+	movq $48118, %rax	
+
+1
+	.quad List.sort	
+
+1
+	movq $1000, %rax	
+
+1
+	jmp .DicNode.insert_2	
+
+1
+	movq $62331, %reg0	
+
+1
+	movq $128, %rsi	
+
+1
+.Matrix.set_17:	
+
+1
+	movq $5606, %r11	
+
+1
+	movq $9886, %rbx	
+
+1
+	jg .Main.main_77	
+
+1
+	jne .A2I.a2i_3	
+
+1
+	movq $Complex_vtable, 0(%reg0)	
+
+1
+	movq $29181, %rdi	
+
+1
+.Razz.new_10:	
+
+1
+	movq $.string12, %rdi	
+
+1
+	movq $27231, %rsi	
+
+1
+	movq $63664, %rax	
+
+1
+.Foo.new_11:	
+
+1
+	movq $47308, %reg0	
+
+1
+	.type CellularAutomaton.cell_left_neighbor, @function	
+
+1
+.DicNode.insert_6:	
+
+1
+	.size Dictionary.getHead, .-Dictionary.getHead	
+
+1
+	je .Main.main_150	
+
+1
+	.string "I"	
+
+1
+	movq $17107, %rax	
+
+1
+	movq $58210, %rsi	
+
+1
+	movq 400(%reg0), %rax	
+
+1
+	jmp .Matrix.get_24	
+
+1
+	movq 96(%reg0), %rax	
+
+1
+.Matrix.get_62:	
+
+1
+.Matrix.set_63:	
+
+1
+	jne .Matrix.set_30	
+
+1
+	movq 192(%rax), %rax	
+
+1
+.Main.func_6:	
+
+1
+	movq 432(%reg0), %rax	
+
+1
+	.size Foo.y, .-Foo.y	
+
+1
+.Matrix.set_7:	
+
+1
+	movq $38915, %reg0	
+
+1
+DicNode.name:	
+
+1
+	je .Main.main_147	
+
+1
+	.quad ListNode.push	
+
+1
+	.globl CellularAutomaton.cell_right_neighbor	
+
+1
+.A2I.i2c_12:	
+
+1
+	movq $56556, %r10	
+
+1
+	movq $45807, %rax	
+
+1
+	movq $53181, %r8	
+
+1
+	sete %r15b	
+
+1
+	.type A2I.new, @function	
+
+1
+	je .Main.funccase_4	
+
+1
+	movq $19369, %reg0	
+
+1
+	jmp .Main.main_68	
+
+1
+	jmp .Matrix.get_26	
+
+1
+	movq 536(%rbx), %rax	
+
+1
+	movq $2, %r9	
+
+1
+.Matrix.set_54:	
+
+1
+.Main.out_whatever_1:	
+
+1
+	movq 240(%rbx), %reg1	
+
+1
+.Bar.new_13:	
+
+1
+	movq $36, %reg0	
+
+1
+	movq $43604, %rax	
+
+1
+	movq $60159, %reg0	
+
+1
+.Matrix.set_32:	
+
+1
+	.type Bar.setJ, @function	
+
+1
+	je .Main.main_165	
+
+1
+	movq $.string21, %r12	
+
+1
+	movq 720(%rbx), %r12	
+
+1
+	movq -32(%rbp), %rcx	
+
+1
+	.globl Main.funccaseb	
+
+1
+	movq $1823, %reg0	
+
+1
+	movq $.string10, %rdi	
+
+1
+	je .Main.main_125	
+
+1
+	movq $34422, %reg0	
+
+1
+	.type CellularAutomaton.cell_right_neighbor, @function	
+
+1
+	movq $10152, %rax	
+
+1
+	movq $31515, %rax	
+
+1
+	jmp .Matrix.mul_3	
+
+1
+	jmp .Main.new_8	
+
+1
+.A2I.c2i_11:	
+
+1
+	movq $55626, %rdi	
+
+1
+	.type List.cdr, @function	
+
+1
+	.globl CellularAutomaton.cell_at_next_evolution	
+
+1
+	movq $3306, %reg0	
+
+1
+	movq $11440, %reg0	
+
+1
+	movq %r14, %r13	
+
+1
+	movq 680(%rbx), %rax	
+
+1
+	movq $64582, %r13	
+
+1
+	movq $36212, %rsi	
+
+1
+	movq $20968, %reg0	
+
+1
+	.globl Main.myInt	
+
+1
+	movq 608(%rbx), %r12	
+
+1
+	jmp .Main.func_1	
+
+1
+	movq $43856, %rdi	
+
+1
+	movq -160(%rbp), %rdx	
+
+1
+	movq $154, %reg0	
+
+1
+	.quad DicNode.incr	
+
+1
+	je .Razz.new_7	
+
+1
+CellularAutomaton.num_cells:	
+
+1
+.string21_l:	
+
+1
+	je .A2I.a2i_1	
+
+1
+	movq 424(%reg0), %reg1	
+
+1
+	movq 600(%rbx), %rax	
+
+1
+	.globl A2I.a2i	
+
+1
+.Matrix.get_59:	
+
+1
+	movq $8022, %rax	
+
+1
+.A2I.c2i_19:	
+
+1
+	movq $19302, %rsi	
+
+1
+	.type Main.print_list, @function	
+
+1
+.Main.funccase_7:	
+

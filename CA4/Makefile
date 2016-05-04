@@ -31,10 +31,11 @@ internals.s.txt: internals.c
 	sed -i 's/\(Object\|String\|IO\|Int\|Bool\)_\([^v]\)/\1\.\2/g' internals.s.txt
 	sed -i 's/\(\w\+\)_vtable(%rip)/\$$\1_vtable/g' internals.s.txt
 	sed -i 's/rep ret/ret/g' internals.s.txt
+	echo "#END INTERNALS" >> internals.s.txt
 
 
 clean:
-	-rm -f $(TEST_TYPES) $(TEST_ASM) $(patsubst %.cl,%.bench,$(TESTS))
+	-rm -f test/*.cl-type test/*.s test/*.bench 
 
 in.txt:
 	./util/ingen.py > in.txt
