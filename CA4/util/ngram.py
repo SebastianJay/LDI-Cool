@@ -66,6 +66,9 @@ if __name__=="__main__":
 
 
     for x in sorted(ngrams.items(), key=lambda x: -x[1]):
+        # Ignore singletons
+        if x[1] == 1:
+            break
         print x[1]
         print x[0].replace('\n','\t\n')
                 
