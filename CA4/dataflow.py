@@ -15,22 +15,16 @@ class DataLattice:
     Mid = 1
     Top = 2
 
-#enum for args value for Object DataType
-class ObjectArgs:
-    Repr = ['Void', 'NonVoid']
-    Void = 0
-    NonVoid = 1
-
 #struct for information about a virtual register
 class DataInfo:
     def __init__(self, dtype, dlat, args):
         self.dtype = dtype
         self.dlat = dlat
         #args member contains different type depending on dtype
-        #   for Object, it is a member of ObjectArgs
+        #   for String, it is a string
         #   for Int, it is a two tuple (int lower bound, int upper bound)
         #   for Bool, it is True or False
-        #   for String, it is a two tuple (ObjectArgs isvoid?, string strictest type)
+        #   for Object, it is a two tuple (bool isvoid?, string strictest type)
         #if dlat is Top or Bottom then this member is invalid
         self.args = args
     def copy(self):
@@ -43,7 +37,7 @@ class DataInfo:
         if self.dlat == DataLattice.Mid:
             ret += ', '
             if self.dtype == DataType.Object:
-                ret += '(' + ObjectArgs.Repr[self.args[0]] + ', ' + self.args[1] + ')'
+                ret += '(' + ('Void' if self.args[0] else 'NonVoid') + ', ' + self.args[1] + ')'
             else:
                 ret += str(self.args)
         ret += ']'
@@ -171,7 +165,7 @@ def transfer(ins, data):
             if data[ins.op1].dtype in [DataType.Int, DataType.Bool, DataType.String]:
                 dataOut[ins.assignee] = DataInfo(DataType.Bool, DataLattice.Mid, False)
             else:
-                dataOut[ins.assignee] = DataInfo(DataType.Bool, DataLattice.Mid, data[ins.op1].args[0] == ObjectArgs.Void)
+                dataOut[ins.assignee] = DataInfo(DataType.Bool, DataLattice.Mid, data[ins.op1].args[0])
     elif isinstance(ins, TACAllocate):
         if ins.ptype == 'Int':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, (0, 0))
@@ -180,9 +174,9 @@ def transfer(ins, data):
         elif ins.ptype == 'String':
             dataOut[ins.assignee] = DataInfo(DataType.String, DataLattice.Mid, '')
         elif ins.allop == 'default':
-            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (ObjectArgs.Void, ins.ptype))
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (True, ins.ptype))
         else:   #new
-            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (ObjectArgs.NonVoid, ins.ptype))
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (False, ins.ptype))
     elif isinstance(ins, TACCall):
         dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
     elif isinstance(ins, TACConstant):
