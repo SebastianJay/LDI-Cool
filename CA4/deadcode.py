@@ -1,5 +1,3 @@
-#TODO analyze how deadcode must change with TACMethodArg and TACClassAttr
-
 from TAC_serialize import *
 
 def getRead(inst):
@@ -31,7 +29,7 @@ def getRead(inst):
         if isinstance(inst.assignee, TACClassAttr):
             res.append(inst.assignee.reg)
 
-    #unbox operands TODO review
+    #unbox operands
     resu = None
     if res is not None:
         resu = []
@@ -65,7 +63,7 @@ def getWritten(inst):
     elif hasattr(inst, 'assignee'):
         res = inst.assignee
 
-    #unbox operand TODO review
+    #unbox operand
     resu = None
     if res is not None:
         if isinstance(res, TACRegister):

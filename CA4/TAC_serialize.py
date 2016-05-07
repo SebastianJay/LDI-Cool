@@ -22,6 +22,8 @@ class TACGraph:
             retval += 'Children: ' + str([str(child.first()) for child in block.children]) + '\n'
             retval += 'Live In: ' + str(block.liveIn) + "\n"
             retval += 'Live Out: ' + str(block.liveOut) + "\n"
+            retval += 'Data In: ' + '\n' + '\n'.join(['\t' + str(key) + ": " + str(block.dataIn[key]) for key in block.dataIn]) + "\n"
+            retval += 'Data Out: ' + '\n' + '\n'.join(['\t' + str(key) + ": " + str(block.dataOut[key]) for key in block.dataOut]) + "\n"
             retval += str(block)
             retval += '\n'
         return retval
@@ -34,6 +36,8 @@ class TACBasicBlock:
         self.children = []
         self.liveOut = set()
         self.liveIn = set()
+        self.dataOut = {}
+        self.dataIn = {}
     def addInstruction(self, instruction):
         self.instructions.append(instruction)
     def isEmpty(self):
