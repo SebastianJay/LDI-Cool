@@ -27,6 +27,9 @@ class DataInfo:
         #   for Object, it is a two tuple (bool isvoid?, string strictest type)
         #if dlat is Top or Bottom then this member is invalid
         self.args = args
+        if self.dtype == DataType.Int and self.dlat == DataLattice.Mid and \
+        (self.args[0] > 2147483647 or self.args[1] < -2147483648):
+            self.args = (0, 0)
     def copy(self):
         argscpy = self.args
         if isinstance(self.args, list) or isinstance(self.args, tuple):
@@ -43,6 +46,45 @@ class DataInfo:
         ret += ']'
         return ret
 
+#apply constant propagation
+def optCFG(cfg):
+    globalFlow(cfg)
+    for block in cfg.blocks:
+        lastins = block.last()
+        #update conditional branches if we know them ahead
+        if isinstance(lastins, TACBT):
+            if block.dataOut[lastins.cond].dlat == DataLattice.Mid:
+                #branch is taken
+                if block.dataOut[lastins.cond].args:
+                    block.instructions[-1] = TACJmp(lastins.label)
+                    badblock = [b for b in block.children if not isinstance(b.first(), TACLabel) or b.first().name != lastins.label][0]
+                    block.children = [b for b in block.children if b != badblock]
+                    badblock.parents = [b for b in badblock.parents if b != block]
+                #branch not taken
+                else:
+                    block.instructions = block.instructions[:-1]
+                    badblock = [b for b in block.children if isinstance(b.first(), TACLabel) and b.first().name == lastins.label][0]
+                    block.children = [b for b in block.children if b != badblock]
+                    badblock.parents = [b for b in badblock.parents if b != block]
+        elif isinstance(lastins, TACBTypeEq):
+            if block.dataOut[lastins.obj].dlat == DataLattice.Mid:
+                if block.dataOut[lastins.obj].args[1] == lastins.dtype:
+                    block.instructions[-1] = TACJmp(lastins.label)
+                    badblock = [b for b in block.children if not isinstance(b.first(), TACLabel) or b.first().name != lastins.label][0]
+                    block.children = [b for b in block.children if b != badblock]
+                    badblock.parents = [b for b in badblock.parents if b != block]
+                else:
+                    block.instructions = block.instructions[:-1]
+                    badblock = [b for b in block.children if isinstance(b.first(), TACLabel) and b.first().name == lastins.label][0]
+                    block.children = [b for b in block.children if b != badblock]
+                    badblock.parents = [b for b in badblock.parents if b != block]
+
+    #other opts
+
+    #drop blocks that are unreachable
+    #TODO apply repeatedly until fixed point; could catch unreachable cycles
+    cfg.blocks = [b for i, b in enumerate(cfg.blocks) if i == 0 or len(b.parents) != 0]
+
 #continue propagating information between basic blocks until fixed point is reached
 def globalFlow(cfg):
     vregs = enumerateReg(cfg)
@@ -52,7 +94,9 @@ def globalFlow(cfg):
     for block in cfg.blocks:
         block.dataIn = initData
         block.dataOut = initData
-    while True:
+    changed = True
+    i = 0
+    while changed:
         changed = False
         for block in cfg.blocks:
             lstIn = [block.dataIn]
@@ -60,7 +104,9 @@ def globalFlow(cfg):
                 lstIn.append(parent.dataOut)
             block.dataIn = join(lstIn)
             changed = changed or forwardFlow(block)
-        if not changed:
+        i += 1
+        #ideally we reach a fixed point but for compilation speed we give up at a certain point
+        if i > 1000:
             break
 
 #modifies block.dataOut in place and returns true if a change was made
@@ -82,17 +128,17 @@ def transfer(ins, data):
             return dataOut
         if ins.opcode == '+':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                (data[ins.op1].args[0] + data[ins.op2].args[0], data[ins.op1].args[1] + data[ins.op2].args[1]))
+                (data[ins.op2].args[0] + data[ins.op1].args[0], data[ins.op2].args[1] + data[ins.op1].args[1]))
         elif ins.opcode == '-':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                (data[ins.op1].args[0] - data[ins.op2].args[0], data[ins.op1].args[1] - data[ins.op2].args[1]))
+                (data[ins.op2].args[0] - data[ins.op1].args[0], data[ins.op2].args[1] - data[ins.op1].args[1]))
         elif ins.opcode == '*':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                (data[ins.op1].args[0] * data[ins.op2].args[0], data[ins.op1].args[1] * data[ins.op2].args[1]))
+                (data[ins.op2].args[0] * data[ins.op1].args[0], data[ins.op2].args[1] * data[ins.op1].args[1]))
         elif ins.opcode == '/':
             #TODO handle divide by zero
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                (data[ins.op1].args[0] / data[ins.op2].args[0], data[ins.op1].args[1] / data[ins.op2].args[1]))
+                (data[ins.op2].args[0] / data[ins.op1].args[0], data[ins.op2].args[1] / data[ins.op1].args[1]))
         elif ins.opcode == '<':
             if data[ins.op1].dtype == DataType.Int and data[ins.op2].dtype == DataType.Int:
                 #if upper bound of op1 is less than lower bound of op2 then certainly true

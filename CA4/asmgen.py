@@ -3,6 +3,7 @@ from TAC_serialize import _constructCFG
 from registerAllocate import registerAllocate
 import sys
 from deadcode import globalDeadRemove
+from dataflow import optCFG
 
 #if a different width of a register is needed find the label in this mapping
 regWidthMap = {
@@ -300,7 +301,7 @@ class ASMOp(ASMInstruction):
 
         asm.append(self)
         return asm
-        
+
     def __str__(self):
         if self.opcode == '+':
             return ('addl ' if self.halfreg else 'addq ') + self.operands[0] + ', ' + self.assignee
@@ -598,7 +599,7 @@ def funcConvert(cfg, regMap):
             ASMOp(rsp, '-', ['$'+str(stackmem), rsp])
         ]
 
-    # Save non-parameter registers 
+    # Save non-parameter registers
     maxreg = min(max(regMap.values()), max(cRegMap.keys()))
     if maxreg > 0:
         for i in range(1, maxreg+1):
@@ -747,14 +748,16 @@ def convert(taclist):
     asmlist = []
     for meth in methlist:
         cfg = _constructCFG(meth)
-        # print cfg
-        # print '-----'
+        #print cfg
+        #print '-----'
+        #optCFG(cfg)
+        #print cfg
+        #print '-----'
         globalDeadRemove(cfg)
-        # print cfg
-        # print '-----'
+        #print cfg
+        #print '-----'
 
-        #regmap = registerAllocate(cfg,13)
-        regmap = registerAllocate(cfg,len(cRegMap))        #stopgap until registerAllocate is fixed
+        regmap = registerAllocate(cfg,len(cRegMap))
 
         asmlist += funcConvert(cfg, regmap)
 

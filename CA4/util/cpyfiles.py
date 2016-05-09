@@ -2,8 +2,8 @@
 from shutil import copytree, rmtree
 from os.path import exists
 
-src = 'C:/Users/Student/Documents/GitHub/LDI-Cool/CA4/test'
-dst = 'C:/VM_share/ca4/test'
+src = 'C:/Users/Student/Documents/GitHub/LDI-Cool/CA4'
+dst = 'C:/VM_share/ca4'
 
 if exists(dst):
     rmtree(dst)

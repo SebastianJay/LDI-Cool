@@ -24,7 +24,7 @@ class TACGraph:
             retval += 'Live Out: ' + str(block.liveOut) + "\n"
             retval += 'Data In: ' + '\n' + '\n'.join(['\t' + str(key) + ": " + str(block.dataIn[key]) for key in block.dataIn]) + "\n"
             retval += 'Data Out: ' + '\n' + '\n'.join(['\t' + str(key) + ": " + str(block.dataOut[key]) for key in block.dataOut]) + "\n"
-            retval += str(block)
+            retval += '===\n' + str(block) + '===\n'
             retval += '\n'
         return retval
 
