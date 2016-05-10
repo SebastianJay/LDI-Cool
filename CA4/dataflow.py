@@ -48,7 +48,8 @@ class DataInfo:
 
 #apply constant propagation
 def optCFG(cfg):
-    globalFlow(cfg)
+    if not globalFlow(cfg):
+        return  #dataflow failed to run in time
     for block in cfg.blocks:
         lastins = block.last()
         #update conditional branches if we know them ahead
@@ -68,7 +69,10 @@ def optCFG(cfg):
                     badblock.parents = [b for b in badblock.parents if b != block]
         elif isinstance(lastins, TACBTypeEq):
             if block.dataOut[lastins.obj].dlat == DataLattice.Mid:
-                if block.dataOut[lastins.obj].args[1] == lastins.dtype:
+                if (block.dataOut[lastins.obj].dtype == DataType.Object and block.dataOut[lastins.obj].args[1] == lastins.dtype) \
+                or (block.dataOut[lastins.obj].dtype == DataType.Int and 'Int' == lastins.dtype) \
+                or (block.dataOut[lastins.obj].dtype == DataType.Bool and 'Bool' == lastins.dtype) \
+                or (block.dataOut[lastins.obj].dtype == DataType.String and 'String' == lastins.dtype):
                     block.instructions[-1] = TACJmp(lastins.label)
                     badblock = [b for b in block.children if not isinstance(b.first(), TACLabel) or b.first().name != lastins.label][0]
                     block.children = [b for b in block.children if b != badblock]
@@ -79,19 +83,25 @@ def optCFG(cfg):
                     block.children = [b for b in block.children if b != badblock]
                     badblock.parents = [b for b in badblock.parents if b != block]
 
-    #other opts
-
     #drop blocks that are unreachable
-    #TODO apply repeatedly until fixed point; could catch unreachable cycles
-    cfg.blocks = [b for i, b in enumerate(cfg.blocks) if i == 0 or len(b.parents) != 0]
+    #TODO could catch unreachable cycles
+    while True:
+        unreachable = [b for i, b in enumerate(cfg.blocks) if (i > 0 and len(b.parents) == 0) or len(b.instructions) == 0]
+        if len(unreachable) == 0:
+            break
+        for block in cfg.blocks:
+            block.parents = [b for b in block.parents if b not in unreachable]
+        cfg.blocks = [b for b in cfg.blocks if b not in unreachable]
+
+    #TODO other opts
 
 #continue propagating information between basic blocks until fixed point is reached
 def globalFlow(cfg):
-    vregs = enumerateReg(cfg)
-    initData = {}
-    for vreg in vregs:
-        initData[vreg] = DataInfo(DataType.Object, DataLattice.Bottom, None)
     for block in cfg.blocks:
+        vregs = enumerateReg(block)
+        initData = {}
+        for vreg in vregs:
+            initData[vreg] = DataInfo(DataType.Object, DataLattice.Bottom, None)
         block.dataIn = initData
         block.dataOut = initData
     changed = True
@@ -106,14 +116,14 @@ def globalFlow(cfg):
             changed = changed or forwardFlow(block)
         i += 1
         #ideally we reach a fixed point but for compilation speed we give up at a certain point
-        if i > 1000:
-            break
+        if i > 100:
+            return False
+    return True
 
 #modifies block.dataOut in place and returns true if a change was made
 def forwardFlow(block):
-    dataIn = block.dataIn
-    dataOut = block.dataOut
-    mdata = dataIn
+    dataOut = dataCopy(block.dataOut)
+    mdata = dataCopy(block.dataIn)
     for ins in block.instructions:
         mdata = transfer(ins, mdata)
     block.dataOut = mdata
@@ -121,10 +131,10 @@ def forwardFlow(block):
 
 #returns a data corresponding to addition of information by TAC ins
 def transfer(ins, data):
-    dataOut = dataCopy(data)
+    dataOut = data
     if isinstance(ins, TACOp2):
         if ins.op1 not in data or ins.op2 not in data or data[ins.op1].dlat != DataLattice.Mid or data[ins.op2].dlat != DataLattice.Mid:
-            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Bottom, None)
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
             return dataOut
         if ins.opcode == '+':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
@@ -136,9 +146,12 @@ def transfer(ins, data):
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
                 (data[ins.op2].args[0] * data[ins.op1].args[0], data[ins.op2].args[1] * data[ins.op1].args[1]))
         elif ins.opcode == '/':
-            #TODO handle divide by zero
-            dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                (data[ins.op2].args[0] / data[ins.op1].args[0], data[ins.op2].args[1] / data[ins.op1].args[1]))
+            if data[ins.op1].args[0] == 0 or data[ins.op1].args[1] == 0:
+                dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
+                return dataOut
+            else:
+                dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
+                    (data[ins.op2].args[0] / data[ins.op1].args[0], data[ins.op2].args[1] / data[ins.op1].args[1]))
         elif ins.opcode == '<':
             if data[ins.op1].dtype == DataType.Int and data[ins.op2].dtype == DataType.Int:
                 #if upper bound of op1 is less than lower bound of op2 then certainly true
@@ -201,7 +214,7 @@ def transfer(ins, data):
             dataOut[ins.assignee].args = (dataOut[ins.assignee].args[1], dataOut[ins.assignee].args[0])
     elif isinstance(ins, TACOp1):
         if ins.op1 not in data or data[ins.op1].dlat != DataLattice.Mid:
-            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Bottom, None)
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
             return dataOut
         if ins.opcode == 'not':
             dataOut[ins.assignee] = DataInfo(DataType.Bool, DataLattice.Mid, not data[ins.op1].args)
@@ -234,9 +247,13 @@ def transfer(ins, data):
             dataOut[ins.assignee] = DataInfo(DataType.String, DataLattice.Mid, ins.const)
     elif isinstance(ins, TACAssign):
         if ins.assignor not in data:
-            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Bottom, None)
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
         else:
-            dataOut[ins.assignee] = data[ins.assignor].copy()
+            if isinstance(ins.assignee, TACRegister):
+                dataOut[ins.assignee] = data[ins.assignor].copy()
+            elif isinstance(ins.assignee, TACClassAttr):
+                #TODO handle assignments to boxed int/bool val field
+                dataOut[ins.assignee.reg] = DataInfo(DataType.Object, DataLattice.Top, None)
     return dataOut
 
 #joins multiple data dicts from multiple incoming edges of cfg
@@ -271,8 +288,13 @@ def dataLub(a, b):
         return DataInfo(DataType.Object, DataLattice.Top, None)
     #if Int then widen the range of args
     if a.dtype == DataType.Int:
-        return DataInfo(DataType.Int, DataLattice.Mid, \
-            (a.args[0] if a.args[0] < b.args[0] else b.args[0], a.args[1] if a.args[1] > b.args[1] else b.args[1]))
+        #NOTE omitting because will never terminate on while loops
+        #return DataInfo(DataType.Int, DataLattice.Mid, \
+        #    (a.args[0] if a.args[0] < b.args[0] else b.args[0], a.args[1] if a.args[1] > b.args[1] else b.args[1]))
+        if a.args == b.args:
+            return a
+        else:
+            return DataInfo(DataType.Int, DataLattice.Top, None)
     #if Bool they must be the same to avoid Top
     if a.dtype == DataType.Bool:
         if a.args == b.args:
@@ -314,18 +336,17 @@ def dataCompare(a, b):
             return False
     return True
 
-def enumerateReg(cfg):
+def enumerateReg(block):
     vregs = set()
-    for block in cfg.blocks:
-        for ins in block.instructions:
-            if isinstance(ins, TACOp):
-                vregs.add(ins.op1)
-                if isinstance(ins, TACOp2):
-                    vregs.add(ins.op2)
-            if isinstance(ins, TACAssign):
-                vregs.add(ins.assignor)
-            if hasattr(ins, 'assignee'):
-                vregs.add(ins.assignee)
+    for ins in block.instructions:
+        if isinstance(ins, TACOp):
+            vregs.add(ins.op1)
+            if isinstance(ins, TACOp2):
+                vregs.add(ins.op2)
+        if isinstance(ins, TACAssign):
+            vregs.add(ins.assignor)
+        if hasattr(ins, 'assignee'):
+            vregs.add(ins.assignee)
     return vregs
 
 import sys

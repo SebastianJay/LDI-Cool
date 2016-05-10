@@ -556,7 +556,6 @@ def funcConvert(cfg, regMap):
 
     #if virtual register, return either register name or place in memory (if index too high)
     #if class attr or method arg, return memory location with appropriate offset
-    #TODO review indexing of temporaries relative to rbp
     def realReg(operand):
         if isinstance(operand, TACRegister):
             vreg = operand.name
@@ -592,7 +591,6 @@ def funcConvert(cfg, regMap):
     ]
 
     # Allocate stack space for temporaries
-    # TODO review number of spaces allocated
     stackmem = 8*(max(regMap.values()) - len(cRegMap) + 1)
     if stackmem > 0:
         preamble+=[
@@ -699,6 +697,10 @@ def funcConvert(cfg, regMap):
         else:
             asmlst.append("UNHANDLED: "+ str(ins))
 
+    #if the return was optimized out, insert a dummy nop so that epilogue works correctly
+    if not isinstance(asmlst[-1], ASMReturn):
+        asmlst.append(ASMMisc('nop'))
+
     #put preamble after start label, epilogue before return
     asmlst = [ASMInfo('globl', asmlst[0].name), ASMInfo('type',asmlst[0].name,  '@function')] + \
              asmlst[:1] + preamble + asmlst[1:-1] \
@@ -750,7 +752,7 @@ def convert(taclist):
         cfg = _constructCFG(meth)
         #print cfg
         #print '-----'
-        #optCFG(cfg)
+        optCFG(cfg)
         #print cfg
         #print '-----'
         globalDeadRemove(cfg)

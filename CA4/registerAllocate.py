@@ -14,7 +14,7 @@ def genRegGraph(cfg):
     for i, v in enumerate(params):
         regGraph[v]=[set(),paramRegs[i]]
         preColor[v] = paramRegs[i]
-    
+
     methParams = []
     deadcode.globalLiveCheck(cfg)
     for block in cfg.blocks:
@@ -34,10 +34,8 @@ def genRegGraph(cfg):
             killed = deadcode.getWritten(inst)
             if killed is not None and killed in live:
                 live.remove(killed)
-                if killed not in regGraph:
-                    regGraph[killed] = [set(), -1]
-
-
+            if killed is not None and killed not in regGraph:
+                regGraph[killed] = [set(), -1]
 
             # Update graph connections
             for t in live:
@@ -102,7 +100,6 @@ def genRegGraph(cfg):
                             del preColor[l]
 
             # Allocate accumulator to return val of a function
-            #TODO review TACClassAttr - probably change tacgen so that it never shows up here
             if isinstance(inst,TAC_serialize.TACCall):
                 regGraph[inst.assignee.getName()][1] = 0
                 preColor[inst.assignee.getName()] = 0
@@ -120,7 +117,7 @@ def genRegGraph(cfg):
             elif isinstance(inst,TAC_serialize.TACOp2) and inst.opcode in ['*','/']:
                 regGraph[inst.assignee.getName()][1] = 0
                 preColor[inst.assignee.getName()] = 0
-            
+
             # Malloc is a call, returns in rax
             elif isinstance(inst,TAC_serialize.TACMalloc):
                 if isinstance(inst.assignee, TAC_serialize.TACRegister):
@@ -156,7 +153,7 @@ def genRegGraph(cfg):
             regGraph[p][1] = paramRegs[i]
         else:
             break
-        
+
 
 #    for x in sorted(regGraph.keys()):
 #        print x, regGraph[x]
@@ -236,5 +233,5 @@ def registerAllocate(cfg, nregs):
 
     regMap = {}
     for node in regGraph:
-        regMap[node] = regGraph[node][1] 
+        regMap[node] = regGraph[node][1]
     return regMap
