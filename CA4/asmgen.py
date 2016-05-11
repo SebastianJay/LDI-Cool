@@ -150,12 +150,11 @@ class ASMIndexer:
                 ins.const = ins.const.replace('\"', '\\\"')
 
         #add literals found in TAC list
-        for ins in inslist:
-            if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
-                ASMIndexer.strMap[ins.const] = '.string' + str(strind)
-                strind += 1
+        #for ins in inslist:
+        #    if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
+        #        ASMIndexer.strMap[ins.const] = '.string' + str(strind)
+        #        strind += 1
         #TODO cull list after optimization to remove unused strings
-
 
         #create attrOffset
         for cname in cmap:
@@ -241,6 +240,14 @@ class ASMIndexer:
                 ASMInfo('quad', str(slen))
             ]
         return slist
+
+    @staticmethod
+    def addStr(inslist):
+        strind = len(ASMIndexer.strMap)
+        for ins in inslist:
+            if isinstance(ins, TACConstant) and ins.ptype == 'string' and ins.const not in ASMIndexer.strMap:
+                ASMIndexer.strMap[ins.const] = '.string' + str(strind)
+                strind += 1
 
 #begin ASM class definitions - adapted from TAC
 # these classes do not necessarily correspond to one x86 instruction apiece
@@ -761,6 +768,7 @@ def convert(taclist):
         cfg = cullLabels(cfg)
         #print cfg
         #print '-----'
+        ASMIndexer.addStr(cfg.toList())
 
         regmap = registerAllocate(cfg,len(cRegMap))
 

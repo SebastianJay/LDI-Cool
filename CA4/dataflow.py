@@ -52,6 +52,9 @@ class DataInfo:
 #TACCall -> lst of (TACRegister, DataInfo)
 gCallArgs = {}
 
+#global set of TACCalls that can be removed because constant propagation
+gCallKill = {}
+
 #apply constant propagation
 def optCFG(cfg):
     if not globalFlow(cfg):
@@ -105,6 +108,17 @@ def optCFG(cfg):
         for ins in block.instructions:
             if not isinstance(ins, TACCall):
                 continue
+            #handle primitives through calls (i.e. string operations)
+            if ins in gCallKill:
+                ind = newinslst.index(ins)
+                if gCallKill[ins].dtype == DataType.Int:
+                    newins = TACConstant(TACIndexer.returnReg, 'int', gCallKill[ins].args[0])
+                elif gCallKill[ins].dtype == DataType.Bool:
+                    newins = TACConstant(TACIndexer.returnReg, 'bool', gCallKill[ins].args)
+                elif gCallKill[ins].dtype == DataType.String:
+                    newins = TACConstant(TACIndexer.returnReg, 'string', gCallKill[ins].args)
+                newinslst = newinslst[:ind] + [newins] + newinslst[ind+1:]  #take out call
+                continue
             if ins not in gCallArgs:
                 continue
             arglst = []
@@ -128,6 +142,15 @@ def optCFG(cfg):
             newinslst = newinslst[:ind] + arglst + newinslst[ind:]  #prepend constant instructions before call
         block.instructions = newinslst
     return cfg
+
+def strSwitch(mstr, mode):
+    if mode:
+        mstr = mstr.replace('\\', '\\\\')
+        mstr = mstr.replace('\"', '\\\"')
+    else:
+        mstr = mstr.replace('\\\\', '\\')
+        mstr = mstr.replace('\\\"', '\"')
+    return mstr
 
 #peephole opt on TAC instructions
 #remove jmp and labels when they are next to each other
@@ -191,7 +214,8 @@ def forwardFlow(block):
     block.dataOut = mdata
     return not dataCompare(dataOut, block.dataOut)
 
-#returns a data corresponding to addition of information by TAC ins
+#returns a data dict corresponding to addition of information by TAC ins
+#return value is the parameter modified in place
 def transfer(ins, data):
     dataOut = data
     if isinstance(ins, TACOp2):
@@ -300,12 +324,42 @@ def transfer(ins, data):
         else:   #new
             dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (False, ins.ptype))
     elif isinstance(ins, TACCall):
-        dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
-        #save information about arguments for possible constant propagation
-        gCallArgs[ins] = []
-        for arg in ins.args:
-            if arg in dataOut:
-                gCallArgs[ins].append((arg, dataOut[arg]))
+        #precompute string methods
+        success = False
+        if not isinstance(ins.funcname, TACRegister) and ins.funcname[:ins.funcname.index('.')] == 'String':
+            mname = ins.funcname[ins.funcname.index('.')+1:]
+            if mname == 'substr':
+                if ins.args[0] in data and ins.args[1] in data and ins.args[2] in data and \
+                data[ins.args[0]].dlat == DataLattice.Mid and data[ins.args[1]].dlat == DataLattice.Mid and \
+                data[ins.args[2]].dlat == DataLattice.Mid:
+                    istr = strSwitch(data[ins.args[0]].args, False)
+                    start = data[ins.args[1]].args
+                    length = data[ins.args[2]].args
+                    if start[0]==start[1] and length[0]==length[1] and start[0] >= 0 and start[1] + length[1] <= len(istr):
+                        dataOut[ins.assignee] = DataInfo(DataType.String, DataLattice.Mid,
+                            strSwitch(istr[start[0]:start[0]+length[0]], True))
+                        success = True
+            elif mname == 'concat':
+                if ins.args[0] in data and ins.args[1] in data and \
+                data[ins.args[0]].dlat == DataLattice.Mid and data[ins.args[1]].dlat == DataLattice.Mid:
+                    istr = strSwitch(data[ins.args[0]].args, False)
+                    cstr = strSwitch(data[ins.args[1]].args, False)
+                    dataOut[ins.assignee] = DataInfo(DataType.String, DataLattice.Mid, strSwitch(istr + cstr, True))
+                    success = True
+            elif mname == 'length':
+                if ins.args[0] in data and data[ins.args[0]].dlat == DataLattice.Mid:
+                    istr = strSwitch(data[ins.args[0]].args, False)
+                    dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, (len(istr), len(istr)))
+                    success = True
+        if not success:
+            dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
+            #save information about arguments for possible constant propagation
+            gCallArgs[ins] = []
+            for arg in ins.args:
+                if arg in dataOut:
+                    gCallArgs[ins].append((arg, dataOut[arg]))
+        else:
+            gCallKill[ins] = dataOut[ins.assignee]  #save info for constant propagation
     elif isinstance(ins, TACConstant):
         if ins.ptype == 'int':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, (int(ins.const), int(ins.const)))
@@ -320,8 +374,20 @@ def transfer(ins, data):
             if isinstance(ins.assignee, TACRegister):
                 dataOut[ins.assignee] = data[ins.assignor].copy()
             elif isinstance(ins.assignee, TACClassAttr):
-                #TODO handle assignments to boxed int/bool val field
                 dataOut[ins.assignee.reg] = DataInfo(DataType.Object, DataLattice.Top, None)
+                dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
+                """
+                #if we are assigning to a boxed Int/Bool's val we mark the boxed reg
+                if ins.assignee.cname == 'Int' and ins.assignee.aname == 'val':
+                    dataOut[ins.assignee.reg] = data[ins.assignor].copy()
+                elif ins.assignee.cname == 'Bool' and ins.assignee.aname == 'val':
+                    if data[ins.assignor].dtype == DataType.Int and data[ins.assignor].dlat == DataLattice.Mid:
+                        dataOut[ins.assignee.reg] = DataInfo(DataType.Bool, DataLattice.Mid, 'true' if data[ins.assignor].args != 0 else 'false')
+                    else:
+                        dataOut[ins.assignee.reg] = data[ins.assignor].copy()
+                else:
+                    dataOut[ins.assignee.reg] = DataInfo(DataType.Object, DataLattice.Top, None)
+                """
     return dataOut
 
 #joins multiple data dicts from multiple incoming edges of cfg
@@ -357,6 +423,7 @@ def dataLub(a, b):
     #if Int then widen the range of args
     if a.dtype == DataType.Int:
         #NOTE omitting because will never terminate on while loops
+        #TODO decide when to the range in args (e.g. when not a loop)
         #return DataInfo(DataType.Int, DataLattice.Mid, \
         #    (a.args[0] if a.args[0] < b.args[0] else b.args[0], a.args[1] if a.args[1] > b.args[1] else b.args[1]))
         if a.args == b.args:

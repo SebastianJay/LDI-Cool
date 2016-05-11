@@ -35,16 +35,17 @@ if __name__=="__main__":
     # Generate vtables
     vtable = asmgen.ASMIndexer.genVtable()
 
+    #create list of ASM instructions
+    insts = [asmgen.ASMInfo('text')] + asmgen.convert(taclist)
+
     # Generate String constants
     strs = asmgen.ASMIndexer.genStr()
 
+    # data segment
     data = [asmgen.ASMInfo('section', '.rodata')] + strs + vtable
 
-    #create list of ASM instructions
-    insts = [asmgen.ASMInfo('text')] + asmgen.convert(taclist)
-    
-    oldinsts = [] 
-    while oldinsts != insts: 
+    oldinsts = []
+    while oldinsts != insts:
         oldinsts = list(insts)
         insts = peephole(insts)
 
@@ -54,7 +55,7 @@ if __name__=="__main__":
     outbuf += asmgen.asmStr(insts)
 
     #if debug:
-    #    print outbuf[outbuf.index('main:'):] 
+    #    print outbuf[outbuf.index('main:'):]
 
     #write result buffer to output file
     with open(sys.argv[1].replace('.cl-type', '.s'),'w') as outfile:
