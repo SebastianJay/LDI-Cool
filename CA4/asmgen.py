@@ -3,7 +3,7 @@ from TAC_serialize import _constructCFG
 from registerAllocate import registerAllocate
 import sys
 from deadcode import globalDeadRemove
-from dataflow import optCFG
+from dataflow import *
 
 #if a different width of a register is needed find the label in this mapping
 regWidthMap = {
@@ -395,7 +395,7 @@ class ASMConstant(ASMDeclare):
         if self.ptype == 'int':
             return 'movq $' + str(self.const) + ', ' + self.assignee
         if self.ptype == 'bool':
-            if self.const == 'true':
+            if self.const == 'true' or self.const == True:
                 return 'movq $1, ' + self.assignee
             else:
                 return 'movq $0, ' + self.assignee
@@ -752,10 +752,13 @@ def convert(taclist):
         cfg = _constructCFG(meth)
         #print cfg
         #print '-----'
-        optCFG(cfg)
+        cfg = optCFG(cfg)
         #print cfg
         #print '-----'
         globalDeadRemove(cfg)
+        #print cfg
+        #print '-----'
+        cfg = cullLabels(cfg)
         #print cfg
         #print '-----'
 

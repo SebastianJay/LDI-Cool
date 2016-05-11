@@ -1,7 +1,12 @@
 from asmgen import *
+from TAC_serialize import *
+from TAC_serialize import _constructCFG
+
+#peephole on ASM instructions
+#small optimizations on mov, arith, and branch instructions
 def peephole(ins):
     i = 0
-    while i < len(ins): 
+    while i < len(ins):
         if i > 2:
             if check(['mov', 'mov'], ins[i-1:i+1]):
                 if ins[i-1].assignee == ins[i].assignor and ins[i-1].assignor == ins[i].assignee:
@@ -60,12 +65,8 @@ def check(types, ins):
             res = isinstance(i, ASMCmp)
         else:
             res = False
-            
 
         if not res:
             break
 
     return res
-            
-
-

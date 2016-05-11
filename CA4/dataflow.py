@@ -1,4 +1,6 @@
 from TAC_serialize import *
+from tacgen import TACIndexer
+from ctypes import c_int
 
 #enum for type of object
 class DataType:
@@ -27,9 +29,9 @@ class DataInfo:
         #   for Object, it is a two tuple (bool isvoid?, string strictest type)
         #if dlat is Top or Bottom then this member is invalid
         self.args = args
-        if self.dtype == DataType.Int and self.dlat == DataLattice.Mid and \
-        (self.args[0] > 2147483647 or self.args[1] < -2147483648):
-            self.args = (0, 0)
+        #if int, deal with overflow
+        if self.dtype == DataType.Int and self.dlat == DataLattice.Mid:
+            self.args = (c_int(self.args[0] & 0xffffffff).value, c_int(self.args[1] & 0xffffffff).value)
     def copy(self):
         argscpy = self.args
         if isinstance(self.args, list) or isinstance(self.args, tuple):
@@ -46,13 +48,18 @@ class DataInfo:
         ret += ']'
         return ret
 
+#global mapping for const propagation of arguments to method calls
+#TACCall -> lst of (TACRegister, DataInfo)
+gCallArgs = {}
+
 #apply constant propagation
 def optCFG(cfg):
     if not globalFlow(cfg):
-        return  #dataflow failed to run in time
+        #print 'NO CFG OPT\n===\n'
+        return cfg      #dataflow failed to run in time
+    #update conditional branches if we know them ahead of time
     for block in cfg.blocks:
         lastins = block.last()
-        #update conditional branches if we know them ahead
         if isinstance(lastins, TACBT):
             if block.dataOut[lastins.cond].dlat == DataLattice.Mid:
                 #branch is taken
@@ -83,8 +90,7 @@ def optCFG(cfg):
                     block.children = [b for b in block.children if b != badblock]
                     badblock.parents = [b for b in badblock.parents if b != block]
 
-    #drop blocks that are unreachable
-    #TODO could catch unreachable cycles
+    #drop blocks that are unreachable TODO check for unreachable cycles
     while True:
         unreachable = [b for i, b in enumerate(cfg.blocks) if (i > 0 and len(b.parents) == 0) or len(b.instructions) == 0]
         if len(unreachable) == 0:
@@ -93,7 +99,63 @@ def optCFG(cfg):
             block.parents = [b for b in block.parents if b not in unreachable]
         cfg.blocks = [b for b in cfg.blocks if b not in unreachable]
 
-    #TODO other opts
+    #scan over args in TACCall instructions to replace with constants if possible
+    for block in cfg.blocks:
+        newinslst = block.instructions[:]  #make shallow copy of instructions
+        for ins in block.instructions:
+            if not isinstance(ins, TACCall):
+                continue
+            if ins not in gCallArgs:
+                continue
+            arglst = []
+            for arg in ins.args:
+                dinfo = [datum[1] for datum in gCallArgs[ins] if datum[0] == arg]
+                if len(dinfo) == 0:
+                    continue
+                dinfo = dinfo[0]
+                if dinfo.dlat != DataLattice.Mid or dinfo.dtype == DataType.Object:
+                    continue    #only dealing with known primitives
+                if arg.boxed:
+                    continue    #primitives are boxed when they need to act as Objects
+                if dinfo.dtype == DataType.Int and dinfo.args[0] == dinfo.args[1]:
+                    argins = TACConstant(arg, 'int', dinfo.args[0])
+                elif dinfo.dtype == DataType.Bool:
+                    argins = TACConstant(arg, 'bool', dinfo.args)
+                elif dinfo.dtype == DataType.String:
+                    argins = TACConstant(arg, 'string', dinfo.args)
+                arglst.append(argins)
+            ind = newinslst.index(ins)
+            newinslst = newinslst[:ind] + arglst + newinslst[ind:]  #prepend constant instructions before call
+        block.instructions = newinslst
+    return cfg
+
+#peephole opt on TAC instructions
+#remove jmp and labels when they are next to each other
+def cullLabels(cfg):
+    labelref = {}
+    inslst = cfg.toList()
+    #count the number of references to a label
+    for ins in inslst:
+        if isinstance(ins, TACBT) or isinstance(ins, TACJmp) or isinstance(ins, TACBTypeEq):
+            if ins.label not in labelref:
+                labelref[ins.label] = 0
+            labelref[ins.label] += 1
+        elif isinstance(ins, TACLabel):
+            if ins.name not in labelref:
+                labelref[ins.name] = 0
+    rmlst = []
+    #keep track of adjacent jump/label instructions when the label is only referenced by that jump
+    for i in range(len(inslst)):
+        if i == 0:  #do not kill method start label
+            continue
+        if (isinstance(inslst[i-1], TACJmp) or isinstance(inslst[i-1], TACBT) or isinstance(ins, TACBTypeEq))\
+        and isinstance(inslst[i], TACLabel) and inslst[i-1].label == inslst[i].name and labelref[inslst[i].name] == 1:
+            rmlst.append(i-1)
+            rmlst.append(i)
+        elif isinstance(inslst[i], TACLabel) and labelref[inslst[i].name] == 0:
+            rmlst.append(i)
+    inslst = [ins for i, ins in enumerate(inslst) if i not in rmlst]
+    return _constructCFG(inslst)
 
 #continue propagating information between basic blocks until fixed point is reached
 def globalFlow(cfg):
@@ -115,7 +177,7 @@ def globalFlow(cfg):
             block.dataIn = join(lstIn)
             changed = changed or forwardFlow(block)
         i += 1
-        #ideally we reach a fixed point but for compilation speed we give up at a certain point
+        #ideally we reach a fixed point but for compilation speed we eventually give up
         if i > 100:
             return False
     return True
@@ -150,8 +212,9 @@ def transfer(ins, data):
                 dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
                 return dataOut
             else:
+                #Python integer division is spooky
                 dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, \
-                    (data[ins.op2].args[0] / data[ins.op1].args[0], data[ins.op2].args[1] / data[ins.op1].args[1]))
+                    (int(float(data[ins.op2].args[0]) / data[ins.op1].args[0]), int(float(data[ins.op2].args[1]) / data[ins.op1].args[1])))
         elif ins.opcode == '<':
             if data[ins.op1].dtype == DataType.Int and data[ins.op2].dtype == DataType.Int:
                 #if upper bound of op1 is less than lower bound of op2 then certainly true
@@ -238,6 +301,11 @@ def transfer(ins, data):
             dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Mid, (False, ins.ptype))
     elif isinstance(ins, TACCall):
         dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
+        #save information about arguments for possible constant propagation
+        gCallArgs[ins] = []
+        for arg in ins.args:
+            if arg in dataOut:
+                gCallArgs[ins].append((arg, dataOut[arg]))
     elif isinstance(ins, TACConstant):
         if ins.ptype == 'int':
             dataOut[ins.assignee] = DataInfo(DataType.Int, DataLattice.Mid, (int(ins.const), int(ins.const)))
@@ -246,7 +314,7 @@ def transfer(ins, data):
         elif ins.ptype == 'string':
             dataOut[ins.assignee] = DataInfo(DataType.String, DataLattice.Mid, ins.const)
     elif isinstance(ins, TACAssign):
-        if ins.assignor not in data:
+        if ins.assignor not in data or isinstance(ins.assignor, TACClassAttr) or isinstance(ins.assignor, TACMethodArg):
             dataOut[ins.assignee] = DataInfo(DataType.Object, DataLattice.Top, None)
         else:
             if isinstance(ins.assignee, TACRegister):
